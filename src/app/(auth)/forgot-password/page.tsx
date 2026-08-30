@@ -20,9 +20,10 @@ export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false);
   const [turnstileExpired, setTurnstileExpired] = useState(false);
 
-  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<ForgotPasswordValues>({
+  const { register, handleSubmit, formState: { errors, touchedFields, dirtyFields }, setValue, watch } = useForm<ForgotPasswordValues>({
     resolver: zodResolver(forgotPasswordSchema),
     mode: 'all',
+    reValidateMode: 'onChange',
   });
 
   const turnstileToken = watch('turnstileToken');
@@ -53,10 +54,10 @@ export default function ForgotPasswordPage() {
       <AuthLayout>
         <div style={{ width: '100%', float: 'left' }}>
           <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-            Check your email
+            Check your inbox
           </h3>
-          <p style={{ fontSize: '13px', color: 'hsl(var(--foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-            If an account exists for that email, we have sent password reset instructions.
+          <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+            If an account exists for that email, we&apos;ve sent password reset instructions. Please check your inbox and spam folder.
           </p>
           <div className="login-con" style={{ marginTop: '20px' }}>
             <Link href="/login" style={{ textDecoration: 'none' }}>
@@ -82,7 +83,7 @@ export default function ForgotPasswordPage() {
                 onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1a7fd4')}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#29A4FF')}
               >
-                Return to login
+                Return to sign in
               </button>
             </Link>
           </div>
@@ -95,10 +96,10 @@ export default function ForgotPasswordPage() {
     <AuthLayout>
       <form id="fgpwd_main" onSubmit={handleSubmit(onSubmit)} style={{ width: '100%', float: 'left' }}>
         <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-          Forgot password
+          Reset your password
         </h3>
-        <p style={{ fontSize: '13px', color: 'hsl(var(--foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-          Password reset instructions will be sent after you type your email.
+        <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+          Enter your email address and we&apos;ll send you a link to reset your password.
         </p>
 
         {/* Email Field */}
@@ -108,7 +109,7 @@ export default function ForgotPasswordPage() {
             type="email"
             className="form-control"
             placeholder="Email address"
-            autoComplete="off"
+            autoComplete="email"
             disabled={loading}
             style={{
               width: '100%',
@@ -116,7 +117,11 @@ export default function ForgotPasswordPage() {
               padding: '6px 12px',
               fontSize: '13px',
               backgroundColor: 'hsl(var(--muted))',
-              border: errors.email ? '1px solid #dc3545' : '1px solid hsl(var(--border))',
+              border: errors.email
+                ? '1px solid #dc3545'
+                : (dirtyFields.email || touchedFields.email) && !errors.email
+                ? '1px solid #28a745'
+                : '1px solid hsl(var(--border))',
               borderRadius: '6px',
               color: 'hsl(var(--foreground))',
               lineHeight: '19.5px',
@@ -181,12 +186,12 @@ export default function ForgotPasswordPage() {
               if (!loading) e.currentTarget.style.backgroundColor = '#29A4FF';
             }}
           >
-            {loading ? 'Sending...' : 'Send recovery link'}
+            {loading ? 'Sending link...' : 'Send reset link'}
           </button>
         </div>
 
         <div className="text-center" style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', gap: '6px', alignItems: 'center' }}>
-          <span style={{ color: 'hsl(var(--foreground))', fontSize: '12px', fontFamily: FONT_STACK }}>Remember your password?</span>
+          <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: FONT_STACK }}>Remember your password?</span>
           <Link
             href="/login"
             style={{ color: '#29A4FF', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK }}

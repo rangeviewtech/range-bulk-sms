@@ -21,14 +21,14 @@ export async function login(formData: FormData) {
   
   const parsed = loginSchema.safeParse(data);
   if (!parsed.success) {
-    return { error: 'Invalid input' };
+    return { error: parsed.error.errors[0]?.message || 'Please check your information and try again.' };
   }
 
   // Verify Turnstile
   if (parsed.data.turnstileToken) {
     const isBotFree = await verifyTurnstileToken(parsed.data.turnstileToken);
     if (!isBotFree) {
-      return { error: 'Security check failed. Please try again.' };
+      return { error: 'Security check failed. Please refresh and try again.' };
     }
   }
 
@@ -38,16 +38,16 @@ export async function login(formData: FormData) {
     });
 
     if (!user || !user.passwordHash) {
-      return { error: 'Invalid email or password' };
+      return { error: 'Invalid email or password. Please try again.' };
     }
 
     if (user.status !== 'ACTIVE') {
-      return { error: 'Account is not active' };
+      return { error: 'Your account is inactive. Please contact support.' };
     }
 
     const isValid = await verifyPassword(parsed.data.password, user.passwordHash);
     if (!isValid) {
-      return { error: 'Invalid email or password' };
+      return { error: 'Invalid email or password. Please try again.' };
     }
 
     // Determine MFA/OTP requirements
@@ -65,7 +65,7 @@ export async function login(formData: FormData) {
       
       const otpResult = await requestOtp(user.id, channel as CommunicationChannel);
       if (otpResult.error) {
-        return { error: 'Failed to send verification code. ' + otpResult.error };
+        return { error: 'Could not send verification code. ' + otpResult.error };
       }
 
       await prisma.auditLog.create({
@@ -83,7 +83,7 @@ export async function login(formData: FormData) {
 
   } catch (error) {
     console.error('Login error:', error);
-    return { error: 'An unexpected error occurred' };
+    return { error: 'Something went wrong on our end. Please try again.' };
   }
   
   redirect('/dashboard');
@@ -94,19 +94,19 @@ export async function register(formData: FormData) {
 
   const parsed = registerSchema.safeParse(data);
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message || 'Invalid input' };
+    return { error: parsed.error.errors[0]?.message || 'Please check your information and try again.' };
   }
 
   // Verify Turnstile
   const isBotFree = await verifyTurnstileToken(parsed.data.turnstileToken);
   if (!isBotFree) {
-    return { error: 'Security check failed. Please try again.' };
+    return { error: 'Security check failed. Please refresh and try again.' };
   }
 
   try {
     const existing = await prisma.user.findUnique({ where: { email: parsed.data.email } });
     if (existing) {
-      return { error: 'Email already in use' };
+      return { error: 'An account with this email address already exists.' };
     }
 
     const passwordHash = await hashPassword(parsed.data.password);
@@ -137,7 +137,7 @@ export async function register(formData: FormData) {
 
   } catch (error) {
     console.error('Registration error:', error);
-    return { error: 'An unexpected error occurred' };
+    return { error: 'Something went wrong on our end. Please try again.' };
   }
 
   redirect('/dashboard');
@@ -145,16 +145,24 @@ export async function register(formData: FormData) {
 
 export async function verifyMfaChallenge(formData: FormData) {
   const session = await verifySession();
-  if (!session || !session.userId) return { error: 'Unauthorized' };
+  if (!session || !session.userId) return { error: 'Your session has expired. Please sign in again.' };
 
-  const parsed = verifyMfaSchema.safeParse({ token: formData.get('token') });
-  if (!parsed.success) return { error: 'Invalid token' };
+  const parsed = verifyMfaSchema.safeParse({ 
+    token: formData.get('token'),
+    turnstileToken: formData.get('turnstileToken') || undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message || 'Please enter a valid 6-digit code.' };
+
+  if (parsed.data.turnstileToken) {
+    const isBotFree = await verifyTurnstileToken(parsed.data.turnstileToken);
+    if (!isBotFree) return { error: 'Security check failed. Please refresh and try again.' };
+  }
 
   const user = await prisma.user.findUnique({ where: { id: session.userId } });
-  if (!user || !user.mfaSecret) return { error: 'MFA not configured properly' };
+  if (!user || !user.mfaSecret) return { error: 'Two-factor authentication is not configured for this account.' };
 
   const isValid = await verifyMfaToken(parsed.data.token, user.mfaSecret);
-  if (!isValid) return { error: 'Invalid MFA code' };
+  if (!isValid) return { error: 'Incorrect verification code. Please try again.' };
 
   // Re-issue session with mfaVerified = true
   await createSession(user.id, true);
@@ -164,16 +172,24 @@ export async function verifyMfaChallenge(formData: FormData) {
 
 export async function unlockScreen(formData: FormData) {
   const session = await verifySession();
-  if (!session || !session.userId) return { error: 'Unauthorized' };
+  if (!session || !session.userId) return { error: 'Your session has expired. Please sign in again.' };
 
-  const parsed = pinSchema.safeParse({ pin: formData.get('pin') });
-  if (!parsed.success) return { error: 'Invalid PIN format' };
+  const parsed = pinSchema.safeParse({ 
+    pin: formData.get('pin'),
+    turnstileToken: formData.get('turnstileToken') || undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.errors[0]?.message || 'Please enter your 6-digit PIN.' };
+
+  if (parsed.data.turnstileToken) {
+    const isBotFree = await verifyTurnstileToken(parsed.data.turnstileToken);
+    if (!isBotFree) return { error: 'Security check failed. Please refresh and try again.' };
+  }
 
   const user = await prisma.user.findUnique({ where: { id: session.userId } });
-  if (!user || !user.screenLockPin) return { error: 'PIN not configured' };
+  if (!user || !user.screenLockPin) return { error: 'No PIN is configured for this account.' };
 
   const isValid = await verifyPassword(parsed.data.pin, user.screenLockPin);
-  if (!isValid) return { error: 'Incorrect PIN' };
+  if (!isValid) return { error: 'Incorrect PIN. Please try again.' };
 
   const cookieStore = await cookies();
   cookieStore.delete('screen_locked');
@@ -342,14 +358,19 @@ export async function requestOtp(userId: string, channel: CommunicationChannel) 
   return { success: true };
 }
 
-export async function verifyLoginOtp(userId: string, channel: CommunicationChannel, code: string) {
+export async function verifyLoginOtp(userId: string, channel: CommunicationChannel, code: string, turnstileToken?: string) {
+  if (turnstileToken) {
+    const isBotFree = await verifyTurnstileToken(turnstileToken);
+    if (!isBotFree) return { error: 'Security check failed. Please refresh and try again.' };
+  }
+
   let user;
   try {
     user = await prisma.user.findUnique({ where: { id: userId } });
-  } catch (error) {
-    return { error: 'Invalid User ID format' };
+  } catch (_error) {
+    return { error: 'Unable to verify account details. Please try again.' };
   }
-  if (!user) return { error: 'User not found' };
+  if (!user) return { error: 'Account not found. Please sign in again.' };
 
   let identifier = '';
   if (channel === 'EMAIL') identifier = user.email;
@@ -359,7 +380,7 @@ export async function verifyLoginOtp(userId: string, channel: CommunicationChann
   const result = await OtpService.verifyOtp(identifier, 'LOGIN', code);
   
   if (!result.valid) {
-    return { error: result.error };
+    return { error: result.error || 'Invalid or expired verification code. Please try again.' };
   }
 
   // Create full session

@@ -1,8 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { requestOtp, verifyLoginOtp } from '@/app/(auth)/actions';
 import { PinInput } from '@/components/forms/pin-input';
+import { TurnstileWidget } from '@/components/forms/turnstile-widget';
+import { toast } from 'sonner';
 
 const FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
@@ -14,6 +17,8 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(60);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileExpired, setTurnstileExpired] = useState(false);
 
   useEffect(() => {
     if (countdown > 0) {
@@ -24,10 +29,14 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
   
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (turnstileExpired) {
+      toast.error('Security check has expired. Please verify again.');
+      return;
+    }
     setLoading(true);
     setError('');
     
-    const result = await verifyLoginOtp(userId, channel, code);
+    const result = await verifyLoginOtp(userId, channel, code, turnstileToken || undefined);
     if (result?.error) {
       setError(result.error);
     }
@@ -43,7 +52,8 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
     if (result?.error) {
       setError(result.error);
     } else {
-      setError('Code resent via ' + newChannel);
+      const channelLabel = newChannel === 'WHATSAPP' ? 'WhatsApp' : newChannel === 'SMS' ? 'SMS' : 'Telegram';
+      toast.success(`A new verification code has been sent via ${channelLabel}.`);
       setCountdown(60);
     }
     setLoading(false);
@@ -51,7 +61,7 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
 
   return (
     <form onSubmit={handleVerify} style={{ width: '100%', float: 'left' }}>
-      <div className="form-group" style={{ position: 'relative', marginBottom: '1.25rem' }}>
+      <div className="form-group" style={{ position: 'relative', marginBottom: '1rem' }}>
         <div style={{ padding: '10px 0', display: 'flex', justifyContent: 'center' }}>
           <PinInput 
             value={code}
@@ -59,13 +69,35 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
           />
         </div>
         {error && (
-          <p style={{ fontSize: '11px', color: error.includes('resent') ? 'hsl(var(--success, 142 71% 45%))' : 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
+          <p style={{ fontSize: '11px', color: error.includes('sent') ? 'hsl(var(--success, 142 71% 45%))' : 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
             {error}
           </p>
         )}
       </div>
 
-      <div className="login-con" style={{ marginTop: '10px', marginBottom: '20px' }}>
+      {/* Cloudflare Turnstile — Bot Protection */}
+      <TurnstileWidget
+        variant="inline"
+        onVerify={(token) => {
+          setTurnstileToken(token);
+          setTurnstileExpired(false);
+        }}
+        onError={() => {
+          setTurnstileToken(null);
+          toast.error('Security check failed. Please refresh and try again.');
+        }}
+        onExpire={() => {
+          setTurnstileToken(null);
+          setTurnstileExpired(true);
+        }}
+      />
+      {turnstileExpired && (
+        <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
+          Security check expired. Please re-verify.
+        </p>
+      )}
+
+      <div className="login-con" style={{ marginTop: '10px', marginBottom: '16px' }}>
         <button
           type="submit"
           disabled={loading || code.length !== 6}
@@ -94,21 +126,21 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
             if (!loading && code.length === 6) e.currentTarget.style.backgroundColor = '#29A4FF';
           }}
         >
-          {loading ? 'Verifying...' : 'Verify'}
+          {loading ? 'Verifying code...' : 'Verify code'}
         </button>
       </div>
 
       <div style={{ paddingTop: '16px', borderTop: '1px solid hsl(var(--border))', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK, margin: 0, display: 'flex', justifyContent: 'space-between' }}>
           <span>Didn&apos;t receive the code?</span>
-          {countdown > 0 && <span style={{ color: 'hsl(var(--destructive))' }}>Wait {countdown}s</span>}
+          {countdown > 0 && <span style={{ color: 'hsl(var(--destructive))' }}>Resend in {countdown}s</span>}
         </p>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           {['WHATSAPP', 'SMS', 'TELEGRAM'].map((c) => (
             <button
               key={c}
               type="button"
-              onClick={() => handleResend(c)}
+              onClick={() => handleResend(c as OtpChannel)}
               disabled={loading || countdown > 0}
               style={{
                 flex: 1,
@@ -132,10 +164,19 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
                 if (!loading && countdown === 0) e.currentTarget.style.backgroundColor = 'hsl(var(--secondary))';
               }}
             >
-              Try {c === 'WHATSAPP' ? 'WhatsApp' : c === 'SMS' ? 'SMS' : 'Telegram'}
+              {c === 'WHATSAPP' ? 'WhatsApp' : c === 'SMS' ? 'SMS' : 'Telegram'}
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="text-center" style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', gap: '6px', alignItems: 'center' }}>
+        <Link
+          href="/login"
+          style={{ color: '#29A4FF', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK }}
+        >
+          Back to sign in
+        </Link>
       </div>
     </form>
   );

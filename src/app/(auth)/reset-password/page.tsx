@@ -98,10 +98,10 @@ function ResetPasswordForm() {
       <AuthLayout>
         <div style={{ width: '100%', float: 'left' }}>
           <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--destructive))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-            Invalid Link
+            Invalid or expired link
           </h3>
-          <p style={{ fontSize: '13px', color: 'hsl(var(--foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-            This password reset link is missing or invalid. Please request a new one.
+          <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+            This password reset link has expired or is invalid. Please request a new one.
           </p>
           <div className="login-con" style={{ marginTop: '20px' }}>
             <Link href="/forgot-password" style={{ textDecoration: 'none' }}>
@@ -127,7 +127,7 @@ function ResetPasswordForm() {
                 onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1a7fd4')}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#29A4FF')}
               >
-                Request new link
+                Request a new link
               </button>
             </Link>
           </div>
@@ -141,10 +141,10 @@ function ResetPasswordForm() {
       <AuthLayout>
         <div style={{ width: '100%', float: 'left' }}>
           <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-            Password Reset!
+            Password updated!
           </h3>
-          <p style={{ fontSize: '13px', color: 'hsl(var(--foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-            Your password has been successfully reset. You can now sign in with your new credentials.
+          <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+            Your password has been reset successfully. You can now sign in with your new password.
           </p>
           <div className="login-con" style={{ marginTop: '20px' }}>
             <Link href="/login" style={{ textDecoration: 'none' }}>
@@ -170,7 +170,7 @@ function ResetPasswordForm() {
                 onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1a7fd4')}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#29A4FF')}
               >
-                Sign in
+                Sign in to your account
               </button>
             </Link>
           </div>
@@ -183,10 +183,10 @@ function ResetPasswordForm() {
     <AuthLayout>
       <form id="resetpwd_main" onSubmit={handleSubmit(onSubmit)} style={{ width: '100%', float: 'left' }}>
         <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-          Set new password
+          Set a new password
         </h3>
-        <p style={{ fontSize: '13px', color: 'hsl(var(--foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-          Please choose a strong password.
+        <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+          Choose a strong password to protect your account.
         </p>
 
         <input type="hidden" {...register('token')} />
@@ -197,7 +197,8 @@ function ResetPasswordForm() {
             {...register('password')}
             type={showPassword ? 'text' : 'password'}
             className="form-control width100"
-            placeholder="New Password"
+            placeholder="New password (min. 8 characters)"
+            autoComplete="new-password"
             disabled={loading}
             style={{
               width: '100%',
@@ -247,7 +248,7 @@ function ResetPasswordForm() {
           {passwordValue.length > 0 && (
             <div style={{ marginTop: '8px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                <span style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK }}>Password Strength:</span>
+                <span style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK }}>Password strength:</span>
                 <span style={{ fontSize: '11px', color: strengthColor, fontWeight: 600, fontFamily: FONT_STACK }}>{strengthText}</span>
               </div>
               <div style={{ width: '100%', height: '4px', backgroundColor: 'hsl(var(--border))', borderRadius: '2px', overflow: 'hidden' }}>
@@ -263,7 +264,8 @@ function ResetPasswordForm() {
             {...register('confirmPassword')}
             type={showConfirmPassword ? 'text' : 'password'}
             className="form-control width100"
-            placeholder="Confirm New Password"
+            placeholder="Confirm new password"
+            autoComplete="new-password"
             disabled={loading}
             style={{
               width: '100%',
@@ -367,7 +369,7 @@ function ResetPasswordForm() {
               if (!loading) e.currentTarget.style.backgroundColor = '#29A4FF';
             }}
           >
-            {loading ? 'Resetting...' : 'Reset Password'}
+            {loading ? 'Updating password...' : 'Update password'}
           </button>
         </div>
 

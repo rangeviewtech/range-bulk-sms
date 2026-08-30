@@ -536,8 +536,8 @@ export default function RegisterPage() {
                 Create an account
               </h3>
 
-              <p style={{ fontSize: '13px', color: 'hsl(var(--foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-                Enter your information to get started.
+              <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+                Get started with your free account. No credit card required.
               </p>
 
               {/* Name Field */}
@@ -546,8 +546,8 @@ export default function RegisterPage() {
                   {...register('name')}
                   type="text"
                   className="form-control width100"
-                  placeholder="Full Name"
-                  autoComplete="off"
+                  placeholder="Full name"
+                  autoComplete="name"
                   disabled={loading || !!socialLoading}
                   style={{
                     width: '100%',
@@ -579,8 +579,8 @@ export default function RegisterPage() {
                   type="email"
                   id="email"
                   className="form-control width100"
-                  placeholder="Email"
-                  autoComplete="off"
+                  placeholder="Email address"
+                  autoComplete="email"
                   disabled={loading || !!socialLoading}
                   style={{
                     width: '100%',
@@ -612,7 +612,8 @@ export default function RegisterPage() {
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   className="form-control width100"
-                  placeholder="Password"
+                  placeholder="Password (min. 8 characters)"
+                  autoComplete="new-password"
                   disabled={loading || !!socialLoading}
                   style={{
                     width: '100%',
@@ -662,7 +663,7 @@ export default function RegisterPage() {
                 {passwordValue.length > 0 && (
                   <div style={{ marginTop: '8px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                      <span style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK }}>Password Strength:</span>
+                      <span style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK }}>Password strength:</span>
                       <span style={{ fontSize: '11px', color: strengthColor, fontWeight: 600, fontFamily: FONT_STACK }}>{strengthText}</span>
                     </div>
                     <div style={{ width: '100%', height: '4px', backgroundColor: 'hsl(var(--border))', borderRadius: '2px', overflow: 'hidden' }}>
@@ -678,7 +679,8 @@ export default function RegisterPage() {
                   {...register('confirmPassword')}
                   type={showConfirmPassword ? 'text' : 'password'}
                   className="form-control width100"
-                  placeholder="Confirm Password"
+                  placeholder="Confirm password"
+                  autoComplete="new-password"
                   disabled={loading || !!socialLoading}
                   style={{
                     width: '100%',
@@ -752,7 +754,7 @@ export default function RegisterPage() {
                 </p>
               )}
 
-              {/* Login Button */}
+              {/* Submit Button */}
               <div className="login-con" style={{ marginTop: '10px' }}>
                 <button
                   type="submit"
@@ -793,7 +795,7 @@ export default function RegisterPage() {
 
               {/* Sign in Link */}
               <div style={{ textAlign: 'center', marginTop: '12px' }}>
-                <span style={{ fontSize: '12px', color: '#888', fontFamily: FONT_STACK }}>
+                <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK }}>
                   Already have an account?{' '}
                 </span>
                 <a
@@ -801,13 +803,13 @@ export default function RegisterPage() {
                   style={{
                     fontSize: '12px',
                     color: '#29A4FF',
-                    textDecoration: 'none',
                     fontWeight: 600,
+                    textDecoration: 'none',
                     fontFamily: FONT_STACK,
-                    transition: 'color 0.15s ease',
+                    transition: 'opacity 0.2s ease',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = '#1a7fd4')}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = '#29A4FF')}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
+                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
                 >
                   Sign in
                 </a>
@@ -825,7 +827,7 @@ export default function RegisterPage() {
                 }}
               >
                 <span className="OR_left-line" style={{ flexGrow: 1, height: '1px', backgroundColor: 'hsl(var(--border))' }}></span>
-                <span className="OR_or-text" style={{ margin: '0 5px', color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: FONT_STACK }}>OR</span>
+                <span className="OR_or-text" style={{ margin: '0 8px', color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: FONT_STACK }}>Or continue with</span>
                 <span className="OR_right-line" style={{ flexGrow: 1, height: '1px', backgroundColor: 'hsl(var(--border))' }}></span>
               </div>
 

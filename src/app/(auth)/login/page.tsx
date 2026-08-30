@@ -474,22 +474,22 @@ export default function LoginPage() {
           {view === 'login' && (
             <form id="login_form" onSubmit={handleSubmit(onSubmit)} style={{ width: '100%', float: 'left' }}>
               <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-                Login to account
+                Sign in
               </h3>
 
-              <p style={{ fontSize: '13px', color: 'hsl(var(--foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-                Access to the most powerful tracking platform in the entire telematics industry.
+              <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+                Welcome back. Please enter your credentials to access your account.
               </p>
 
-              {/* Username Field */}
+              {/* Email / Username Field */}
               <div className="form-group usernamefd" style={{ position: 'relative', marginBottom: '0.9rem' }}>
                 <input
                   {...register('email')}
                   type="text"
                   id="username"
                   className="form-control width100"
-                  placeholder="Username"
-                  autoComplete="off"
+                  placeholder="Email or username"
+                  autoComplete="username"
                   disabled={loading || !!socialLoading}
                   style={{
                     width: '100%',
@@ -499,7 +499,7 @@ export default function LoginPage() {
                     backgroundColor: 'hsl(var(--muted))',
                     border: errors.email
                       ? '1px solid #dc3545'
-                      : touchedFields.email
+                      : touchedFields.email && !errors.email
                       ? '1px solid #28a745'
                       : '1px solid hsl(var(--border))',
                     borderRadius: '6px',
@@ -522,6 +522,7 @@ export default function LoginPage() {
                   id="password"
                   className="form-control width100"
                   placeholder="Password"
+                  autoComplete="current-password"
                   disabled={loading || !!socialLoading}
                   style={{
                     width: '100%',
@@ -531,7 +532,7 @@ export default function LoginPage() {
                     backgroundColor: 'hsl(var(--muted))',
                     border: errors.password
                       ? '1px solid #dc3545'
-                      : touchedFields.password
+                      : touchedFields.password && !errors.password
                       ? '1px solid #28a745'
                       : '1px solid hsl(var(--border))',
                     borderRadius: '6px',
@@ -578,7 +579,7 @@ export default function LoginPage() {
                     className="prod-checkbox"
                   />
                   <label htmlFor="remember" style={{ color: 'hsl(var(--foreground))', fontSize: '12px', cursor: 'pointer', fontFamily: FONT_STACK, margin: 0, lineHeight: '14px' }}>
-                    Remember me
+                    Keep me signed in
                   </label>
                 </div>
                 <div className="forget-con">
@@ -593,7 +594,7 @@ export default function LoginPage() {
                     onMouseEnter={(e) => (e.currentTarget.style.color = '#29A4FF')}
                     onMouseLeave={(e) => (e.currentTarget.style.color = 'hsl(var(--foreground))')}
                   >
-                    Forgot password ?
+                    Forgot password?
                   </a>
                 </div>
               </div>
@@ -641,20 +642,21 @@ export default function LoginPage() {
                     cursor: loading || !!socialLoading ? 'not-allowed' : 'pointer',
                     textAlign: 'center',
                     boxSizing: 'border-box',
-                    fontFamily: 'sans-serif',
+                    fontFamily: FONT_STACK,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     opacity: loading ? 0.7 : 1,
+                    transition: 'background-color 0.2s ease',
                   }}
                   onMouseEnter={(e) => {
-                    if (!loading && !socialLoading) e.currentTarget.style.backgroundColor = '#727271';
+                    if (!loading && !socialLoading) e.currentTarget.style.backgroundColor = '#1a7fd4';
                   }}
                   onMouseLeave={(e) => {
                     if (!loading && !socialLoading) e.currentTarget.style.backgroundColor = '#29A4FF';
                   }}
                 >
-                  {loading ? 'Logging in...' : 'Login'}
+                  {loading ? 'Signing in...' : 'Sign in'}
                 </button>
               </div>
 
@@ -671,12 +673,12 @@ export default function LoginPage() {
                     textDecoration: 'none',
                     fontWeight: 600,
                     fontFamily: FONT_STACK,
-                    transition: 'color 0.15s ease',
+                    transition: 'opacity 0.2s ease',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = '#1a7fd4')}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = '#29A4FF')}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
+                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
                 >
-                  Register
+                  Create one
                 </a>
               </div>
 
@@ -692,7 +694,7 @@ export default function LoginPage() {
                 }}
               >
                 <span className="OR_left-line" style={{ flexGrow: 1, height: '1px', backgroundColor: 'hsl(var(--border))' }}></span>
-                <span className="OR_or-text" style={{ margin: '0 5px', color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: FONT_STACK }}>OR</span>
+                <span className="OR_or-text" style={{ margin: '0 8px', color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: FONT_STACK }}>Or continue with</span>
                 <span className="OR_right-line" style={{ flexGrow: 1, height: '1px', backgroundColor: 'hsl(var(--border))' }}></span>
               </div>
 
@@ -999,20 +1001,20 @@ export default function LoginPage() {
           {/* ================= VIEW 2: FORGOT PASSWORD ================= */}
           {view === 'forgot' && (
             <form id="fgpwd_main" onSubmit={handleRecover} style={{ width: '100%', float: 'left' }}>
-              <h1 className="header-main" style={{ fontSize: '20px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '28px', fontFamily: FONT_STACK }}>
-                Forgot password
-              </h1>
-              <p style={{ fontSize: '13px', color: 'hsl(var(--foreground))', marginBottom: '20px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-                Password reset instructions will be sent after you type your username.
+              <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
+                Reset password
+              </h3>
+              <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+                Enter your email address and we&apos;ll send you instructions to reset your password.
               </p>
 
-              <div className="form-group usernamefd" style={{ position: 'relative', marginBottom: '1.25rem' }}>
+              <div className="form-group usernamefd" style={{ position: 'relative', marginBottom: '1rem' }}>
                 <input
-                  type="text"
+                  type="email"
                   id="forgot_username"
                   className="form-control"
-                  placeholder="Username"
-                  autoComplete="off"
+                  placeholder="Email address"
+                  autoComplete="email"
                   value={forgotUsername}
                   onChange={(e) => setForgotUsername(e.target.value)}
                   style={{
@@ -1021,30 +1023,58 @@ export default function LoginPage() {
                     padding: '6px 12px',
                     fontSize: '13px',
                     backgroundColor: 'hsl(var(--muted))',
-                    border: '1px solid hsl(var(--border))',
+                    border: forgotUsername.length > 0 && !forgotUsername.includes('@')
+                      ? '1px solid #dc3545'
+                      : forgotUsername.length > 0 && forgotUsername.includes('@')
+                      ? '1px solid #28a745'
+                      : '1px solid hsl(var(--border))',
                     borderRadius: '6px',
                     color: 'hsl(var(--foreground))',
                     lineHeight: '19.5px',
                     outline: 'none',
                     boxSizing: 'border-box',
                     fontFamily: FONT_STACK,
+                    transition: 'border-color 0.2s ease',
                   }}
                 />
               </div>
 
-              <div className="form-group" style={{ marginBottom: '0px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div className="forget-con">
+              {/* Cloudflare Turnstile — Bot Protection */}
+              <TurnstileWidget
+                variant="inline"
+                onVerify={(token) => {
+                  setTurnstileToken(token);
+                  setTurnstileExpired(false);
+                }}
+                onError={() => {
+                  setTurnstileToken(null);
+                  toast.error('Security check failed. Please refresh and try again.');
+                }}
+                onExpire={() => {
+                  setTurnstileToken(null);
+                  setTurnstileExpired(true);
+                }}
+              />
+              {turnstileExpired && (
+                <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
+                  Security check expired. Please re-verify.
+                </p>
+              )}
+
+              <div className="form-group" style={{ marginTop: '10px', marginBottom: '0px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                <div className="forget-con" style={{ flex: 1 }}>
                   <button
                     type="button"
                     className="btn-forget"
                     onClick={() => setView('login')}
                     style={{
+                      width: '100%',
                       height: '33px',
                       padding: '6px 16px',
                       fontSize: '13px',
                       backgroundColor: 'hsl(var(--secondary))',
                       color: 'hsl(var(--secondary-foreground))',
-                      fontWeight: 500,
+                      fontWeight: 600,
                       borderRadius: '6px',
                       border: '1px solid hsl(var(--border))',
                       cursor: 'pointer',
@@ -1054,30 +1084,37 @@ export default function LoginPage() {
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'hsl(var(--accent))')}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'hsl(var(--secondary))')}
                   >
-                    Dismiss
+                    Back to sign in
                   </button>
                 </div>
-                <div className="login-con">
+                <div className="login-con" style={{ flex: 1 }}>
                   <button
                     type="submit"
                     className="btn btn-primary btn-main"
+                    disabled={loading}
                     style={{
+                      width: '100%',
                       height: '33px',
-                      padding: '6px 28px',
+                      padding: '6px 16px',
                       fontSize: '13px',
                       backgroundColor: '#29A4FF',
                       color: '#ffffff',
                       fontWeight: 700,
                       borderRadius: '6px',
                       border: '0',
-                      cursor: 'pointer',
+                      cursor: loading ? 'not-allowed' : 'pointer',
                       fontFamily: FONT_STACK,
+                      opacity: loading ? 0.7 : 1,
                       transition: 'background-color 0.2s ease',
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1a7fd4')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#29A4FF')}
+                    onMouseEnter={(e) => {
+                      if (!loading) e.currentTarget.style.backgroundColor = '#1a7fd4';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!loading) e.currentTarget.style.backgroundColor = '#29A4FF';
+                    }}
                   >
-                    Recover
+                    {loading ? 'Sending...' : 'Send reset link'}
                   </button>
                 </div>
               </div>
