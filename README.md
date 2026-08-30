@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Master Starter Template
 
-## Getting Started
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![License: Proprietary](https://img.shields.io/badge/license-Proprietary-red)
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
 
-First, run the development server:
+A production-quality, reusable Next.js starter template built by **Range View Technology Services Uganda Limited**.
+
+## Features
+
+- **App Router**: Leveraging the latest Next.js features (Server Components, Actions, Layouts).
+- **Design System**: A robust, token-first design system built on Tailwind CSS v4 and Radix UI.
+- **50+ UI Components**: Pre-built, accessible, responsive components (shadcn/ui inspired).
+- **Dark/Light Mode**: First-class support for both themes using Next Themes.
+- **Accessibility (a11y)**: Built-in focus management, ARIA attributes, and keyboard navigation.
+- **Responsive**: Mobile-first design principles.
+- **Type Safety**: Strict TypeScript configuration.
+- **Code Quality**: Pre-configured ESLint, Prettier, and Husky.
+
+## Tech Stack
+
+| Technology | Description |
+| --- | --- |
+| Next.js 15 | React framework for production |
+| React 19 | UI Library |
+| Tailwind CSS v4 | Utility-first CSS framework |
+| Radix UI | Unstyled, accessible component primitives |
+| Lucide React | Icon library |
+| TypeScript | Static typing |
+
+## Quick Start
 
 ```bash
+# Clone the repository
+git clone <repository-url> my-new-project
+
+# Navigate into the project
+cd my-new-project
+
+# Install dependencies
+npm install
+
+# Start the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Project Structure
+
+```
+src/
+├── app/                  # Next.js App Router pages and layouts
+├── components/           # UI Components (ui/, layout/, navigation/, etc.)
+├── config/               # App configuration (nav, site info, etc.)
+├── design-system/        # Design tokens (colors, typography, spacing)
+├── hooks/                # Custom React hooks
+├── lib/                  # Utility functions (cn, etc.)
+└── types/                # Global TypeScript interfaces/types
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Key Scripts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `npm run dev`: Starts the development server.
+- `npm run build`: Builds the app for production.
+- `npm run start`: Runs the built app in production mode.
+- `npm run lint`: Lints the codebase.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Customization for New Projects
 
-## Learn More
+To start a new project from this template:
+1. Update `package.json` with the new project name and details.
+2. Modify `src/config/app.ts` with the new branding.
+3. Update theme tokens in `src/app/globals.css` and `src/design-system/tokens/colors.ts`.
 
-To learn more about Next.js, take a look at the following resources:
+## Documentation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Architecture](./ARCHITECTURE.md)
+- [Design System](./DESIGN_SYSTEM.md)
+- [Customization](./CUSTOMIZATION.md)
+- [Contributing](./CONTRIBUTING.md)
+- [Security](./SECURITY.md)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Proprietary — Range View Technology Services Uganda Limited. All rights reserved.

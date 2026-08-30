@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 40" width="135" height="40">
+  <rect width="135" height="40" rx="6" fill="#000000" />
+  <!-- Microsoft 4-color logo -->
+  <g transform="translate(10, 10)">
+    <rect x="0" y="0" width="9" height="9" fill="#f35325" />
+    <rect x="10" y="0" width="9" height="9" fill="#81bc06" />
+    <rect x="0" y="10" width="9" height="9" fill="#05a6f0" />
+    <rect x="10" y="10" width="9" height="9" fill="#ffba08" />
+  </g>
+  <!-- Text -->
+  <text x="35" y="15" fill="#ffffff" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif" font-size="8" font-weight="500" letter-spacing="0.5">GET IT FROM</text>
+  <text x="35" y="27" fill="#ffffff" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif" font-size="12" font-weight="600">Microsoft Store</text>
+</svg>

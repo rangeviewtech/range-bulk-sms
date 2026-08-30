@@ -1,0 +1,54 @@
+
+/* ========== Chatbot CSS ========== */
+:root {
+    --blue: #234292;
+    --white: #ffffff;
+    --light-white: #e5e5e5;
+    --black: #333333;
+    --grey: #f1f1f1;
+    --light-grey: #525252;
+    --shadow: rgba(208, 201, 201, 0.5);
+    --textarea: #bfbfbf;
+    --lightblue: #234292;
+    --orange: #e98316;
+    --liht-yellow: #fff3ca;
+    --sketch: #515e85;
+    --sketch-border: #edeeee;
+    --green: #62a815;
+    --red: #ff5100;
+}
+.container{ height: 100%; width: 100%; display: flex; }
+.chatbox_content{ width: 100%; }
+.chatbox__support{ display: flex; flex-direction: column; height: 100%; position: relative; }
+.helpMsg{ display: flex; justify-content: center; align-items: center; flex-direction: column; height: 40%; }
+.helpMsg > span{ color: #234292; font-weight: 700; margin-top: 15px; font-family: sans-serif; }
+.askQuestions{ display: flex; width: 94%; flex-wrap: wrap; justify-content: space-between; margin-left: 10px; }
+.questions{ border-radius: 3px; border: 0.5px solid #bfbfbf; width: 228px; height: 35.54px; margin-bottom: 5.75px; cursor: pointer; }
+.questionText{ font-family: sans-serif; font-size: 12px; font-weight: 500; color: #979797; width: 210px; height: 15px; text-overflow: ellipsis; padding-left: 11px; padding-top: 9px; overflow: hidden; white-space: nowrap; }
+.chatbox__messages{ max-height:100%; background: #ffffff; margin-top: auto; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; }
+.initial__msg{ font-size: 12px; font-family: sans-serif; border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; margin-right: auto; margin-bottom: 10px; background: #e0e0e0; padding: 8px 12px; }
+.messages__item{ overflow-wrap: anywhere; }
+.messages__item--visitor { display: flex; flex-direction: column; margin-left: 23px; margin-right: 15px; margin-top: 15px; }
+.chatbotContiner{ margin: auto; width: 52%; height: auto; overflow-y: auto; }
+.newansDiv{ display: flex; flex-direction: column; margin: 15px 23px; width: 295px; padding-bottom: 15px; }
+.answerDiv{ padding-left: 35px; font-size: 12px; font-family: sans-serif; font-weight: 500; color: #444444; line-height: 15px; white-space: pre-line; }
+.icon-container{ padding-left: 35px; }
+.bold { font-weight: bold; }
+.answersDiv{ display: flex; flex-direction: column; font-size: 12px; font-family: sans-serif; font-weight: 500; color: #444444; line-height: 15px; white-space: pre-line; }
+.botImage{ width: 24px; height: 24px; }
+.userQuestion{ padding-left: 35px; color: #686868; font-size: 12px; font-family: sans-serif; font-weight: 500; }
+.messages__item--operator { display: flex; flex-direction: column; margin-left: 23px; width: 248px; margin-top: 10px; }
+.userMessage{ display: flex; flex-direction: column; margin-top: 10px; margin-left: 23px; }
+.usersDiv{ display: flex; align-items: center; margin-bottom: 5px; }
+.userName{ padding-left: 12px; color: #000000; font-size: 14px; font-family: sans-serif; font-weight: 700; }
+.shortname{ width: 24px; height: 24px; background-color: #D0DDFF; border-radius: 50%; font-size: 12px; display: flex; justify-content: center; align-items: center; }
+.typing-animation { display: inline-flex; margin-left: 35px; padding: 10px 10px; border-radius: 50px; margin-top: 15px; margin-bottom:10px; }
+.chatbotHeader{ background: #234292; height: 40px; width: 55%; margin: auto; box-shadow: 0px 0px 5px #a2a2a2; padding: 5px 10px; }
+.Title{ font-size: 16px; font-family: "Open-Sans"; font-weight: 400; color: #f0f0f0; padding: 10px; }  
+.dot{ height: 10px; width: 10px; opacity: 0.7; margin: 0 3px; border-radius: 50%; background: #6c757d; animation: animateDots 1.8s var(--delay) ease-in-out infinite; }
+@keyframes animateDots { 0%,44%{ transform: translateY(0px); } 28%{ opacity: 0.4; transform: translateY(-9px); } 44%{ opacity: 0.2; } }
+.down_arrow{ position: absolute; bottom: 75px; left: 45%; display: none; border: 1px solid #525252; border-radius: 50%; width: 22.89px; height: 22.89px; align-items: center; justify-content: center; background: #ffffff; cursor: pointer; }
+.chatbox__footer{ display: flex; border: 1px solid #ccc; margin: 10px; padding: 5px; align-items: center; outline: 0; }
+.input__box{ flex-grow: 1; border: 0px solid #ccc !important; background: white; padding-left: 8px; font-family: sans-serif; font-size: 12px; outline: 0; resize: none; overflow-y: hidden; min-height: 20px; max-height: 70px; }
+.send__button{ background-color: #ffffff; color: white; font-family: sans-serif; text-align: center; border: none; cursor: pointer; }
+.focus{ box-shadow: 0px 0px 7px 0px #66afe9 !important; border-color: #66afe9!important; }
