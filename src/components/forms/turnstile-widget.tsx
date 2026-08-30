@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile';
 import { useRef } from 'react';
@@ -58,29 +58,52 @@ export function TurnstileWidget({
     return null;
   }
 
-  // The overlay trick masks the harsh white border rendered by Cloudflare in testing mode.
-  // It paints a 2px border matching the page background over the white edge, 
-  // and an inner box-shadow of #333 to create the faint grey border the user wants.
-  const MaskOverlay = () => {
-    if (resolvedTheme !== 'dark') return null;
-    return (
-      <div 
-        style={{ 
-          position: 'absolute', 
-          top: '-1.5px', left: '-1.5px', right: '-1.5px', bottom: '-1.5px', 
-          border: '2px solid hsl(var(--card))', 
-          borderRadius: '6px',
-          pointerEvents: 'none',
-          boxShadow: 'inset 0 0 0 1px #333333'
-        }} 
-      />
-    );
-  };
 
   if (variant === 'inline') {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '12px', marginBottom: '16px' }}>
-        <div style={{ position: 'relative', display: 'inline-block', width: '100%', maxWidth: '300px' }}>
+        <div style={{ 
+          display: 'inline-block',
+          overflow: 'hidden',
+          borderRadius: '6px',
+          border: '1px solid hsl(var(--border))',
+          width: 'fit-content',
+          background: 'transparent'
+        }}>
+          <div style={{ margin: '-1px', display: 'flex', width: 'calc(100% + 2px)' }}>
+            <Turnstile
+              ref={ref}
+              siteKey={siteKey}
+              onSuccess={(token) => onVerify(token)}
+              onError={() => onError?.()}
+              onExpire={() => {
+                onExpire?.();
+                ref.current?.reset();
+              }}
+              options={{
+                theme: (resolvedTheme === 'dark' ? 'dark' : 'light') as any,
+                appearance,
+                size: 'normal',
+              }}
+              style={{ width: '100%' }}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex justify-center w-full my-3">
+      <div style={{ 
+        display: 'inline-block',
+        overflow: 'hidden',
+        borderRadius: '6px',
+        border: '1px solid hsl(var(--border))',
+        width: 'fit-content',
+        background: 'transparent'
+      }}>
+        <div style={{ margin: '-1px', display: 'flex', width: 'calc(100% + 2px)' }}>
           <Turnstile
             ref={ref}
             siteKey={siteKey}
@@ -93,34 +116,11 @@ export function TurnstileWidget({
             options={{
               theme: (resolvedTheme === 'dark' ? 'dark' : 'light') as any,
               appearance,
-              size: 'flexible',
+              size: 'normal',
             }}
             style={{ width: '100%' }}
           />
-          <MaskOverlay />
         </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex justify-center w-full my-3">
-      <div style={{ position: 'relative', display: 'inline-block' }}>
-        <Turnstile
-          ref={ref}
-          siteKey={siteKey}
-          onSuccess={(token) => onVerify(token)}
-          onError={() => onError?.()}
-          onExpire={() => {
-            onExpire?.();
-            ref.current?.reset();
-          }}
-          options={{
-            theme: (resolvedTheme === 'dark' ? 'dark' : 'light') as any,
-            appearance,
-          }}
-        />
-        <MaskOverlay />
       </div>
     </div>
   );

@@ -1135,7 +1135,7 @@ export default function RegisterPage() {
                   title="Google Play Store"
                   style={{ flex: 1, textDecoration: 'none' }}
                 >
-                  <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
+                  <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ width: '100%', height: '30px', objectFit: 'contain', border: '1px solid hsl(var(--border))', borderRadius: '6px' }} />
                 </a>
                 <a
                   href="https://apps.apple.com/in/app/trakzee/id1396516275"
@@ -1153,7 +1153,7 @@ export default function RegisterPage() {
                   title="Microsoft Store"
                   style={{ flex: 1, textDecoration: 'none' }}
                 >
-                  <img src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
+                  <img src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" style={{ width: '100%', height: '30px', objectFit: 'contain', border: '1px solid hsl(var(--border))', borderRadius: '6px' }} />
                 </a>
               </div>
             </div>

@@ -104,7 +104,8 @@ export function PWARegister() {
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
-              <img src={appAssets.icon} alt={`${appConfig.name} Icon`} className="w-9 h-9 object-contain" />
+              <img src={appAssets.icon} alt={`${appConfig.name} Icon`} className="w-9 h-9 object-contain theme-logo-light" />
+              <img src={appAssets.iconLight} alt={`${appConfig.name} Icon`} className="w-9 h-9 object-contain theme-logo-dark" />
               <div>
                 <h4 style={{ fontSize: '14px', fontWeight: 600, color: 'hsl(var(--foreground))', margin: 0, lineHeight: '18px' }}>
                   Install {appConfig.name} App

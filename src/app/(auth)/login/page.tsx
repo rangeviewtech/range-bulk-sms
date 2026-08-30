@@ -431,6 +431,8 @@ export default function LoginPage() {
             )}
           </div>
         </div>
+        {/* Centered Wrapper for Logo + All Views */}
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
         {/* .logo-container (Standardized Brand Logo) */}
           <>
             <img
@@ -438,7 +440,7 @@ export default function LoginPage() {
             alt={`${appConfig.name} logo`}
             className="logo-container theme-logo-light"
             style={{
-              margin: '50px auto 20px',
+              margin: '0 auto 20px',
               width: '180px',
               height: '75px',
               objectFit: 'contain',
@@ -449,7 +451,7 @@ export default function LoginPage() {
             alt={`${appConfig.name} logo`}
             className="logo-container theme-logo-dark"
             style={{
-              margin: '50px auto 20px',
+              margin: '0 auto 20px',
               width: '180px',
               height: '75px',
               objectFit: 'contain',
@@ -465,9 +467,7 @@ export default function LoginPage() {
             backgroundColor: 'hsl(var(--card))',
             position: 'relative',
             display: 'flex',
-            flex: 1,
             flexDirection: 'column',
-            justifyContent: 'center',
           }}
         >
           {/* ================= VIEW 1: LOGIN ================= */}
@@ -550,7 +550,7 @@ export default function LoginPage() {
                   className="field-icon"
                   style={{
                     position: 'absolute',
-                    top: '50%',
+                    top: '19px',
                     right: '12px',
                     transform: 'translateY(-50%)',
                     cursor: 'pointer',
@@ -589,7 +589,9 @@ export default function LoginPage() {
                       e.preventDefault();
                       setView('forgot');
                     }}
-                    style={{ color: 'hsl(var(--foreground))', fontSize: '12px', textDecoration: 'none', fontFamily: FONT_STACK }}
+                    style={{ color: 'hsl(var(--foreground))', fontSize: '12px', textDecoration: 'none', fontFamily: FONT_STACK, transition: 'color 0.2s' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = '#29A4FF')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = 'hsl(var(--foreground))')}
                   >
                     Forgot password ?
                   </a>
@@ -1037,16 +1039,22 @@ export default function LoginPage() {
                     className="btn-forget"
                     onClick={() => setView('login')}
                     style={{
-                      background: 'none',
-                      border: 'none',
+                      height: '33px',
+                      padding: '6px 16px',
                       fontSize: '13px',
-                      color: 'hsl(var(--foreground))',
+                      backgroundColor: 'hsl(var(--secondary))',
+                      color: 'hsl(var(--secondary-foreground))',
+                      fontWeight: 500,
+                      borderRadius: '6px',
+                      border: '1px solid hsl(var(--border))',
                       cursor: 'pointer',
-                      textDecoration: 'none',
                       fontFamily: FONT_STACK,
+                      transition: 'background-color 0.2s ease',
                     }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'hsl(var(--accent))')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'hsl(var(--secondary))')}
                   >
-                    Cancel
+                    Dismiss
                   </button>
                 </div>
                 <div className="login-con">
@@ -1063,8 +1071,11 @@ export default function LoginPage() {
                       borderRadius: '6px',
                       border: '0',
                       cursor: 'pointer',
-                      fontFamily: 'sans-serif',
+                      fontFamily: FONT_STACK,
+                      transition: 'background-color 0.2s ease',
                     }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1a7fd4')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#29A4FF')}
                   >
                     Recover
                   </button>
@@ -1157,7 +1168,7 @@ export default function LoginPage() {
               </div>
             </div>
           )}
-        </div>
+        </div>{/* end centered wrapper */}
 
 
         {/* Language icon removed from bottom — repositioned to top-right corner below */}
