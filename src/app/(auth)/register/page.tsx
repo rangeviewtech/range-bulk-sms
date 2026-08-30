@@ -7,7 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { registerSchema } from '@/lib/validations/auth';
-import { Eye, EyeOff, Loader2, Globe } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Globe, Search } from 'lucide-react';
+import { ThemeToggle } from '@/components/navigation/theme-toggle';
 import { isDev, formatErrorForEnv } from '@/lib/env';
 import { appConfig } from '@/config/app';
 import { appAssets } from '@/config/assets';
@@ -152,7 +153,6 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors, touchedFields, dirtyFields },
     watch,
     trigger,
@@ -163,9 +163,7 @@ export default function RegisterPage() {
   });
 
   
-  // eslint-disable-next-line react-hooks/incompatible-library
   const passwordValue = watch('password') || '';
-  // eslint-disable-next-line react-hooks/incompatible-library
   const confirmPasswordValue = watch('confirmPassword') || '';
 
   useEffect(() => {
@@ -351,8 +349,12 @@ export default function RegisterPage() {
             top: '14px',
             right: '14px',
             zIndex: 50,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
           }}
         >
+          <ThemeToggle />
           <div className="dropdown" style={{ position: 'relative', display: 'inline-block' }}>
             <button
               type="button"
@@ -375,7 +377,7 @@ export default function RegisterPage() {
                 borderRadius: '4px',
                 transition: 'opacity 0.15s ease, background-color 0.15s ease',
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.backgroundColor = '#f5f5f5'; }}
+              onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.backgroundColor = 'hsl(var(--accent))'; }}
               onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.6'; e.currentTarget.style.backgroundColor = 'transparent'; }}
             >
               {selectedFlag ? (
@@ -394,7 +396,6 @@ export default function RegisterPage() {
               ) : (
                 <Globe size={14} style={{ flexShrink: 0, opacity: 0.7, color: 'hsl(var(--foreground))' }} />
               )}
-
             </button>
 
             {langOpen && (
@@ -406,9 +407,9 @@ export default function RegisterPage() {
                   top: '100%',
                   right: 0,
                   left: 'auto',
-                  backgroundColor: '#f6f6f6',
+                  backgroundColor: 'hsl(var(--card))',
                   minWidth: '230px',
-                  border: '1px solid #ddd',
+                  border: '1px solid hsl(var(--border))',
                   zIndex: 40,
                   maxHeight: '260px',
                   overflow: 'auto',
@@ -417,7 +418,8 @@ export default function RegisterPage() {
                   marginTop: '2px',
                 }}
               >
-                <div style={{ position: 'sticky', top: 0, backgroundColor: '#f6f6f6', zIndex: 2 }}>
+                <div style={{ position: 'sticky', top: 0, backgroundColor: 'hsl(var(--card))', zIndex: 2 }}>
+                  <Search size={14} style={{ position: 'absolute', left: '9px', top: '8px', color: 'hsl(var(--muted-foreground))' }} />
                   <input
                     type="text"
                     placeholder="Search.."
@@ -430,10 +432,11 @@ export default function RegisterPage() {
                       fontSize: '13px',
                       padding: '5px 5px 5px 30px',
                       border: 'none',
-                      borderBottom: '1px solid #ddd',
+                      borderBottom: '1px solid hsl(var(--border))',
                       width: '100%',
-                      outline: '0px solid #ddd',
+                      outline: 'none',
                       backgroundColor: 'hsl(var(--card))',
+                      color: 'hsl(var(--foreground))',
                       fontFamily: FONT_STACK,
                     }}
                   />
@@ -457,6 +460,7 @@ export default function RegisterPage() {
                       alignItems: 'center',
                       gap: '8px',
                       fontSize: '13px',
+                      borderBottom: '1px solid hsl(var(--border))',
                       fontFamily: FONT_STACK,
                       transition: 'background-color 0.15s ease',
                     }}
@@ -486,46 +490,47 @@ export default function RegisterPage() {
             )}
           </div>
         </div>
-        {/* .logo-container (Standardized Brand Logo) */}
-        <>
+
+        {/* Centered Wrapper for Logo + Form */}
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
+          {/* .logo-container (Standardized Brand Logo) */}
+          <>
             <img
-          src={appAssets.logo}
-          alt={`${appConfig.name} logo`}
-          className="logo-container theme-logo-light"
-          style={{
-            margin: '50px auto 20px',
-            width: '180px',
-            height: '75px',
-            objectFit: 'contain',
-          }}
-        />
+              src={appAssets.logo}
+              alt={`${appConfig.name} logo`}
+              className="logo-container theme-logo-light"
+              style={{
+                margin: '0 auto 20px',
+                width: '180px',
+                height: '75px',
+                objectFit: 'contain',
+              }}
+            />
             <img
-          src={appAssets.logoLight}
-          alt={`${appConfig.name} logo`}
-          className="logo-container theme-logo-dark"
-          style={{
-            margin: '50px auto 20px',
-            width: '180px',
-            height: '75px',
-            objectFit: 'contain',
-          }}
-        />
+              src={appAssets.logoLight}
+              alt={`${appConfig.name} logo`}
+              className="logo-container theme-logo-dark"
+              style={{
+                margin: '0 auto 20px',
+                width: '180px',
+                height: '75px',
+                objectFit: 'contain',
+              }}
+            />
           </>
 
-        {/* .main-container */}
-        <div
-          className="main-container"
-          style={{
-            width: '100%',
-            backgroundColor: 'hsl(var(--card))',
-            position: 'relative',
-            display: 'flex',
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'center',
-          }}
-        >
-          {/* ================= REGISTER FORM ================= */}
+          {/* .main-container */}
+          <div
+            className="main-container"
+            style={{
+              width: '100%',
+              backgroundColor: 'hsl(var(--card))',
+              position: 'relative',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {/* ================= REGISTER FORM ================= */}
             <form id="register_form" onSubmit={handleSubmit(onSubmit)} style={{ width: '100%', float: 'left' }}>
               <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
                 Create an account
@@ -721,7 +726,7 @@ export default function RegisterPage() {
                 {errors.confirmPassword ? (
                   <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{errors.confirmPassword.message}</p>
                 ) : (touchedFields.confirmPassword && passwordValue !== confirmPasswordValue) ? (
-                  <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>Passwords don't match</p>
+                  <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>Passwords don&apos;t match</p>
                 ) : null}
               </div>
 
@@ -768,14 +773,15 @@ export default function RegisterPage() {
                     cursor: loading || !!socialLoading ? 'not-allowed' : 'pointer',
                     textAlign: 'center',
                     boxSizing: 'border-box',
-                    fontFamily: 'sans-serif',
+                    fontFamily: FONT_STACK,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     opacity: loading ? 0.7 : 1,
+                    transition: 'background-color 0.2s ease',
                   }}
                   onMouseEnter={(e) => {
-                    if (!loading && !socialLoading) e.currentTarget.style.backgroundColor = '#727271';
+                    if (!loading && !socialLoading) e.currentTarget.style.backgroundColor = '#1a7fd4';
                   }}
                   onMouseLeave={(e) => {
                     if (!loading && !socialLoading) e.currentTarget.style.backgroundColor = '#29A4FF';
@@ -1121,42 +1127,43 @@ export default function RegisterPage() {
                 </div>
               </div>
             </form>
+          </div>
 
           {/* .application-container with direct Google Play Store, Apple App Store, and Microsoft Store links */}
           <div className="application-container" style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', width: '100%' }}>
-              <div style={{ fontSize: '11px', color: '#888888', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase', fontFamily: FONT_STACK }}>
-                Get Mobile & Desktop App
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', width: '100%' }}>
-                <a
-                  href="https://play.google.com/store/apps/details?id=com.uffizio.trakzee&hl=en_IN"
-                  target="_blank"
-                  rel="noreferrer"
-                  title="Google Play Store"
-                  style={{ flex: 1, textDecoration: 'none' }}
-                >
-                  <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ width: '100%', height: '30px', objectFit: 'contain', border: '1px solid hsl(var(--border))', borderRadius: '6px' }} />
-                </a>
-                <a
-                  href="https://apps.apple.com/in/app/trakzee/id1396516275"
-                  target="_blank"
-                  rel="noreferrer"
-                  title="Apple App Store"
-                  style={{ flex: 1, textDecoration: 'none' }}
-                >
-                  <img src={appAssets.storeBadges.appStore} alt="Apple App Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
-                </a>
-                <a
-                  href="https://apps.microsoft.com/store"
-                  target="_blank"
-                  rel="noreferrer"
-                  title="Microsoft Store"
-                  style={{ flex: 1, textDecoration: 'none' }}
-                >
-                  <img src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" style={{ width: '100%', height: '30px', objectFit: 'contain', border: '1px solid hsl(var(--border))', borderRadius: '6px' }} />
-                </a>
-              </div>
+            <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase', fontFamily: FONT_STACK }}>
+              Get Mobile & Desktop App
             </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', width: '100%' }}>
+              <a
+                href="https://play.google.com/store/apps/details?id=com.uffizio.trakzee&hl=en_IN"
+                target="_blank"
+                rel="noreferrer"
+                title="Google Play Store"
+                style={{ flex: 1, textDecoration: 'none' }}
+              >
+                <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
+              </a>
+              <a
+                href="https://apps.apple.com/in/app/trakzee/id1396516275"
+                target="_blank"
+                rel="noreferrer"
+                title="Apple App Store"
+                style={{ flex: 1, textDecoration: 'none' }}
+              >
+                <img src={appAssets.storeBadges.appStore} alt="Apple App Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
+              </a>
+              <a
+                href="https://apps.microsoft.com/store"
+                target="_blank"
+                rel="noreferrer"
+                title="Microsoft Store"
+                style={{ flex: 1, textDecoration: 'none' }}
+              >
+                <img src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
+              </a>
+            </div>
+          </div>
         </div>
 
       </div>

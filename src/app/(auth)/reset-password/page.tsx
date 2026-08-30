@@ -122,7 +122,10 @@ function ResetPasswordForm() {
                   textAlign: 'center',
                   boxSizing: 'border-box',
                   fontFamily: FONT_STACK,
+                  transition: 'background-color 0.2s ease',
                 }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1a7fd4')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#29A4FF')}
               >
                 Request new link
               </button>
@@ -162,7 +165,10 @@ function ResetPasswordForm() {
                   textAlign: 'center',
                   boxSizing: 'border-box',
                   fontFamily: FONT_STACK,
+                  transition: 'background-color 0.2s ease',
                 }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1a7fd4')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#29A4FF')}
               >
                 Sign in
               </button>
@@ -203,7 +209,7 @@ function ResetPasswordForm() {
                 ? '1px solid #dc3545'
                 : (dirtyFields.password || touchedFields.password) && !errors.password
                 ? '1px solid #28a745'
-                : '1px solid #DEE2E6',
+                : '1px solid hsl(var(--border))',
               borderRadius: '6px',
               color: 'hsl(var(--foreground))',
               lineHeight: '19.5px',
@@ -269,7 +275,7 @@ function ResetPasswordForm() {
                 ? '1px solid #dc3545'
                 : (dirtyFields.confirmPassword || touchedFields.confirmPassword) && !errors.confirmPassword && passwordValue === confirmPasswordValue && confirmPasswordValue.length > 0
                 ? '1px solid #28a745'
-                : '1px solid #DEE2E6',
+                : '1px solid hsl(var(--border))',
               borderRadius: '6px',
               color: 'hsl(var(--foreground))',
               lineHeight: '19.5px',
@@ -305,7 +311,7 @@ function ResetPasswordForm() {
           {errors.confirmPassword ? (
             <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{errors.confirmPassword.message}</p>
           ) : (touchedFields.confirmPassword && passwordValue !== confirmPasswordValue) ? (
-            <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>Passwords don't match</p>
+            <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>Passwords don&apos;t match</p>
           ) : null}
         </div>
 
@@ -352,6 +358,13 @@ function ResetPasswordForm() {
               boxSizing: 'border-box',
               fontFamily: FONT_STACK,
               opacity: loading ? 0.7 : 1,
+              transition: 'background-color 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              if (!loading) e.currentTarget.style.backgroundColor = '#1a7fd4';
+            }}
+            onMouseLeave={(e) => {
+              if (!loading) e.currentTarget.style.backgroundColor = '#29A4FF';
             }}
           >
             {loading ? 'Resetting...' : 'Reset Password'}
@@ -361,7 +374,7 @@ function ResetPasswordForm() {
         <div className="text-center" style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', gap: '6px', alignItems: 'center' }}>
           <Link
             href="/login"
-            style={{ color: 'hsl(var(--foreground))', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK }}
+            style={{ color: '#29A4FF', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK }}
           >
             Back to sign in
           </Link>

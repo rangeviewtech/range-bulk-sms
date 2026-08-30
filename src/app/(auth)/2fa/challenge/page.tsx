@@ -75,10 +75,26 @@ export default function TwoFactorChallengePage() {
                 boxSizing: 'border-box',
                 fontFamily: FONT_STACK,
                 opacity: loading || (tokenValue?.length !== 6) ? 0.7 : 1,
+                transition: 'background-color 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                if (!loading && tokenValue?.length === 6) e.currentTarget.style.backgroundColor = '#1a7fd4';
+              }}
+              onMouseLeave={(e) => {
+                if (!loading && tokenValue?.length === 6) e.currentTarget.style.backgroundColor = '#29A4FF';
               }}
             >
               {loading ? "Verifying..." : "Verify Code"}
             </button>
+          </div>
+
+          <div className="text-center" style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', gap: '6px', alignItems: 'center' }}>
+            <a
+              href="/login"
+              style={{ color: '#29A4FF', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK }}
+            >
+              Back to sign in
+            </a>
           </div>
         </form>
       </div>

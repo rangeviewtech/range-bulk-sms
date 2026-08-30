@@ -75,6 +75,13 @@ export default function ScreenLockPage() {
                 boxSizing: 'border-box',
                 fontFamily: FONT_STACK,
                 opacity: loading || (pinValue?.length !== 6) ? 0.7 : 1,
+                transition: 'background-color 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                if (!loading && pinValue?.length === 6) e.currentTarget.style.backgroundColor = '#1a7fd4';
+              }}
+              onMouseLeave={(e) => {
+                if (!loading && pinValue?.length === 6) e.currentTarget.style.backgroundColor = '#29A4FF';
               }}
             >
               {loading ? "Unlocking..." : "Unlock"}
@@ -93,14 +100,17 @@ export default function ScreenLockPage() {
                 padding: '6px 28px',
                 fontSize: '13px',
                 lineHeight: '19.5px',
-                backgroundColor: 'hsl(var(--card))',
-                color: 'hsl(var(--foreground))',
+                backgroundColor: 'hsl(var(--secondary))',
+                color: 'hsl(var(--secondary-foreground))',
                 fontWeight: 600,
-                borderRadius: '4px',
-                border: '1px solid #DEE2E6',
+                borderRadius: '6px',
+                border: '1px solid hsl(var(--border))',
                 cursor: 'pointer',
                 fontFamily: FONT_STACK,
+                transition: 'background-color 0.2s ease',
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'hsl(var(--accent))')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'hsl(var(--secondary))')}
             >
               Sign out
             </button>

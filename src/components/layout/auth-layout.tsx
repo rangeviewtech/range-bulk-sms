@@ -246,7 +246,10 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
                       fontSize: '13px',
                       borderBottom: '1px solid hsl(var(--border))',
                       fontFamily: FONT_STACK,
+                      transition: 'background-color 0.15s ease',
                     }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'hsl(var(--accent))')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                   >
                     {l.flag ? (
                       <img 

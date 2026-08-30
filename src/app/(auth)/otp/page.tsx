@@ -30,7 +30,7 @@ export default async function OtpPage(props: { searchParams: Promise<{ userId: s
           Two-Step Verification
         </h3>
         <p style={{ fontSize: '13px', color: 'hsl(var(--foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-          We've sent a verification code to your {defaultChannel.toLowerCase()}.
+          We&apos;ve sent a verification code to your {defaultChannel.toLowerCase()}.
         </p>
         <OtpClient userId={userId} defaultChannel={defaultChannel} />
       </div>

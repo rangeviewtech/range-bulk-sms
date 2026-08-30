@@ -77,7 +77,10 @@ export default function ForgotPasswordPage() {
                   textAlign: 'center',
                   boxSizing: 'border-box',
                   fontFamily: FONT_STACK,
+                  transition: 'background-color 0.2s ease',
                 }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1a7fd4')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#29A4FF')}
               >
                 Return to login
               </button>
@@ -113,7 +116,7 @@ export default function ForgotPasswordPage() {
               padding: '6px 12px',
               fontSize: '13px',
               backgroundColor: 'hsl(var(--muted))',
-              border: errors.email ? '1px solid #dc3545' : '1px solid #DEE2E6',
+              border: errors.email ? '1px solid #dc3545' : '1px solid hsl(var(--border))',
               borderRadius: '6px',
               color: 'hsl(var(--foreground))',
               lineHeight: '19.5px',
@@ -169,6 +172,13 @@ export default function ForgotPasswordPage() {
               boxSizing: 'border-box',
               fontFamily: FONT_STACK,
               opacity: loading ? 0.7 : 1,
+              transition: 'background-color 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              if (!loading) e.currentTarget.style.backgroundColor = '#1a7fd4';
+            }}
+            onMouseLeave={(e) => {
+              if (!loading) e.currentTarget.style.backgroundColor = '#29A4FF';
             }}
           >
             {loading ? 'Sending...' : 'Send recovery link'}
@@ -179,7 +189,7 @@ export default function ForgotPasswordPage() {
           <span style={{ color: 'hsl(var(--foreground))', fontSize: '12px', fontFamily: FONT_STACK }}>Remember your password?</span>
           <Link
             href="/login"
-            style={{ color: 'hsl(var(--foreground))', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK }}
+            style={{ color: '#29A4FF', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK }}
           >
             Sign in
           </Link>

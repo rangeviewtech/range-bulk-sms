@@ -6,9 +6,11 @@ import { PinInput } from '@/components/forms/pin-input';
 
 const FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
+type OtpChannel = 'EMAIL' | 'WHATSAPP' | 'SMS' | 'TELEGRAM';
+
 export default function OtpClient({ userId, defaultChannel }: { userId: string; defaultChannel: string }) {
   const [code, setCode] = useState('');
-  const [channel, setChannel] = useState(defaultChannel);
+  const [channel, setChannel] = useState<OtpChannel>((defaultChannel as OtpChannel) || 'EMAIL');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(60);
@@ -25,19 +27,19 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
     setLoading(true);
     setError('');
     
-    const result = await verifyLoginOtp(userId, channel as any, code);
+    const result = await verifyLoginOtp(userId, channel, code);
     if (result?.error) {
       setError(result.error);
     }
     setLoading(false);
   };
 
-  const handleResend = async (newChannel: string) => {
+  const handleResend = async (newChannel: OtpChannel) => {
     setLoading(true);
     setError('');
     setChannel(newChannel);
     
-    const result = await requestOtp(userId, newChannel as any);
+    const result = await requestOtp(userId, newChannel);
     if (result?.error) {
       setError(result.error);
     } else {
@@ -83,15 +85,22 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
             boxSizing: 'border-box',
             fontFamily: FONT_STACK,
             opacity: loading || code.length !== 6 ? 0.7 : 1,
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            if (!loading && code.length === 6) e.currentTarget.style.backgroundColor = '#1a7fd4';
+          }}
+          onMouseLeave={(e) => {
+            if (!loading && code.length === 6) e.currentTarget.style.backgroundColor = '#29A4FF';
           }}
         >
           {loading ? 'Verifying...' : 'Verify'}
         </button>
       </div>
 
-      <div style={{ paddingTop: '16px', borderTop: '1px solid #DEE2E6', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ paddingTop: '16px', borderTop: '1px solid hsl(var(--border))', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK, margin: 0, display: 'flex', justifyContent: 'space-between' }}>
-          <span>Didn't receive the code?</span>
+          <span>Didn&apos;t receive the code?</span>
           {countdown > 0 && <span style={{ color: 'hsl(var(--destructive))' }}>Wait {countdown}s</span>}
         </p>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -107,13 +116,20 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
                 height: '30px',
                 padding: '0 8px',
                 fontSize: '11px',
-                backgroundColor: 'hsl(var(--card))',
-                border: '1px solid #DEE2E6',
-                borderRadius: '4px',
-                color: loading || countdown > 0 ? '#999999' : 'hsl(var(--foreground))',
+                backgroundColor: 'hsl(var(--secondary))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: '6px',
+                color: loading || countdown > 0 ? 'hsl(var(--muted-foreground))' : 'hsl(var(--secondary-foreground))',
                 cursor: loading || countdown > 0 ? 'not-allowed' : 'pointer',
                 fontFamily: FONT_STACK,
                 opacity: loading || countdown > 0 ? 0.7 : 1,
+                transition: 'background-color 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                if (!loading && countdown === 0) e.currentTarget.style.backgroundColor = 'hsl(var(--accent))';
+              }}
+              onMouseLeave={(e) => {
+                if (!loading && countdown === 0) e.currentTarget.style.backgroundColor = 'hsl(var(--secondary))';
               }}
             >
               Try {c === 'WHATSAPP' ? 'WhatsApp' : c === 'SMS' ? 'SMS' : 'Telegram'}
