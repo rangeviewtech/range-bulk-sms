@@ -96,17 +96,20 @@ function ResetPasswordForm() {
   if (!token) {
     return (
       <AuthLayout>
-        <div style={{ width: '100%', float: 'left' }}>
-          <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--destructive))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-            Invalid or expired link
-          </h3>
-          <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-            This password reset link has expired or is invalid. Please request a new one.
-          </p>
-          <div className="login-con" style={{ marginTop: '20px' }}>
+        <div className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
+          <div className="auth-stagger-1">
+            <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--destructive))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
+              Invalid or expired link
+            </h3>
+            <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+              This password reset link has expired or is invalid. Please request a new one.
+            </p>
+          </div>
+          <div className="login-con auth-stagger-2" style={{ marginTop: '20px' }}>
             <Link href="/forgot-password" style={{ textDecoration: 'none' }}>
               <button
                 type="button"
+                className="auth-btn-primary"
                 style={{
                   width: '100%',
                   height: '33px',
@@ -122,10 +125,7 @@ function ResetPasswordForm() {
                   textAlign: 'center',
                   boxSizing: 'border-box',
                   fontFamily: FONT_STACK,
-                  transition: 'background-color 0.2s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1a7fd4')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#29A4FF')}
               >
                 Request a new link
               </button>
@@ -139,17 +139,20 @@ function ResetPasswordForm() {
   if (success) {
     return (
       <AuthLayout>
-        <div style={{ width: '100%', float: 'left' }}>
-          <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-            Password updated!
-          </h3>
-          <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-            Your password has been reset successfully. You can now sign in with your new password.
-          </p>
-          <div className="login-con" style={{ marginTop: '20px' }}>
+        <div className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
+          <div className="auth-stagger-1">
+            <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
+              Password updated!
+            </h3>
+            <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+              Your password has been reset successfully. You can now sign in with your new password.
+            </p>
+          </div>
+          <div className="login-con auth-stagger-2" style={{ marginTop: '20px' }}>
             <Link href="/login" style={{ textDecoration: 'none' }}>
               <button
                 type="button"
+                className="auth-btn-primary"
                 style={{
                   width: '100%',
                   height: '33px',
@@ -165,10 +168,7 @@ function ResetPasswordForm() {
                   textAlign: 'center',
                   boxSizing: 'border-box',
                   fontFamily: FONT_STACK,
-                  transition: 'background-color 0.2s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1a7fd4')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#29A4FF')}
               >
                 Sign in to your account
               </button>
@@ -181,22 +181,24 @@ function ResetPasswordForm() {
 
   return (
     <AuthLayout>
-      <form id="resetpwd_main" onSubmit={handleSubmit(onSubmit)} style={{ width: '100%', float: 'left' }}>
-        <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-          Set a new password
-        </h3>
-        <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-          Choose a strong password to protect your account.
-        </p>
+      <form id="resetpwd_main" onSubmit={handleSubmit(onSubmit)} className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
+        <div className="auth-stagger-1">
+          <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
+            Set a new password
+          </h3>
+          <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+            Choose a strong password to protect your account.
+          </p>
+        </div>
 
         <input type="hidden" {...register('token')} />
 
         {/* Password Field */}
-        <div className="form-group passwordfd" style={{ position: 'relative', marginBottom: '0.9rem' }}>
+        <div className="form-group passwordfd auth-stagger-2" style={{ position: 'relative', marginBottom: '0.9rem' }}>
           <input
             {...register('password')}
             type={showPassword ? 'text' : 'password'}
-            className="form-control width100"
+            className="form-control width100 auth-input"
             placeholder="New password (min. 8 characters)"
             autoComplete="new-password"
             disabled={loading}
@@ -217,7 +219,6 @@ function ResetPasswordForm() {
               outline: 'none',
               boxSizing: 'border-box',
               fontFamily: FONT_STACK,
-              transition: 'border-color 0.2s ease',
             }}
           />
           <button
@@ -239,6 +240,7 @@ function ResetPasswordForm() {
               alignItems: 'center',
               justifyContent: 'center',
               color: 'hsl(var(--muted-foreground))',
+              transition: 'transform 0.15s ease, opacity 0.15s ease',
             }}
           >
             {showPassword ? <EyeOff size={16} color='hsl(var(--muted-foreground))' /> : <Eye size={16} color='hsl(var(--muted-foreground))' />}
@@ -259,11 +261,11 @@ function ResetPasswordForm() {
         </div>
 
         {/* Confirm Password Field */}
-        <div className="form-group" style={{ position: 'relative', marginBottom: '0.9rem' }}>
+        <div className="form-group auth-stagger-3" style={{ position: 'relative', marginBottom: '0.9rem' }}>
           <input
             {...register('confirmPassword')}
             type={showConfirmPassword ? 'text' : 'password'}
-            className="form-control width100"
+            className="form-control width100 auth-input"
             placeholder="Confirm new password"
             autoComplete="new-password"
             disabled={loading}
@@ -284,7 +286,6 @@ function ResetPasswordForm() {
               outline: 'none',
               boxSizing: 'border-box',
               fontFamily: FONT_STACK,
-              transition: 'border-color 0.2s ease',
             }}
           />
           <button
@@ -306,6 +307,7 @@ function ResetPasswordForm() {
               alignItems: 'center',
               justifyContent: 'center',
               color: 'hsl(var(--muted-foreground))',
+              transition: 'transform 0.15s ease, opacity 0.15s ease',
             }}
           >
             {showConfirmPassword ? <EyeOff size={16} color='hsl(var(--muted-foreground))' /> : <Eye size={16} color='hsl(var(--muted-foreground))' />}
@@ -318,32 +320,35 @@ function ResetPasswordForm() {
         </div>
 
         {/* Turnstile */}
-        <TurnstileWidget
-          variant="inline"
-          onVerify={(token) => {
-            setValue('turnstileToken', token, { shouldValidate: true });
-            setTurnstileExpired(false);
-          }}
-          onError={() => {
-            setValue('turnstileToken', '', { shouldValidate: true });
-            toast.error('Security check failed. Please refresh and try again.');
-          }}
-          onExpire={() => {
-            setValue('turnstileToken', '', { shouldValidate: true });
-            setTurnstileExpired(true);
-          }}
-        />
-        {errors.turnstileToken && <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>{errors.turnstileToken.message}</p>}
-        {turnstileExpired && (
-          <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
-            Security check expired. Please re-verify.
-          </p>
-        )}
+        <div className="auth-stagger-3">
+          <TurnstileWidget
+            variant="inline"
+            onVerify={(token) => {
+              setValue('turnstileToken', token, { shouldValidate: true });
+              setTurnstileExpired(false);
+            }}
+            onError={() => {
+              setValue('turnstileToken', '', { shouldValidate: true });
+              toast.error('Security check failed. Please refresh and try again.');
+            }}
+            onExpire={() => {
+              setValue('turnstileToken', '', { shouldValidate: true });
+              setTurnstileExpired(true);
+            }}
+          />
+          {errors.turnstileToken && <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>{errors.turnstileToken.message}</p>}
+          {turnstileExpired && (
+            <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
+              Security check expired. Please re-verify.
+            </p>
+          )}
+        </div>
 
-        <div className="login-con" style={{ marginTop: '10px' }}>
+        <div className="login-con auth-stagger-4" style={{ marginTop: '10px' }}>
           <button
             type="submit"
             disabled={loading}
+            className="btn btn-primary btn-main auth-btn-primary"
             style={{
               width: '100%',
               height: '33px',
@@ -360,23 +365,17 @@ function ResetPasswordForm() {
               boxSizing: 'border-box',
               fontFamily: FONT_STACK,
               opacity: loading ? 0.7 : 1,
-              transition: 'background-color 0.2s ease',
-            }}
-            onMouseEnter={(e) => {
-              if (!loading) e.currentTarget.style.backgroundColor = '#1a7fd4';
-            }}
-            onMouseLeave={(e) => {
-              if (!loading) e.currentTarget.style.backgroundColor = '#29A4FF';
             }}
           >
             {loading ? 'Updating password...' : 'Update password'}
           </button>
         </div>
 
-        <div className="text-center" style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', gap: '6px', alignItems: 'center' }}>
+        <div className="text-center auth-stagger-5" style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', gap: '6px', alignItems: 'center' }}>
           <Link
             href="/login"
-            style={{ color: '#29A4FF', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK }}
+            style={{ color: '#29A4FF', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s' }}
+            className="hover:opacity-80"
           >
             Back to sign in
           </Link>

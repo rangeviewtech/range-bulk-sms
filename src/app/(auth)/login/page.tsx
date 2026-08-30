@@ -258,6 +258,7 @@ export default function LoginPage() {
             key={src}
             src={src}
             alt={`Background Slide ${index + 1}`}
+            className="auth-carousel-slide"
             style={{
               position: 'absolute',
               left: 0,
@@ -267,7 +268,6 @@ export default function LoginPage() {
               maxWidth: '100%',
               minHeight: '100%',
               objectFit: 'cover',
-              transition: 'opacity 1.5s ease-in-out',
               opacity: index === currentImageIndex ? 1 : 0,
               zIndex: index === currentImageIndex ? 2 : 1,
             }}
@@ -277,7 +277,7 @@ export default function LoginPage() {
 
       {/* ================= .form-main-container ================= */}
       <div
-        className="form-main-container"
+        className="form-main-container auth-fade-in"
         style={{
           position: 'fixed',
           width: '340px',
@@ -292,7 +292,8 @@ export default function LoginPage() {
           padding: '30px',
           boxSizing: 'border-box',
           zIndex: 20,
-          boxShadow: '0 0 20px rgba(0,0,0,0.12)',
+          boxShadow: '0 0 30px rgba(0,0,0,0.14)',
+          transition: 'background-color 0.3s ease',
         }}
       >
         {/* ================= Theme & Language Icons - Top-Right Corner ================= */}
@@ -472,22 +473,24 @@ export default function LoginPage() {
         >
           {/* ================= VIEW 1: LOGIN ================= */}
           {view === 'login' && (
-            <form id="login_form" onSubmit={handleSubmit(onSubmit)} style={{ width: '100%', float: 'left' }}>
-              <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-                Sign in
-              </h3>
+            <form id="login_form" onSubmit={handleSubmit(onSubmit)} className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
+              <div className="auth-stagger-1">
+                <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
+                  Sign in
+                </h3>
 
-              <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-                Welcome back. Please enter your credentials to access your account.
-              </p>
+                <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+                  Welcome back. Please enter your credentials to access your account.
+                </p>
+              </div>
 
               {/* Email / Username Field */}
-              <div className="form-group usernamefd" style={{ position: 'relative', marginBottom: '0.9rem' }}>
+              <div className="form-group usernamefd auth-stagger-2" style={{ position: 'relative', marginBottom: '0.9rem' }}>
                 <input
                   {...register('email')}
                   type="text"
                   id="username"
-                  className="form-control width100"
+                  className="form-control width100 auth-input"
                   placeholder="Email or username"
                   autoComplete="username"
                   disabled={loading || !!socialLoading}
@@ -508,19 +511,18 @@ export default function LoginPage() {
                     outline: 'none',
                     boxSizing: 'border-box',
                     fontFamily: FONT_STACK,
-                    transition: 'border-color 0.2s ease',
                   }}
                 />
                 {errors.email && <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{errors.email.message}</p>}
               </div>
 
               {/* Password Field */}
-              <div className="form-group passwordfd" style={{ position: 'relative', marginBottom: '0.9rem' }}>
+              <div className="form-group passwordfd auth-stagger-3" style={{ position: 'relative', marginBottom: '0.9rem' }}>
                 <input
                   {...register('password')}
                   type={showPassword ? 'text' : 'password'}
                   id="password"
-                  className="form-control width100"
+                  className="form-control width100 auth-input"
                   placeholder="Password"
                   autoComplete="current-password"
                   disabled={loading || !!socialLoading}
@@ -541,7 +543,6 @@ export default function LoginPage() {
                     outline: 'none',
                     boxSizing: 'border-box',
                     fontFamily: FONT_STACK,
-                    transition: 'border-color 0.2s ease',
                   }}
                 />
                 <button
@@ -563,6 +564,7 @@ export default function LoginPage() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: 'hsl(var(--muted-foreground))',
+                    transition: 'transform 0.15s ease, opacity 0.15s ease',
                   }}
                 >
                   {showPassword ? <EyeOff size={16} color='hsl(var(--muted-foreground))' /> : <Eye size={16} color='hsl(var(--muted-foreground))' />}
@@ -571,7 +573,7 @@ export default function LoginPage() {
               </div>
 
               {/* Options */}
-              <div className="form-group" style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="form-group auth-stagger-4" style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div className="remember-con" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <input
                     type="checkbox"
@@ -600,33 +602,35 @@ export default function LoginPage() {
               </div>
 
               {/* Cloudflare Turnstile — Bot Protection */}
-              <TurnstileWidget
-                variant="inline"
-                onVerify={(token) => {
-                  setTurnstileToken(token);
-                  setTurnstileExpired(false);
-                }}
-                onError={() => {
-                  setTurnstileToken(null);
-                  toast.error('Security check failed. Please refresh and try again.');
-                }}
-                onExpire={() => {
-                  setTurnstileToken(null);
-                  setTurnstileExpired(true);
-                }}
-              />
-              {turnstileExpired && (
-                <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
-                  Security check expired. Please re-verify.
-                </p>
-              )}
+              <div className="auth-stagger-4">
+                <TurnstileWidget
+                  variant="inline"
+                  onVerify={(token) => {
+                    setTurnstileToken(token);
+                    setTurnstileExpired(false);
+                  }}
+                  onError={() => {
+                    setTurnstileToken(null);
+                    toast.error('Security check failed. Please refresh and try again.');
+                  }}
+                  onExpire={() => {
+                    setTurnstileToken(null);
+                    setTurnstileExpired(true);
+                  }}
+                />
+                {turnstileExpired && (
+                  <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
+                    Security check expired. Please re-verify.
+                  </p>
+                )}
+              </div>
 
               {/* Login Button */}
-              <div className="login-con" style={{ marginTop: '10px' }}>
+              <div className="login-con auth-stagger-5" style={{ marginTop: '10px' }}>
                 <button
                   type="submit"
                   id="submit_button"
-                  className="btn btn-primary btn-main"
+                  className="btn btn-primary btn-main auth-btn-primary"
                   disabled={loading || !!socialLoading}
                   style={{
                     width: '100%',
@@ -647,13 +651,6 @@ export default function LoginPage() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     opacity: loading ? 0.7 : 1,
-                    transition: 'background-color 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!loading && !socialLoading) e.currentTarget.style.backgroundColor = '#1a7fd4';
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!loading && !socialLoading) e.currentTarget.style.backgroundColor = '#29A4FF';
                   }}
                 >
                   {loading ? 'Signing in...' : 'Sign in'}
@@ -661,7 +658,7 @@ export default function LoginPage() {
               </div>
 
               {/* Register Link */}
-              <div style={{ textAlign: 'center', marginTop: '12px' }}>
+              <div className="auth-stagger-5" style={{ textAlign: 'center', marginTop: '12px' }}>
                 <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK }}>
                   Don&apos;t have an account?{' '}
                 </span>
@@ -684,7 +681,7 @@ export default function LoginPage() {
 
               {/* Divider */}
               <div
-                className="OR_separator"
+                className="OR_separator auth-stagger-6"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -1180,6 +1177,7 @@ export default function LoginPage() {
                   target="_blank"
                   rel="noreferrer"
                   title="Google Play Store"
+                  className="auth-store-badge"
                   style={{ flex: 1, textDecoration: 'none' }}
                 >
                   <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
@@ -1189,6 +1187,7 @@ export default function LoginPage() {
                   target="_blank"
                   rel="noreferrer"
                   title="Apple App Store"
+                  className="auth-store-badge"
                   style={{ flex: 1, textDecoration: 'none' }}
                 >
                   <img src={appAssets.storeBadges.appStore} alt="Apple App Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
@@ -1198,6 +1197,7 @@ export default function LoginPage() {
                   target="_blank"
                   rel="noreferrer"
                   title="Microsoft Store"
+                  className="auth-store-badge"
                   style={{ flex: 1, textDecoration: 'none' }}
                 >
                   <img src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />

@@ -102,6 +102,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
             key={src}
             src={src}
             alt={`Background Slide ${index + 1}`}
+            className="auth-carousel-slide"
             style={{
               position: 'absolute',
               left: 0,
@@ -111,7 +112,6 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
               maxWidth: '100%',
               minHeight: '100%',
               objectFit: 'cover',
-              transition: 'opacity 1.5s ease-in-out',
               opacity: index === currentImageIndex ? 1 : 0,
               zIndex: index === currentImageIndex ? 2 : 1,
             }}
@@ -121,7 +121,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
 
       {/* Form Main Container */}
       <div
-        className="form-main-container"
+        className="form-main-container auth-fade-in"
         style={{
           position: 'fixed',
           width: '340px',
@@ -135,9 +135,10 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
           flexDirection: 'column',
           padding: '30px',
           zIndex: 20,
-          boxShadow: '0 0 20px rgba(0,0,0,0.12)',
+          boxShadow: '0 0 30px rgba(0,0,0,0.14)',
           overflowY: 'auto',
           overflowX: 'hidden',
+          transition: 'background-color 0.3s ease',
         }}
       >
         {/* Theme & Language Icons */}
@@ -149,6 +150,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
           />
         )}
         <div
+          className="auth-stagger-1"
           style={{
             position: 'absolute',
             top: '14px',
@@ -162,29 +164,29 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
           <ThemeToggle />
           <div style={{ position: 'relative' }}>
             <Button
-  variant="ghost"
-  size="icon"
-  className="h-9 w-9 rounded-full"
-  onClick={() => setLangOpen(!langOpen)}
-  aria-label="Select language"
->
-  {selectedFlag ? (
-    <img
-      src={`https://flagcdn.com/20x15/${selectedFlag}.png`}
-      id="def-lang"
-      alt={selectedLang}
-      style={{
-        width: '18px',
-        height: '13px',
-        borderRadius: '1px',
-        objectFit: 'cover',
-        boxShadow: '0 0 1px rgba(0,0,0,0.3)',
-      }}
-    />
-  ) : (
-    <Globe className="h-[1.2rem] w-[1.2rem] text-foreground" />
-  )}
-</Button>
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 rounded-full transition-transform active:scale-95"
+              onClick={() => setLangOpen(!langOpen)}
+              aria-label="Select language"
+            >
+              {selectedFlag ? (
+                <img
+                  src={`https://flagcdn.com/20x15/${selectedFlag}.png`}
+                  id="def-lang"
+                  alt={selectedLang}
+                  style={{
+                    width: '18px',
+                    height: '13px',
+                    borderRadius: '1px',
+                    objectFit: 'cover',
+                    boxShadow: '0 0 1px rgba(0,0,0,0.3)',
+                  }}
+                />
+              ) : (
+                <Globe className="h-[1.2rem] w-[1.2rem] text-foreground" />
+              )}
+            </Button>
 
             {langOpen && (
               <div
@@ -200,16 +202,16 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
                   zIndex: 40,
                   maxHeight: '260px',
                   overflow: 'auto',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
-                  borderRadius: '0 0 4px 4px',
-                  marginTop: '2px',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                  borderRadius: '6px',
+                  marginTop: '4px',
                 }}
               >
                 <div style={{ position: 'sticky', top: 0, backgroundColor: 'hsl(var(--card))', zIndex: 2 }}>
-                    <Search size={14} style={{ position: 'absolute', left: '9px', top: '8px', color: 'hsl(var(--muted-foreground))' }} />
-                    <input
+                  <Search size={14} style={{ position: 'absolute', left: '9px', top: '8px', color: 'hsl(var(--muted-foreground))' }} />
+                  <input
                     type="text"
-                    placeholder="Search.."
+                    placeholder="Search language..."
                     value={langSearch}
                     onChange={(e) => setLangSearch(e.target.value)}
                     autoFocus
@@ -218,7 +220,8 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
                       fontSize: '13px',
                       padding: '5px 5px 5px 30px',
                       border: 'none',
-                      borderBottom: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))',
+                      borderBottom: '1px solid hsl(var(--border))',
+                      color: 'hsl(var(--foreground))',
                       width: '100%',
                       outline: 'none',
                       backgroundColor: 'hsl(var(--card))',
@@ -238,13 +241,13 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
                     }}
                     style={{
                       color: selectedLang === l.name ? '#29A4FF' : 'hsl(var(--foreground))',
-                      padding: '5px 8px',
+                      padding: '6px 10px',
                       textDecoration: 'none',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px',
                       fontSize: '13px',
-                      borderBottom: '1px solid hsl(var(--border))',
+                      borderBottom: '1px solid hsl(var(--border) / 0.5)',
                       fontFamily: FONT_STACK,
                       transition: 'background-color 0.15s ease',
                     }}
@@ -271,34 +274,36 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
         {/* Centered Wrapper for Logo and Form */}
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
           {/* Brand Logo */}
-          <>
+          <div className="auth-stagger-1">
             <img
-            src={appAssets.logo}
-            alt={`${appConfig.name} logo`}
-            className="logo-container theme-logo-light"
-            style={{
-              margin: '0 auto 20px',
-              width: '180px',
-              height: '75px',
-              objectFit: 'contain',
-            }}
-          />
+              src={appAssets.logo}
+              alt={`${appConfig.name} logo`}
+              className="logo-container theme-logo-light"
+              style={{
+                margin: '0 auto 20px',
+                width: '180px',
+                height: '75px',
+                objectFit: 'contain',
+                transition: 'transform 0.3s ease',
+              }}
+            />
             <img
-            src={appAssets.logoLight}
-            alt={`${appConfig.name} logo`}
-            className="logo-container theme-logo-dark"
-            style={{
-              margin: '0 auto 20px',
-              width: '180px',
-              height: '75px',
-              objectFit: 'contain',
-            }}
-          />
-          </>
+              src={appAssets.logoLight}
+              alt={`${appConfig.name} logo`}
+              className="logo-container theme-logo-dark"
+              style={{
+                margin: '0 auto 20px',
+                width: '180px',
+                height: '75px',
+                objectFit: 'contain',
+                transition: 'transform 0.3s ease',
+              }}
+            />
+          </div>
 
           {/* Content Container */}
           <div
-            className="main-container"
+            className="main-container auth-stagger-2"
             style={{
               width: '100%',
               backgroundColor: 'hsl(var(--card))',
@@ -311,18 +316,18 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* App Store Links */}
-          <div className="application-container" style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', width: '100%' }}>
+          <div className="application-container auth-stagger-5" style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', width: '100%' }}>
             <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase', fontFamily: FONT_STACK }}>
               Get Mobile & Desktop App
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', width: '100%' }}>
-              <a href="https://play.google.com/store/apps/details?id=com.uffizio.trakzee&hl=en_IN" target="_blank" rel="noreferrer" title="Google Play Store" style={{ flex: 1, textDecoration: 'none' }}>
+              <a href="https://play.google.com/store/apps/details?id=com.uffizio.trakzee&hl=en_IN" target="_blank" rel="noreferrer" title="Google Play Store" className="auth-store-badge" style={{ flex: 1, textDecoration: 'none' }}>
                 <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
               </a>
-              <a href="https://apps.apple.com/in/app/trakzee/id1396516275" target="_blank" rel="noreferrer" title="Apple App Store" style={{ flex: 1, textDecoration: 'none' }}>
+              <a href="https://apps.apple.com/in/app/trakzee/id1396516275" target="_blank" rel="noreferrer" title="Apple App Store" className="auth-store-badge" style={{ flex: 1, textDecoration: 'none' }}>
                 <img src={appAssets.storeBadges.appStore} alt="Apple App Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
               </a>
-              <a href="https://apps.microsoft.com/store" target="_blank" rel="noreferrer" title="Microsoft Store" style={{ flex: 1, textDecoration: 'none' }}>
+              <a href="https://apps.microsoft.com/store" target="_blank" rel="noreferrer" title="Microsoft Store" className="auth-store-badge" style={{ flex: 1, textDecoration: 'none' }}>
                 <img src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
               </a>
             </div>

@@ -60,8 +60,8 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
   };
 
   return (
-    <form onSubmit={handleVerify} style={{ width: '100%', float: 'left' }}>
-      <div className="form-group" style={{ position: 'relative', marginBottom: '1rem' }}>
+    <form onSubmit={handleVerify} className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
+      <div className="form-group auth-stagger-1" style={{ position: 'relative', marginBottom: '1rem' }}>
         <div style={{ padding: '10px 0', display: 'flex', justifyContent: 'center' }}>
           <PinInput 
             value={code}
@@ -76,31 +76,34 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
       </div>
 
       {/* Cloudflare Turnstile — Bot Protection */}
-      <TurnstileWidget
-        variant="inline"
-        onVerify={(token) => {
-          setTurnstileToken(token);
-          setTurnstileExpired(false);
-        }}
-        onError={() => {
-          setTurnstileToken(null);
-          toast.error('Security check failed. Please refresh and try again.');
-        }}
-        onExpire={() => {
-          setTurnstileToken(null);
-          setTurnstileExpired(true);
-        }}
-      />
-      {turnstileExpired && (
-        <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
-          Security check expired. Please re-verify.
-        </p>
-      )}
+      <div className="auth-stagger-2">
+        <TurnstileWidget
+          variant="inline"
+          onVerify={(token) => {
+            setTurnstileToken(token);
+            setTurnstileExpired(false);
+          }}
+          onError={() => {
+            setTurnstileToken(null);
+            toast.error('Security check failed. Please refresh and try again.');
+          }}
+          onExpire={() => {
+            setTurnstileToken(null);
+            setTurnstileExpired(true);
+          }}
+        />
+        {turnstileExpired && (
+          <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
+            Security check expired. Please re-verify.
+          </p>
+        )}
+      </div>
 
-      <div className="login-con" style={{ marginTop: '10px', marginBottom: '16px' }}>
+      <div className="login-con auth-stagger-3" style={{ marginTop: '10px', marginBottom: '16px' }}>
         <button
           type="submit"
           disabled={loading || code.length !== 6}
+          className="btn btn-primary btn-main auth-btn-primary"
           style={{
             width: '100%',
             height: '33px',
@@ -117,20 +120,13 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
             boxSizing: 'border-box',
             fontFamily: FONT_STACK,
             opacity: loading || code.length !== 6 ? 0.7 : 1,
-            transition: 'background-color 0.2s ease',
-          }}
-          onMouseEnter={(e) => {
-            if (!loading && code.length === 6) e.currentTarget.style.backgroundColor = '#1a7fd4';
-          }}
-          onMouseLeave={(e) => {
-            if (!loading && code.length === 6) e.currentTarget.style.backgroundColor = '#29A4FF';
           }}
         >
           {loading ? 'Verifying code...' : 'Verify code'}
         </button>
       </div>
 
-      <div style={{ paddingTop: '16px', borderTop: '1px solid hsl(var(--border))', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div className="auth-stagger-4" style={{ paddingTop: '16px', borderTop: '1px solid hsl(var(--border))', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK, margin: 0, display: 'flex', justifyContent: 'space-between' }}>
           <span>Didn&apos;t receive the code?</span>
           {countdown > 0 && <span style={{ color: 'hsl(var(--destructive))' }}>Resend in {countdown}s</span>}
@@ -142,6 +138,7 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
               type="button"
               onClick={() => handleResend(c as OtpChannel)}
               disabled={loading || countdown > 0}
+              className="auth-btn-secondary"
               style={{
                 flex: 1,
                 minWidth: '30%',
@@ -155,13 +152,6 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
                 cursor: loading || countdown > 0 ? 'not-allowed' : 'pointer',
                 fontFamily: FONT_STACK,
                 opacity: loading || countdown > 0 ? 0.7 : 1,
-                transition: 'background-color 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                if (!loading && countdown === 0) e.currentTarget.style.backgroundColor = 'hsl(var(--accent))';
-              }}
-              onMouseLeave={(e) => {
-                if (!loading && countdown === 0) e.currentTarget.style.backgroundColor = 'hsl(var(--secondary))';
               }}
             >
               {c === 'WHATSAPP' ? 'WhatsApp' : c === 'SMS' ? 'SMS' : 'Telegram'}
@@ -170,10 +160,11 @@ export default function OtpClient({ userId, defaultChannel }: { userId: string; 
         </div>
       </div>
 
-      <div className="text-center" style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', gap: '6px', alignItems: 'center' }}>
+      <div className="text-center auth-stagger-5" style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', gap: '6px', alignItems: 'center' }}>
         <Link
           href="/login"
-          style={{ color: '#29A4FF', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK }}
+          style={{ color: '#29A4FF', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s' }}
+          className="hover:opacity-80"
         >
           Back to sign in
         </Link>
