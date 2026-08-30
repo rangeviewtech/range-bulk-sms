@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { registerSchema } from '@/lib/validations/auth';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Globe } from 'lucide-react';
 import { isDev, formatErrorForEnv } from '@/lib/env';
 import { appConfig } from '@/config/app';
 import { appAssets } from '@/config/assets';

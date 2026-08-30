@@ -1172,6 +1172,7 @@ export default function LoginPage() {
 
 
         {/* Language icon removed from bottom — repositioned to top-right corner below */}
+      </div>
     </div>
   );
 }

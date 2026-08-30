@@ -1,7 +1,7 @@
 'use client';
 
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 
 interface TurnstileWidgetProps {
@@ -25,6 +25,7 @@ export function TurnstileWidget({
 }: TurnstileWidgetProps) {
   const ref = useRef<TurnstileInstance>(null);
   const { resolvedTheme } = useTheme();
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
@@ -65,23 +66,25 @@ export function TurnstileWidget({
         <div style={{ 
           display: 'inline-block',
           overflow: 'hidden',
-          borderRadius: '6px',
-          border: '1px solid hsl(var(--border))',
+          borderRadius: isLoaded ? '6px' : '0',
+          border: isLoaded ? '1px solid hsl(var(--border))' : 'none',
           width: 'fit-content',
           background: 'transparent'
         }}>
-          <div style={{ margin: '-1px', display: 'flex', width: 'calc(100% + 2px)' }}>
+          <div style={{ margin: isLoaded ? '-1px' : '0', display: 'flex', width: isLoaded ? 'calc(100% + 2px)' : '100%' }}>
             <Turnstile
               ref={ref}
               siteKey={siteKey}
-              onSuccess={(token) => onVerify(token)}
-              onError={() => onError?.()}
+              onSuccess={(token) => { setIsLoaded(true); onVerify(token); }}
+              onError={() => { setIsLoaded(true); onError?.(); }}
               onExpire={() => {
                 onExpire?.();
                 ref.current?.reset();
               }}
+              onBeforeInteractive={() => setIsLoaded(true)}
+              onAfterInteractive={() => setIsLoaded(true)}
               options={{
-                theme: (resolvedTheme === 'dark' ? 'dark' : 'light') as any,
+                theme: resolvedTheme === 'dark' ? 'dark' : 'light',
                 appearance,
                 size: 'normal',
               }}
@@ -98,23 +101,25 @@ export function TurnstileWidget({
       <div style={{ 
         display: 'inline-block',
         overflow: 'hidden',
-        borderRadius: '6px',
-        border: '1px solid hsl(var(--border))',
+        borderRadius: isLoaded ? '6px' : '0',
+        border: isLoaded ? '1px solid hsl(var(--border))' : 'none',
         width: 'fit-content',
         background: 'transparent'
       }}>
-        <div style={{ margin: '-1px', display: 'flex', width: 'calc(100% + 2px)' }}>
+        <div style={{ margin: isLoaded ? '-1px' : '0', display: 'flex', width: isLoaded ? 'calc(100% + 2px)' : '100%' }}>
           <Turnstile
             ref={ref}
             siteKey={siteKey}
-            onSuccess={(token) => onVerify(token)}
-            onError={() => onError?.()}
+            onSuccess={(token) => { setIsLoaded(true); onVerify(token); }}
+            onError={() => { setIsLoaded(true); onError?.(); }}
             onExpire={() => {
               onExpire?.();
               ref.current?.reset();
             }}
+            onBeforeInteractive={() => setIsLoaded(true)}
+            onAfterInteractive={() => setIsLoaded(true)}
             options={{
-              theme: (resolvedTheme === 'dark' ? 'dark' : 'light') as any,
+              theme: resolvedTheme === 'dark' ? 'dark' : 'light',
               appearance,
               size: 'normal',
             }}
