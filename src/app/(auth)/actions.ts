@@ -51,27 +51,31 @@ export async function login(formData: FormData) {
     }
 
     // Determine MFA/OTP requirements
-    if (user.mfaEnabled) {
+    if (user.mfaEnabled || user.phone || user.telegramChatId) {
       await createSession(user.id, false); 
-      await prisma.auditLog.create({
-        data: { userId: user.id, action: 'LOGIN_MFA_CHALLENGE', resource: 'User' }
-      });
-      return { redirect: '/2fa/challenge' };
-    }
-
-    // Determine OTP preferred channel
-    if (user.telegramChatId || user.phone) {
-      const channel = user.telegramChatId ? 'TELEGRAM' : (user.whatsappConsent ? 'WHATSAPP' : 'SMS');
       
-      const otpResult = await requestOtp(user.id, channel as CommunicationChannel);
-      if (otpResult.error) {
-        return { error: 'Could not send verification code. ' + otpResult.error };
+      let channel = 'APP';
+      if (user.mfaEnabled) {
+        channel = 'APP';
+      } else if (user.telegramChatId) {
+        channel = 'TELEGRAM';
+      } else if (user.whatsappConsent) {
+        channel = 'WHATSAPP';
+      } else if (user.phone) {
+        channel = 'SMS';
+      }
+
+      if (channel !== 'APP') {
+        const otpResult = await requestOtp(user.id, channel as CommunicationChannel);
+        if (otpResult.error) {
+          return { error: 'Could not send verification code. ' + otpResult.error };
+        }
       }
 
       await prisma.auditLog.create({
-        data: { userId: user.id, action: 'LOGIN_OTP_CHALLENGE', resource: 'User' }
+        data: { userId: user.id, action: 'LOGIN_MFA_CHALLENGE', resource: 'User' }
       });
-      return { redirect: `/otp?userId=${user.id}&channel=${channel}` };
+      return { redirect: `/2fa/challenge?userId=${user.id}&channel=${channel}` };
     }
 
     // No 2FA/OTP configured - log them in directly
@@ -408,4 +412,75 @@ export async function generateTelegramLinkingToken() {
   });
 
   return { token, url: `https://t.me/${process.env.TELEGRAM_BOT_USERNAME || 'bot'}?start=${token}` };
+}
+
+export async function verifyUnifiedVerification(formData: FormData) {
+  const session = await verifySession();
+  const userIdParam = formData.get('userId') as string | null;
+  const userId = session?.userId || userIdParam;
+
+  if (!userId) return { error: 'Your session has expired. Please sign in again.' };
+
+  const code = (formData.get('code') as string || '').trim();
+  const method = (formData.get('method') as string) || 'APP';
+  const turnstileToken = (formData.get('turnstileToken') as string) || undefined;
+
+  if (!code || code.length !== 6) {
+    return { error: 'Please enter a valid 6-digit verification code.' };
+  }
+
+  if (turnstileToken) {
+    const isBotFree = await verifyTurnstileToken(turnstileToken);
+    if (!isBotFree) return { error: 'Security check failed. Please refresh and try again.' };
+  }
+
+  let user;
+  try {
+    user = await prisma.user.findUnique({ where: { id: userId } });
+  } catch (_e) {
+    return { error: 'Unable to verify account. Please try again.' };
+  }
+  if (!user) return { error: 'Account not found. Please sign in again.' };
+
+  // 1. If method is APP or if user has mfaSecret, check TOTP
+  if (method === 'APP' && user.mfaSecret) {
+    const isValidTotp = await verifyMfaToken(code, user.mfaSecret);
+    if (isValidTotp) {
+      await createSession(user.id, true);
+      await prisma.auditLog.create({
+        data: { userId: user.id, action: 'MFA_LOGIN_SUCCESS', resource: 'User' }
+      });
+      redirect('/dashboard');
+    }
+  }
+
+  // 2. Otherwise check OTP for delivery channels
+  let identifier = '';
+  if (method === 'EMAIL') identifier = user.email;
+  else if (method === 'SMS' || method === 'WHATSAPP') identifier = user.phone || user.email;
+  else if (method === 'TELEGRAM') identifier = user.telegramChatId || user.email;
+  else identifier = user.email;
+
+  const result = await OtpService.verifyOtp(identifier, 'LOGIN', code);
+  if (result.valid) {
+    await createSession(user.id, true);
+    await prisma.auditLog.create({
+      data: { userId: user.id, action: 'OTP_LOGIN_SUCCESS', resource: 'User' }
+    });
+    redirect('/dashboard');
+  }
+
+  if (method === 'APP') {
+    return { error: 'Incorrect authenticator code. Please check your app and try again.' };
+  }
+
+  return { error: result.error || 'Invalid or expired verification code. Please try again.' };
+}
+
+export async function resendUnifiedVerification(userIdParam: string | undefined, channel: CommunicationChannel) {
+  const session = await verifySession();
+  const userId = session?.userId || userIdParam;
+  if (!userId) return { error: 'Your session has expired. Please sign in again.' };
+
+  return await requestOtp(userId, channel);
 }
