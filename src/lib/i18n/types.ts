@@ -185,4 +185,17 @@ export interface TranslationDictionary {
     securityAlertSubject: string;
     securityAlertBody: string;
   };
+
+  pwa: {
+    installTitle: string;
+    installSubtitle: string;
+    installButton: string;
+    dismissButton: string;
+    offlineTitle: string;
+    offlineSubtitle: string;
+    offlineBanner: string;
+    onlineTitle: string;
+    onlineSubtitle: string;
+    installedSuccess: string;
+  };
 }

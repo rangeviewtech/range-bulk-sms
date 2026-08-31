@@ -3,6 +3,7 @@
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile';
 import { useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
+import { useLanguage } from '@/hooks/use-language';
 
 interface TurnstileWidgetProps {
   onVerify: (token: string) => void;
@@ -25,8 +26,10 @@ export function TurnstileWidget({
 }: TurnstileWidgetProps) {
   const ref = useRef<TurnstileInstance>(null);
   const { resolvedTheme } = useTheme();
+  const { language } = useLanguage();
   const [isLoaded, setIsLoaded] = useState(false);
 
+  const turnstileLang = language.toLowerCase() === 'ae' ? 'ar' : language.toLowerCase();
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   if (!siteKey) {
@@ -73,6 +76,7 @@ export function TurnstileWidget({
         }}>
           <div style={{ margin: isLoaded ? '-1px' : '0', display: 'flex', width: isLoaded ? 'calc(100% + 2px)' : '100%' }}>
             <Turnstile
+              key={`turnstile-${turnstileLang}`}
               ref={ref}
               siteKey={siteKey}
               onSuccess={(token) => { setIsLoaded(true); onVerify(token); }}
@@ -87,6 +91,7 @@ export function TurnstileWidget({
                 theme: resolvedTheme === 'dark' ? 'dark' : 'light',
                 appearance,
                 size: 'normal',
+                language: turnstileLang,
               }}
               style={{ width: '100%' }}
             />
@@ -108,6 +113,7 @@ export function TurnstileWidget({
       }}>
         <div style={{ margin: isLoaded ? '-1px' : '0', display: 'flex', width: isLoaded ? 'calc(100% + 2px)' : '100%' }}>
           <Turnstile
+            key={`turnstile-${turnstileLang}`}
             ref={ref}
             siteKey={siteKey}
             onSuccess={(token) => { setIsLoaded(true); onVerify(token); }}
@@ -122,6 +128,7 @@ export function TurnstileWidget({
               theme: resolvedTheme === 'dark' ? 'dark' : 'light',
               appearance,
               size: 'normal',
+              language: turnstileLang,
             }}
             style={{ width: '100%' }}
           />

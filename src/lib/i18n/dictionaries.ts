@@ -180,6 +180,18 @@ export const enDictionary: TranslationDictionary = {
     securityAlertSubject: 'Security Alert',
     securityAlertBody: 'We detected a new login to your account from {device}.',
   },
+  pwa: {
+    installTitle: 'Install {app} App',
+    installSubtitle: 'Fast offline access & telematics tracking',
+    installButton: 'Install',
+    dismissButton: 'Dismiss',
+    offlineTitle: 'Offline Mode',
+    offlineSubtitle: 'App is running offline using cached assets.',
+    offlineBanner: 'You are currently offline. Running in PWA offline mode.',
+    onlineTitle: 'Connection restored',
+    onlineSubtitle: 'You are back online.',
+    installedSuccess: '{app} installed successfully!',
+  },
 };
 
 export const deDictionary: TranslationDictionary = {
@@ -310,6 +322,18 @@ export const deDictionary: TranslationDictionary = {
     otpBody: 'Ihr Verifizierungscode lautet: {otp}. Geben Sie diesen nicht weiter.',
     securityAlertSubject: 'Sicherheitswarnung',
     securityAlertBody: 'Ein neuer Login von {device} wurde erkannt.',
+  },
+  pwa: {
+    installTitle: '{app}-App installieren',
+    installSubtitle: 'Schneller Offline-Zugriff & Telematik-Tracking',
+    installButton: 'Installieren',
+    dismissButton: 'Schließen',
+    offlineTitle: 'Offline-Modus',
+    offlineSubtitle: 'App läuft offline mit zwischengespeicherten Daten.',
+    offlineBanner: 'Sie sind derzeit offline. PWA-Offline-Modus aktiv.',
+    onlineTitle: 'Verbindung wiederhergestellt',
+    onlineSubtitle: 'Sie sind wieder online.',
+    installedSuccess: '{app} erfolgreich installiert!',
   },
 };
 
@@ -442,6 +466,18 @@ export const esDictionary: TranslationDictionary = {
     securityAlertSubject: 'Alerta de seguridad',
     securityAlertBody: 'Detectamos un nuevo inicio de sesión desde {device}.',
   },
+  pwa: {
+    installTitle: 'Instalar app {app}',
+    installSubtitle: 'Acceso rápido sin conexión y rastreo telemático',
+    installButton: 'Instalar',
+    dismissButton: 'Descartar',
+    offlineTitle: 'Modo sin conexión',
+    offlineSubtitle: 'La aplicación funciona sin conexión con datos guardados.',
+    offlineBanner: 'Actualmente estás sin conexión. Ejecutando en modo PWA.',
+    onlineTitle: 'Conexión restaurada',
+    onlineSubtitle: 'Ya estás en línea.',
+    installedSuccess: '¡{app} instalada con éxito!',
+  },
 };
 
 export const frDictionary: TranslationDictionary = {
@@ -573,6 +609,18 @@ export const frDictionary: TranslationDictionary = {
     securityAlertSubject: 'Alerte de sécurité',
     securityAlertBody: 'Nouvelle connexion détectée depuis {device}.',
   },
+  pwa: {
+    installTitle: "Installer l'application {app}",
+    installSubtitle: 'Accès hors ligne rapide et suivi télématique',
+    installButton: 'Installer',
+    dismissButton: 'Ignorer',
+    offlineTitle: 'Mode hors ligne',
+    offlineSubtitle: "L'application fonctionne hors ligne avec le cache.",
+    offlineBanner: 'Vous êtes hors ligne. Mode PWA actif.',
+    onlineTitle: 'Connexion rétablie',
+    onlineSubtitle: 'Vous êtes de nouveau en ligne.',
+    installedSuccess: '{app} installée avec succès !',
+  },
 };
 
 export const aeDictionary: TranslationDictionary = {
@@ -703,6 +751,18 @@ export const aeDictionary: TranslationDictionary = {
     otpBody: 'رمز التحقق لتسجيل الدخول هو: {otp}. لا تشارك هذا الرمز مع أحد.',
     securityAlertSubject: 'تنبيه أمان',
     securityAlertBody: 'تم رصد تسجيل دخول جديد من {device}.',
+  },
+  pwa: {
+    installTitle: 'تثبيت تطبيق {app}',
+    installSubtitle: 'وصول سريع دون اتصال بالإنترنت وتتبع تيليماتيكس',
+    installButton: 'تثبيت',
+    dismissButton: 'إغلاق',
+    offlineTitle: 'وضع عدم الاتصال',
+    offlineSubtitle: 'يعمل التطبيق دون اتصال بالإنترنت باستخدام البيانات المخزنة.',
+    offlineBanner: 'أنت غير متصل بالإنترنت حالياً. يعمل بوضع PWA.',
+    onlineTitle: 'تمت استعادة الاتصال',
+    onlineSubtitle: 'لقد عدت إلى الإنترنت.',
+    installedSuccess: 'تم تثبيت {app} بنجاح!',
   },
 };
 
