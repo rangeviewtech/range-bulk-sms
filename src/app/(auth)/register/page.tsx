@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -162,7 +163,7 @@ export default function RegisterPage() {
 
     try {
       const formData = new FormData();
-      Object.entries(data).forEach(([key, value]) => formData.append(key, value || ''));
+      Object.entries(data).forEach(([key, value]) => formData.append(key, String(value ?? '')));
       if (turnstileToken) {
         formData.append('turnstileToken', turnstileToken);
       }
@@ -537,6 +538,37 @@ export default function RegisterPage() {
                 ) : null}
               </div>
 
+              {/* Accept Terms & Conditions Checkbox */}
+              <div className="auth-stagger-4" style={{ marginTop: '10px', marginBottom: '8px', display: 'flex', flexDirection: 'column' }}>
+                <label style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', cursor: 'pointer', userSelect: 'none', margin: 0 }}>
+                  <input
+                    type="checkbox"
+                    {...register('acceptTerms')}
+                    className="prod-checkbox"
+                    style={{ marginTop: '2.5px' }}
+                  />
+                  <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', lineHeight: '18px', fontFamily: FONT_STACK }}>
+                    {dict.auth.agreeToTermsPrompt || 'I agree to the'}{' '}
+                    <Link href="/terms" target="_blank" style={{ color: '#29A4FF', textDecoration: 'none', fontWeight: 600 }}>
+                      {dict.legal?.termsAndConditions || 'Terms & Conditions'}
+                    </Link>
+                    {', '}
+                    <Link href="/privacy" target="_blank" style={{ color: '#29A4FF', textDecoration: 'none', fontWeight: 600 }}>
+                      {dict.legal?.privacyPolicy || 'Privacy Policy'}
+                    </Link>
+                    {' '}&{' '}
+                    <Link href="/cookies" target="_blank" style={{ color: '#29A4FF', textDecoration: 'none', fontWeight: 600 }}>
+                      {dict.legal?.cookiePolicy || 'Cookie Policy'}
+                    </Link>
+                  </span>
+                </label>
+                {errors.acceptTerms && (
+                  <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>
+                    {errors.acceptTerms.message}
+                  </p>
+                )}
+              </div>
+
               {/* Cloudflare Turnstile — Bot Protection */}
               <div className="auth-stagger-4">
                 <TurnstileWidget
@@ -818,6 +850,21 @@ export default function RegisterPage() {
               >
                 <img src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
               </a>
+            </div>
+
+            {/* Legal Links Footer */}
+            <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', flexWrap: 'wrap', width: '100%' }}>
+              <Link href="/terms" target="_blank" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', textDecoration: 'none', transition: 'color 0.2s', fontFamily: FONT_STACK }} className="hover:text-foreground">
+                {dict.legal?.termsAndConditions || 'Terms & Conditions'}
+              </Link>
+              <span style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>•</span>
+              <Link href="/privacy" target="_blank" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', textDecoration: 'none', transition: 'color 0.2s', fontFamily: FONT_STACK }} className="hover:text-foreground">
+                {dict.legal?.privacyPolicy || 'Privacy Policy'}
+              </Link>
+              <span style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>•</span>
+              <Link href="/cookies" target="_blank" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', textDecoration: 'none', transition: 'color 0.2s', fontFamily: FONT_STACK }} className="hover:text-foreground">
+                {dict.legal?.cookiePolicy || 'Cookie Policy'}
+              </Link>
             </div>
           </div>
         </div>

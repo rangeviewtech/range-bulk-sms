@@ -84,6 +84,7 @@ export interface TranslationDictionary {
     confirmPasswordPlaceholder: string;
     createAccountButton: string;
     creatingAccount: string;
+    agreeToTermsPrompt: string;
     alreadyHaveAccountPrompt: string;
     signInLink: string;
     
@@ -197,5 +198,24 @@ export interface TranslationDictionary {
     onlineTitle: string;
     onlineSubtitle: string;
     installedSuccess: string;
+  };
+
+  legal: {
+    termsTitle: string;
+    termsSubtitle: string;
+    privacyTitle: string;
+    privacySubtitle: string;
+    cookiesTitle: string;
+    cookiesSubtitle: string;
+    termsAndConditions: string;
+    privacyPolicy: string;
+    cookiePolicy: string;
+    lastUpdated: string;
+    acceptTermsValidation: string;
+    quickSummary: string;
+    tableOfContents: string;
+    backToRegister: string;
+    backToLogin: string;
+    backToHome: string;
   };
 }

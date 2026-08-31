@@ -79,6 +79,7 @@ export const enDictionary: TranslationDictionary = {
     confirmPasswordPlaceholder: 'Confirm password',
     createAccountButton: 'Create account',
     creatingAccount: 'Creating account...',
+    agreeToTermsPrompt: 'I agree to the',
     alreadyHaveAccountPrompt: 'Already have an account?',
     signInLink: 'Sign in',
     
@@ -192,6 +193,24 @@ export const enDictionary: TranslationDictionary = {
     onlineSubtitle: 'You are back online.',
     installedSuccess: '{app} installed successfully!',
   },
+  legal: {
+    termsTitle: 'Terms & Conditions',
+    termsSubtitle: 'Please review the terms of service governing your access to and use of our platform.',
+    privacyTitle: 'Privacy Policy',
+    privacySubtitle: 'Learn how we collect, safeguard, and responsibly process your telematics and personal data.',
+    cookiesTitle: 'Cookie Policy',
+    cookiesSubtitle: 'Understand how we use cookies, local storage, and tracking technologies to ensure optimal performance.',
+    termsAndConditions: 'Terms & Conditions',
+    privacyPolicy: 'Privacy Policy',
+    cookiePolicy: 'Cookie Policy',
+    lastUpdated: 'Last Updated: August 2026',
+    acceptTermsValidation: 'Please accept the Terms & Conditions and Privacy Policy to register',
+    quickSummary: 'Summary at a Glance',
+    tableOfContents: 'Table of Contents',
+    backToRegister: 'Back to Registration',
+    backToLogin: 'Back to Sign In',
+    backToHome: 'Back to Home',
+  },
 };
 
 export const deDictionary: TranslationDictionary = {
@@ -222,6 +241,7 @@ export const deDictionary: TranslationDictionary = {
     confirmPasswordPlaceholder: 'Passwort bestätigen',
     createAccountButton: 'Konto erstellen',
     creatingAccount: 'Konto wird erstellt...',
+    agreeToTermsPrompt: 'Ich akzeptiere die',
     alreadyHaveAccountPrompt: 'Bereits registriert?',
     signInLink: 'Anmelden',
     
@@ -335,6 +355,24 @@ export const deDictionary: TranslationDictionary = {
     onlineSubtitle: 'Sie sind wieder online.',
     installedSuccess: '{app} erfolgreich installiert!',
   },
+  legal: {
+    termsTitle: 'Allgemeine Geschäftsbedingungen',
+    termsSubtitle: 'Bitte lesen Sie die Nutzungsbedingungen für die Nutzung unserer Telematik-Plattform.',
+    privacyTitle: 'Datenschutzerklärung',
+    privacySubtitle: 'Erfahren Sie, wie wir Ihre persönlichen Daten und Telematik-Informationen schützen und verarbeiten.',
+    cookiesTitle: 'Cookie-Richtlinie',
+    cookiesSubtitle: 'Erfahren Sie, wie wir Cookies und Tracking-Technologien für ein optimales Nutzungserlebnis verwenden.',
+    termsAndConditions: 'AGB',
+    privacyPolicy: 'Datenschutz',
+    cookiePolicy: 'Cookie-Richtlinie',
+    lastUpdated: 'Zuletzt aktualisiert: August 2026',
+    acceptTermsValidation: 'Bitte akzeptieren Sie die AGB und die Datenschutzerklärung zur Registrierung',
+    quickSummary: 'Kurzübersicht',
+    tableOfContents: 'Inhaltsverzeichnis',
+    backToRegister: 'Zurück zur Registrierung',
+    backToLogin: 'Zurück zur Anmeldung',
+    backToHome: 'Zurück zur Startseite',
+  },
 };
 
 export const esDictionary: TranslationDictionary = {
@@ -365,6 +403,7 @@ export const esDictionary: TranslationDictionary = {
     confirmPasswordPlaceholder: 'Confirmar contraseña',
     createAccountButton: 'Crear cuenta',
     creatingAccount: 'Creando cuenta...',
+    agreeToTermsPrompt: 'Acepto los',
     alreadyHaveAccountPrompt: '¿Ya tiene una cuenta?',
     signInLink: 'Iniciar sesión',
     
@@ -478,6 +517,24 @@ export const esDictionary: TranslationDictionary = {
     onlineSubtitle: 'Ya estás en línea.',
     installedSuccess: '¡{app} instalada con éxito!',
   },
+  legal: {
+    termsTitle: 'Términos y Condiciones',
+    termsSubtitle: 'Por favor, revise los términos de servicio que rigen el uso de nuestra plataforma.',
+    privacyTitle: 'Política de Privacidad',
+    privacySubtitle: 'Conozca cómo protegemos, procesamos y salvaguardamos sus datos telemáticos y personales.',
+    cookiesTitle: 'Política de Cookies',
+    cookiesSubtitle: 'Comprenda cómo utilizamos cookies y tecnologías de rastreo para optimizar su experiencia.',
+    termsAndConditions: 'Términos y Condiciones',
+    privacyPolicy: 'Política de Privacidad',
+    cookiePolicy: 'Política de Cookies',
+    lastUpdated: 'Última actualización: Agosto 2026',
+    acceptTermsValidation: 'Por favor, acepte los Términos y Condiciones y la Política de Privacidad para registrarse',
+    quickSummary: 'Resumen Rápido',
+    tableOfContents: 'Tabla de Contenidos',
+    backToRegister: 'Volver al Registro',
+    backToLogin: 'Volver a Iniciar Sesión',
+    backToHome: 'Volver al Inicio',
+  },
 };
 
 export const frDictionary: TranslationDictionary = {
@@ -508,6 +565,7 @@ export const frDictionary: TranslationDictionary = {
     confirmPasswordPlaceholder: 'Confirmer le mot de passe',
     createAccountButton: 'Créer un compte',
     creatingAccount: 'Création en cours...',
+    agreeToTermsPrompt: 'J’accepte les',
     alreadyHaveAccountPrompt: 'Vous avez déjà un compte ?',
     signInLink: 'Se connecter',
     
@@ -621,6 +679,24 @@ export const frDictionary: TranslationDictionary = {
     onlineSubtitle: 'Vous êtes de nouveau en ligne.',
     installedSuccess: '{app} installée avec succès !',
   },
+  legal: {
+    termsTitle: 'Conditions Générales d’Utilisation',
+    termsSubtitle: 'Veuillez consulter les conditions régissant votre utilisation de notre plateforme télématique.',
+    privacyTitle: 'Politique de Confidentialité',
+    privacySubtitle: 'Découvrez comment nous collectons, protégeons et traitons vos données personnelles et télématiques.',
+    cookiesTitle: 'Politique des Cookies',
+    cookiesSubtitle: 'Comprenez comment nous utilisons les cookies et technologies similaires pour optimiser votre navigation.',
+    termsAndConditions: 'Conditions Générales',
+    privacyPolicy: 'Politique de Confidentialité',
+    cookiePolicy: 'Politique des Cookies',
+    lastUpdated: 'Dernière mise à jour : Août 2026',
+    acceptTermsValidation: 'Veuillez accepter les Conditions Générales et la Politique de Confidentialité pour vous inscrire',
+    quickSummary: 'Résumé en un coup d’œil',
+    tableOfContents: 'Table des Matières',
+    backToRegister: 'Retour à l’Inscription',
+    backToLogin: 'Retour à la Connexion',
+    backToHome: 'Retour à l’Accueil',
+  },
 };
 
 export const aeDictionary: TranslationDictionary = {
@@ -651,6 +727,7 @@ export const aeDictionary: TranslationDictionary = {
     confirmPasswordPlaceholder: 'تأكيد كلمة المرور',
     createAccountButton: 'إنشاء الحساب',
     creatingAccount: 'جاري إنشاء الحساب...',
+    agreeToTermsPrompt: 'أوافق على',
     alreadyHaveAccountPrompt: 'لديك حساب بالفعل؟',
     signInLink: 'تسجيل الدخول',
     
@@ -763,6 +840,24 @@ export const aeDictionary: TranslationDictionary = {
     onlineTitle: 'تمت استعادة الاتصال',
     onlineSubtitle: 'لقد عدت إلى الإنترنت.',
     installedSuccess: 'تم تثبيت {app} بنجاح!',
+  },
+  legal: {
+    termsTitle: 'الشروط والأحكام',
+    termsSubtitle: 'يرجى مراجعة شروط الخدمة التي تحكم استخدامك لمنصة التتبع والتليماتكس الخاصة بنا.',
+    privacyTitle: 'سياسة الخصوصية',
+    privacySubtitle: 'تعرف على كيفية جمع بياناتك الشخصية وبيانات التتبع وحمايتها ومعالجتها بأعلى معايير الأمان.',
+    cookiesTitle: 'سياسة ملفات تعريف الارتباط (الكوكيز)',
+    cookiesSubtitle: 'تعرف على كيفية استخدامنا لملفات تعريف الارتباط والتقنيات ذات الصلة لتحسين تجربتك.',
+    termsAndConditions: 'الشروط والأحكام',
+    privacyPolicy: 'سياسة الخصوصية',
+    cookiePolicy: 'سياسة الكوكيز',
+    lastUpdated: 'آخر تحديث: أغسطس 2026',
+    acceptTermsValidation: 'يرجى الموافقة على الشروط والأحكام وسياسة الخصوصية لإتمام التسجيل',
+    quickSummary: 'ملخص سريع',
+    tableOfContents: 'فهرس المحتويات',
+    backToRegister: 'العودة إلى التسجيل',
+    backToLogin: 'العودة إلى تسجيل الدخول',
+    backToHome: 'العودة إلى الرئيسية',
   },
 };
 

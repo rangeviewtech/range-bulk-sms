@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
 import { LanguageToggle } from "@/components/navigation/language-toggle";
 import { useLanguage } from "@/hooks/use-language";
@@ -857,6 +858,21 @@ export default function LoginPage() {
                 >
                   <img src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
                 </a>
+              </div>
+
+              {/* Legal Links Footer */}
+              <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', flexWrap: 'wrap', width: '100%' }}>
+                <Link href="/terms" target="_blank" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', textDecoration: 'none', transition: 'color 0.2s', fontFamily: FONT_STACK }} className="hover:text-foreground">
+                  {dict.legal?.termsAndConditions || 'Terms & Conditions'}
+                </Link>
+                <span style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>•</span>
+                <Link href="/privacy" target="_blank" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', textDecoration: 'none', transition: 'color 0.2s', fontFamily: FONT_STACK }} className="hover:text-foreground">
+                  {dict.legal?.privacyPolicy || 'Privacy Policy'}
+                </Link>
+                <span style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>•</span>
+                <Link href="/cookies" target="_blank" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', textDecoration: 'none', transition: 'color 0.2s', fontFamily: FONT_STACK }} className="hover:text-foreground">
+                  {dict.legal?.cookiePolicy || 'Cookie Policy'}
+                </Link>
               </div>
             </div>
           )}

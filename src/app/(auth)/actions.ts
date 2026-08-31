@@ -95,8 +95,9 @@ export async function login(formData: FormData) {
 
 export async function register(formData: FormData) {
   const data = Object.fromEntries(formData.entries());
+  const acceptTerms = data.acceptTerms === 'true' || data.acceptTerms === 'on';
 
-  const parsed = registerSchema.safeParse(data);
+  const parsed = registerSchema.safeParse({ ...data, acceptTerms });
   if (!parsed.success) {
     return { error: parsed.error.errors[0]?.message || 'Please check your information and try again.' };
   }
