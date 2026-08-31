@@ -1,4 +1,10 @@
 import Link from 'next/link';
+import { createMetadata } from '@/lib/metadata';
+
+export const metadata = createMetadata({
+  title: 'Design System',
+  description: 'Core design tokens, components, and layout foundations.',
+});
 
 const links = [
   { href: '/design-system', label: 'Overview' },

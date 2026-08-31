@@ -2,11 +2,12 @@ import { Metadata } from 'next';
 import { LegalLayout } from '@/components/layout/legal-layout';
 import { ShieldCheck, Lock, Eye, Server, UserCheck, Globe, Database } from 'lucide-react';
 import { appConfig } from '@/config/app';
+import { createMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: `Privacy Policy | ${appConfig.name}`,
+export const metadata: Metadata = createMetadata({
+  title: 'Privacy Policy',
   description: `Learn how ${appConfig.name} collects, protects, and manages telematics data, personal information, and location metrics.`,
-};
+});
 
 const TOC = [
   { id: 'information-we-collect', title: 'Information We Collect' },

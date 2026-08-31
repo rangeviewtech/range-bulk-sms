@@ -1,6 +1,12 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { FileQuestion } from 'lucide-react';
+import { createMetadata } from '@/lib/metadata';
+
+export const metadata = createMetadata({
+  title: 'Page Not Found',
+  description: 'The requested page could not be found.',
+});
 
 export default function NotFound() {
   return (

@@ -2,11 +2,12 @@ import { Metadata } from 'next';
 import { LegalLayout } from '@/components/layout/legal-layout';
 import { FileText, ShieldCheck, Scale, Cpu, AlertTriangle, RefreshCw } from 'lucide-react';
 import { appConfig } from '@/config/app';
+import { createMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: `Terms & Conditions | ${appConfig.name}`,
+export const metadata: Metadata = createMetadata({
+  title: 'Terms & Conditions',
   description: `Terms and conditions governing use of ${appConfig.name} GPS tracking, fleet telemetry, and SaaS services.`,
-};
+});
 
 const TOC = [
   { id: 'acceptance', title: 'Acceptance of Terms' },

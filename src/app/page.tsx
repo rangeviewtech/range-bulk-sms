@@ -1,7 +1,12 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { appConfig } from '@/config/app';
+import { createMetadata } from '@/lib/metadata';
 import { ArrowRight, Palette } from 'lucide-react';
+
+export const metadata = createMetadata({
+  title: 'Home - Real-Time GPS Tracking & Fleet Telematics',
+});
 
 export default function HomePage() {
   return (

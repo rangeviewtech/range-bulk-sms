@@ -2,11 +2,12 @@ import { Metadata } from 'next';
 import { LegalLayout } from '@/components/layout/legal-layout';
 import { Cookie, Settings, CheckCircle2, Shield, Sliders } from 'lucide-react';
 import { appConfig } from '@/config/app';
+import { createMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: `Cookie Policy | ${appConfig.name}`,
+export const metadata: Metadata = createMetadata({
+  title: 'Cookie Policy',
   description: `Understand how ${appConfig.name} uses cookies, local storage, and caching to ensure optimal platform performance.`,
-};
+});
 
 const TOC = [
   { id: 'what-are-cookies', title: 'What Are Cookies?' },
