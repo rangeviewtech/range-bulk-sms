@@ -253,14 +253,14 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod }: U
             className="btn btn-primary btn-main auth-btn-primary"
             style={{
               width: '100%',
-              height: '33px',
+              height: '38px',
               padding: '6px 28px',
-              fontSize: '13px',
+              fontSize: '13.5px',
               lineHeight: '19.5px',
               backgroundColor: '#29A4FF',
               color: '#ffffff',
               fontWeight: 700,
-              borderRadius: '6px',
+              borderRadius: '7px',
               border: '0',
               cursor: loading || code.length !== 6 ? 'not-allowed' : 'pointer',
               textAlign: 'center',

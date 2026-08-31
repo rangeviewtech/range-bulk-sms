@@ -100,14 +100,14 @@ export default function ScreenLockPage() {
               className="btn btn-primary btn-main auth-btn-primary"
               style={{
                 width: '100%',
-                height: '33px',
+                height: '38px',
                 padding: '6px 28px',
-                fontSize: '13px',
+                fontSize: '13.5px',
                 lineHeight: '19.5px',
                 backgroundColor: '#29A4FF',
                 color: '#ffffff',
                 fontWeight: 700,
-                borderRadius: '6px',
+                borderRadius: '7px',
                 border: '0',
                 cursor: loading || (pinValue?.length !== 6) ? 'not-allowed' : 'pointer',
                 textAlign: 'center',
@@ -126,19 +126,14 @@ export default function ScreenLockPage() {
           <form action={logout}>
             <button 
               type="submit"
-              className="auth-btn-secondary"
+              className="btn btn-secondary auth-btn-secondary"
               style={{
                 width: '100%',
-                height: '33px',
+                height: '38px',
                 padding: '6px 28px',
-                fontSize: '13px',
+                fontSize: '13.5px',
                 lineHeight: '19.5px',
-                backgroundColor: 'hsl(var(--secondary))',
-                color: 'hsl(var(--secondary-foreground))',
-                fontWeight: 600,
-                borderRadius: '6px',
-                border: '1px solid hsl(var(--border))',
-                cursor: 'pointer',
+                borderRadius: '7px',
                 fontFamily: FONT_STACK,
               }}
             >

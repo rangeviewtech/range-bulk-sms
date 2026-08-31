@@ -465,56 +465,135 @@ input:-webkit-autofill:active {
   outline: none !important;
 }
 
-/* Primary Button Modern Micro-Interactions */
+/* Primary Button Modern Micro-Interactions & Styling */
 .auth-btn-primary {
   position: relative;
   overflow: hidden;
-  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+  height: 38px;
+  border-radius: 7px;
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 19.5px;
+  background-color: #29A4FF !important;
+  color: #ffffff !important;
+  border: none !important;
+  cursor: pointer;
+  text-align: center;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  box-shadow: 0 2px 6px rgba(41, 164, 255, 0.22);
+  transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
               opacity 0.2s ease !important;
 }
 
 .auth-btn-primary:hover:not(:disabled) {
-  background-color: #1a7fd4 !important;
-  box-shadow: 0 4px 14px rgba(41, 164, 255, 0.35) !important;
-  transform: translateY(-1px) !important;
+  background-color: #1a8fe3 !important;
+  box-shadow: 0 5px 16px rgba(41, 164, 255, 0.38) !important;
+  transform: translateY(-1.5px) !important;
 }
 
 .auth-btn-primary:active:not(:disabled) {
-  transform: translateY(0) scale(0.985) !important;
-  box-shadow: 0 2px 6px rgba(41, 164, 255, 0.25) !important;
+  transform: translateY(0) scale(0.98) !important;
+  box-shadow: 0 2px 4px rgba(41, 164, 255, 0.25) !important;
+}
+
+.auth-btn-primary:disabled {
+  cursor: not-allowed !important;
+  opacity: 0.65 !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
 /* Secondary Button Interactions */
 .auth-btn-secondary {
-  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.15s ease !important;
+  position: relative;
+  overflow: hidden;
+  height: 38px;
+  border-radius: 7px;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 19.5px;
+  background-color: hsl(var(--secondary)) !important;
+  color: hsl(var(--secondary-foreground)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  cursor: pointer;
+  text-align: center;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .auth-btn-secondary:hover:not(:disabled) {
   background-color: hsl(var(--accent)) !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+  border-color: hsl(var(--foreground) / 0.2) !important;
+  transform: translateY(-1.5px) !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08) !important;
 }
 
 .auth-btn-secondary:active:not(:disabled) {
-  transform: translateY(0) scale(0.985) !important;
+  transform: translateY(0) scale(0.98) !important;
 }
 
 /* Social Login Buttons Lift and Glow */
 .auth-social-btn {
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  position: relative;
+  overflow: hidden;
+  height: 38px;
+  border-radius: 7px;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .auth-social-btn:hover:not(:disabled) {
+  background-color: hsl(var(--muted));
+  border-color: #29A4FF !important;
+  box-shadow: 0 4px 12px rgba(41, 164, 255, 0.18);
   transform: translateY(-2px) !important;
 }
 
 .auth-social-btn:active:not(:disabled) {
-  transform: translateY(0) scale(0.94) !important;
+  transform: translateY(0) scale(0.95) !important;
+}
+
+/* Material Ripple Effect Animation */
+.btn-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: scale(0);
+  animation: btnRippleAnimation 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  z-index: 15;
+}
+
+@keyframes btnRippleAnimation {
+  0% {
+    transform: scale(0);
+    opacity: 0.75;
+  }
+  40% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
 }
 
 /* App Store Badges Lift */

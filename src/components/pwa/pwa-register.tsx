@@ -138,47 +138,35 @@ export function PWARegister() {
             </button>
           </div>
 
-          <div className="flex gap-2" style={{ marginTop: '2px' }}>
+          <div className="flex gap-2" style={{ marginTop: '4px' }}>
             <button
               onClick={triggerInstall}
+              className="auth-btn-primary"
               style={{
                 flex: 1,
-                height: '33px',
-                backgroundColor: '#29A4FF',
-                color: '#ffffff',
-                fontWeight: 700,
+                height: '36px',
+                borderRadius: '7px',
                 fontSize: '13px',
-                borderRadius: '6px',
-                border: 'none',
-                cursor: 'pointer',
+                fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '6px',
-                transition: 'all 0.2s ease',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#727271')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#29A4FF')}
             >
               <Download size={14} />
               <span>{installBtnText}</span>
             </button>
             <button
               onClick={() => setInstallPrompt(null)}
+              className="auth-btn-secondary"
               style={{
-                height: '33px',
-                backgroundColor: 'hsl(var(--card))',
-                color: 'hsl(var(--foreground))',
-                fontWeight: 400,
+                height: '36px',
+                borderRadius: '7px',
                 fontSize: '13px',
-                borderRadius: '6px',
-                border: '1px solid hsl(var(--border))',
-                cursor: 'pointer',
+                fontWeight: 600,
                 padding: '0 14px',
-                transition: 'all 0.2s ease',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'hsl(var(--accent))')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
               {dismissBtnText}
             </button>

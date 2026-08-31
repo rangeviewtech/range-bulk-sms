@@ -568,14 +568,14 @@ export default function RegisterPage() {
                   disabled={loading || !!socialLoading}
                   style={{
                     width: '100%',
-                    height: '33px',
+                    height: '38px',
                     padding: '6px 28px',
-                    fontSize: '13px',
+                    fontSize: '13.5px',
                     lineHeight: '19.5px',
                     backgroundColor: '#29A4FF',
                     color: '#ffffff',
                     fontWeight: 700,
-                    borderRadius: '6px',
+                    borderRadius: '7px',
                     border: '0',
                     cursor: loading || !!socialLoading ? 'not-allowed' : 'pointer',
                     textAlign: 'center',
@@ -644,44 +644,19 @@ export default function RegisterPage() {
                   <button
                     type="button"
                     title="Sign in with Google"
+                    className="auth-social-btn"
                     disabled={!!socialLoading || loading}
                     onClick={() => handleSocialSignIn('google', 'Google')}
                     style={{
                       flex: 1,
-                      height: '36px',
-                      backgroundColor: socialLoading === 'google' ? 'hsl(var(--accent))' : 'hsl(var(--card))',
-                      border: socialLoading === 'google' ? '1px solid #4285F4' : '1px solid hsl(var(--border))',
-                      borderRadius: '6px',
+                      height: '38px',
+                      borderRadius: '7px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       cursor: socialLoading || loading ? 'not-allowed' : 'pointer',
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.1s ease',
                       outline: 'none',
                       opacity: socialLoading && socialLoading !== 'google' ? 0.45 : 1,
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
-                      transform: 'scale(1)',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!socialLoading && !loading) {
-                        e.currentTarget.style.backgroundColor = 'hsl(var(--accent))';
-                        e.currentTarget.style.borderColor = '#4285F4';
-                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(66, 133, 244, 0.22)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!socialLoading && !loading) {
-                        e.currentTarget.style.backgroundColor = 'hsl(var(--card))';
-                        e.currentTarget.style.borderColor = 'hsl(var(--border))';
-                        e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
-                        e.currentTarget.style.transform = 'scale(1)';
-                      }
-                    }}
-                    onMouseDown={(e) => {
-                      if (!socialLoading && !loading) e.currentTarget.style.transform = 'scale(0.93)';
-                    }}
-                    onMouseUp={(e) => {
-                      if (!socialLoading && !loading) e.currentTarget.style.transform = 'scale(1)';
                     }}
                   >
                     {socialLoading === 'google' ? <Loader2 size={16} className="animate-spin text-[#4285F4]" /> : <GoogleIcon size={18} />}
@@ -691,44 +666,19 @@ export default function RegisterPage() {
                   <button
                     type="button"
                     title="Sign in with Microsoft"
+                    className="auth-social-btn"
                     disabled={!!socialLoading || loading}
                     onClick={() => handleSocialSignIn('microsoft', 'Microsoft')}
                     style={{
                       flex: 1,
-                      height: '36px',
-                      backgroundColor: socialLoading === 'microsoft' ? 'hsl(var(--accent))' : 'hsl(var(--card))',
-                      border: socialLoading === 'microsoft' ? '1px solid #05A6F0' : '1px solid hsl(var(--border))',
-                      borderRadius: '6px',
+                      height: '38px',
+                      borderRadius: '7px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       cursor: socialLoading || loading ? 'not-allowed' : 'pointer',
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.1s ease',
                       outline: 'none',
                       opacity: socialLoading && socialLoading !== 'microsoft' ? 0.45 : 1,
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
-                      transform: 'scale(1)',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!socialLoading && !loading) {
-                        e.currentTarget.style.backgroundColor = 'hsl(var(--accent))';
-                        e.currentTarget.style.borderColor = '#05A6F0';
-                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(5, 166, 240, 0.22)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!socialLoading && !loading) {
-                        e.currentTarget.style.backgroundColor = 'hsl(var(--card))';
-                        e.currentTarget.style.borderColor = 'hsl(var(--border))';
-                        e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
-                        e.currentTarget.style.transform = 'scale(1)';
-                      }
-                    }}
-                    onMouseDown={(e) => {
-                      if (!socialLoading && !loading) e.currentTarget.style.transform = 'scale(0.93)';
-                    }}
-                    onMouseUp={(e) => {
-                      if (!socialLoading && !loading) e.currentTarget.style.transform = 'scale(1)';
                     }}
                   >
                     {socialLoading === 'microsoft' ? <Loader2 size={16} className="animate-spin text-[#05A6F0]" /> : <MicrosoftIcon size={17} />}
@@ -738,45 +688,20 @@ export default function RegisterPage() {
                   <button
                     type="button"
                     title="Sign in with Apple"
+                    className="auth-social-btn"
                     disabled={!!socialLoading || loading}
                     onClick={() => handleSocialSignIn('apple', 'Apple')}
                     style={{
                       flex: 1,
-                      height: '36px',
-                      backgroundColor: socialLoading === 'apple' ? 'hsl(var(--accent))' : 'hsl(var(--card))',
-                      border: socialLoading === 'apple' ? '1px solid hsl(var(--foreground))' : '1px solid hsl(var(--border))',
-                      borderRadius: '6px',
+                      height: '38px',
+                      borderRadius: '7px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       cursor: socialLoading || loading ? 'not-allowed' : 'pointer',
                       color: 'hsl(var(--foreground))',
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.1s ease',
                       outline: 'none',
                       opacity: socialLoading && socialLoading !== 'apple' ? 0.45 : 1,
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
-                      transform: 'scale(1)',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!socialLoading && !loading) {
-                        e.currentTarget.style.backgroundColor = 'hsl(var(--accent))';
-                        e.currentTarget.style.borderColor = 'hsl(var(--foreground))';
-                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.18)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!socialLoading && !loading) {
-                        e.currentTarget.style.backgroundColor = 'hsl(var(--card))';
-                        e.currentTarget.style.borderColor = 'hsl(var(--border))';
-                        e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
-                        e.currentTarget.style.transform = 'scale(1)';
-                      }
-                    }}
-                    onMouseDown={(e) => {
-                      if (!socialLoading && !loading) e.currentTarget.style.transform = 'scale(0.93)';
-                    }}
-                    onMouseUp={(e) => {
-                      if (!socialLoading && !loading) e.currentTarget.style.transform = 'scale(1)';
                     }}
                   >
                     {socialLoading === 'apple' ? <Loader2 size={16} className="animate-spin text-foreground" /> : <AppleIcon size={18} />}
@@ -786,45 +711,20 @@ export default function RegisterPage() {
                   <button
                     type="button"
                     title="Sign in with GitHub"
+                    className="auth-social-btn"
                     disabled={!!socialLoading || loading}
                     onClick={() => handleSocialSignIn('github', 'GitHub')}
                     style={{
                       flex: 1,
-                      height: '36px',
-                      backgroundColor: socialLoading === 'github' ? 'hsl(var(--accent))' : 'hsl(var(--card))',
-                      border: socialLoading === 'github' ? '1px solid hsl(var(--foreground))' : '1px solid hsl(var(--border))',
-                      borderRadius: '6px',
+                      height: '38px',
+                      borderRadius: '7px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       cursor: socialLoading || loading ? 'not-allowed' : 'pointer',
                       color: 'hsl(var(--foreground))',
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.1s ease',
                       outline: 'none',
                       opacity: socialLoading && socialLoading !== 'github' ? 0.45 : 1,
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
-                      transform: 'scale(1)',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!socialLoading && !loading) {
-                        e.currentTarget.style.backgroundColor = 'hsl(var(--accent))';
-                        e.currentTarget.style.borderColor = 'hsl(var(--foreground))';
-                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.18)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!socialLoading && !loading) {
-                        e.currentTarget.style.backgroundColor = 'hsl(var(--card))';
-                        e.currentTarget.style.borderColor = 'hsl(var(--border))';
-                        e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
-                        e.currentTarget.style.transform = 'scale(1)';
-                      }
-                    }}
-                    onMouseDown={(e) => {
-                      if (!socialLoading && !loading) e.currentTarget.style.transform = 'scale(0.93)';
-                    }}
-                    onMouseUp={(e) => {
-                      if (!socialLoading && !loading) e.currentTarget.style.transform = 'scale(1)';
                     }}
                   >
                     {socialLoading === 'github' ? <Loader2 size={16} className="animate-spin text-[#24292e]" /> : <GitHubIcon size={18} />}
@@ -834,44 +734,19 @@ export default function RegisterPage() {
                   <button
                     type="button"
                     title="Sign in with Facebook"
+                    className="auth-social-btn"
                     disabled={!!socialLoading || loading}
                     onClick={() => handleSocialSignIn('facebook', 'Facebook')}
                     style={{
                       flex: 1,
-                      height: '36px',
-                      backgroundColor: socialLoading === 'facebook' ? 'hsl(var(--accent))' : 'hsl(var(--card))',
-                      border: socialLoading === 'facebook' ? '1px solid #1877F2' : '1px solid hsl(var(--border))',
-                      borderRadius: '6px',
+                      height: '38px',
+                      borderRadius: '7px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       cursor: socialLoading || loading ? 'not-allowed' : 'pointer',
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.1s ease',
                       outline: 'none',
                       opacity: socialLoading && socialLoading !== 'facebook' ? 0.45 : 1,
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
-                      transform: 'scale(1)',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!socialLoading && !loading) {
-                        e.currentTarget.style.backgroundColor = 'hsl(var(--accent))';
-                        e.currentTarget.style.borderColor = '#1877F2';
-                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(24, 119, 242, 0.22)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!socialLoading && !loading) {
-                        e.currentTarget.style.backgroundColor = 'hsl(var(--card))';
-                        e.currentTarget.style.borderColor = 'hsl(var(--border))';
-                        e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
-                        e.currentTarget.style.transform = 'scale(1)';
-                      }
-                    }}
-                    onMouseDown={(e) => {
-                      if (!socialLoading && !loading) e.currentTarget.style.transform = 'scale(0.93)';
-                    }}
-                    onMouseUp={(e) => {
-                      if (!socialLoading && !loading) e.currentTarget.style.transform = 'scale(1)';
                     }}
                   >
                     {socialLoading === 'facebook' ? <Loader2 size={16} className="animate-spin text-[#1877F2]" /> : <FacebookIcon size={18} />}
@@ -881,45 +756,20 @@ export default function RegisterPage() {
                   <button
                     type="button"
                     title="Sign in with X"
+                    className="auth-social-btn"
                     disabled={!!socialLoading || loading}
                     onClick={() => handleSocialSignIn('x', 'X')}
                     style={{
                       flex: 1,
-                      height: '36px',
-                      backgroundColor: socialLoading === 'x' ? 'hsl(var(--accent))' : 'hsl(var(--card))',
-                      border: socialLoading === 'x' ? '1px solid hsl(var(--foreground))' : '1px solid hsl(var(--border))',
-                      borderRadius: '6px',
+                      height: '38px',
+                      borderRadius: '7px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       cursor: socialLoading || loading ? 'not-allowed' : 'pointer',
                       color: 'hsl(var(--foreground))',
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.1s ease',
                       outline: 'none',
                       opacity: socialLoading && socialLoading !== 'x' ? 0.45 : 1,
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
-                      transform: 'scale(1)',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!socialLoading && !loading) {
-                        e.currentTarget.style.backgroundColor = 'hsl(var(--accent))';
-                        e.currentTarget.style.borderColor = 'hsl(var(--foreground))';
-                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.18)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!socialLoading && !loading) {
-                        e.currentTarget.style.backgroundColor = 'hsl(var(--card))';
-                        e.currentTarget.style.borderColor = 'hsl(var(--border))';
-                        e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
-                        e.currentTarget.style.transform = 'scale(1)';
-                      }
-                    }}
-                    onMouseDown={(e) => {
-                      if (!socialLoading && !loading) e.currentTarget.style.transform = 'scale(0.93)';
-                    }}
-                    onMouseUp={(e) => {
-                      if (!socialLoading && !loading) e.currentTarget.style.transform = 'scale(1)';
                     }}
                   >
                     {socialLoading === 'x' ? <Loader2 size={16} className="animate-spin text-foreground" /> : <XIcon size={16} />}
