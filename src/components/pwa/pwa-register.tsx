@@ -138,7 +138,7 @@ export function PWARegister() {
             </button>
           </div>
 
-          <div className="flex gap-2" style={{ marginTop: '4px' }}>
+          <div className="flex gap-2" style={{ marginTop: '4px', direction: 'ltr' }}>
             <button
               onClick={triggerInstall}
               className="auth-btn-primary"

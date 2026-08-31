@@ -527,6 +527,7 @@ export default function LoginPage() {
                     justifyContent: 'space-between',
                     gap: '6px',
                     width: '100%',
+                    direction: 'ltr',
                   }}
                 >
                   {/* Google */}
@@ -731,7 +732,7 @@ export default function LoginPage() {
                 </p>
               )}
 
-              <div className="form-group" style={{ marginTop: '10px', marginBottom: '0px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+              <div className="form-group" style={{ marginTop: '10px', marginBottom: '0px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', direction: 'ltr' }}>
                 <div className="forget-con" style={{ flex: 1 }}>
                   <button
                     type="button"

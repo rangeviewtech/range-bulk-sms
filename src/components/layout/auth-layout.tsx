@@ -151,7 +151,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
             <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase', fontFamily: FONT_STACK }}>
               {dict.common.getMobileApp || 'GET MOBILE & DESKTOP APP'}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', width: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', width: '100%', direction: 'ltr' }}>
               <a href="https://play.google.com/store/apps/details?id=com.uffizio.trakzee&hl=en_IN" target="_blank" rel="noreferrer" title={dict.common.googlePlay || "Google Play Store"} className="auth-store-badge" style={{ flex: 1, textDecoration: 'none' }}>
                 <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
               </a>

@@ -638,6 +638,7 @@ export default function RegisterPage() {
                     justifyContent: 'space-between',
                     gap: '6px',
                     width: '100%',
+                    direction: 'ltr',
                   }}
                 >
                   {/* Google */}

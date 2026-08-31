@@ -158,6 +158,7 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod }: U
             padding: '3px',
             borderRadius: '8px',
             border: '1px solid hsl(var(--border))',
+            direction: 'ltr',
           }}
         >
           {METHODS.map((m) => {
