@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
+import { LanguageToggle } from "@/components/navigation/language-toggle";
 import { Globe, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation';
@@ -18,58 +19,6 @@ import { socialLogin } from '@/app/(auth)/actions';
 import { TurnstileWidget } from '@/components/forms/turnstile-widget';
 
 type LoginFormValues = z.infer<typeof loginSchema>;
-
-const LANGUAGES: { code: string; name: string; flag?: string }[] = [
-  { code: '-1', name: 'Default Language' },
-  { code: 'EN', name: 'English', flag: 'gb' },
-  { code: 'DE', name: 'German', flag: 'de' },
-  { code: 'ES', name: 'Spanish', flag: 'es' },
-  { code: 'AE', name: 'Arabic', flag: 'sa' },
-  { code: 'FR', name: 'French', flag: 'fr' },
-  { code: 'FA', name: 'Persian', flag: 'ir' },
-  { code: 'SQ', name: 'Albanian', flag: 'al' },
-  { code: 'TH', name: 'Thai', flag: 'th' },
-  { code: 'HE', name: 'Hebrew', flag: 'il' },
-  { code: 'RU', name: 'Russian', flag: 'ru' },
-  { code: 'PT', name: 'Portuguese', flag: 'pt' },
-  { code: 'JA', name: 'Japanese', flag: 'jp' },
-  { code: 'KO', name: 'Korean', flag: 'kr' },
-  { code: 'ZH', name: 'Chinese', flag: 'cn' },
-  { code: 'MN', name: 'Mongolian', flag: 'mn' },
-  { code: 'NE', name: 'Nepali', flag: 'np' },
-  { code: 'HI', name: 'Hindi', flag: 'in' },
-  { code: 'IT', name: 'Italian', flag: 'it' },
-  { code: 'MY', name: 'Burmese', flag: 'mm' },
-  { code: 'TR', name: 'Turkish', flag: 'tr' },
-  { code: 'SR', name: 'Serbian', flag: 'rs' },
-  { code: 'HU', name: 'Hungarian', flag: 'hu' },
-  { code: 'PL', name: 'Polish', flag: 'pl' },
-  { code: 'DU', name: 'Dutch', flag: 'nl' },
-  { code: 'TE', name: 'Telugu', flag: 'in' },
-  { code: 'KM', name: 'Cambodian', flag: 'kh' },
-  { code: 'IN', name: 'Indonesian', flag: 'id' },
-  { code: 'GJ', name: 'Gujarati', flag: 'in' },
-  { code: 'BN', name: 'Bengali', flag: 'bd' },
-  { code: 'MR', name: 'Marathi', flag: 'in' },
-  { code: 'KN', name: 'Kannada', flag: 'in' },
-  { code: 'EL', name: 'Greek', flag: 'gr' },
-  { code: 'BR', name: 'Portuguese Brazil', flag: 'br' },
-  { code: 'CZ', name: 'Czech', flag: 'cz' },
-  { code: 'MS', name: 'Malay', flag: 'my' },
-  { code: 'TA', name: 'Tamil', flag: 'in' },
-  { code: 'ML', name: 'Malayalam', flag: 'in' },
-  { code: 'UR', name: 'Urdu', flag: 'pk' },
-  { code: 'BS', name: 'Bosnian', flag: 'ba' },
-  { code: 'HR', name: 'Croatian', flag: 'hr' },
-  { code: 'GR', name: 'Greek Athens', flag: 'gr' },
-  { code: 'AO', name: 'Portuguese AO', flag: 'ao' },
-  { code: 'KU', name: 'Kurdish', flag: 'iq' },
-  { code: 'AM', name: 'Amharic', flag: 'et' },
-  { code: 'OM', name: 'Oromo', flag: 'et' },
-  { code: 'TI', name: 'Tigrinya', flag: 'er' },
-  { code: 'PA', name: 'Punjabi', flag: 'in' },
-  { code: 'ET', name: 'Estonian', flag: 'ee' },
-];
 
 const FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
@@ -133,10 +82,6 @@ export default function LoginPage() {
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [langOpen, setLangOpen] = useState(false);
-  const [langSearch, setLangSearch] = useState('');
-  const [selectedLang, setSelectedLang] = useState('Default Language');
-  const [selectedFlag, setSelectedFlag] = useState<string | undefined>(undefined);
   const [forgotUsername, setForgotUsername] = useState('');
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileExpired, setTurnstileExpired] = useState(false);
@@ -230,10 +175,6 @@ export default function LoginPage() {
     setView('login');
   };
 
-  const filteredLanguages = LANGUAGES.filter((l) =>
-    l.name.toLowerCase().includes(langSearch.toLowerCase())
-  );
-
   return (
     <div
       className="relative min-h-screen w-full bg-white overflow-hidden select-none"
@@ -297,14 +238,8 @@ export default function LoginPage() {
         }}
       >
         {/* ================= Theme & Language Icons - Top-Right Corner ================= */}
-        {langOpen && (
-          <div
-            id="dropdown-overlay"
-            onClick={() => setLangOpen(false)}
-            style={{ position: 'fixed', inset: 0, zIndex: 30, background: 'transparent' }}
-          />
-        )}
         <div
+          className="auth-stagger-1"
           style={{
             position: 'absolute',
             top: '14px',
@@ -316,121 +251,7 @@ export default function LoginPage() {
           }}
         >
           <ThemeToggle />
-          <div className="dropdown" style={{ position: 'relative', display: 'inline-block' }}>
-            <Button
-  variant="ghost"
-  size="icon"
-  className="h-9 w-9 rounded-full"
-  onClick={() => setLangOpen(!langOpen)}
-  aria-label="Select language"
->
-  {selectedFlag ? (
-    <img
-      src={`https://flagcdn.com/20x15/${selectedFlag}.png`}
-      id="def-lang"
-      alt={selectedLang}
-      style={{
-        width: '18px',
-        height: '13px',
-        borderRadius: '1px',
-        objectFit: 'cover',
-        boxShadow: '0 0 1px rgba(0,0,0,0.3)',
-      }}
-    />
-  ) : (
-    <Globe className="h-[1.2rem] w-[1.2rem] text-foreground" />
-  )}
-</Button>
-
-            {langOpen && (
-              <div
-                id="myDropdown"
-                className="dropdown-content show"
-                style={{
-                  position: 'absolute',
-                  top: '100%',
-                  right: 0,
-                  left: 'auto',
-                  backgroundColor: 'hsl(var(--card))',
-                  minWidth: '230px',
-                  border: '1px solid hsl(var(--border))',
-                  zIndex: 40,
-                  maxHeight: '260px',
-                  overflow: 'auto',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
-                  borderRadius: '0 0 4px 4px',
-                  marginTop: '2px',
-                }}
-              >
-                <div style={{ position: 'sticky', top: 0, backgroundColor: 'hsl(var(--card))', zIndex: 2 }}>
-                    <Search size={14} style={{ position: 'absolute', left: '9px', top: '8px', color: 'hsl(var(--muted-foreground))' }} />
-                    <input
-                    type="text"
-                    placeholder="Search.."
-                    id="myInput"
-                    value={langSearch}
-                    onChange={(e) => setLangSearch(e.target.value)}
-                    autoFocus
-                    style={{
-                      boxSizing: 'border-box',
-                      fontSize: '13px',
-                      padding: '5px 5px 5px 30px',
-                      border: 'none',
-                      borderBottom: '1px solid #ddd',
-                      width: '100%',
-                      outline: '0px solid #ddd',
-                      backgroundColor: 'hsl(var(--card))',
-                      fontFamily: FONT_STACK,
-                    }}
-                  />
-                </div>
-                {filteredLanguages.map((l) => (
-                  <a
-                    key={l.code}
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setSelectedLang(l.name);
-                      setSelectedFlag(l.flag);
-                      setLangOpen(false);
-                      toast.info(`Language set to ${l.name}`);
-                    }}
-                    style={{
-                      color: selectedLang === l.name ? '#29A4FF' : 'hsl(var(--foreground))',
-                      padding: '5px 8px',
-                      textDecoration: 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      fontSize: '13px',
-                      fontFamily: FONT_STACK,
-                      transition: 'background-color 0.15s ease',
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'hsl(var(--accent))')}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                  >
-                    {l.flag ? (
-                      <img
-                        src={`https://flagcdn.com/20x15/${l.flag}.png`}
-                        alt={l.name}
-                        style={{
-                          width: '16px',
-                          height: '12px',
-                          borderRadius: '1px',
-                          objectFit: 'cover',
-                          flexShrink: 0,
-                          boxShadow: '0 0 1px rgba(0,0,0,0.3)',
-                        }}
-                      />
-                    ) : (
-                      <Globe size={14} style={{ flexShrink: 0, opacity: 0.7, color: 'hsl(var(--foreground))' }} />
-                    )}
-                    <span>{l.name}</span>
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
+          <LanguageToggle />
         </div>
         {/* Centered Wrapper for Logo + All Views */}
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
