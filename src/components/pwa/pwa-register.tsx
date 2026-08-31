@@ -103,11 +103,11 @@ export function PWARegister() {
         </div>
       )}
 
-      {/* PWA Install Floating Banner / Prompt */}
+      {/* PWA Install Floating Banner / Prompt - Always Floating Bottom Left */}
       {installPrompt && (
         <div
           dir={isRtl ? 'rtl' : 'ltr'}
-          className={`fixed bottom-6 ${isRtl ? 'right-6' : 'left-6'} z-50 border border-border shadow-2xl p-4 rounded-lg flex flex-col gap-3.5 max-w-xs transition-all duration-300 animate-in fade-in slide-in-from-bottom-5`}
+          className="fixed bottom-6 left-6 z-50 border border-border shadow-2xl p-4 rounded-lg flex flex-col gap-3.5 max-w-xs transition-all duration-300 animate-in fade-in slide-in-from-bottom-5"
           style={{
             fontFamily: FONT_STACK,
             width: '300px',
