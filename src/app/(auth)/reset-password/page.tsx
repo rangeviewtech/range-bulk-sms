@@ -11,6 +11,7 @@ import { resetPasswordSchema } from '@/lib/validations/auth';
 import { resetPassword } from '@/app/(auth)/actions';
 import { TurnstileWidget } from '@/components/forms/turnstile-widget';
 import { AuthLayout } from '@/components/layout/auth-layout';
+import { useLanguage } from '@/hooks/use-language';
 import { Eye, EyeOff } from 'lucide-react';
 
 type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
@@ -18,6 +19,7 @@ type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 const FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
 function ResetPasswordForm() {
+  const { dict } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -48,21 +50,21 @@ function ResetPasswordForm() {
   const hasNumber = /[0-9]/.test(passwordValue);
   const requirementsMet = [hasLength, hasUpper, hasLower, hasNumber].filter(Boolean).length;
   
-  let strengthText = 'Weak';
+  let strengthText = dict.auth.strengthWeak;
   let strengthColor = 'hsl(var(--destructive))';
   let strengthWidth = '0%';
   
   if (passwordValue.length > 0) {
     if (requirementsMet <= 2) {
-      strengthText = 'Weak';
+      strengthText = dict.auth.strengthWeak;
       strengthColor = 'hsl(var(--destructive))';
       strengthWidth = '33%';
     } else if (requirementsMet === 3) {
-      strengthText = 'Good';
+      strengthText = dict.auth.strengthGood;
       strengthColor = '#ffc107';
       strengthWidth = '66%';
     } else if (requirementsMet === 4) {
-      strengthText = 'Strong';
+      strengthText = dict.auth.strengthStrong;
       strengthColor = 'hsl(var(--success, 142 71% 45%))';
       strengthWidth = '100%';
     }
@@ -70,7 +72,7 @@ function ResetPasswordForm() {
 
   const onSubmit = async (data: ResetPasswordValues) => {
     if (turnstileExpired) {
-      toast.error('Security check has expired. Please verify again.');
+      toast.error(dict.validation.securityCheckExpired || 'Security check has expired. Please verify again.');
       setValue('turnstileToken', '');
       return;
     }
@@ -89,7 +91,7 @@ function ResetPasswordForm() {
       setLoading(false);
     } else {
       setSuccess(true);
-      toast.success('Password reset successfully! You can now log in.');
+      toast.success(dict.auth.passwordUpdatedTitle || 'Password reset successfully! You can now log in.');
     }
   };
 
@@ -99,10 +101,10 @@ function ResetPasswordForm() {
         <div className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
           <div className="auth-stagger-1">
             <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--destructive))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-              Invalid or expired link
+              {dict.auth.invalidOrExpiredTitle}
             </h3>
             <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-              This password reset link has expired or is invalid. Please request a new one.
+              {dict.auth.invalidOrExpiredSubtitle}
             </p>
           </div>
           <div className="login-con auth-stagger-2" style={{ marginTop: '20px' }}>
@@ -127,7 +129,7 @@ function ResetPasswordForm() {
                   fontFamily: FONT_STACK,
                 }}
               >
-                Request a new link
+                {dict.auth.requestNewLinkButton}
               </button>
             </Link>
           </div>
@@ -142,10 +144,10 @@ function ResetPasswordForm() {
         <div className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
           <div className="auth-stagger-1">
             <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-              Password updated!
+              {dict.auth.passwordUpdatedTitle}
             </h3>
             <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-              Your password has been reset successfully. You can now sign in with your new password.
+              {dict.auth.passwordUpdatedSubtitle}
             </p>
           </div>
           <div className="login-con auth-stagger-2" style={{ marginTop: '20px' }}>
@@ -170,7 +172,7 @@ function ResetPasswordForm() {
                   fontFamily: FONT_STACK,
                 }}
               >
-                Sign in to your account
+                {dict.auth.signInButton}
               </button>
             </Link>
           </div>
@@ -184,10 +186,10 @@ function ResetPasswordForm() {
       <form id="resetpwd_main" onSubmit={handleSubmit(onSubmit)} className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
         <div className="auth-stagger-1">
           <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-            Set a new password
+            {dict.auth.resetPasswordTitle}
           </h3>
           <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-            Choose a strong password to protect your account.
+            {dict.auth.resetPasswordSubtitle}
           </p>
         </div>
 
@@ -199,7 +201,7 @@ function ResetPasswordForm() {
             {...register('password')}
             type={showPassword ? 'text' : 'password'}
             className="form-control width100 auth-input"
-            placeholder="New password (min. 8 characters)"
+            placeholder={dict.auth.newPasswordPlaceholder}
             autoComplete="new-password"
             disabled={loading}
             style={{
@@ -250,7 +252,7 @@ function ResetPasswordForm() {
           {passwordValue.length > 0 && (
             <div style={{ marginTop: '8px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                <span style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK }}>Password strength:</span>
+                <span style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK }}>{dict.auth.strengthLabel}:</span>
                 <span style={{ fontSize: '11px', color: strengthColor, fontWeight: 600, fontFamily: FONT_STACK }}>{strengthText}</span>
               </div>
               <div style={{ width: '100%', height: '4px', backgroundColor: 'hsl(var(--border))', borderRadius: '2px', overflow: 'hidden' }}>
@@ -266,7 +268,7 @@ function ResetPasswordForm() {
             {...register('confirmPassword')}
             type={showConfirmPassword ? 'text' : 'password'}
             className="form-control width100 auth-input"
-            placeholder="Confirm new password"
+            placeholder={dict.auth.confirmPasswordPlaceholder}
             autoComplete="new-password"
             disabled={loading}
             style={{
@@ -315,7 +317,7 @@ function ResetPasswordForm() {
           {errors.confirmPassword ? (
             <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{errors.confirmPassword.message}</p>
           ) : (touchedFields.confirmPassword && passwordValue !== confirmPasswordValue) ? (
-            <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>Passwords don&apos;t match</p>
+            <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{dict.validation.passwordsMismatch}</p>
           ) : null}
         </div>
 
@@ -339,7 +341,7 @@ function ResetPasswordForm() {
           {errors.turnstileToken && <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>{errors.turnstileToken.message}</p>}
           {turnstileExpired && (
             <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
-              Security check expired. Please re-verify.
+              {dict.validation.securityCheckExpired}
             </p>
           )}
         </div>
@@ -367,7 +369,7 @@ function ResetPasswordForm() {
               opacity: loading ? 0.7 : 1,
             }}
           >
-            {loading ? 'Updating password...' : 'Update password'}
+            {loading ? dict.auth.updatingPassword : dict.auth.updatePasswordButton}
           </button>
         </div>
 
@@ -377,7 +379,7 @@ function ResetPasswordForm() {
             style={{ color: '#29A4FF', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s' }}
             className="hover:opacity-80"
           >
-            Back to sign in
+            {dict.auth.signInLink}
           </Link>
         </div>
       </form>

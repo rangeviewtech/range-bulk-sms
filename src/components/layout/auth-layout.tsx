@@ -3,12 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
 import { LanguageToggle } from "@/components/navigation/language-toggle";
+import { useLanguage } from "@/hooks/use-language";
 import { appAssets } from '@/config/assets';
 import { appConfig } from '@/config/app';
 
 const FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
 export function AuthLayout({ children }: { children: React.ReactNode }) {
+  const { dict } = useLanguage();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const slides = appAssets.slides;
@@ -147,16 +149,16 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
           {/* App Store Links */}
           <div className="application-container auth-stagger-5" style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', width: '100%' }}>
             <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase', fontFamily: FONT_STACK }}>
-              Get Mobile & Desktop App
+              {dict.common.getMobileApp || 'GET MOBILE & DESKTOP APP'}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', width: '100%' }}>
-              <a href="https://play.google.com/store/apps/details?id=com.uffizio.trakzee&hl=en_IN" target="_blank" rel="noreferrer" title="Google Play Store" className="auth-store-badge" style={{ flex: 1, textDecoration: 'none' }}>
+              <a href="https://play.google.com/store/apps/details?id=com.uffizio.trakzee&hl=en_IN" target="_blank" rel="noreferrer" title={dict.common.googlePlay || "Google Play Store"} className="auth-store-badge" style={{ flex: 1, textDecoration: 'none' }}>
                 <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
               </a>
-              <a href="https://apps.apple.com/in/app/trakzee/id1396516275" target="_blank" rel="noreferrer" title="Apple App Store" className="auth-store-badge" style={{ flex: 1, textDecoration: 'none' }}>
+              <a href="https://apps.apple.com/in/app/trakzee/id1396516275" target="_blank" rel="noreferrer" title={dict.common.appStore || "Apple App Store"} className="auth-store-badge" style={{ flex: 1, textDecoration: 'none' }}>
                 <img src={appAssets.storeBadges.appStore} alt="Apple App Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
               </a>
-              <a href="https://apps.microsoft.com/store" target="_blank" rel="noreferrer" title="Microsoft Store" className="auth-store-badge" style={{ flex: 1, textDecoration: 'none' }}>
+              <a href="https://apps.microsoft.com/store" target="_blank" rel="noreferrer" title={dict.common.microsoftStore || "Microsoft Store"} className="auth-store-badge" style={{ flex: 1, textDecoration: 'none' }}>
                 <img src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
               </a>
             </div>

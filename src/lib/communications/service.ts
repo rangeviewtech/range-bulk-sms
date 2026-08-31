@@ -40,23 +40,33 @@ export const NotificationService = {
     return job;
   },
 
-  async sendLoginOtp(phone: string, otp: string) {
+  async sendLoginOtp(recipient: string, otp: string, channel: CommunicationChannel = 'SMS', lang: string = 'EN') {
     return this.dispatch({
-      recipient: phone,
-      channel: 'SMS',
+      recipient,
+      channel,
       template: 'auth.login_otp',
-      payload: { otp },
+      payload: { otp, lang, locale: lang },
       priority: 'CRITICAL', // OTPs are critical
     });
   },
 
-  async sendPasswordReset(email: string, token: string) {
+  async sendPasswordReset(email: string, token: string, lang: string = 'EN') {
     return this.dispatch({
       recipient: email,
       channel: 'EMAIL',
       template: 'auth.password_reset',
-      payload: { token },
+      payload: { token, lang, locale: lang },
       priority: 'CRITICAL', 
+    });
+  },
+
+  async sendWelcome(email: string, name: string, lang: string = 'EN') {
+    return this.dispatch({
+      recipient: email,
+      channel: 'EMAIL',
+      template: 'auth.welcome',
+      payload: { name, lang, locale: lang },
+      priority: 'NORMAL',
     });
   }
 };

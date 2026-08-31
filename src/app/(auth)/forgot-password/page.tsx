@@ -10,12 +10,14 @@ import { toast } from 'sonner';
 import { TurnstileWidget } from '@/components/forms/turnstile-widget';
 import { forgotPasswordSchema } from '@/lib/validations/auth';
 import { AuthLayout } from '@/components/layout/auth-layout';
+import { useLanguage } from '@/hooks/use-language';
 
 type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
 
 const FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
 export default function ForgotPasswordPage() {
+  const { dict } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [turnstileExpired, setTurnstileExpired] = useState(false);
@@ -30,7 +32,7 @@ export default function ForgotPasswordPage() {
 
   const onSubmit = async (data: ForgotPasswordValues) => {
     if (turnstileExpired) {
-      toast.error('Security check has expired. Please verify again.');
+      toast.error(dict.validation.securityCheckExpired || 'Security check has expired. Please verify again.');
       setValue('turnstileToken', '');
       return;
     }
@@ -55,10 +57,10 @@ export default function ForgotPasswordPage() {
         <div className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
           <div className="auth-stagger-1">
             <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-              Check your inbox
+              {dict.auth.checkInboxTitle}
             </h3>
             <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-              If an account exists for that email, we&apos;ve sent password reset instructions. Please check your inbox and spam folder.
+              {dict.auth.checkInboxSubtitle}
             </p>
           </div>
           <div className="login-con auth-stagger-2" style={{ marginTop: '20px' }}>
@@ -83,7 +85,7 @@ export default function ForgotPasswordPage() {
                   fontFamily: FONT_STACK,
                 }}
               >
-                Return to sign in
+                {dict.auth.returnToSignInButton}
               </button>
             </Link>
           </div>
@@ -97,10 +99,10 @@ export default function ForgotPasswordPage() {
       <form id="fgpwd_main" onSubmit={handleSubmit(onSubmit)} className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
         <div className="auth-stagger-1">
           <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-            Reset your password
+            {dict.auth.forgotPasswordTitle}
           </h3>
           <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-            Enter your email address and we&apos;ll send you a link to reset your password.
+            {dict.auth.forgotPasswordSubtitle}
           </p>
         </div>
 
@@ -110,7 +112,7 @@ export default function ForgotPasswordPage() {
             {...register('email')}
             type="email"
             className="form-control auth-input"
-            placeholder="Email address"
+            placeholder={dict.auth.emailPlaceholder}
             autoComplete="email"
             disabled={loading}
             style={{
@@ -155,7 +157,7 @@ export default function ForgotPasswordPage() {
           {errors.turnstileToken && <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>{errors.turnstileToken.message}</p>}
           {turnstileExpired && (
             <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
-              Security check expired. Please re-verify.
+              {dict.validation.securityCheckExpired}
             </p>
           )}
         </div>
@@ -183,18 +185,18 @@ export default function ForgotPasswordPage() {
               opacity: loading ? 0.7 : 1,
             }}
           >
-            {loading ? 'Sending link...' : 'Send reset link'}
+            {loading ? dict.auth.sendingResetLink : dict.auth.sendResetLinkButton}
           </button>
         </div>
 
         <div className="text-center auth-stagger-5" style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', gap: '6px', alignItems: 'center' }}>
-          <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: FONT_STACK }}>Remember your password?</span>
+          <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: FONT_STACK }}>{dict.auth.rememberPasswordPrompt}</span>
           <Link
             href="/login"
             style={{ color: '#29A4FF', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s' }}
             className="hover:opacity-80"
           >
-            Sign in
+            {dict.auth.signInLink}
           </Link>
         </div>
       </form>

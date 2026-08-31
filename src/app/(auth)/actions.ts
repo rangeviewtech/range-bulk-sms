@@ -223,8 +223,10 @@ export async function forgotPassword(formData: FormData) {
     });
 
     // Enqueue background email job
+    const cookieStore = await cookies();
+    const lang = cookieStore.get('app_language')?.value || 'EN';
     const { NotificationService } = await import('@/lib/communications/service');
-    await NotificationService.sendPasswordReset(user.email, token);
+    await NotificationService.sendPasswordReset(user.email, token, lang);
   }
 
   // Always return success to prevent email enumeration attacks
@@ -349,12 +351,14 @@ export async function requestOtp(userId: string, channel: CommunicationChannel) 
   });
 
   // Enqueue Job immediately
+  const cookieStore = await cookies();
+  const lang = cookieStore.get('app_language')?.value || 'EN';
   const { NotificationService } = await import('@/lib/communications/service');
   await NotificationService.dispatch({
     recipient: identifier,
     channel,
     template: 'auth.login_otp',
-    payload: { otp },
+    payload: { otp, lang, locale: lang },
     priority: 'CRITICAL',
     idempotencyKey: `login_otp_${otpId}`
   });

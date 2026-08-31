@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
 import { LanguageToggle } from "@/components/navigation/language-toggle";
+import { useLanguage } from "@/hooks/use-language";
 import { Globe, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation';
@@ -77,6 +78,7 @@ function XIcon({ size = 16 }: { size?: number }) {
 }
 
 export default function LoginPage() {
+  const { dict } = useLanguage();
   const [view, setView] = useState<'login' | 'forgot' | 'app'>('login');
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
@@ -297,11 +299,11 @@ export default function LoginPage() {
             <form id="login_form" onSubmit={handleSubmit(onSubmit)} className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
               <div className="auth-stagger-1">
                 <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-                  Sign in
+                  {dict.auth.signInTitle}
                 </h3>
 
                 <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-                  Welcome back. Please enter your credentials to access your account.
+                  {dict.auth.signInSubtitle}
                 </p>
               </div>
 
@@ -312,7 +314,7 @@ export default function LoginPage() {
                   type="text"
                   id="username"
                   className="form-control width100 auth-input"
-                  placeholder="Email or username"
+                  placeholder={dict.auth.emailOrUsernamePlaceholder}
                   autoComplete="username"
                   disabled={loading || !!socialLoading}
                   style={{
@@ -344,7 +346,7 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   className="form-control width100 auth-input"
-                  placeholder="Password"
+                  placeholder={dict.auth.passwordPlaceholder}
                   autoComplete="current-password"
                   disabled={loading || !!socialLoading}
                   style={{
@@ -402,7 +404,7 @@ export default function LoginPage() {
                     className="prod-checkbox"
                   />
                   <label htmlFor="remember" style={{ color: 'hsl(var(--foreground))', fontSize: '12px', cursor: 'pointer', fontFamily: FONT_STACK, margin: 0, lineHeight: '14px' }}>
-                    Keep me signed in
+                    {dict.auth.rememberMe}
                   </label>
                 </div>
                 <div className="forget-con">
@@ -417,7 +419,7 @@ export default function LoginPage() {
                     onMouseEnter={(e) => (e.currentTarget.style.color = '#29A4FF')}
                     onMouseLeave={(e) => (e.currentTarget.style.color = 'hsl(var(--foreground))')}
                   >
-                    Forgot password?
+                    {dict.auth.forgotPasswordLink}
                   </a>
                 </div>
               </div>
@@ -441,7 +443,7 @@ export default function LoginPage() {
                 />
                 {turnstileExpired && (
                   <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
-                    Security check expired. Please re-verify.
+                    {dict.validation.securityCheckExpired}
                   </p>
                 )}
               </div>
@@ -474,14 +476,14 @@ export default function LoginPage() {
                     opacity: loading ? 0.7 : 1,
                   }}
                 >
-                  {loading ? 'Signing in...' : 'Sign in'}
+                  {loading ? dict.auth.signingIn : dict.auth.signInButton}
                 </button>
               </div>
 
               {/* Register Link */}
               <div className="auth-stagger-5" style={{ textAlign: 'center', marginTop: '12px' }}>
                 <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK }}>
-                  Don&apos;t have an account?{' '}
+                  {dict.auth.noAccountPrompt}{' '}
                 </span>
                 <a
                   href="/register"
@@ -496,7 +498,7 @@ export default function LoginPage() {
                   onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
                   onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
                 >
-                  Create one
+                  {dict.auth.createOneLink}
                 </a>
               </div>
 
@@ -512,7 +514,7 @@ export default function LoginPage() {
                 }}
               >
                 <span className="OR_left-line" style={{ flexGrow: 1, height: '1px', backgroundColor: 'hsl(var(--border))' }}></span>
-                <span className="OR_or-text" style={{ margin: '0 8px', color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: FONT_STACK }}>Or continue with</span>
+                <span className="OR_or-text" style={{ margin: '0 8px', color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: FONT_STACK }}>{dict.auth.orContinueWith}</span>
                 <span className="OR_right-line" style={{ flexGrow: 1, height: '1px', backgroundColor: 'hsl(var(--border))' }}></span>
               </div>
 
@@ -820,10 +822,10 @@ export default function LoginPage() {
           {view === 'forgot' && (
             <form id="fgpwd_main" onSubmit={handleRecover} style={{ width: '100%', float: 'left' }}>
               <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-                Reset password
+                {dict.auth.forgotPasswordTitle}
               </h3>
               <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-                Enter your email address and we&apos;ll send you instructions to reset your password.
+                {dict.auth.forgotPasswordSubtitle}
               </p>
 
               <div className="form-group usernamefd" style={{ position: 'relative', marginBottom: '1rem' }}>
@@ -831,7 +833,7 @@ export default function LoginPage() {
                   type="email"
                   id="forgot_username"
                   className="form-control"
-                  placeholder="Email address"
+                  placeholder={dict.auth.emailPlaceholder}
                   autoComplete="email"
                   value={forgotUsername}
                   onChange={(e) => setForgotUsername(e.target.value)}
@@ -875,7 +877,7 @@ export default function LoginPage() {
               />
               {turnstileExpired && (
                 <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
-                  Security check expired. Please re-verify.
+                  {dict.validation.securityCheckExpired}
                 </p>
               )}
 
@@ -902,7 +904,7 @@ export default function LoginPage() {
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'hsl(var(--accent))')}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'hsl(var(--secondary))')}
                   >
-                    Back to sign in
+                    {dict.auth.signInLink}
                   </button>
                 </div>
                 <div className="login-con" style={{ flex: 1 }}>
@@ -932,7 +934,7 @@ export default function LoginPage() {
                       if (!loading) e.currentTarget.style.backgroundColor = '#29A4FF';
                     }}
                   >
-                    {loading ? 'Sending...' : 'Send reset link'}
+                    {loading ? dict.auth.sendingResetLink : dict.auth.sendResetLinkButton}
                   </button>
                 </div>
               </div>

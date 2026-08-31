@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { useState } from "react";
@@ -10,71 +10,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-export interface Language {
-  code: string;
-  name: string;
-  flag: string;
-}
-
-export const defaultLanguages: Language[] = [
-  { code: 'EN', name: 'English', flag: 'gb' },
-  { code: 'DE', name: 'German', flag: 'de' },
-  { code: 'ES', name: 'Spanish', flag: 'es' },
-  { code: 'AE', name: 'Arabic', flag: 'sa' },
-  { code: 'FR', name: 'French', flag: 'fr' },
-  { code: 'FA', name: 'Persian', flag: 'ir' },
-  { code: 'SQ', name: 'Albanian', flag: 'al' },
-  { code: 'TH', name: 'Thai', flag: 'th' },
-  { code: 'HE', name: 'Hebrew', flag: 'il' },
-  { code: 'RU', name: 'Russian', flag: 'ru' },
-  { code: 'PT', name: 'Portuguese', flag: 'pt' },
-  { code: 'JA', name: 'Japanese', flag: 'jp' },
-  { code: 'KO', name: 'Korean', flag: 'kr' },
-  { code: 'ZH', name: 'Chinese', flag: 'cn' },
-  { code: 'MN', name: 'Mongolian', flag: 'mn' },
-  { code: 'NE', name: 'Nepali', flag: 'np' },
-  { code: 'HI', name: 'Hindi', flag: 'in' },
-  { code: 'IT', name: 'Italian', flag: 'it' },
-  { code: 'MY', name: 'Burmese', flag: 'mm' },
-  { code: 'TR', name: 'Turkish', flag: 'tr' },
-  { code: 'SR', name: 'Serbian', flag: 'rs' },
-  { code: 'HU', name: 'Hungarian', flag: 'hu' },
-  { code: 'PL', name: 'Polish', flag: 'pl' },
-  { code: 'DU', name: 'Dutch', flag: 'nl' },
-  { code: 'TE', name: 'Telugu', flag: 'in' },
-  { code: 'KM', name: 'Cambodian', flag: 'kh' },
-  { code: 'IN', name: 'Indonesian', flag: 'id' },
-  { code: 'GJ', name: 'Gujarati', flag: 'in' },
-  { code: 'BN', name: 'Bengali', flag: 'bd' },
-  { code: 'MR', name: 'Marathi', flag: 'in' },
-  { code: 'KN', name: 'Kannada', flag: 'in' },
-  { code: 'EL', name: 'Greek', flag: 'gr' },
-  { code: 'BR', name: 'Portuguese Brazil', flag: 'br' },
-  { code: 'CZ', name: 'Czech', flag: 'cz' },
-  { code: 'MS', name: 'Malay', flag: 'my' },
-  { code: 'TA', name: 'Tamil', flag: 'in' },
-  { code: 'ML', name: 'Malayalam', flag: 'in' },
-  { code: 'UR', name: 'Urdu', flag: 'pk' },
-  { code: 'BS', name: 'Bosnian', flag: 'ba' },
-  { code: 'HR', name: 'Croatian', flag: 'hr' },
-  { code: 'GR', name: 'Greek Athens', flag: 'gr' },
-  { code: 'AO', name: 'Portuguese AO', flag: 'ao' },
-  { code: 'KU', name: 'Kurdish', flag: 'iq' },
-  { code: 'AM', name: 'Amharic', flag: 'et' },
-  { code: 'OM', name: 'Oromo', flag: 'et' },
-  { code: 'TI', name: 'Tigrinya', flag: 'er' },
-  { code: 'PA', name: 'Punjabi', flag: 'in' },
-  { code: 'ET', name: 'Estonian', flag: 'ee' },
-];
+import { useLanguage } from "@/hooks/use-language";
+import { SUPPORTED_LANGUAGES, LanguageCode } from "@/lib/i18n";
 
 export function LanguageToggle() {
-  const [selectedLang, setSelectedLang] = useState<string>('English');
-  const [selectedFlag, setSelectedFlag] = useState<string>('');
+  const { language, setLanguage, currentLanguageMeta, dict } = useLanguage();
   const [search, setSearch] = useState<string>('');
 
-  const filtered = defaultLanguages.filter((l) =>
-    l.name.toLowerCase().includes(search.toLowerCase())
+  const filtered = SUPPORTED_LANGUAGES.filter((l) =>
+    l.name.toLowerCase().includes(search.toLowerCase()) ||
+    (l.nativeName && l.nativeName.toLowerCase().includes(search.toLowerCase()))
   );
 
   return (
@@ -86,10 +31,10 @@ export function LanguageToggle() {
           className="h-9 w-9 rounded-full transition-transform active:scale-95"
           aria-label="Select language"
         >
-          {selectedFlag ? (
+          {currentLanguageMeta.flag ? (
             <img
-              src={`https://flagcdn.com/20x15/${selectedFlag}.png`}
-              alt={selectedLang}
+              src={`https://flagcdn.com/20x15/${currentLanguageMeta.flag}.png`}
+              alt={currentLanguageMeta.name}
               className="h-3.5 w-5 rounded-[2px] object-cover shadow-sm"
             />
           ) : (
@@ -100,14 +45,14 @@ export function LanguageToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-56 p-1.5 rounded-xl border bg-popover text-popover-foreground shadow-xl"
+        className="w-60 p-1.5 rounded-xl border bg-popover text-popover-foreground shadow-xl z-50"
       >
         {/* Search Header */}
         <div className="relative px-1 pt-1 pb-2">
           <Search className="absolute left-3 top-3.5 h-3.5 w-3.5 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Search language..."
+            placeholder={dict.common.searchPlaceholder || "Search language..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full rounded-lg bg-muted/60 py-1.5 pl-8 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-[#29A4FF] focus:bg-muted transition-all"
@@ -124,13 +69,12 @@ export function LanguageToggle() {
             </div>
           ) : (
             filtered.map((l) => {
-              const isSelected = selectedLang === l.name;
+              const isSelected = language === l.code;
               return (
                 <DropdownMenuItem
                   key={l.code}
                   onClick={() => {
-                    setSelectedLang(l.name);
-                    setSelectedFlag(l.flag);
+                    setLanguage(l.code as LanguageCode);
                   }}
                   className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground"
                 >
@@ -144,9 +88,16 @@ export function LanguageToggle() {
                     ) : (
                       <span className="h-3 w-4 rounded-[2px] bg-muted inline-block" />
                     )}
-                    <span className={`font-medium ${isSelected ? 'text-[#29A4FF]' : 'text-foreground'}`}>
-                      {l.name}
-                    </span>
+                    <div className="flex flex-col text-left">
+                      <span className={`font-medium ${isSelected ? 'text-[#29A4FF]' : 'text-foreground'}`}>
+                        {l.name}
+                      </span>
+                      {l.nativeName && l.nativeName !== l.name && (
+                        <span className="text-[10px] text-muted-foreground">
+                          {l.nativeName}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   {isSelected && <Check className="h-4 w-4 text-[#29A4FF]" />}
                 </DropdownMenuItem>

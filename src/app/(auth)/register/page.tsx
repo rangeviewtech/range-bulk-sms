@@ -10,6 +10,7 @@ import { registerSchema } from '@/lib/validations/auth';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { ThemeToggle } from '@/components/navigation/theme-toggle';
 import { LanguageToggle } from '@/components/navigation/language-toggle';
+import { useLanguage } from '@/hooks/use-language';
 import { isDev, formatErrorForEnv } from '@/lib/env';
 import { appConfig } from '@/config/app';
 import { appAssets } from '@/config/assets';
@@ -75,6 +76,7 @@ function XIcon({ size = 16 }: { size?: number }) {
 }
 
 export default function RegisterPage() {
+  const { dict } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -123,21 +125,21 @@ export default function RegisterPage() {
   const hasNumber = /[0-9]/.test(passwordValue);
   const requirementsMet = [hasLength, hasUpper, hasLower, hasNumber].filter(Boolean).length;
   
-  let strengthText = 'Weak';
+  let strengthText = dict.auth.strengthWeak;
   let strengthColor = 'hsl(var(--destructive))';
   let strengthWidth = '0%';
   
   if (passwordValue.length > 0) {
     if (requirementsMet <= 2) {
-      strengthText = 'Weak';
+      strengthText = dict.auth.strengthWeak;
       strengthColor = 'hsl(var(--destructive))';
       strengthWidth = '33%';
     } else if (requirementsMet === 3) {
-      strengthText = 'Good';
+      strengthText = dict.auth.strengthGood;
       strengthColor = '#ffc107';
       strengthWidth = '66%';
     } else if (requirementsMet === 4) {
-      strengthText = 'Strong';
+      strengthText = dict.auth.strengthStrong;
       strengthColor = 'hsl(var(--success, 142 71% 45%))';
       strengthWidth = '100%';
     }
@@ -335,11 +337,11 @@ export default function RegisterPage() {
             <form id="register_form" onSubmit={handleSubmit(onSubmit)} className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
               <div className="auth-stagger-1">
                 <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-                  Create an account
+                  {dict.auth.createAccountTitle}
                 </h3>
 
                 <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-                  Get started with your free account. No credit card required.
+                  {dict.auth.createAccountSubtitle}
                 </p>
               </div>
 
@@ -349,7 +351,7 @@ export default function RegisterPage() {
                   {...register('name')}
                   type="text"
                   className="form-control width100 auth-input"
-                  placeholder="Full name"
+                  placeholder={dict.auth.fullNamePlaceholder}
                   autoComplete="name"
                   disabled={loading || !!socialLoading}
                   style={{
@@ -381,7 +383,7 @@ export default function RegisterPage() {
                   type="email"
                   id="email"
                   className="form-control width100 auth-input"
-                  placeholder="Email address"
+                  placeholder={dict.auth.emailPlaceholder}
                   autoComplete="email"
                   disabled={loading || !!socialLoading}
                   style={{
@@ -413,7 +415,7 @@ export default function RegisterPage() {
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   className="form-control width100 auth-input"
-                  placeholder="Password (min. 8 characters)"
+                  placeholder={dict.auth.registerPasswordPlaceholder}
                   autoComplete="new-password"
                   disabled={loading || !!socialLoading}
                   style={{
@@ -464,7 +466,7 @@ export default function RegisterPage() {
                 {passwordValue.length > 0 && (
                   <div style={{ marginTop: '8px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                      <span style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK }}>Password strength:</span>
+                      <span style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK }}>{dict.auth.strengthLabel}:</span>
                       <span style={{ fontSize: '11px', color: strengthColor, fontWeight: 600, fontFamily: FONT_STACK }}>{strengthText}</span>
                     </div>
                     <div style={{ width: '100%', height: '4px', backgroundColor: 'hsl(var(--border))', borderRadius: '2px', overflow: 'hidden' }}>
@@ -480,7 +482,7 @@ export default function RegisterPage() {
                   {...register('confirmPassword')}
                   type={showConfirmPassword ? 'text' : 'password'}
                   className="form-control width100 auth-input"
-                  placeholder="Confirm password"
+                  placeholder={dict.auth.confirmPasswordPlaceholder}
                   autoComplete="new-password"
                   disabled={loading || !!socialLoading}
                   style={{
@@ -529,7 +531,7 @@ export default function RegisterPage() {
                 {errors.confirmPassword ? (
                   <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{errors.confirmPassword.message}</p>
                 ) : (touchedFields.confirmPassword && passwordValue !== confirmPasswordValue) ? (
-                  <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>Passwords don&apos;t match</p>
+                  <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{dict.validation.passwordsMismatch}</p>
                 ) : null}
               </div>
 
@@ -552,7 +554,7 @@ export default function RegisterPage() {
                 />
                 {turnstileExpired && (
                   <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
-                    Security check expired. Please re-verify.
+                    {dict.validation.securityCheckExpired}
                   </p>
                 )}
               </div>
@@ -585,14 +587,14 @@ export default function RegisterPage() {
                     opacity: loading ? 0.7 : 1,
                   }}
                 >
-                  {loading ? 'Creating account...' : 'Create account'}
+                  {loading ? dict.auth.creatingAccount : dict.auth.createAccountButton}
                 </button>
               </div>
 
               {/* Sign in Link */}
               <div className="auth-stagger-5" style={{ textAlign: 'center', marginTop: '12px' }}>
                 <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK }}>
-                  Already have an account?{' '}
+                  {dict.auth.alreadyHaveAccountPrompt}{' '}
                 </span>
                 <a
                   href="/login"
@@ -607,7 +609,7 @@ export default function RegisterPage() {
                   onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
                   onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
                 >
-                  Sign in
+                  {dict.auth.signInLink}
                 </a>
               </div>
 
@@ -623,7 +625,7 @@ export default function RegisterPage() {
                 }}
               >
                 <span className="OR_left-line" style={{ flexGrow: 1, height: '1px', backgroundColor: 'hsl(var(--border))' }}></span>
-                <span className="OR_or-text" style={{ margin: '0 8px', color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: FONT_STACK }}>Or continue with</span>
+                <span className="OR_or-text" style={{ margin: '0 8px', color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: FONT_STACK }}>{dict.auth.orContinueWith}</span>
                 <span className="OR_right-line" style={{ flexGrow: 1, height: '1px', backgroundColor: 'hsl(var(--border))' }}></span>
               </div>
 

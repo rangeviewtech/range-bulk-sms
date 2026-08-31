@@ -10,11 +10,13 @@ import { pinSchema } from '@/lib/validations/auth';
 import { PinInput } from '@/components/forms/pin-input';
 import { TurnstileWidget } from '@/components/forms/turnstile-widget';
 import { AuthLayout } from '@/components/layout/auth-layout';
+import { useLanguage } from '@/hooks/use-language';
 
 type PinValues = z.infer<typeof pinSchema>;
 const FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
 export default function ScreenLockPage() {
+  const { dict } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileExpired, setTurnstileExpired] = useState(false);
@@ -28,7 +30,7 @@ export default function ScreenLockPage() {
 
   const onSubmit = async (data: PinValues) => {
     if (turnstileExpired) {
-      toast.error('Security check has expired. Please verify again.');
+      toast.error(dict.validation.securityCheckExpired || 'Security check has expired. Please verify again.');
       return;
     }
     setLoading(true);
@@ -51,10 +53,10 @@ export default function ScreenLockPage() {
       <div className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
         <div className="auth-stagger-1">
           <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-            Session locked
+            {dict.auth.sessionLockedTitle}
           </h3>
           <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-            Your session was locked for security. Enter your 6-digit PIN to continue.
+            {dict.auth.sessionLockedSubtitle}
           </p>
         </div>
 
@@ -86,7 +88,7 @@ export default function ScreenLockPage() {
             />
             {turnstileExpired && (
               <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
-                Security check expired. Please re-verify.
+                {dict.validation.securityCheckExpired}
               </p>
             )}
           </div>
@@ -114,13 +116,13 @@ export default function ScreenLockPage() {
                 opacity: loading || (pinValue?.length !== 6) ? 0.7 : 1,
               }}
             >
-              {loading ? 'Unlocking...' : 'Unlock session'}
+              {loading ? dict.auth.unlocking : dict.auth.unlockSessionButton}
             </button>
           </div>
         </form>
 
         <div className="auth-stagger-5" style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid hsl(var(--border))', textAlign: 'center' }}>
-          <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK, marginBottom: '12px' }}>Not your account?</p>
+          <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK, marginBottom: '12px' }}>{dict.auth.notYourAccountPrompt}</p>
           <form action={logout}>
             <button 
               type="submit"
@@ -140,7 +142,7 @@ export default function ScreenLockPage() {
                 fontFamily: FONT_STACK,
               }}
             >
-              Sign out
+              {dict.auth.signOutButton}
             </button>
           </form>
         </div>
