@@ -210,6 +210,10 @@ export const enDictionary: TranslationDictionary = {
     backToRegister: 'Back to Registration',
     backToLogin: 'Back to Sign In',
     backToHome: 'Back to Home',
+    cookieBannerTitle: 'Cookie Preferences',
+    cookieBannerSubtitle: 'Essential cookies & telemetry caching',
+    cookieAcceptButton: 'Accept All',
+    cookieDeclineButton: 'Decline',
   },
 };
 
@@ -372,6 +376,10 @@ export const deDictionary: TranslationDictionary = {
     backToRegister: 'Zurück zur Registrierung',
     backToLogin: 'Zurück zur Anmeldung',
     backToHome: 'Zurück zur Startseite',
+    cookieBannerTitle: 'Cookie-Einstellungen',
+    cookieBannerSubtitle: 'Essenzielle Cookies & Telemetrie-Cache',
+    cookieAcceptButton: 'Alle annehmen',
+    cookieDeclineButton: 'Ablehnen',
   },
 };
 
@@ -534,6 +542,10 @@ export const esDictionary: TranslationDictionary = {
     backToRegister: 'Volver al Registro',
     backToLogin: 'Volver a Iniciar Sesión',
     backToHome: 'Volver al Inicio',
+    cookieBannerTitle: 'Preferencias de Cookies',
+    cookieBannerSubtitle: 'Cookies esenciales y caché de telemetría',
+    cookieAcceptButton: 'Aceptar todo',
+    cookieDeclineButton: 'Rechazar',
   },
 };
 
@@ -696,6 +708,10 @@ export const frDictionary: TranslationDictionary = {
     backToRegister: 'Retour à l’Inscription',
     backToLogin: 'Retour à la Connexion',
     backToHome: 'Retour à l’Accueil',
+    cookieBannerTitle: 'Gestion des Cookies',
+    cookieBannerSubtitle: 'Cookies essentiels et cache de télématique',
+    cookieAcceptButton: 'Tout accepter',
+    cookieDeclineButton: 'Refuser',
   },
 };
 
@@ -858,6 +874,10 @@ export const aeDictionary: TranslationDictionary = {
     backToRegister: 'العودة إلى التسجيل',
     backToLogin: 'العودة إلى تسجيل الدخول',
     backToHome: 'العودة إلى الرئيسية',
+    cookieBannerTitle: 'تفضيلات ملفات تعريف الارتباط',
+    cookieBannerSubtitle: 'الكوكيز الأساسية وتخزين بيانات التتبع',
+    cookieAcceptButton: 'قبول الكل',
+    cookieDeclineButton: 'رفض',
   },
 };
 

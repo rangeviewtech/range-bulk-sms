@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Cookie, X, ShieldCheck } from 'lucide-react';
+import { Cookie, X, Check } from 'lucide-react';
 import Link from 'next/link';
 import { useLanguage } from '@/hooks/use-language';
+
+const FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
 export function CookieBanner() {
   const [isVisible, setIsVisible] = useState(false);
@@ -13,7 +15,7 @@ export function CookieBanner() {
     try {
       const consent = localStorage.getItem('cookie_consent');
       if (!consent) {
-        const timer = setTimeout(() => setIsVisible(true), 1500);
+        const timer = setTimeout(() => setIsVisible(true), 1200);
         return () => clearTimeout(timer);
       }
     } catch {
@@ -41,71 +43,112 @@ export function CookieBanner() {
 
   if (!isVisible) return null;
 
+  const bannerTitle = dict.legal?.cookieBannerTitle || 'Cookie Preferences';
+  const bannerSubtitle = dict.legal?.cookieBannerSubtitle || 'Essential cookies & telemetry caching';
+  const acceptBtnText = dict.legal?.cookieAcceptButton || 'Accept All';
+  const declineBtnText = dict.legal?.cookieDeclineButton || 'Decline';
+
   return (
     <div
       dir={isRtl ? 'rtl' : 'ltr'}
-      className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 animate-in slide-in-from-bottom-5 fade-in duration-500 max-w-[92vw] sm:max-w-md"
+      className="fixed bottom-6 right-6 z-50 border border-border shadow-2xl p-4 rounded-lg flex flex-col gap-3.5 max-w-xs transition-all duration-300 animate-in fade-in slide-in-from-bottom-5"
+      style={{
+        fontFamily: FONT_STACK,
+        width: '300px',
+        backgroundColor: 'hsl(var(--card))',
+        boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
+      }}
     >
-      <div className="bg-card p-5 sm:p-6 rounded-xl border border-border shadow-2xl relative space-y-4">
-        <button 
-          onClick={handleReject}
-          aria-label="Close"
-          className="absolute top-3.5 right-3.5 p-1 text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
-        
-        <div className="flex gap-3.5 items-start">
-          <div className="hidden sm:flex mt-0.5">
-            <div className="w-9 h-9 bg-[#29A4FF]/10 text-[#29A4FF] rounded-lg flex items-center justify-center border border-[#29A4FF]/20">
-              <Cookie className="w-5 h-5" />
-            </div>
+      {/* Header Row — matching PWA prompt */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div
+            className="w-9 h-9 shrink-0 rounded-lg flex items-center justify-center border border-[#29A4FF]/25"
+            style={{ backgroundColor: 'rgba(41, 164, 255, 0.1)', color: '#29A4FF' }}
+          >
+            <Cookie size={20} />
           </div>
-          <div className="space-y-2.5 flex-1 pr-4 sm:pr-0">
-            <div>
-              <h3 className="font-semibold tracking-tight text-sm sm:text-base text-foreground flex items-center gap-2">
-                <Cookie className="w-4 h-4 text-[#29A4FF] sm:hidden" />
-                {dict.legal?.cookiesTitle || 'Cookie & Privacy Preferences'}
-              </h3>
-              <p className="text-muted-foreground text-xs mt-1 leading-relaxed">
-                {dict.legal?.cookiesSubtitle || 'We use essential cookies and telemetry caching to ensure optimal GPS tracking performance and security.'}
-              </p>
-            </div>
-            
-            <div className="flex gap-2 pt-1" style={{ direction: 'ltr' }}>
-              <button
-                onClick={handleAccept}
-                className="btn btn-primary auth-btn-primary flex-1 text-xs font-bold text-white bg-[#29A4FF] rounded-md"
-                style={{ height: '34px' }}
-              >
-                Accept All
-              </button>
-              <button
-                onClick={handleReject}
-                className="btn btn-secondary auth-btn-secondary flex-1 text-xs font-semibold rounded-md"
-                style={{ height: '34px' }}
-              >
-                Essential Only
-              </button>
-            </div>
-
-            <div className="text-[11px] flex items-center justify-between gap-2 pt-1 text-muted-foreground">
-              <Link href="/cookies" className="text-[#29A4FF] hover:underline font-medium">
-                {dict.legal?.cookiePolicy || 'Cookie Policy'}
-              </Link>
-              <span>•</span>
-              <Link href="/privacy" className="text-[#29A4FF] hover:underline font-medium">
-                {dict.legal?.privacyPolicy || 'Privacy Policy'}
-              </Link>
-              <span>•</span>
-              <Link href="/terms" className="text-[#29A4FF] hover:underline font-medium">
-                {dict.legal?.termsAndConditions || 'Terms'}
-              </Link>
-            </div>
+          <div>
+            <h4 style={{ fontSize: '14px', fontWeight: 600, color: 'hsl(var(--foreground))', margin: 0, lineHeight: '18px' }}>
+              {bannerTitle}
+            </h4>
+            <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', margin: '2px 0 0 0', lineHeight: '16px' }}>
+              {bannerSubtitle}
+            </p>
           </div>
         </div>
+        <button
+          onClick={handleReject}
+          style={{ background: 'none', border: 'none', padding: '2px', cursor: 'pointer', color: 'hsl(var(--muted-foreground))' }}
+          title="Close"
+          aria-label="Close"
+        >
+          <X size={16} />
+        </button>
+      </div>
+
+      {/* Buttons Row — matching PWA prompt with locked LTR button ordering */}
+      <div className="flex gap-2" style={{ marginTop: '4px', direction: 'ltr' }}>
+        <button
+          onClick={handleAccept}
+          className="auth-btn-primary"
+          style={{
+            flex: 1,
+            height: '36px',
+            borderRadius: '7px',
+            fontSize: '13px',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+          }}
+        >
+          <Check size={14} />
+          <span>{acceptBtnText}</span>
+        </button>
+        <button
+          onClick={handleReject}
+          className="auth-btn-secondary"
+          style={{
+            height: '36px',
+            borderRadius: '7px',
+            fontSize: '13px',
+            fontWeight: 600,
+            padding: '0 14px',
+          }}
+        >
+          {declineBtnText}
+        </button>
+      </div>
+
+      {/* Policy Links Row */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          fontSize: '11px',
+          color: 'hsl(var(--muted-foreground))',
+          paddingTop: '4px',
+          borderTop: '1px solid hsl(var(--border) / 0.5)',
+          marginTop: '2px',
+        }}
+      >
+        <Link href="/cookies" className="text-[#29A4FF] hover:underline font-semibold">
+          {dict.legal?.cookiePolicy || 'Cookie Policy'}
+        </Link>
+        <span style={{ opacity: 0.4 }}>•</span>
+        <Link href="/privacy" className="hover:text-foreground transition-colors">
+          {dict.legal?.privacyPolicy || 'Privacy'}
+        </Link>
+        <span style={{ opacity: 0.4 }}>•</span>
+        <Link href="/terms" className="hover:text-foreground transition-colors">
+          {dict.legal?.termsAndConditions || 'Terms'}
+        </Link>
       </div>
     </div>
   );
 }
+
 

@@ -1,6 +1,7 @@
-﻿import { AppProviders } from '@/providers/app-providers';
+import { AppProviders } from '@/providers/app-providers';
 import { createMetadata } from '@/lib/metadata';
 import { PWARegister } from '@/components/pwa/pwa-register';
+import { CookieBanner } from '@/components/blocks/ui/cookie-banner';
 
 import './globals.css';
 import './trakzee-legacy.css';
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="h-full antialiased font-sans">
         <AppProviders>
           <PWARegister />
+          <CookieBanner />
           {children}
         </AppProviders>
       </body>

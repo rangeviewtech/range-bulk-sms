@@ -217,5 +217,9 @@ export interface TranslationDictionary {
     backToRegister: string;
     backToLogin: string;
     backToHome: string;
+    cookieBannerTitle: string;
+    cookieBannerSubtitle: string;
+    cookieAcceptButton: string;
+    cookieDeclineButton: string;
   };
 }
