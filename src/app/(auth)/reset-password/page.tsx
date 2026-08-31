@@ -19,7 +19,7 @@ type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 const FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
 function ResetPasswordForm() {
-  const { dict } = useLanguage();
+  const { dict, isRtl } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -207,7 +207,7 @@ function ResetPasswordForm() {
             style={{
               width: '100%',
               height: '38px',
-              padding: '6px 36px 6px 12px',
+              padding: isRtl ? '6px 12px 6px 36px' : '6px 36px 6px 12px',
               fontSize: '13px',
               backgroundColor: 'hsl(var(--muted))',
               border: errors.password
@@ -231,7 +231,8 @@ function ResetPasswordForm() {
             style={{
               position: 'absolute',
               top: '19px',
-              right: '12px',
+              right: isRtl ? 'auto' : '12px',
+              left: isRtl ? '12px' : 'auto',
               transform: 'translateY(-50%)',
               cursor: 'pointer',
               background: 'none',
@@ -274,7 +275,7 @@ function ResetPasswordForm() {
             style={{
               width: '100%',
               height: '38px',
-              padding: '6px 36px 6px 12px',
+              padding: isRtl ? '6px 12px 6px 36px' : '6px 36px 6px 12px',
               fontSize: '13px',
               backgroundColor: 'hsl(var(--muted))',
               border: errors.confirmPassword || (touchedFields.confirmPassword && passwordValue !== confirmPasswordValue)
@@ -298,7 +299,8 @@ function ResetPasswordForm() {
             style={{
               position: 'absolute',
               top: '19px',
-              right: '12px',
+              right: isRtl ? 'auto' : '12px',
+              left: isRtl ? '12px' : 'auto',
               transform: 'translateY(-50%)',
               cursor: 'pointer',
               background: 'none',

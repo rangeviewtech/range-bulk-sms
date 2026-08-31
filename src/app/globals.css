@@ -261,8 +261,8 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0px 1000px #F7F7F7 inset !important;
-  -webkit-text-fill-color: #000000 !important;
+  -webkit-box-shadow: 0 0 0px 1000px hsl(var(--muted)) inset !important;
+  -webkit-text-fill-color: hsl(var(--foreground)) !important;
   transition: background-color 5000s ease-in-out 0s;
 }
 
@@ -319,7 +319,12 @@ input:-webkit-autofill:active {
 }
 
 .form-control {
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.form-control:hover:not(:disabled):not(:focus) {
+  border-color: hsl(var(--foreground) / 0.28) !important;
 }
 .form-control:focus, .form-control:focus-visible, .form-control:active {
   border-color: #29A4FF !important;
@@ -450,18 +455,18 @@ input:-webkit-autofill:active {
 .auth-input {
   transition: border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.15s ease !important;
+              background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .auth-input:hover:not(:disabled):not(:focus) {
-  border-color: hsl(var(--foreground) / 0.25) !important;
+  border-color: hsl(var(--foreground) / 0.28) !important;
 }
 
 .auth-input:focus,
-.auth-input:focus-visible {
+.auth-input:focus-visible,
+.auth-input:active {
   border-color: #29A4FF !important;
-  box-shadow: 0 0 0 3.5px rgba(41, 164, 255, 0.18) !important;
+  box-shadow: 0 0 0 1px #29A4FF !important;
   outline: none !important;
 }
 
