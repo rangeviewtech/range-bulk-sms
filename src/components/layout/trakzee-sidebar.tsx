@@ -271,6 +271,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
   // Flyout State
   const [hoveredModule, setHoveredModule] = React.useState<NavModule | null>(null);
   const [hoveredCategory, setHoveredCategory] = React.useState<NavCategory | null>(null);
+  const [categoryIndex, setCategoryIndex] = React.useState<number>(0);
   const [flyoutTop, setFlyoutTop] = React.useState<number>(0);
 
   // Drawers & Dialogs
@@ -331,6 +332,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
   const closeAllFlyouts = () => {
     setHoveredModule(null);
     setHoveredCategory(null);
+    setCategoryIndex(0);
   };
 
   return (
@@ -418,6 +420,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
                     setFlyoutTop(rect.top);
                     setHoveredModule(mod);
                     setHoveredCategory(mod.categories ? mod.categories[0] : null);
+                    setCategoryIndex(0);
                   }}
                 >
                   {mod.href && !mod.categories ? (
@@ -475,7 +478,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
           </div>
         </aside>
 
-        {/* 2. MULTI-LEVEL FLYOUT MENU (Layer 2 #subMenu + Layer 3 #deepMenu - vertically aligned with hovered module) */}
+        {/* 2. MULTI-LEVEL FLYOUT MENU (Layer 2 #subMenu + Layer 3 #deepMenu) */}
         {hoveredModule && hoveredModule.categories && (
           <div
             id="flyout-container"
@@ -490,12 +493,15 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
               className="w-[170px] bg-[#1542b7] text-white flex flex-col shadow-2xl border-r border-white/10 max-h-[85vh] overflow-y-auto"
             >
               <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5">
-                {hoveredModule.categories.map((cat) => {
+                {hoveredModule.categories.map((cat, idx) => {
                   const isCatHovered = hoveredCategory?.title === cat.title;
                   return (
                     <li
                       key={cat.title}
-                      onMouseEnter={() => setHoveredCategory(cat)}
+                      onMouseEnter={() => {
+                        setHoveredCategory(cat);
+                        setCategoryIndex(idx);
+                      }}
                       className={cn(
                         "h-[38px] px-3 flex items-center justify-between text-[12px] font-medium text-white/90 hover:text-white hover:bg-[#07163d] cursor-pointer transition-colors group",
                         isCatHovered && "bg-[#07163d] text-white font-semibold"
@@ -514,11 +520,14 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
               </ul>
             </div>
 
-            {/* LAYER 3: Deep Menu Screens (180px wide, #1542b7 / rgb(21, 66, 183)) */}
+            {/* LAYER 3: Deep Menu Screens (180px wide, positioned dynamically next to hovered category) */}
             {hoveredCategory && (
               <div
                 id="deepMenu"
-                className="w-[180px] bg-[#1542b7] text-white flex flex-col shadow-2xl max-h-[85vh] overflow-y-auto border-r border-white/10 animate-in fade-in duration-75"
+                className="w-[180px] bg-[#1542b7] text-white flex flex-col shadow-2xl h-fit max-h-[80vh] overflow-y-auto border-r border-white/10 animate-in fade-in duration-75"
+                style={{
+                  marginTop: `${categoryIndex * 38}px`
+                }}
               >
                 <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5">
                   {hoveredCategory.items.map((screen) => {
