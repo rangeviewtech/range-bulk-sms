@@ -20,11 +20,8 @@ import {
   Check,
   Moon,
   Sun,
-  Shield,
-  HelpCircle,
   Layers,
-  ArrowRight,
-  Download
+  ArrowRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
@@ -274,6 +271,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
   // Flyout State
   const [hoveredModule, setHoveredModule] = React.useState<NavModule | null>(null);
   const [hoveredCategory, setHoveredCategory] = React.useState<NavCategory | null>(null);
+  const [flyoutTop, setFlyoutTop] = React.useState<number>(0);
 
   // Drawers & Dialogs
   const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
@@ -337,219 +335,216 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
 
   return (
     <>
-      {/* 1. PRIMARY SIDEBAR (90px wide, #07163d) */}
-      <aside
-        id="left-tree"
-        className="fixed top-0 left-0 h-full w-[90px] bg-[#07163d] text-white flex flex-col z-[60] select-none shadow-2xl"
+      {/* UNIFIED CONTAINER FOR SIDEBAR + FLYOUTS TO MAINTAIN MOUSE INTERACTION */}
+      <div 
+        id="tree-outer-wrapper" 
+        className="fixed top-0 left-0 h-full z-[60] pointer-events-none flex"
         onMouseLeave={closeAllFlyouts}
       >
-        {/* LOGO CONTAINER (78px x 78px circular badge matching live site) */}
-        <div id="tree-logo" className="flex items-center justify-center p-2 pt-2.5">
-          <Link
-            href="/dashboard"
-            className="w-[78px] h-[78px] rounded-full bg-[#02050f] border border-white/20 flex flex-col items-center justify-center hover:border-white/40 transition-all shadow-inner group overflow-hidden"
-            title="Trakzee - Fleet Telematics"
-          >
-            {/* Live Uffizio Logo */}
-            <img 
-              src="/images/smart/ulogo.png" 
-              alt="Uffizio Trakzee Logo" 
-              className="w-[60px] h-[24px] object-contain"
-            />
-          </Link>
-        </div>
-
-        {/* USER & NOTIFICATIONS BAR (70px height) */}
-        <div id="tree-user" className="flex items-center justify-center h-[65px] border-b border-white/10 relative">
-          {/* User Icon */}
-          <button
-            type="button"
-            onClick={() => {
-              setIsUserMenuOpen((prev) => !prev);
-              setIsNotificationsOpen(false);
-            }}
-            className={cn(
-              "flex-1 h-full flex items-center justify-center hover:bg-white/10 transition-colors text-white/70 hover:text-white cursor-pointer relative",
-              isUserMenuOpen && "bg-white/15 text-white"
-            )}
-            title="User Profile & Settings"
-            aria-label="User Profile"
-          >
-            <User className="w-[22px] h-[22px]" strokeWidth={1.3} />
-          </button>
-
-          {/* Divider */}
-          <div className="w-[1px] h-[26px] bg-white/10" />
-
-          {/* Notifications Icon */}
-          <button
-            type="button"
-            onClick={() => {
-              setIsNotificationsOpen((prev) => !prev);
-              setIsUserMenuOpen(false);
-            }}
-            className={cn(
-              "flex-1 h-full flex items-center justify-center hover:bg-white/10 transition-colors text-white/70 hover:text-white cursor-pointer relative",
-              isNotificationsOpen && "bg-white/15 text-white"
-            )}
-            title="Notifications & Announcements"
-            aria-label="Notifications"
-          >
-            <Bell className="w-[22px] h-[22px]" strokeWidth={1.3} />
-            <span className="absolute top-4 right-4 w-2 h-2 bg-[#29a4ff] rounded-full animate-pulse ring-2 ring-[#07163d]" />
-          </button>
-        </div>
-
-        {/* PRIMARY MODULES LIST */}
-        <div id="tree-module" className="flex-1 flex flex-col py-1 overflow-y-auto overflow-x-hidden">
-          {TRAKZEE_NAVIGATION.map((mod) => {
-            const isHovered = hoveredModule?.title === mod.title;
-            const isActive = mod.href ? pathname === mod.href : pathname.startsWith(`/${mod.title.toLowerCase()}`);
-
-            return (
-              <div
-                key={mod.title}
-                className="w-full h-[78px] relative flex flex-col items-center justify-center cursor-pointer transition-all duration-150"
-                onMouseEnter={() => {
-                  setHoveredModule(mod);
-                  setHoveredCategory(mod.categories ? mod.categories[0] : null);
-                }}
-              >
-                {mod.href && !mod.categories ? (
-                  <Link
-                    href={mod.href}
-                    className={cn(
-                      "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white hover:bg-[#234292] transition-colors relative",
-                      (isHovered || isActive) && "bg-[#234292] text-white"
-                    )}
-                  >
-                    {isActive && (
-                      <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#29a4ff]" />
-                    )}
-                    {mod.icon}
-                    <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px]">
-                      {mod.title}
-                    </span>
-                  </Link>
-                ) : (
-                  <div
-                    className={cn(
-                      "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white hover:bg-[#234292] transition-colors relative",
-                      (isHovered || isActive) && "bg-[#234292] text-white"
-                    )}
-                  >
-                    {isActive && (
-                      <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#29a4ff]" />
-                    )}
-                    {mod.icon}
-                    <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px]">
-                      {mod.title}
-                    </span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* BOTTOM CLOUD DOWNLOAD (matching live cloude_download_new.svg) */}
-        <div id="tree-download" className="h-[50px] border-t border-white/10 flex items-center justify-center">
-          <button
-            type="button"
-            onClick={() => setIsCloudDownloadOpen(true)}
-            className="w-full h-full flex items-center justify-center hover:bg-[#234292] transition-colors cursor-pointer"
-            title="Cloud Download"
-            aria-label="Cloud Download"
-          >
-            <img 
-              src="/images/smart/cloude_download_new.svg" 
-              alt="Cloud Download" 
-              className="h-[27px] w-auto object-contain"
-            />
-          </button>
-        </div>
-      </aside>
-
-      {/* 2. MULTI-LEVEL FLYOUT MENU (Layer 2 #subMenu + Layer 3 #deepMenu) */}
-      {hoveredModule && hoveredModule.categories && (
-        <div
-          className="fixed top-0 left-[90px] h-full z-[55] flex animate-in fade-in duration-150"
-          onMouseEnter={() => {}}
-          onMouseLeave={closeAllFlyouts}
+        {/* 1. PRIMARY SIDEBAR (90px wide, #07163d) */}
+        <aside
+          id="left-tree"
+          className="h-full w-[90px] bg-[#07163d] text-white flex flex-col pointer-events-auto select-none shadow-2xl shrink-0"
         >
-          {/* LAYER 2: Submenu Categories (170px wide, #0d276b) */}
-          <div
-            id="subMenu"
-            className="w-[170px] h-full bg-[#0d276b] text-white border-r border-white/10 flex flex-col shadow-2xl overflow-y-auto"
-          >
-            {/* Header Title */}
-            <div className="h-[50px] px-3.5 flex items-center justify-between border-b border-white/10 bg-[#0a1f54] text-xs font-bold uppercase tracking-wider text-[#29a4ff]">
-              <span>{hoveredModule.title}</span>
-              <span className="text-[10px] font-normal text-white/40">{hoveredModule.categories.length}</span>
-            </div>
-
-            {/* Category Items (40px height per item) */}
-            <ul className="flex-1 py-0 divide-y divide-white/5 list-none m-0 p-0">
-              {hoveredModule.categories.map((cat) => {
-                const isCatHovered = hoveredCategory?.title === cat.title;
-                return (
-                  <li
-                    key={cat.title}
-                    onMouseEnter={() => setHoveredCategory(cat)}
-                    className={cn(
-                      "h-[40px] px-3 flex items-center justify-between text-[12px] font-medium text-white/85 hover:text-white hover:bg-[#07163d] cursor-pointer transition-colors group",
-                      isCatHovered && "bg-[#07163d] text-[#29a4ff] font-semibold"
-                    )}
-                  >
-                    <span className="truncate">{cat.title}</span>
-                    <ChevronRight
-                      className={cn(
-                        "w-3.5 h-3.5 text-white/40 group-hover:text-white transition-transform",
-                        isCatHovered && "text-[#29a4ff] translate-x-0.5"
-                      )}
-                    />
-                  </li>
-                );
-              })}
-            </ul>
+          {/* LOGO CONTAINER (78px x 78px circular badge matching live site) */}
+          <div id="tree-logo" className="flex items-center justify-center p-2 pt-2.5">
+            <Link
+              href="/dashboard"
+              className="w-[78px] h-[78px] rounded-full bg-[#02050f] border border-white/20 flex flex-col items-center justify-center hover:border-white/40 transition-all shadow-inner group overflow-hidden"
+              title="Trakzee - Fleet Telematics"
+            >
+              {/* Live Uffizio Logo */}
+              <img 
+                src="/images/smart/ulogo.png" 
+                alt="Uffizio Trakzee Logo" 
+                className="w-[60px] h-[24px] object-contain"
+              />
+            </Link>
           </div>
 
-          {/* LAYER 3: Deep Menu Screens (180px wide, #07163d) */}
-          {hoveredCategory && (
-            <div
-              id="deepMenu"
-              className="w-[190px] h-full bg-[#07163d] text-white border-r border-white/10 flex flex-col shadow-2xl overflow-y-auto animate-in slide-in-from-left-2 duration-150"
+          {/* USER & NOTIFICATIONS BAR (65px height) */}
+          <div id="tree-user" className="flex items-center justify-center h-[65px] border-b border-white/10 relative">
+            {/* User Icon */}
+            <button
+              type="button"
+              onClick={() => {
+                setIsUserMenuOpen((prev) => !prev);
+                setIsNotificationsOpen(false);
+              }}
+              className={cn(
+                "flex-1 h-full flex items-center justify-center hover:bg-white/10 transition-colors text-white/70 hover:text-white cursor-pointer relative",
+                isUserMenuOpen && "bg-white/15 text-white"
+              )}
+              title="User Profile & Settings"
+              aria-label="User Profile"
             >
-              {/* Header Title */}
-              <div className="h-[50px] px-3.5 flex items-center border-b border-white/10 bg-[#040e27] text-xs font-semibold text-white/90 truncate">
-                <span className="truncate">{hoveredCategory.title}</span>
-              </div>
+              <User className="w-[22px] h-[22px]" strokeWidth={1.3} />
+            </button>
 
-              {/* Screens List (38px height per item) */}
-              <ul className="flex-1 py-0 divide-y divide-white/5 list-none m-0 p-0">
-                {hoveredCategory.items.map((screen) => {
-                  const isCurrent = pathname === screen.href;
+            {/* Divider */}
+            <div className="w-[1px] h-[26px] bg-white/10" />
+
+            {/* Notifications Icon */}
+            <button
+              type="button"
+              onClick={() => {
+                setIsNotificationsOpen((prev) => !prev);
+                setIsUserMenuOpen(false);
+              }}
+              className={cn(
+                "flex-1 h-full flex items-center justify-center hover:bg-white/10 transition-colors text-white/70 hover:text-white cursor-pointer relative",
+                isNotificationsOpen && "bg-white/15 text-white"
+              )}
+              title="Notifications & Announcements"
+              aria-label="Notifications"
+            >
+              <Bell className="w-[22px] h-[22px]" strokeWidth={1.3} />
+              <span className="absolute top-4 right-4 w-2 h-2 bg-[#29a4ff] rounded-full animate-pulse ring-2 ring-[#07163d]" />
+            </button>
+          </div>
+
+          {/* PRIMARY MODULES LIST */}
+          <div id="tree-module" className="flex-1 flex flex-col py-1 overflow-y-auto overflow-x-hidden">
+            {TRAKZEE_NAVIGATION.map((mod) => {
+              const isHovered = hoveredModule?.title === mod.title;
+              const isActive = mod.href ? pathname === mod.href : pathname.startsWith(`/${mod.title.toLowerCase()}`);
+
+              return (
+                <div
+                  key={mod.title}
+                  className="w-full h-[78px] relative flex flex-col items-center justify-center cursor-pointer transition-all duration-150"
+                  onMouseEnter={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    setFlyoutTop(rect.top);
+                    setHoveredModule(mod);
+                    setHoveredCategory(mod.categories ? mod.categories[0] : null);
+                  }}
+                >
+                  {mod.href && !mod.categories ? (
+                    <Link
+                      href={mod.href}
+                      className={cn(
+                        "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white hover:bg-[#1542b7] transition-colors relative",
+                        (isHovered || isActive) && "bg-[#1542b7] text-white"
+                      )}
+                    >
+                      {isActive && (
+                        <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#29a4ff]" />
+                      )}
+                      {mod.icon}
+                      <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px]">
+                        {mod.title}
+                      </span>
+                    </Link>
+                  ) : (
+                    <div
+                      className={cn(
+                        "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white hover:bg-[#1542b7] transition-colors relative",
+                        (isHovered || isActive) && "bg-[#1542b7] text-white"
+                      )}
+                    >
+                      {isActive && (
+                        <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#29a4ff]" />
+                      )}
+                      {mod.icon}
+                      <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px]">
+                        {mod.title}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* BOTTOM CLOUD DOWNLOAD */}
+          <div id="tree-download" className="h-[50px] border-t border-white/10 flex items-center justify-center">
+            <button
+              type="button"
+              onClick={() => setIsCloudDownloadOpen(true)}
+              className="w-full h-full flex items-center justify-center hover:bg-[#1542b7] transition-colors cursor-pointer"
+              title="Cloud Download"
+              aria-label="Cloud Download"
+            >
+              <img 
+                src="/images/smart/cloude_download_new.svg" 
+                alt="Cloud Download" 
+                className="h-[27px] w-auto object-contain"
+              />
+            </button>
+          </div>
+        </aside>
+
+        {/* 2. MULTI-LEVEL FLYOUT MENU (Layer 2 #subMenu + Layer 3 #deepMenu - vertically aligned with hovered module) */}
+        {hoveredModule && hoveredModule.categories && (
+          <div
+            id="flyout-container"
+            className="absolute left-[90px] flex shadow-2xl transition-all duration-75 select-none pointer-events-auto"
+            style={{ 
+              top: `${Math.min(flyoutTop, typeof window !== 'undefined' ? Math.max(10, window.innerHeight - 440) : 100)}px` 
+            }}
+          >
+            {/* LAYER 2: Submenu Categories (170px wide, #1542b7 / rgb(21, 66, 183)) */}
+            <div
+              id="subMenu"
+              className="w-[170px] bg-[#1542b7] text-white flex flex-col shadow-2xl border-r border-white/10 max-h-[85vh] overflow-y-auto"
+            >
+              <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5">
+                {hoveredModule.categories.map((cat) => {
+                  const isCatHovered = hoveredCategory?.title === cat.title;
                   return (
-                    <li key={screen.title} className="h-[38px] cursor-pointer">
-                      <Link
-                        href={screen.href}
-                        onClick={closeAllFlyouts}
+                    <li
+                      key={cat.title}
+                      onMouseEnter={() => setHoveredCategory(cat)}
+                      className={cn(
+                        "h-[38px] px-3 flex items-center justify-between text-[12px] font-medium text-white/90 hover:text-white hover:bg-[#07163d] cursor-pointer transition-colors group",
+                        isCatHovered && "bg-[#07163d] text-white font-semibold"
+                      )}
+                    >
+                      <span className="truncate">{cat.title}</span>
+                      <ChevronRight
                         className={cn(
-                          "w-full h-full px-3.5 flex items-center text-[12px] text-white/80 hover:text-white hover:bg-[#234292] hover:pl-4.5 transition-all truncate",
-                          isCurrent && "bg-[#29a4ff] text-white font-semibold"
+                          "w-3.5 h-3.5 text-white/50 group-hover:text-white transition-transform",
+                          isCatHovered && "text-white translate-x-0.5"
                         )}
-                        title={screen.title}
-                      >
-                        <span className="truncate">{screen.title}</span>
-                      </Link>
+                      />
                     </li>
                   );
                 })}
               </ul>
             </div>
-          )}
-        </div>
-      )}
+
+            {/* LAYER 3: Deep Menu Screens (180px wide, #1542b7 / rgb(21, 66, 183)) */}
+            {hoveredCategory && (
+              <div
+                id="deepMenu"
+                className="w-[180px] bg-[#1542b7] text-white flex flex-col shadow-2xl max-h-[85vh] overflow-y-auto border-r border-white/10 animate-in fade-in duration-75"
+              >
+                <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5">
+                  {hoveredCategory.items.map((screen) => {
+                    const isCurrent = pathname === screen.href;
+                    return (
+                      <li key={screen.title} className="h-[38px] cursor-pointer">
+                        <Link
+                          href={screen.href}
+                          onClick={closeAllFlyouts}
+                          className={cn(
+                            "w-full h-full px-3.5 flex items-center text-[12px] text-white/90 hover:text-white hover:bg-[#07163d] transition-all truncate",
+                            isCurrent && "bg-[#07163d] text-white font-semibold"
+                          )}
+                          title={screen.title}
+                        >
+                          <span className="truncate">{screen.title}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* 3. USER PROFILE DRAWER / FLYOUT */}
       {isUserMenuOpen && (
@@ -643,7 +638,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
             onClick={() => setIsUserMenuOpen(false)}
             className="flex items-center gap-2 px-3.5 py-2 hover:bg-muted/70 transition-colors border-t border-border mt-1"
           >
-            <HelpCircle className="w-3.5 h-3.5 text-muted-foreground" />
+            <Check className="w-3.5 h-3.5 text-muted-foreground" />
             <span>Help & Support</span>
           </Link>
 
@@ -662,7 +657,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
 
       {/* 4. NOTIFICATIONS DRAWER */}
       {isNotificationsOpen && (
-        <div className="fixed top-0 left-[90px] h-full w-[320px] bg-card text-card-foreground border-r border-border shadow-2xl flex flex-col z-[70] animate-in slide-in-from-left duration-200">
+        <div className="fixed top-0 left-[90px] h-full w-[320px] bg-card text-card-foreground border-r border-border shadow-2xl flex flex-col z-[70] animate-in slide-in-from-left duration-200 pointer-events-auto">
           {/* Header Tabs */}
           <div className="h-[46px] flex items-stretch border-b border-border bg-muted/40">
             <button
@@ -751,7 +746,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
 
       {isSearchOpen && (
         <div 
-          className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-20 p-4 animate-in fade-in duration-150"
+          className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-20 p-4 animate-in fade-in duration-150 pointer-events-auto"
           onClick={() => setIsSearchOpen(false)}
         >
           <div
@@ -818,7 +813,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
       {/* 6. CLOUD DOWNLOAD MANAGER DIALOG */}
       {isCloudDownloadOpen && (
         <div 
-          className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto"
           onClick={() => setIsCloudDownloadOpen(false)}
         >
           <div 
