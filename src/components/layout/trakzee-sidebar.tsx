@@ -260,6 +260,8 @@ export const TRAKZEE_NAVIGATION: NavModule[] = [
   },
 ];
 
+const ITEM_HEIGHT = 38; // standard 38px height per menu row
+
 interface TrakzeeSidebarProps {
   user?: { name?: string | null; email?: string | null; image?: string | null } | null;
 }
@@ -334,6 +336,22 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
     setHoveredCategory(null);
     setCategoryIndex(0);
   };
+
+  // Compute smart top offset for #deepMenu so it NEVER overflows the bottom of #subMenu
+  const deepMenuTopOffset = React.useMemo(() => {
+    if (!hoveredModule || !hoveredModule.categories || !hoveredCategory) return 0;
+    const subMenuTotalHeight = hoveredModule.categories.length * ITEM_HEIGHT;
+    const deepMenuTotalHeight = hoveredCategory.items.length * ITEM_HEIGHT;
+    const naturalTop = categoryIndex * ITEM_HEIGHT;
+
+    if (deepMenuTotalHeight <= subMenuTotalHeight) {
+      // Clamp so deepMenu never exceeds bottom of subMenu
+      const maxTop = subMenuTotalHeight - deepMenuTotalHeight;
+      return Math.max(0, Math.min(naturalTop, maxTop));
+    } else {
+      return 0;
+    }
+  }, [hoveredModule, hoveredCategory, categoryIndex]);
 
   return (
     <>
@@ -417,7 +435,9 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
                   className="w-full h-[78px] relative flex flex-col items-center justify-center cursor-pointer transition-all duration-150"
                   onMouseEnter={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
-                    setFlyoutTop(rect.top);
+                    const subMenuHeight = (mod.categories?.length || 0) * ITEM_HEIGHT;
+                    const maxTop = typeof window !== 'undefined' ? Math.max(10, window.innerHeight - subMenuHeight - 20) : rect.top;
+                    setFlyoutTop(Math.min(rect.top, maxTop));
                     setHoveredModule(mod);
                     setHoveredCategory(mod.categories ? mod.categories[0] : null);
                     setCategoryIndex(0);
@@ -484,7 +504,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
             id="flyout-container"
             className="absolute left-[90px] flex shadow-2xl transition-all duration-75 select-none pointer-events-auto"
             style={{ 
-              top: `${Math.min(flyoutTop, typeof window !== 'undefined' ? Math.max(10, window.innerHeight - 440) : 100)}px` 
+              top: `${flyoutTop}px` 
             }}
           >
             {/* LAYER 2: Submenu Categories (170px wide, #1542b7 / rgb(21, 66, 183)) */}
@@ -520,13 +540,13 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
               </ul>
             </div>
 
-            {/* LAYER 3: Deep Menu Screens (180px wide, positioned dynamically next to hovered category) */}
+            {/* LAYER 3: Deep Menu Screens (180px wide, positioned dynamically & clamped to subMenu bottom) */}
             {hoveredCategory && (
               <div
                 id="deepMenu"
                 className="w-[180px] bg-[#1542b7] text-white flex flex-col shadow-2xl h-fit max-h-[80vh] overflow-y-auto border-r border-white/10 animate-in fade-in duration-75"
                 style={{
-                  marginTop: `${categoryIndex * 38}px`
+                  marginTop: `${deepMenuTopOffset}px`
                 }}
               >
                 <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5">
