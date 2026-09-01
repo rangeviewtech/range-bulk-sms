@@ -93,7 +93,8 @@ import {
   Smartphone,
   Signal,
   CreditCard,
-  Armchair
+  Armchair,
+  DoorClosed
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -147,15 +148,15 @@ const VEHICLES_DATA: FleetVehicle[] = [
     type: "Truck (Fuel Tanker)",
     group: "Mega Milk",
     status: "Running",
-    speed: 19,
+    speed: 6,
     avgSpeed: 5,
     maxSpeed: 26,
     voltage: "28.3V",
     batteryLevel: 95,
     gsm: 5,
     ignition: true,
-    time: "02-09-2026 12:16:29 AM",
-    address: "Kibuye Natete Road, Nabuny zone A, Rubaga, Kampala, P.O. BOX 6940, Uganda (SE)",
+    time: "02-09-2026 12:16:57 AM",
+    address: "Kiribedda, Nateete, Rubaga, Kampala, P.O. BOX 6940, Uganda (SE)",
     driver: "--",
     mobile: "--",
     currentTrip: "2.15 km",
@@ -229,14 +230,14 @@ const VEHICLES_DATA: FleetVehicle[] = [
     type: "Truck (Fuel Tanker)",
     group: "Mega Milk",
     status: "Running",
-    speed: 19,
+    speed: 51,
     avgSpeed: 38,
     maxSpeed: 82,
-    voltage: "27.7V",
+    voltage: "27.8V",
     batteryLevel: 95,
     gsm: 5,
     ignition: true,
-    time: "02-09-2026 12:16:30 AM",
+    time: "02-09-2026 12:16:54 AM",
     address: "Mbarara Masaka Road, Lwengo, Uganda (NE)",
     driver: "Ntale Driver",
     mobile: "+256 701 498210",
@@ -311,15 +312,15 @@ const VEHICLES_DATA: FleetVehicle[] = [
     type: "Heavy Tipper",
     group: "walen",
     status: "Running",
-    speed: 54,
+    speed: 44,
     avgSpeed: 48,
     maxSpeed: 80,
     voltage: "26.6V",
     batteryLevel: 92,
     gsm: 4,
     ignition: true,
-    time: "02-09-2026 12:16:30 AM",
-    address: "Sironko Kapchorwa Road, Tabagonyi, Bugisa sub-county",
+    time: "02-09-2026 12:16:56 AM",
+    address: "Sironko Kapchorwa Road, Bunambutye, Bugisa",
     driver: "Samuel Kimani",
     mobile: "+256 709 168775",
     currentTrip: "84.30 km",
@@ -351,7 +352,6 @@ export default function TrackingPage() {
   const [leftActiveTab, setLeftActiveTab] = React.useState<"object" | "driver" | "address" | "geofence">("object");
   const [isObjectPanelCollapsed, setIsObjectPanelCollapsed] = React.useState(false);
   
-  // Right Drawer toggle: Telemetry Details vs Pin Tab Settings
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = React.useState(true);
   const [isPinTabDrawerOpen, setIsPinTabDrawerOpen] = React.useState(false);
 
@@ -864,7 +864,7 @@ export default function TrackingPage() {
         )}
       </div>
 
-      {/* 5. RIGHT FLOATING VEHICLE DETAIL DRAWER (ALL 16 WIDGET CARDS MATCHING SCREENSHOTS) */}
+      {/* 5. RIGHT FLOATING VEHICLE DETAIL DRAWER (ALL CARDS MATCHING EXACT SCREENSHOTS) */}
       {isDetailDrawerOpen && selectedVehicle && !isPinTabDrawerOpen && (
         <div className="absolute top-3 right-14 bottom-3 z-30 w-[320px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs">
           
@@ -1055,178 +1055,52 @@ export default function TrackingPage() {
               </div>
             </div>
 
-            {/* 10. SPEED CARD (Image 1) */}
-            <div className="border border-border rounded overflow-hidden shadow-xs">
-              <div className="bg-slate-100 dark:bg-muted/70 px-3 py-1.5 flex items-center justify-between font-bold text-xs text-foreground">
-                <div className="flex items-center gap-1.5">
-                  <Gauge className="w-3.5 h-3.5 text-[#1542b7]" />
-                  <span>Speed</span>
-                </div>
-                <RotateCw className="w-3.5 h-3.5 text-muted-foreground cursor-pointer" />
-              </div>
-              <div className="p-2.5 space-y-2">
-                <div className="flex justify-between text-xs">
-                  <div><span className="text-muted-foreground">Average Speed</span> <strong className="text-sky-600">{selectedVehicle.avgSpeed} km/h</strong></div>
-                  <div><span className="text-muted-foreground">Max Speed</span> <strong className="text-rose-600">{selectedVehicle.maxSpeed} km/h</strong></div>
-                </div>
-                <div className="relative w-full h-[60px] flex items-center justify-center">
-                  <svg className="w-[140px] h-[60px]" viewBox="0 0 200 100">
-                    <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#e2e8f0" strokeWidth="8" strokeLinecap="round" />
-                    <line x1="100" y1="90" x2="135" y2="45" stroke="#2563eb" strokeWidth="3" strokeLinecap="round" />
-                    <circle cx="100" cy="90" r="5" fill="#2563eb" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            {/* 11. ALERT CARD (Image 1) */}
-            <div className="border border-border rounded overflow-hidden shadow-xs p-2.5 flex justify-between items-center text-xs">
-              <div className="flex items-center gap-1.5 font-bold text-foreground">
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                <span>Alert</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-muted-foreground">Total <strong className="text-foreground">0</strong></span>
-                <span className="text-[#1542b7] dark:text-[#29a4ff] font-bold cursor-pointer">+ Alert</span>
-              </div>
-            </div>
-
-            {/* 12. TEMPERATURE CARD (Image 1) */}
-            <div className="rounded overflow-hidden shadow-xs bg-gradient-to-r from-blue-900 to-indigo-900 text-white p-3 flex items-center justify-between">
-              <div className="space-y-1">
-                <div className="text-[10px] uppercase tracking-wider text-sky-200 font-bold">Temperature</div>
-                <div className="text-xs font-semibold">No Temperature Sensor Found</div>
-              </div>
-              <div className="flex items-center gap-1 text-sky-300">
-                <Sun className="w-4 h-4" />
-                <Snowflake className="w-4 h-4" />
-              </div>
-            </div>
-
-            {/* 13. GPS DEVICE PARAMETERS CARD (Image 1 & 2) */}
-            <div className="border border-border rounded overflow-hidden shadow-xs">
-              <div className="bg-slate-100 dark:bg-muted/70 px-3 py-1.5 flex items-center justify-between font-bold text-xs text-foreground">
-                <div className="flex items-center gap-1.5">
-                  <Smartphone className="w-3.5 h-3.5 text-[#1542b7]" />
-                  <span>GPS Device Parameters</span>
-                </div>
-                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
-              </div>
-              <div className="p-2 divide-y divide-border/50 text-[10px]">
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Int Battery</span><span className="font-semibold text-foreground">4.04 V</span></div>
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Satellite</span><span className="font-semibold text-foreground">{selectedVehicle.satellites}</span></div>
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Ext Power</span><span className="font-semibold text-foreground">{selectedVehicle.voltage}</span></div>
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Movement</span><span className="font-semibold text-emerald-600">ON</span></div>
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Altitude</span><span className="font-semibold text-foreground">{selectedVehicle.altitude} m</span></div>
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">HDOP / PDOP</span><span className="font-semibold text-foreground">7 / 12</span></div>
-              </div>
-            </div>
-
-            {/* 14. NETWORK PARAMETER CARD (Image 2) */}
-            <div className="border border-border rounded overflow-hidden shadow-xs">
-              <div className="bg-[#1542b7] text-white px-3 py-1.5 flex items-center justify-between font-bold text-xs">
-                <div className="flex items-center gap-1.5">
-                  <Signal className="w-3.5 h-3.5" />
-                  <span>Network Parameter</span>
-                </div>
-              </div>
-              <div className="p-2 divide-y divide-border/50 text-[10px]">
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">GSM Bars</span><span className="font-semibold text-foreground">{selectedVehicle.gsm} / 5</span></div>
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Operator</span><span className="font-semibold text-foreground">{selectedVehicle.operator}</span></div>
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">PMN / OPCO</span><span className="font-semibold text-foreground">UGACE / AIRUG</span></div>
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Country</span><span className="font-semibold text-foreground">Uganda</span></div>
-              </div>
-            </div>
-
-            {/* 15. SECURITY CARD (Image 3) */}
-            <div className="rounded overflow-hidden shadow-xs bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-3 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <ShieldCheck className="w-6 h-6 text-sky-200" />
-                <div className="grid grid-cols-2 gap-x-3 text-[11px] font-semibold">
-                  <span className="hover:underline cursor-pointer">Immobilize</span>
-                  <span className="hover:underline cursor-pointer">Door</span>
-                  <span className="hover:underline cursor-pointer">Boot</span>
-                  <span className="hover:underline cursor-pointer">Buzzer</span>
-                </div>
-              </div>
-            </div>
-
-            {/* 16. OBJECT INFORMATION CARD (Image 3) */}
-            <div className="border border-border rounded overflow-hidden shadow-xs">
-              <div className="bg-slate-100 dark:bg-muted/70 px-3 py-1.5 font-bold text-xs text-foreground">
-                Object Information
-              </div>
-              <div className="p-2 divide-y divide-border/50 text-[10px]">
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Object Brand</span><span className="font-semibold text-foreground">{selectedVehicle.brand}</span></div>
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Object Model</span><span className="font-semibold text-foreground">{selectedVehicle.model}</span></div>
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Object Category</span><span className="font-semibold text-foreground">movable</span></div>
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Fuel Type</span><span className="font-semibold text-foreground">Diesel</span></div>
-              </div>
-            </div>
-
-            {/* 17. DOCUMENTS CARD (Image 3) */}
-            <div className="border border-border rounded overflow-hidden shadow-xs p-2.5 flex justify-between items-center text-xs">
-              <span className="text-muted-foreground">No Record Found</span>
-              <button type="button" className="text-[#1542b7] dark:text-[#29a4ff] font-bold text-[11px]">+ Document</button>
-            </div>
-
-            {/* 18. EXPENSE CARD (Image 3 & 4) */}
-            <div className="rounded overflow-hidden shadow-xs bg-gradient-to-r from-teal-600 to-emerald-600 text-white p-3 space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-[11px] font-semibold">Expense (last 7 days)</span>
-                <span className="text-base font-extrabold">USh0</span>
-              </div>
-              <div className="flex gap-2 text-[10px]">
-                <button type="button" className="flex-1 py-1 bg-white/20 hover:bg-white/30 rounded font-bold">+ Expense</button>
-                <button type="button" className="flex-1 py-1 bg-white/20 hover:bg-white/30 rounded font-bold flex items-center justify-center gap-1"><History className="w-3 h-3" /> History</button>
-              </div>
-            </div>
-
-            {/* 19. GPS DEVICE INFO CARD (Image 4) */}
-            <div className="border border-border rounded overflow-hidden shadow-xs">
-              <div className="bg-slate-100 dark:bg-muted/70 px-3 py-1.5 flex items-center justify-between font-bold text-xs text-foreground">
-                <span>GPS Device Information</span>
-                <span className="px-1.5 py-0.2 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded text-[9px]">1</span>
-              </div>
-              <div className="p-2 divide-y divide-border/50 text-[10px]">
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Device</span><span className="font-semibold text-foreground">{selectedVehicle.deviceModel}</span></div>
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Device Status</span><span className="font-bold text-emerald-600">Connected</span></div>
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">IMEI</span><span className="font-mono text-foreground">{selectedVehicle.imei}</span></div>
-              </div>
-            </div>
-
-            {/* 20. DRIVER INFORMATION CARD (Image 5) */}
-            <div className="border border-border rounded overflow-hidden shadow-xs">
-              <div className="bg-[#1542b7] text-white px-3 py-1.5 font-bold text-xs">
-                Driver Information
-              </div>
-              <div className="p-2 divide-y divide-border/50 text-[10px]">
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Driver Number</span><span className="font-semibold text-foreground">NA</span></div>
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Age</span><span className="font-semibold text-foreground">NA</span></div>
-                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">License Available</span><span className="font-semibold text-foreground">NA</span></div>
-              </div>
-            </div>
-
-            {/* 21. PASSENGER SEAT DIAGRAM CARD (Image 5) */}
+            {/* 10. FUEL CONSUMPTION CIRCLE (Image 5) */}
             <div className="border border-border rounded overflow-hidden shadow-xs p-2.5 space-y-2">
-              <div className="font-bold text-xs text-foreground flex items-center gap-1.5">
-                <Armchair className="w-3.5 h-3.5 text-[#1542b7]" />
-                <span>Passenger Seat</span>
+              <div className="flex items-center justify-between font-bold text-xs text-foreground">
+                <div className="flex items-center gap-1.5">
+                  <Fuel className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Fuel Cons...</span>
+                </div>
+                <Info className="w-3.5 h-3.5 text-muted-foreground cursor-pointer" />
               </div>
-              <div className="flex items-center justify-between text-xs">
-                <div><span className="text-muted-foreground">Occupied</span> <strong className="text-blue-600">0</strong></div>
-                <div><span className="text-muted-foreground">Vacant</span> <strong className="text-emerald-600">0</strong></div>
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-full border-2 border-amber-500 flex flex-col items-center justify-center text-[9px] font-bold text-amber-700 bg-amber-50 dark:bg-amber-950/40">
+                  <RotateCw className="w-4 h-4 text-amber-600 mb-0.5" />
+                  <span>Fuel</span>
+                </div>
+                <div className="text-[10px] space-y-0.5 text-right">
+                  <div><span className="text-muted-foreground">Distance: </span><strong className="text-foreground">0 ltr</strong></div>
+                  <div><span className="text-muted-foreground">Duration: </span><strong className="text-foreground">0 ltr</strong></div>
+                  <div><span className="text-muted-foreground">CO2 E...: </span><strong className="text-foreground">0 kg</strong></div>
+                  <div><span className="text-muted-foreground">Waste: </span><strong className="text-foreground">0 ltr</strong></div>
+                </div>
               </div>
-              <div className="w-full h-16 bg-slate-100 dark:bg-muted/40 rounded border border-border flex items-center justify-center">
+              <div className="text-[9px] text-muted-foreground text-center">Due to 0 hrs idling</div>
+            </div>
+
+            {/* 11. PASSENGER SEAT DIAGRAM CARD (Image 5) */}
+            <div className="border border-border rounded overflow-hidden shadow-xs p-2.5 space-y-2">
+              <div className="font-bold text-xs text-foreground flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <Armchair className="w-3.5 h-3.5 text-[#1542b7]" />
+                  <span>Passenger Seat</span>
+                </div>
+                <div className="flex gap-2 text-[10px]">
+                  <span>Occupied <strong className="text-blue-600">0</strong></span>
+                  <span>Vacant <strong className="text-rose-600">0</strong></span>
+                </div>
+              </div>
+              <div className="w-full h-14 bg-slate-100 dark:bg-muted/40 rounded border border-border flex items-center justify-center">
                 <div className="grid grid-cols-6 gap-1 p-1">
                   {[...Array(12)].map((_, i) => (
-                    <div key={i} className="w-3.5 h-3.5 rounded bg-sky-500/30 border border-sky-500/50" />
+                    <div key={i} className="w-3 h-3 rounded-xs bg-slate-300 dark:bg-slate-700 border border-slate-400" />
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* 22. RPM DIAL GAUGE CARD (Image 5) */}
+            {/* 12. RPM DIAL GAUGE CARD (Image 5) */}
             <div className="border border-border rounded overflow-hidden shadow-xs p-2.5 space-y-2">
               <div className="font-bold text-xs text-foreground flex items-center gap-1.5">
                 <RotateCw className="w-3.5 h-3.5 text-[#1542b7]" />
@@ -1242,17 +1116,48 @@ export default function TrackingPage() {
                   <line x1="100" y1="90" x2="100" y2="40" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" />
                   <circle cx="100" cy="90" r="5" fill="#ef4444" />
                 </svg>
+                <div className="absolute bottom-0 text-[10px] font-bold text-muted-foreground">RPM 0</div>
               </div>
             </div>
 
-            {/* 23. REMINDER BELL CARD (Image 5) */}
-            <div className="rounded overflow-hidden shadow-xs bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 p-3 flex items-center justify-between">
-              <div>
-                <div className="font-bold text-xs text-rose-900 dark:text-rose-200">Reminder</div>
-                <div className="text-[10px] text-rose-700 dark:text-rose-300">Due: <strong>0</strong></div>
+            {/* 13. REMINDER BELL CARD (Matching Image 1 & Screenshot media_1788297454474.png) */}
+            <div className="rounded overflow-hidden shadow-xs bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 p-3 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-bold text-xs text-rose-950 dark:text-rose-200 flex items-center gap-1.5">
+                    <Bell className="w-3.5 h-3.5 text-rose-600" />
+                    <span>Reminder</span>
+                  </div>
+                  <div className="text-[11px] text-rose-900 dark:text-rose-300 mt-1">Due: <strong className="text-sm font-extrabold text-rose-600">0</strong></div>
+                </div>
+                <div className="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-lg ring-4 ring-rose-200 dark:ring-rose-900">
+                  <Bell className="w-5 h-5 animate-bounce" />
+                </div>
               </div>
-              <div className="w-8 h-8 rounded-full bg-rose-500 text-white flex items-center justify-center shadow">
-                <Bell className="w-4 h-4 animate-bounce" />
+
+              <div className="grid grid-cols-2 text-[10px] border-t border-rose-200 dark:border-rose-900 pt-1.5 text-rose-900 dark:text-rose-200">
+                <div>Overdue: <strong>0</strong></div>
+                <div className="text-right">Upcoming: <strong>0</strong></div>
+              </div>
+
+              <button
+                type="button"
+                className="w-full py-1.5 bg-[#881337] hover:bg-[#70102b] text-white rounded font-bold text-xs shadow cursor-pointer transition-colors"
+              >
+                + Add Reminder
+              </button>
+            </div>
+
+            {/* 14. DOOR CARD (Matching Screenshot media_1788297454474.png) */}
+            <div className="border border-border rounded overflow-hidden shadow-xs">
+              <div className="bg-slate-100 dark:bg-muted/70 px-3 py-1.5 flex items-center justify-between font-bold text-xs text-foreground">
+                <div className="flex items-center gap-1.5">
+                  <DoorClosed className="w-3.5 h-3.5 text-[#1542b7]" />
+                  <span>Door</span>
+                </div>
+              </div>
+              <div className="p-3 text-center text-xs text-muted-foreground">
+                No Record Found
               </div>
             </div>
 
