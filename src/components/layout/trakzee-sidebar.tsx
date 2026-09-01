@@ -21,7 +21,8 @@ import {
   Moon,
   Sun,
   Layers,
-  ArrowRight
+  ArrowRight,
+  Sparkles
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
@@ -49,16 +50,16 @@ export const TRAKZEE_NAVIGATION: NavModule[] = [
   {
     title: "Dashboard",
     href: "/dashboard",
-    icon: <Gauge className="w-[26px] h-[26px] mb-1.5" strokeWidth={1.25} />,
+    icon: <Gauge className="w-[26px] h-[26px] mb-1.5 transition-transform duration-200 group-hover:scale-110" strokeWidth={1.25} />,
   },
   {
     title: "Tracking",
     href: "/tracking",
-    icon: <MapPin className="w-[26px] h-[26px] mb-1.5" strokeWidth={1.25} />,
+    icon: <MapPin className="w-[26px] h-[26px] mb-1.5 transition-transform duration-200 group-hover:scale-110" strokeWidth={1.25} />,
   },
   {
     title: "Reports",
-    icon: <FileText className="w-[26px] h-[26px] mb-1.5" strokeWidth={1.25} />,
+    icon: <FileText className="w-[26px] h-[26px] mb-1.5 transition-transform duration-200 group-hover:scale-110" strokeWidth={1.25} />,
     categories: [
       {
         title: "Activity",
@@ -175,7 +176,7 @@ export const TRAKZEE_NAVIGATION: NavModule[] = [
   },
   {
     title: "Charts",
-    icon: <PieChart className="w-[26px] h-[26px] mb-1.5" strokeWidth={1.25} />,
+    icon: <PieChart className="w-[26px] h-[26px] mb-1.5 transition-transform duration-200 group-hover:scale-110" strokeWidth={1.25} />,
     categories: [
       {
         title: "Activity",
@@ -210,7 +211,7 @@ export const TRAKZEE_NAVIGATION: NavModule[] = [
   },
   {
     title: "Settings",
-    icon: <Settings className="w-[26px] h-[26px] mb-1.5" strokeWidth={1.25} />,
+    icon: <Settings className="w-[26px] h-[26px] mb-1.5 transition-transform duration-200 group-hover:scale-110" strokeWidth={1.25} />,
     categories: [
       {
         title: "General",
@@ -364,20 +365,20 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
         {/* 1. PRIMARY SIDEBAR (90px wide, #07163d) */}
         <aside
           id="left-tree"
-          className="h-full w-[90px] bg-[#07163d] text-white flex flex-col pointer-events-auto select-none shadow-2xl shrink-0"
+          className="h-full w-[90px] bg-[#07163d] text-white flex flex-col pointer-events-auto select-none shadow-[4px_0_24px_rgba(0,0,0,0.4)] shrink-0 border-r border-white/5"
         >
           {/* LOGO CONTAINER (78px x 78px circular badge matching live site) */}
           <div id="tree-logo" className="flex items-center justify-center p-2 pt-2.5">
             <Link
               href="/dashboard"
-              className="w-[78px] h-[78px] rounded-full bg-[#02050f] border border-white/20 flex flex-col items-center justify-center hover:border-white/40 transition-all shadow-inner group overflow-hidden"
+              className="w-[78px] h-[78px] rounded-full bg-[#02050f] border border-white/20 flex flex-col items-center justify-center trakzee-logo-badge group overflow-hidden"
               title="Trakzee - Fleet Telematics"
             >
               {/* Live Uffizio Logo */}
               <img 
                 src="/images/smart/ulogo.png" 
                 alt="Uffizio Trakzee Logo" 
-                className="w-[60px] h-[24px] object-contain"
+                className="w-[60px] h-[24px] object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
           </div>
@@ -392,13 +393,13 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
                 setIsNotificationsOpen(false);
               }}
               className={cn(
-                "flex-1 h-full flex items-center justify-center hover:bg-white/10 transition-colors text-white/70 hover:text-white cursor-pointer relative",
+                "flex-1 h-full flex items-center justify-center hover:bg-white/10 transition-all duration-200 text-white/70 hover:text-white cursor-pointer relative group",
                 isUserMenuOpen && "bg-white/15 text-white"
               )}
               title="User Profile & Settings"
               aria-label="User Profile"
             >
-              <User className="w-[22px] h-[22px]" strokeWidth={1.3} />
+              <User className="w-[22px] h-[22px] transition-transform duration-200 group-hover:scale-110" strokeWidth={1.3} />
             </button>
 
             {/* Divider */}
@@ -412,14 +413,15 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
                 setIsUserMenuOpen(false);
               }}
               className={cn(
-                "flex-1 h-full flex items-center justify-center hover:bg-white/10 transition-colors text-white/70 hover:text-white cursor-pointer relative",
+                "flex-1 h-full flex items-center justify-center hover:bg-white/10 transition-all duration-200 text-white/70 hover:text-white cursor-pointer relative group",
                 isNotificationsOpen && "bg-white/15 text-white"
               )}
               title="Notifications & Announcements"
               aria-label="Notifications"
             >
-              <Bell className="w-[22px] h-[22px]" strokeWidth={1.3} />
-              <span className="absolute top-4 right-4 w-2 h-2 bg-[#29a4ff] rounded-full animate-pulse ring-2 ring-[#07163d]" />
+              <Bell className="w-[22px] h-[22px] transition-transform duration-200 group-hover:scale-110" strokeWidth={1.3} />
+              <span className="absolute top-4 right-4 w-2 h-2 bg-[#29a4ff] rounded-full animate-ping opacity-75 ring-2 ring-[#07163d]" />
+              <span className="absolute top-4 right-4 w-2 h-2 bg-[#29a4ff] rounded-full ring-2 ring-[#07163d]" />
             </button>
           </div>
 
@@ -432,7 +434,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
               return (
                 <div
                   key={mod.title}
-                  className="w-full h-[78px] relative flex flex-col items-center justify-center cursor-pointer transition-all duration-150"
+                  className="w-full h-[78px] relative flex flex-col items-center justify-center cursor-pointer group"
                   onMouseEnter={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
                     const subMenuHeight = (mod.categories?.length || 0) * ITEM_HEIGHT;
@@ -447,30 +449,30 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
                     <Link
                       href={mod.href}
                       className={cn(
-                        "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white hover:bg-[#1542b7] transition-colors relative",
-                        (isHovered || isActive) && "bg-[#1542b7] text-white"
+                        "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group",
+                        (isHovered || isActive) && "bg-[#1542b7] text-white shadow-inner"
                       )}
                     >
                       {isActive && (
-                        <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#29a4ff]" />
+                        <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#29a4ff] shadow-[0_0_10px_#29a4ff] animate-indicator-slide" />
                       )}
                       {mod.icon}
-                      <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px]">
+                      <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px] group-hover:font-semibold transition-all">
                         {mod.title}
                       </span>
                     </Link>
                   ) : (
                     <div
                       className={cn(
-                        "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white hover:bg-[#1542b7] transition-colors relative",
-                        (isHovered || isActive) && "bg-[#1542b7] text-white"
+                        "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group",
+                        (isHovered || isActive) && "bg-[#1542b7] text-white shadow-inner"
                       )}
                     >
                       {isActive && (
-                        <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#29a4ff]" />
+                        <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#29a4ff] shadow-[0_0_10px_#29a4ff] animate-indicator-slide" />
                       )}
                       {mod.icon}
-                      <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px]">
+                      <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px] group-hover:font-semibold transition-all">
                         {mod.title}
                       </span>
                     </div>
@@ -485,14 +487,14 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
             <button
               type="button"
               onClick={() => setIsCloudDownloadOpen(true)}
-              className="w-full h-full flex items-center justify-center hover:bg-[#1542b7] transition-colors cursor-pointer"
+              className="w-full h-full flex items-center justify-center hover:bg-[#1542b7] transition-all duration-200 cursor-pointer group"
               title="Cloud Download"
               aria-label="Cloud Download"
             >
               <img 
                 src="/images/smart/cloude_download_new.svg" 
                 alt="Cloud Download" 
-                className="h-[27px] w-auto object-contain"
+                className="h-[27px] w-auto object-contain transition-transform duration-200 group-hover:scale-110 group-hover:-translate-y-0.5"
               />
             </button>
           </div>
@@ -502,7 +504,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
         {hoveredModule && hoveredModule.categories && (
           <div
             id="flyout-container"
-            className="absolute left-[90px] flex shadow-2xl transition-all duration-75 select-none pointer-events-auto"
+            className="absolute left-[90px] flex shadow-[0_16px_48px_rgba(0,0,0,0.5)] select-none pointer-events-auto transition-all duration-150 ease-out"
             style={{ 
               top: `${flyoutTop}px` 
             }}
@@ -510,7 +512,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
             {/* LAYER 2: Submenu Categories (170px wide, #1542b7 / rgb(21, 66, 183)) */}
             <div
               id="subMenu"
-              className="w-[170px] bg-[#1542b7] text-white flex flex-col shadow-2xl border-r border-white/10 max-h-[85vh] overflow-y-auto"
+              className="w-[170px] bg-[#1542b7] text-white flex flex-col shadow-2xl border-r border-white/10 max-h-[85vh] overflow-y-auto animate-flyout-sub backdrop-blur-md"
             >
               <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5">
                 {hoveredModule.categories.map((cat, idx) => {
@@ -523,15 +525,17 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
                         setCategoryIndex(idx);
                       }}
                       className={cn(
-                        "h-[38px] px-3 flex items-center justify-between text-[12px] font-medium text-white/90 hover:text-white hover:bg-[#07163d] cursor-pointer transition-colors group",
-                        isCatHovered && "bg-[#07163d] text-white font-semibold"
+                        "h-[38px] px-3 flex items-center justify-between text-[12px] font-medium text-white/90 hover:text-white trakzee-menu-item cursor-pointer transition-all duration-150 group",
+                        isCatHovered 
+                          ? "bg-[#07163d] text-white font-semibold shadow-inner border-l-2 border-[#29a4ff]" 
+                          : "hover:bg-[#07163d]/80 border-l-2 border-transparent"
                       )}
                     >
                       <span className="truncate">{cat.title}</span>
                       <ChevronRight
                         className={cn(
-                          "w-3.5 h-3.5 text-white/50 group-hover:text-white transition-transform",
-                          isCatHovered && "text-white translate-x-0.5"
+                          "w-3.5 h-3.5 text-white/50 group-hover:text-white transition-all duration-200",
+                          isCatHovered ? "text-[#29a4ff] translate-x-1" : "group-hover:translate-x-0.5"
                         )}
                       />
                     </li>
@@ -544,7 +548,8 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
             {hoveredCategory && (
               <div
                 id="deepMenu"
-                className="w-[180px] bg-[#1542b7] text-white flex flex-col shadow-2xl h-fit max-h-[80vh] overflow-y-auto border-r border-white/10 animate-in fade-in duration-75"
+                key={hoveredCategory.title}
+                className="w-[180px] bg-[#1542b7] text-white flex flex-col shadow-2xl h-fit max-h-[80vh] overflow-y-auto border-r border-white/10 animate-flyout-deep backdrop-blur-md transition-all duration-150"
                 style={{
                   marginTop: `${deepMenuTopOffset}px`
                 }}
@@ -553,17 +558,19 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
                   {hoveredCategory.items.map((screen) => {
                     const isCurrent = pathname === screen.href;
                     return (
-                      <li key={screen.title} className="h-[38px] cursor-pointer">
+                      <li key={screen.title} className="h-[38px] cursor-pointer group">
                         <Link
                           href={screen.href}
                           onClick={closeAllFlyouts}
                           className={cn(
-                            "w-full h-full px-3.5 flex items-center text-[12px] text-white/90 hover:text-white hover:bg-[#07163d] transition-all truncate",
-                            isCurrent && "bg-[#07163d] text-white font-semibold"
+                            "w-full h-full px-3.5 flex items-center text-[12px] text-white/90 hover:text-white trakzee-menu-item transition-all duration-150 truncate border-l-2",
+                            isCurrent 
+                              ? "bg-[#07163d] text-white font-semibold border-[#29a4ff]" 
+                              : "border-transparent hover:bg-[#07163d]/90 hover:border-white/30"
                           )}
                           title={screen.title}
                         >
-                          <span className="truncate">{screen.title}</span>
+                          <span className="truncate group-hover:translate-x-1 transition-transform duration-150">{screen.title}</span>
                         </Link>
                       </li>
                     );
@@ -578,7 +585,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
       {/* 3. USER PROFILE DRAWER / FLYOUT */}
       {isUserMenuOpen && (
         <div
-          className="fixed top-[80px] left-[90px] w-[210px] bg-card text-card-foreground border border-border shadow-2xl rounded-md z-[70] py-1.5 text-xs font-medium animate-in fade-in slide-in-from-left-2 duration-150"
+          className="fixed top-[80px] left-[90px] w-[210px] bg-card text-card-foreground border border-border shadow-[0_12px_36px_rgba(0,0,0,0.25)] rounded-md z-[70] py-1.5 text-xs font-medium animate-in fade-in slide-in-from-left-2 duration-200"
           onMouseLeave={() => {
             setIsUserMenuOpen(false);
             setIsAppsMenuOpen(false);
@@ -622,7 +629,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
             </div>
 
             {isAppsMenuOpen && (
-              <div className="absolute top-0 left-full w-[170px] bg-card border border-border shadow-2xl rounded-md py-1.5 ml-1 text-xs">
+              <div className="absolute top-0 left-full w-[170px] bg-card border border-border shadow-2xl rounded-md py-1.5 ml-1 text-xs animate-in fade-in slide-in-from-left-1 duration-150">
                 <Link
                   href="/lite"
                   onClick={() => setIsUserMenuOpen(false)}
@@ -686,7 +693,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
 
       {/* 4. NOTIFICATIONS DRAWER */}
       {isNotificationsOpen && (
-        <div className="fixed top-0 left-[90px] h-full w-[320px] bg-card text-card-foreground border-r border-border shadow-2xl flex flex-col z-[70] animate-in slide-in-from-left duration-200 pointer-events-auto">
+        <div className="fixed top-0 left-[90px] h-full w-[320px] bg-card text-card-foreground border-r border-border shadow-[0_16px_48px_rgba(0,0,0,0.3)] flex flex-col z-[70] animate-in slide-in-from-left duration-250 pointer-events-auto">
           {/* Header Tabs */}
           <div className="h-[46px] flex items-stretch border-b border-border bg-muted/40">
             <button
@@ -726,15 +733,15 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
           {/* Priority Filters for Notifications */}
           {activeNotiTab === "notifications" && (
             <div className="grid grid-cols-3 border-b border-border text-center text-xs">
-              <div className="py-2.5 bg-red-50 dark:bg-red-950/30 border-b-2 border-red-500 text-red-600 dark:text-red-400 cursor-pointer">
+              <div className="py-2.5 bg-red-50 dark:bg-red-950/30 border-b-2 border-red-500 text-red-600 dark:text-red-400 cursor-pointer transition-all hover:brightness-95">
                 <div className="text-sm font-bold">0</div>
                 <div className="text-[10px] uppercase font-semibold">High</div>
               </div>
-              <div className="py-2.5 bg-amber-50 dark:bg-amber-950/30 border-b-2 border-amber-500 text-amber-600 dark:text-amber-400 cursor-pointer">
+              <div className="py-2.5 bg-amber-50 dark:bg-amber-950/30 border-b-2 border-amber-500 text-amber-600 dark:text-amber-400 cursor-pointer transition-all hover:brightness-95">
                 <div className="text-sm font-bold">0</div>
                 <div className="text-[10px] uppercase font-semibold">Medium</div>
               </div>
-              <div className="py-2.5 bg-emerald-50 dark:bg-emerald-950/30 border-b-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 cursor-pointer">
+              <div className="py-2.5 bg-emerald-50 dark:bg-emerald-950/30 border-b-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 cursor-pointer transition-all hover:brightness-95">
                 <div className="text-sm font-bold">0</div>
                 <div className="text-[10px] uppercase font-semibold">Low</div>
               </div>
@@ -754,13 +761,13 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
         </div>
       )}
 
-      {/* 5. UNIVERSAL SCREEN SEARCH OVERLAY (Top-right clean SVG icon matching live Trakzee) */}
+      {/* 5. UNIVERSAL SCREEN SEARCH OVERLAY */}
       <div className="fixed top-3.5 right-4 z-[50]">
         <button
           type="button"
           id="universalSelectorSearchIcon"
           onClick={() => setIsSearchOpen(true)}
-          className="p-2 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer"
+          className="p-2 text-muted-foreground hover:text-foreground hover:scale-115 transition-all duration-200 cursor-pointer"
           title="Search Screens (Ctrl+K)"
           aria-label="Search Screens"
         >
@@ -775,11 +782,11 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
 
       {isSearchOpen && (
         <div 
-          className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-20 p-4 animate-in fade-in duration-150 pointer-events-auto"
+          className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-md flex items-start justify-center pt-20 p-4 animate-in fade-in duration-200 pointer-events-auto"
           onClick={() => setIsSearchOpen(false)}
         >
           <div
-            className="w-full max-w-xl bg-card border border-border rounded-xl shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-150"
+            className="w-full max-w-xl bg-card border border-border rounded-xl shadow-[0_24px_64px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Search Input Bar */}
@@ -796,7 +803,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
               <button
                 type="button"
                 onClick={() => setIsSearchOpen(false)}
-                className="p-1 text-muted-foreground hover:text-foreground rounded cursor-pointer"
+                className="p-1 text-muted-foreground hover:text-foreground rounded cursor-pointer transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -810,17 +817,17 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
                     key={`${s.module}-${s.category}-${s.title}`}
                     href={s.href}
                     onClick={() => setIsSearchOpen(false)}
-                    className="flex items-center justify-between px-3.5 py-2.5 hover:bg-muted/70 rounded-md transition-colors group"
+                    className="flex items-center justify-between px-3.5 py-2.5 hover:bg-muted/70 rounded-md transition-all duration-150 group"
                   >
                     <div>
-                      <div className="text-xs font-semibold text-foreground group-hover:text-[#29a4ff]">
+                      <div className="text-xs font-semibold text-foreground group-hover:text-[#29a4ff] transition-colors">
                         {s.title}
                       </div>
                       <div className="text-[10px] text-muted-foreground">
                         {s.module} {s.category ? `> ${s.category}` : ""}
                       </div>
                     </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-[#29a4ff] transition-transform group-hover:translate-x-0.5" />
+                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-[#29a4ff] transition-transform group-hover:translate-x-1" />
                   </Link>
                 ))
               ) : (
@@ -842,11 +849,11 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
       {/* 6. CLOUD DOWNLOAD MANAGER DIALOG */}
       {isCloudDownloadOpen && (
         <div 
-          className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto"
+          className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 pointer-events-auto animate-in fade-in duration-200"
           onClick={() => setIsCloudDownloadOpen(false)}
         >
           <div 
-            className="w-full max-w-md bg-card border border-border rounded-xl shadow-2xl p-5 space-y-4"
+            className="w-full max-w-md bg-card border border-border rounded-xl shadow-[0_24px_64px_rgba(0,0,0,0.4)] p-5 space-y-4 animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-border pb-3">
@@ -861,7 +868,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
               <button
                 type="button"
                 onClick={() => setIsCloudDownloadOpen(false)}
-                className="p-1 text-muted-foreground hover:text-foreground cursor-pointer"
+                className="p-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
