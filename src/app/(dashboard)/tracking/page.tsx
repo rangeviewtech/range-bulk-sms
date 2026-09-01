@@ -65,7 +65,14 @@ import {
   Camera,
   Activity,
   CircleDot,
-  FileText
+  FileText,
+  FileCode,
+  FileBox,
+  LineChart,
+  ZoomIn,
+  ZoomOut,
+  RefreshCw,
+  ArrowUpDown
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -197,56 +204,6 @@ const VEHICLES_DATA: FleetVehicle[] = [
     coords: { x: 38, y: 58 },
   },
   {
-    id: "UBL-090W",
-    name: "UBL 090W - Truck",
-    plate: "UBL 090W",
-    type: "Truck",
-    group: "Mega Milk",
-    status: "Stopped",
-    speed: 0,
-    voltage: "18.1V",
-    batteryLevel: 40,
-    gsm: 2,
-    ignition: false,
-    time: "01-09-2026 09:57:13 PM",
-    address: "Mbarara - Masaka Road, Kibwera, Western Region",
-    driver: "Paul Kato",
-    mobile: "+256 705 090123",
-    currentTrip: "18.20 km",
-    odometer: "0024190",
-    fuelLiter: 42,
-    fuelCapacity: 200,
-    fuelRefill: 0,
-    fuelDrain: 0,
-    fuelConsumption: "14.10 liter",
-    coords: { x: 35, y: 64 },
-  },
-  {
-    id: "UBN-3867X",
-    name: "UBN 3867X - Truck",
-    plate: "UBN 3867X",
-    type: "Truck",
-    group: "Mega Milk",
-    status: "Inactive",
-    speed: 0,
-    voltage: "4.3V",
-    batteryLevel: 10,
-    gsm: 1,
-    ignition: false,
-    time: "16-07-2026 08:37:42 PM",
-    address: "Mbarara - Masaka Road, Kibwera, Western Region",
-    driver: "Eric Mukasa",
-    mobile: "--",
-    currentTrip: "0.00 km",
-    odometer: "0008450",
-    fuelLiter: 10,
-    fuelCapacity: 200,
-    fuelRefill: 0,
-    fuelDrain: 0,
-    fuelConsumption: "0.00 liter",
-    coords: { x: 30, y: 68 },
-  },
-  {
     id: "UBM-755K",
     name: "UBM 755K - Truck",
     plate: "UBM 755K",
@@ -270,56 +227,6 @@ const VEHICLES_DATA: FleetVehicle[] = [
     fuelDrain: 0,
     fuelConsumption: "42.00 liter",
     coords: { x: 50, y: 25 },
-  },
-  {
-    id: "UBP-004L",
-    name: "UBP 004L - Truck",
-    plate: "UBP 004L",
-    type: "Truck",
-    group: "Weldone Logistics",
-    status: "Stopped",
-    speed: 0,
-    voltage: "25.6V",
-    batteryLevel: 85,
-    gsm: 4,
-    ignition: false,
-    time: "01-09-2026 10:10:04 PM",
-    address: "Old Jinja Road, Namanve, Bbuto, Kira, Wakiso",
-    driver: "Ali Hussein",
-    mobile: "+256 707 004992",
-    currentTrip: "38.50 km",
-    odometer: "0031890",
-    fuelLiter: 120,
-    fuelCapacity: 260,
-    fuelRefill: 0,
-    fuelDrain: 0,
-    fuelConsumption: "28.50 liter",
-    coords: { x: 72, y: 40 },
-  },
-  {
-    id: "UBQ-255H",
-    name: "UBQ 255H - Crane",
-    plate: "UBQ 255H",
-    type: "Mobile Crane",
-    group: "Weldone Logistics",
-    status: "Stopped",
-    speed: 0,
-    voltage: "25.3V",
-    batteryLevel: 90,
-    gsm: 3,
-    ignition: false,
-    time: "01-09-2026 10:17:59 PM",
-    address: "Hima, Kasese, Uganda (SE)",
-    driver: "Hassan Omar",
-    mobile: "+256 708 255314",
-    currentTrip: "12.00 km",
-    odometer: "0019420",
-    fuelLiter: 95,
-    fuelCapacity: 220,
-    fuelRefill: 0,
-    fuelDrain: 0,
-    fuelConsumption: "19.30 liter",
-    coords: { x: 28, y: 48 },
   },
   {
     id: "UBH-168K",
@@ -348,6 +255,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
   },
 ];
 
+// PLAYBACK TRIPS DATA (Image 2)
 const PLAYBACK_TRIPS_DATA = [
   {
     startTime: "01-09-2026 12:00:00 AM",
@@ -366,7 +274,7 @@ const PLAYBACK_TRIPS_DATA = [
     startTime: "01-09-2026 07:35:25 AM",
     startLoc: "Rwesirabo, Kiruhura, Uganda (SW)",
     endTime: "01-09-2026 12:53:42 PM",
-    endLoc: "Mbarara Masaka Road, Lwengo (NE)",
+    endLoc: "Mbarara Masaka Road, Lwengo, Uganda (NE)",
     running: "01:49",
     distance: "102.59",
     avgSpeed: "57",
@@ -377,7 +285,7 @@ const PLAYBACK_TRIPS_DATA = [
   },
   {
     startTime: "01-09-2026 01:40:38 PM",
-    startLoc: "Mbarara Masaka Road, Lwengo (NE)",
+    startLoc: "Mbarara Masaka Road, Lwengo, Uganda (NE)",
     endTime: "01-09-2026 03:00:02 PM",
     endLoc: "Mugore, Kiruhura, Uganda (SE)",
     running: "00:53",
@@ -391,16 +299,72 @@ const PLAYBACK_TRIPS_DATA = [
   {
     startTime: "01-09-2026 04:00:42 PM",
     startLoc: "Mugore, Kiruhura, Uganda",
-    endTime: "01-09-2026 10:46:25 PM",
+    endTime: "01-09-2026 11:58:19 PM",
     endLoc: "Kazo, Kiruhura, Uganda (NE)",
-    running: "02:52",
-    distance: "93.55",
-    avgSpeed: "33",
+    running: "04:04",
+    distance: "157.12",
+    avgSpeed: "39",
     maxSpeed: "95",
     alerts: 2,
     driver: "Ntale Driver",
     status: "Unclassified"
   },
+];
+
+// PLAYBACK EVENTS DATA (Image 3)
+const PLAYBACK_EVENTS_DATA = [
+  {
+    event: "Idle 1",
+    time: "01-09-2026 08:47:27 AM",
+    duration: "00:17:50",
+    address: "Mbarara Masaka Road, Kibwera, PO BOX 1051, Uganda (NE)",
+    driver: "Ntale Driver"
+  },
+  {
+    event: "Idle 2",
+    time: "01-09-2026 09:18:55 AM",
+    duration: "00:21:50",
+    address: "Mbarara Masaka Road, Kibwera, PO BOX 1051, Uganda (SW)",
+    driver: "Ntale Driver"
+  },
+  {
+    event: "Idle 3",
+    time: "01-09-2026 09:48:55 AM",
+    duration: "00:40:30",
+    address: "Mbarara Masaka Road, Kibwera, PO BOX 1051, Uganda (SE)",
+    driver: "Ntale Driver"
+  },
+  {
+    event: "Idle 4",
+    time: "01-09-2026 10:58:17 AM",
+    duration: "00:33:00",
+    address: "Mbarara Masaka Road, Kibwera, PO BOX 1051, Uganda (NE)",
+    driver: "Ntale Driver"
+  },
+  {
+    event: "Idle 5",
+    time: "01-09-2026 12:36:26 PM",
+    duration: "00:17:16",
+    address: "Mbarara Masaka Road, Lwengo, Uganda (NE)",
+    driver: "Ntale Driver"
+  },
+  {
+    event: "Stoppage 1",
+    time: "01-09-2026 12:53:42 PM",
+    duration: "00:46:56",
+    address: "Mbarara Masaka Road, Lwengo, Uganda (NE)",
+    driver: "Ntale Driver"
+  },
+];
+
+// PLAYBACK DATA POINTS (Image 4)
+const PLAYBACK_DATAPOINTS_DATA = [
+  { status: "Running", time: "01-09-2026 12:00:00 AM", lat: "0.0759983", lng: "30.9686966", speed: 12, distance: "0.01", address: "Kiruhura, Uganda", driver: "Ntale Driver", battery: "0" },
+  { status: "Running", time: "01-09-2026 12:00:02 AM", lat: "0.0760183", lng: "30.9687316", speed: 7, distance: "0.01", address: "Kiruhura, Uganda (SE)", driver: "Ntale Driver", battery: "0" },
+  { status: "Running", time: "01-09-2026 12:00:10 AM", lat: "0.0760383", lng: "30.9687916", speed: 6, distance: "0.02", address: "Kiruhura, Uganda (SE)", driver: "Ntale Driver", battery: "0" },
+  { status: "Running", time: "01-09-2026 12:00:12 AM", lat: "0.076055", lng: "30.9688333", speed: 13, distance: "0.02", address: "Kiruhura, Uganda (SE)", driver: "Ntale Driver", battery: "0" },
+  { status: "Running", time: "01-09-2026 12:00:14 AM", lat: "0.0760915", lng: "30.968855", speed: 6, distance: "0.03", address: "Kiruhura, Uganda (SF)", driver: "Ntale Driver", battery: "0" },
+  { status: "Running", time: "01-09-2026 12:00:24 AM", lat: "0.0761916", lng: "30.9689883", speed: 7, distance: "0.04", address: "Kiruhura, Uganda (NE)", driver: "Ntale Driver", battery: "0" },
 ];
 
 export default function TrackingPage() {
@@ -410,7 +374,10 @@ export default function TrackingPage() {
   const [playbackSpeed, setPlaybackSpeed] = React.useState("4X");
   const [isSpeedMenuOpen, setIsSpeedMenuOpen] = React.useState(false);
   const [isPlaybackSettingsOpen, setIsPlaybackSettingsOpen] = React.useState(true);
+  
+  // Bottom drawer state & active tab
   const [isTripsDrawerOpen, setIsTripsDrawerOpen] = React.useState(true);
+  const [activeBottomTab, setActiveBottomTab] = React.useState<"trips" | "events" | "datapoints" | "fuel" | "stoppage">("trips");
 
   // Selected vehicle & filters
   const [selectedVehicle, setSelectedVehicle] = React.useState<FleetVehicle>(VEHICLES_DATA[0]);
@@ -526,7 +493,7 @@ export default function TrackingPage() {
         </div>
       </div>
 
-      {/* 2. TOP PLAYBACK TOOLBAR (Switch between Live Tracking and Playback) */}
+      {/* 2. TOP PLAYBACK TOOLBAR */}
       {!isPlaybackMode ? (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center">
           <button
@@ -567,7 +534,7 @@ export default function TrackingPage() {
           <div className="h-4 w-[1px] bg-border" />
 
           <div className="flex items-center gap-1 font-semibold text-[11px] text-muted-foreground">
-            <span>01-09-2026 12:00 AM To 01-09-2026 10:46 PM</span>
+            <span>01-09-2026 12:00 AM To 01-09-2026 11:58 PM</span>
             <Calendar className="w-3.5 h-3.5 text-muted-foreground ml-1" />
           </div>
 
@@ -596,10 +563,9 @@ export default function TrackingPage() {
         </div>
       )}
 
-      {/* 3. RIGHT FLOATING PLAYBACK SETTINGS DRAWER (matching Page 7 exactly) */}
+      {/* 3. RIGHT FLOATING PLAYBACK SETTINGS DRAWER */}
       {isPlaybackMode && isPlaybackSettingsOpen && (
         <div className="absolute top-14 right-14 z-30 w-[275px] bg-white dark:bg-card border border-border shadow-2xl rounded overflow-hidden text-xs animate-in slide-in-from-right duration-200">
-          {/* Header Strip */}
           <div className="h-[32px] bg-[#2563eb] text-white px-3 flex items-center justify-between font-semibold text-[11px]">
             <span>Playback Settings</span>
             <div className="flex items-center gap-2">
@@ -608,7 +574,6 @@ export default function TrackingPage() {
             </div>
           </div>
 
-          {/* Settings Options */}
           <div className="p-3 space-y-2 text-[11px]">
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-1.5 cursor-pointer">
@@ -714,7 +679,7 @@ export default function TrackingPage() {
         </div>
       )}
 
-      {/* 4. RIGHT FLOATING MAP ACTIONS TOOLBAR (Matching Page 7 vertical bar) */}
+      {/* 4. RIGHT FLOATING MAP ACTIONS TOOLBAR */}
       <div className="absolute top-14 right-3 z-20 flex flex-col gap-1">
         <div className="bg-white dark:bg-card border border-border shadow-xl rounded flex flex-col text-muted-foreground overflow-hidden">
           <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Search Location"><Search className="w-3.5 h-3.5" /></button>
@@ -742,17 +707,16 @@ export default function TrackingPage() {
           <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Settings"><Settings className="w-3.5 h-3.5" /></button>
         </div>
 
-        {/* 10 km scale indicator */}
         <div className="mt-auto self-end text-[9px] font-bold bg-white/90 dark:bg-card/90 px-1 py-0.5 rounded border border-border text-foreground shadow">
           10 km
         </div>
       </div>
 
-      {/* 5. PLAYBACK MODE: BOTTOM FLOATING TRANSPORT CONTROLLER & EXPANDABLE TRIPS DRAWER */}
+      {/* 5. PLAYBACK MODE: BOTTOM FLOATING TRANSPORT CONTROLLER & EXPANDABLE DRAWER */}
       {isPlaybackMode && (
         <div className="absolute bottom-0 left-0 right-0 z-40 flex flex-col items-center">
           
-          {/* Main Floating Media Scrubber Pill (matching Page 7 exactly) */}
+          {/* Main Floating Media Scrubber Pill */}
           <div className="mb-2 bg-[#1e293b] text-white backdrop-blur-md border border-white/20 shadow-2xl rounded px-3 py-1.5 flex items-center gap-3 text-xs animate-in slide-in-from-bottom-2 duration-200">
             
             {/* Speed Multiplier Pill [4X ^] */}
@@ -807,14 +771,14 @@ export default function TrackingPage() {
               />
               <div className="flex justify-between text-[9px] text-slate-400">
                 <span>01-09-2026 12:00:00 AM</span>
-                <span>01-09-2026 10:46:25 PM</span>
+                <span>01-09-2026 11:58:19 PM</span>
               </div>
             </div>
 
             {/* Live / History Ratio Pill */}
             <div className="px-2 py-0.5 rounded bg-slate-800 border border-white/10 text-[9px] flex items-center gap-2">
-              <span className="text-cyan-400 font-bold">Live (93.95%)</span>
-              <span className="text-slate-400">History (6.05%)</span>
+              <span className="text-cyan-400 font-bold">Live (94.18%)</span>
+              <span className="text-slate-400">History (5.82%)</span>
             </div>
 
             {/* Expand Bottom Trips Drawer Button */}
@@ -828,87 +792,368 @@ export default function TrackingPage() {
             </button>
           </div>
 
-          {/* Expandable Trips Data Grid Drawer (Matching Page 7 exactly) */}
-          {isTripsDrawerOpen && (
-            <div className="w-full bg-white dark:bg-card border-t border-border shadow-2xl animate-in slide-in-from-bottom duration-200 text-xs max-h-[320px] flex flex-col">
-              
-              {/* Header Blue Tool Strip */}
-              <div className="h-[34px] bg-[#2563eb] text-white px-3 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-semibold">
-                  <div className="px-2.5 py-1 bg-white text-[#2563eb] rounded-t flex items-center gap-1 font-bold">
-                    <MapPin className="w-3.5 h-3.5" />
-                    <span>Trips</span>
+          {/* Bottom Telematics Drawer Bar & Panels (Matching Images 1, 2, 3, 4, 5) */}
+          <div className="w-full flex flex-col">
+            
+            {/* Header Blue Tool Strip */}
+            <div className="h-[34px] bg-[#2563eb] text-white px-3 flex items-center justify-between shadow-md">
+              <div className="flex items-center gap-1.5 text-xs font-semibold">
+                <button type="button" className="p-1 hover:text-white/80" title="User"><User className="w-3.5 h-3.5" /></button>
+                
+                {/* Trips Tab */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveBottomTab("trips");
+                    setIsTripsDrawerOpen(true);
+                  }}
+                  className={cn(
+                    "px-2.5 py-1 rounded-t flex items-center gap-1 font-bold text-xs transition-colors",
+                    activeBottomTab === "trips" && isTripsDrawerOpen ? "bg-white text-[#2563eb]" : "text-white hover:bg-blue-700"
+                  )}
+                >
+                  <MapPin className="w-3.5 h-3.5" />
+                  <span>Trips</span>
+                </button>
+
+                {/* Stoppage Tab */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveBottomTab("stoppage");
+                    setIsTripsDrawerOpen(true);
+                  }}
+                  className={cn(
+                    "p-1.5 rounded-t flex items-center gap-1 transition-colors",
+                    activeBottomTab === "stoppage" && isTripsDrawerOpen ? "bg-white text-[#2563eb]" : "text-white hover:bg-blue-700"
+                  )}
+                  title="Stoppage"
+                >
+                  <span className="w-2.5 h-2.5 rounded-full bg-sky-400 inline-block" />
+                </button>
+
+                {/* Events Tab */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveBottomTab("events");
+                    setIsTripsDrawerOpen(true);
+                  }}
+                  className={cn(
+                    "px-2 py-1 rounded-t flex items-center gap-1 font-bold text-xs transition-colors",
+                    activeBottomTab === "events" && isTripsDrawerOpen ? "bg-white text-[#2563eb]" : "text-white hover:bg-blue-700"
+                  )}
+                  title="Events"
+                >
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-300 inline-block" />
+                  {activeBottomTab === "events" && isTripsDrawerOpen && <span>Events</span>}
+                </button>
+
+                {/* Overspeed Tab */}
+                <button type="button" className="p-1 hover:text-white/80" title="Overspeed"><Gauge className="w-3.5 h-3.5" /></button>
+
+                {/* Fuel Tab */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveBottomTab("fuel");
+                    setIsTripsDrawerOpen(true);
+                  }}
+                  className={cn(
+                    "px-2 py-1 rounded-t flex items-center gap-1 font-bold text-xs transition-colors",
+                    activeBottomTab === "fuel" && isTripsDrawerOpen ? "bg-white text-[#2563eb]" : "text-white hover:bg-blue-700"
+                  )}
+                  title="Fuel Graph"
+                >
+                  <Fuel className="w-3.5 h-3.5" />
+                  {activeBottomTab === "fuel" && isTripsDrawerOpen && <span>Fuel</span>}
+                </button>
+
+                <button type="button" className="p-1 hover:text-white/80" title="Temperature"><Thermometer className="w-3.5 h-3.5" /></button>
+                <button type="button" className="p-1 hover:text-white/80" title="Camera"><Camera className="w-3.5 h-3.5" /></button>
+
+                {/* Data Points Tab */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveBottomTab("datapoints");
+                    setIsTripsDrawerOpen(true);
+                  }}
+                  className={cn(
+                    "px-2 py-1 rounded-t flex items-center gap-1 font-bold text-xs transition-colors",
+                    activeBottomTab === "datapoints" && isTripsDrawerOpen ? "bg-white text-[#2563eb]" : "text-white hover:bg-blue-700"
+                  )}
+                  title="Data Points"
+                >
+                  <Activity className="w-3.5 h-3.5" />
+                  {activeBottomTab === "datapoints" && isTripsDrawerOpen && <span>Data Points</span>}
+                </button>
+
+                {/* Collapse / Expand toggle */}
+                <button 
+                  type="button" 
+                  onClick={() => setIsTripsDrawerOpen(!isTripsDrawerOpen)} 
+                  className="p-1 hover:text-white/80"
+                >
+                  {isTripsDrawerOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
+                </button>
+              </div>
+
+              {/* Center Resize Handle */}
+              <div className="w-12 h-1 bg-white/40 rounded-full cursor-row-resize" />
+
+              {/* Export Buttons */}
+              <div className="flex items-center gap-1.5">
+                {activeBottomTab === "datapoints" ? (
+                  <div className="flex items-center gap-1 text-[10px] font-bold">
+                    <button type="button" className="px-1.5 py-0.5 bg-white text-slate-800 border rounded shadow-xs">XML</button>
+                    <button type="button" className="px-1.5 py-0.5 bg-white text-emerald-700 border border-emerald-600 rounded shadow-xs">XLS</button>
+                    <button type="button" className="px-1.5 py-0.5 bg-white text-sky-700 border border-sky-600 rounded shadow-xs">CSV</button>
+                    <button type="button" className="px-1.5 py-0.5 bg-white text-rose-700 border border-rose-600 rounded shadow-xs">PDF</button>
                   </div>
-                  <button type="button" className="p-1 hover:text-white/80" title="Stoppage"><span className="w-2.5 h-2.5 rounded-full bg-sky-400 inline-block" /></button>
-                  <button type="button" className="p-1 hover:text-white/80" title="Idle"><span className="w-2.5 h-2.5 rounded-full bg-amber-300 inline-block" /></button>
-                  <button type="button" className="p-1 hover:text-white/80" title="Overspeed"><Gauge className="w-3.5 h-3.5" /></button>
-                  <button type="button" className="p-1 hover:text-white/80" title="Fuel"><Fuel className="w-3.5 h-3.5" /></button>
-                  <button type="button" className="p-1 hover:text-white/80" title="Temperature"><Thermometer className="w-3.5 h-3.5" /></button>
-                  <button type="button" className="p-1 hover:text-white/80" title="Camera"><Camera className="w-3.5 h-3.5" /></button>
-                  <button type="button" onClick={() => setIsTripsDrawerOpen(false)} className="p-1 hover:text-white/80"><ChevronDown className="w-3.5 h-3.5" /></button>
-                </div>
-
-                {/* Center Resize Handle */}
-                <div className="w-12 h-1 bg-white/40 rounded-full cursor-row-resize" />
-
-                {/* XLS Export Button */}
-                <div className="flex items-center gap-2">
+                ) : activeBottomTab === "fuel" ? (
+                  <div className="flex items-center gap-1 text-white">
+                    <button type="button" className="p-1 hover:text-white/80"><ZoomIn className="w-3 h-3" /></button>
+                    <button type="button" className="p-1 hover:text-white/80"><ZoomOut className="w-3 h-3" /></button>
+                    <button type="button" className="p-1 hover:text-white/80"><ChevronLeft className="w-3 h-3" /></button>
+                    <button type="button" className="p-1 hover:text-white/80"><ChevronRight className="w-3 h-3" /></button>
+                    <button type="button" className="p-1 hover:text-white/80"><RefreshCw className="w-3 h-3" /></button>
+                  </div>
+                ) : (
                   <button type="button" className="flex items-center gap-1 px-2 py-0.5 bg-white text-emerald-700 border border-emerald-600 rounded text-[10px] font-bold shadow-sm">
                     <FileSpreadsheet className="w-3 h-3" />
                     <span>XLS</span>
                   </button>
-                </div>
-              </div>
-
-              {/* Data Table */}
-              <div className="flex-1 overflow-x-auto overflow-y-auto">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="border-b border-border bg-slate-100 dark:bg-muted/50 text-foreground font-bold text-[11px]">
-                      <th className="p-2 pl-3">Start Time</th>
-                      <th className="p-2">Start Location</th>
-                      <th className="p-2">End Time</th>
-                      <th className="p-2">End Location</th>
-                      <th className="p-2 text-right">Running</th>
-                      <th className="p-2 text-right">Distance</th>
-                      <th className="p-2 text-right">Average Speed (km/hr)</th>
-                      <th className="p-2 text-right">Max Speed (km/hr)</th>
-                      <th className="p-2 text-right">Alerts</th>
-                      <th className="p-2">Driver</th>
-                      <th className="p-2 pr-3">Trip Status</th>
-                    </tr>
-                    {/* Overall Summary Row (bold matching Page 7) */}
-                    <tr className="bg-slate-200/60 dark:bg-muted/70 font-bold text-foreground text-[11px] border-b border-border">
-                      <td className="p-1.5 pl-3" colSpan={4}></td>
-                      <td className="p-1.5 text-right font-extrabold">10:22</td>
-                      <td className="p-1.5 text-right font-extrabold">365.2</td>
-                      <td className="p-1.5 text-right font-extrabold">35</td>
-                      <td className="p-1.5 text-right font-extrabold">102</td>
-                      <td className="p-1.5 text-right font-extrabold">26</td>
-                      <td className="p-1.5" colSpan={2}></td>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/60">
-                    {PLAYBACK_TRIPS_DATA.map((trip, idx) => (
-                      <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-muted/40 transition-colors text-[11px]">
-                        <td className="p-2 pl-3 font-medium text-foreground">{trip.startTime}</td>
-                        <td className="p-2 text-muted-foreground truncate max-w-[200px]">{trip.startLoc}</td>
-                        <td className="p-2 font-medium text-foreground">{trip.endTime}</td>
-                        <td className="p-2 text-muted-foreground truncate max-w-[200px]">{trip.endLoc}</td>
-                        <td className="p-2 text-right font-semibold text-foreground">{trip.running}</td>
-                        <td className="p-2 text-right font-bold text-foreground">{trip.distance}</td>
-                        <td className="p-2 text-right text-foreground">{trip.avgSpeed}</td>
-                        <td className="p-2 text-right text-foreground">{trip.maxSpeed}</td>
-                        <td className="p-2 text-right font-bold text-foreground">{trip.alerts}</td>
-                        <td className="p-2 text-foreground">{trip.driver}</td>
-                        <td className="p-2 pr-3 text-muted-foreground">{trip.status}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                )}
               </div>
             </div>
-          )}
+
+            {/* EXPANDED CONTENT DRAWER (Trips, Events, Data Points, Fuel Graph) */}
+            {isTripsDrawerOpen && (
+              <div className="w-full bg-white dark:bg-card border-t border-border shadow-2xl animate-in slide-in-from-bottom duration-200 text-xs max-h-[300px] min-h-[220px] flex flex-col overflow-hidden">
+                
+                {/* 1. TRIPS TAB (Image 2) */}
+                {activeBottomTab === "trips" && (
+                  <div className="flex-1 overflow-x-auto overflow-y-auto">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b border-border bg-slate-100 dark:bg-muted/50 text-foreground font-bold text-[11px]">
+                          <th className="p-2 pl-3">Start Time</th>
+                          <th className="p-2">Start Location</th>
+                          <th className="p-2">End Time</th>
+                          <th className="p-2">End Location</th>
+                          <th className="p-2 text-right">Running</th>
+                          <th className="p-2 text-right">Distance</th>
+                          <th className="p-2 text-right">Average Speed (km/hr)</th>
+                          <th className="p-2 text-right">Max Speed (km/hr)</th>
+                          <th className="p-2 text-right">Alerts</th>
+                          <th className="p-2">Driver</th>
+                          <th className="p-2 pr-3">Trip Status</th>
+                        </tr>
+                        <tr className="bg-slate-200/60 dark:bg-muted/70 font-bold text-foreground text-[11px] border-b border-border">
+                          <td className="p-1.5 pl-3" colSpan={4}></td>
+                          <td className="p-1.5 text-right font-extrabold">11:34</td>
+                          <td className="p-1.5 text-right font-extrabold">428.77</td>
+                          <td className="p-1.5 text-right font-extrabold">37</td>
+                          <td className="p-1.5 text-right font-extrabold">102</td>
+                          <td className="p-1.5 text-right font-extrabold">26</td>
+                          <td className="p-1.5" colSpan={2}></td>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/60">
+                        {PLAYBACK_TRIPS_DATA.map((trip, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-muted/40 transition-colors text-[11px]">
+                            <td className="p-2 pl-3 font-medium text-foreground">{trip.startTime}</td>
+                            <td className="p-2 text-muted-foreground truncate max-w-[200px]">{trip.startLoc}</td>
+                            <td className="p-2 font-medium text-foreground">{trip.endTime}</td>
+                            <td className="p-2 text-muted-foreground truncate max-w-[200px]">{trip.endLoc}</td>
+                            <td className="p-2 text-right font-semibold text-foreground">{trip.running}</td>
+                            <td className="p-2 text-right font-bold text-foreground">{trip.distance}</td>
+                            <td className="p-2 text-right text-foreground">{trip.avgSpeed}</td>
+                            <td className="p-2 text-right text-foreground">{trip.maxSpeed}</td>
+                            <td className="p-2 text-right font-bold text-foreground">{trip.alerts}</td>
+                            <td className="p-2 text-foreground">{trip.driver}</td>
+                            <td className="p-2 pr-3 text-muted-foreground">{trip.status}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {/* 2. EVENTS TAB (Image 3) */}
+                {activeBottomTab === "events" && (
+                  <div className="flex-1 overflow-x-auto overflow-y-auto">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b border-border bg-slate-100 dark:bg-muted/50 text-foreground font-bold text-[11px]">
+                          <th className="p-2 pl-3">Event</th>
+                          <th className="p-2">
+                            <div className="flex items-center gap-1 cursor-pointer">
+                              <span>Time</span>
+                              <ArrowUpDown className="w-3 h-3 text-muted-foreground" />
+                            </div>
+                          </th>
+                          <th className="p-2">Event Duration</th>
+                          <th className="p-2">Address</th>
+                          <th className="p-2 pr-3">Driver</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/60">
+                        {PLAYBACK_EVENTS_DATA.map((ev, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-muted/40 transition-colors text-[11px]">
+                            <td className="p-2 pl-3 font-bold text-foreground">{ev.event}</td>
+                            <td className="p-2 text-foreground">{ev.time}</td>
+                            <td className="p-2 font-semibold text-foreground">{ev.duration}</td>
+                            <td className="p-2 text-muted-foreground truncate max-w-[400px]">{ev.address}</td>
+                            <td className="p-2 pr-3 text-foreground">{ev.driver}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {/* 3. DATA POINTS TAB (Image 4) */}
+                {activeBottomTab === "datapoints" && (
+                  <div className="flex-1 overflow-x-auto overflow-y-auto">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b border-border bg-slate-100 dark:bg-muted/50 text-foreground font-bold text-[11px]">
+                          <th className="p-2 pl-3">
+                            <div className="flex items-center gap-1 cursor-pointer">
+                              <span>Status</span>
+                              <ArrowUpDown className="w-3 h-3 text-muted-foreground" />
+                            </div>
+                          </th>
+                          <th className="p-2">
+                            <div className="flex items-center gap-1 cursor-pointer">
+                              <span>Time</span>
+                              <ArrowUpDown className="w-3 h-3 text-muted-foreground" />
+                            </div>
+                          </th>
+                          <th className="p-2">Latitude</th>
+                          <th className="p-2">Longitude</th>
+                          <th className="p-2 text-right">
+                            <div className="flex items-center justify-end gap-1 cursor-pointer">
+                              <span>Speed</span>
+                              <ArrowUpDown className="w-3 h-3 text-muted-foreground" />
+                            </div>
+                          </th>
+                          <th className="p-2 text-right">Distance(km)</th>
+                          <th className="p-2">Address</th>
+                          <th className="p-2">Driver</th>
+                          <th className="p-2 pr-3 text-right">
+                            <div className="flex items-center justify-end gap-1 cursor-pointer">
+                              <span>Battery Voltage %</span>
+                              <ArrowUpDown className="w-3 h-3 text-muted-foreground" />
+                            </div>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/60">
+                        {PLAYBACK_DATAPOINTS_DATA.map((dp, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-muted/40 transition-colors text-[11px]">
+                            <td className="p-2 pl-3 font-semibold text-emerald-600">{dp.status}</td>
+                            <td className="p-2 font-medium text-foreground">{dp.time}</td>
+                            <td className="p-2 text-muted-foreground font-mono">{dp.lat}</td>
+                            <td className="p-2 text-muted-foreground font-mono">{dp.lng}</td>
+                            <td className="p-2 text-right font-bold text-foreground">{dp.speed}</td>
+                            <td className="p-2 text-right text-foreground">{dp.distance}</td>
+                            <td className="p-2 text-muted-foreground truncate max-w-[200px]">{dp.address}</td>
+                            <td className="p-2 text-foreground">{dp.driver}</td>
+                            <td className="p-2 pr-3 text-right text-muted-foreground">{dp.battery}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {/* 4. FUEL GRAPH & SENSOR TAB (Image 5) */}
+                {activeBottomTab === "fuel" && (
+                  <div className="flex-1 flex overflow-hidden">
+                    {/* Left Sensor Selection Sidebar */}
+                    <div className="w-[170px] border-r border-border p-2 bg-slate-50 dark:bg-muted/20 text-xs shrink-0">
+                      <div className="font-bold text-foreground mb-2 text-[11px]">Select sensor</div>
+                      <label className="flex items-center gap-1.5 cursor-pointer text-[11px] text-foreground font-medium">
+                        <input type="checkbox" defaultChecked className="w-3 h-3 text-blue-600 rounded" />
+                        <span>BLE Fuel Level 1</span>
+                      </label>
+                    </div>
+
+                    {/* Right Interactive SVG Fuel Graph Line */}
+                    <div className="flex-1 p-3 flex flex-col justify-between overflow-hidden">
+                      <div className="relative w-full h-[160px]">
+                        {/* Y-axis label */}
+                        <div className="absolute left-0 top-0 text-[10px] text-muted-foreground font-bold -rotate-90 origin-top-left translate-y-24">
+                          BLE Fuel Level 1 (ltr)
+                        </div>
+
+                        {/* Chart Grid Lines & Graph */}
+                        <svg className="w-full h-full pl-8 pb-4" viewBox="0 0 800 140" preserveAspectRatio="none">
+                          {/* Horizontal Grid lines */}
+                          <line x1="0" y1="10" x2="800" y2="10" stroke="#e2e8f0" strokeDasharray="3,3" />
+                          <line x1="0" y1="40" x2="800" y2="40" stroke="#e2e8f0" strokeDasharray="3,3" />
+                          <line x1="0" y1="70" x2="800" y2="70" stroke="#e2e8f0" strokeDasharray="3,3" />
+                          <line x1="0" y1="100" x2="800" y2="100" stroke="#e2e8f0" strokeDasharray="3,3" />
+                          <line x1="0" y1="130" x2="800" y2="130" stroke="#cbd5e1" />
+
+                          {/* Y-axis ticks */}
+                          <text x="-5" y="14" fontSize="9" fill="#94a3b8" textAnchor="end">200</text>
+                          <text x="-5" y="44" fontSize="9" fill="#94a3b8" textAnchor="end">150</text>
+                          <text x="-5" y="74" fontSize="9" fill="#94a3b8" textAnchor="end">100</text>
+                          <text x="-5" y="104" fontSize="9" fill="#94a3b8" textAnchor="end">50</text>
+                          <text x="-5" y="134" fontSize="9" fill="#94a3b8" textAnchor="end">0</text>
+
+                          {/* Pink / Red Fuel Telemetry Line (with sudden Refill jump at ~16:00) */}
+                          <polyline
+                            points="
+                              0,58 
+                              50,59 
+                              100,62 
+                              150,68 
+                              200,75 
+                              250,85 
+                              300,92 
+                              350,96 
+                              400,99 
+                              450,105 
+                              500,108 
+                              505,32 
+                              550,33 
+                              600,34 
+                              650,36 
+                              700,37 
+                              750,42 
+                              800,48
+                            "
+                            fill="none"
+                            stroke="#f43f5e"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+
+                        {/* X-axis Timestamp labels */}
+                        <div className="flex justify-between pl-8 text-[10px] text-muted-foreground font-semibold">
+                          <span>00:00</span>
+                          <span>04:00</span>
+                          <span>08:00</span>
+                          <span>12:00</span>
+                          <span>16:00</span>
+                          <span>20:00</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+              </div>
+            )}
+
+          </div>
 
         </div>
       )}
