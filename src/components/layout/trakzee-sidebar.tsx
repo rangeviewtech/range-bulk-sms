@@ -9,7 +9,6 @@ import {
   FileText,
   PieChart,
   Settings,
-  CloudDownload,
   User,
   Bell,
   ChevronRight,
@@ -24,7 +23,8 @@ import {
   Shield,
   HelpCircle,
   Layers,
-  ArrowRight
+  ArrowRight,
+  Download
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
@@ -52,16 +52,16 @@ export const TRAKZEE_NAVIGATION: NavModule[] = [
   {
     title: "Dashboard",
     href: "/dashboard",
-    icon: <Gauge className="w-6 h-6 mb-1.5" strokeWidth={1.3} />,
+    icon: <Gauge className="w-[26px] h-[26px] mb-1.5" strokeWidth={1.25} />,
   },
   {
     title: "Tracking",
     href: "/tracking",
-    icon: <MapPin className="w-6 h-6 mb-1.5" strokeWidth={1.3} />,
+    icon: <MapPin className="w-[26px] h-[26px] mb-1.5" strokeWidth={1.25} />,
   },
   {
     title: "Reports",
-    icon: <FileText className="w-6 h-6 mb-1.5" strokeWidth={1.3} />,
+    icon: <FileText className="w-[26px] h-[26px] mb-1.5" strokeWidth={1.25} />,
     categories: [
       {
         title: "Activity",
@@ -178,7 +178,7 @@ export const TRAKZEE_NAVIGATION: NavModule[] = [
   },
   {
     title: "Charts",
-    icon: <PieChart className="w-6 h-6 mb-1.5" strokeWidth={1.3} />,
+    icon: <PieChart className="w-[26px] h-[26px] mb-1.5" strokeWidth={1.25} />,
     categories: [
       {
         title: "Activity",
@@ -213,7 +213,7 @@ export const TRAKZEE_NAVIGATION: NavModule[] = [
   },
   {
     title: "Settings",
-    icon: <Settings className="w-6 h-6 mb-1.5" strokeWidth={1.3} />,
+    icon: <Settings className="w-[26px] h-[26px] mb-1.5" strokeWidth={1.25} />,
     categories: [
       {
         title: "General",
@@ -337,23 +337,25 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
 
   return (
     <>
-      {/* 1. PRIMARY SIDEBAR (90px) */}
+      {/* 1. PRIMARY SIDEBAR (90px wide, #07163d) */}
       <aside
         id="left-tree"
         className="fixed top-0 left-0 h-full w-[90px] bg-[#07163d] text-white flex flex-col z-[60] select-none shadow-2xl"
         onMouseLeave={closeAllFlyouts}
       >
-        {/* LOGO CONTAINER */}
-        <div className="flex items-center justify-center p-2 pt-2.5">
+        {/* LOGO CONTAINER (78px x 78px circular badge matching live site) */}
+        <div id="tree-logo" className="flex items-center justify-center p-2 pt-2.5">
           <Link
             href="/dashboard"
-            className="w-[74px] h-[74px] rounded-full bg-[#02050f] border border-white/20 flex flex-col items-center justify-center hover:border-white/40 transition-all shadow-inner group"
+            className="w-[78px] h-[78px] rounded-full bg-[#02050f] border border-white/20 flex flex-col items-center justify-center hover:border-white/40 transition-all shadow-inner group overflow-hidden"
             title="Trakzee - Fleet Telematics"
           >
-            <div className="text-[13px] font-bold tracking-wider text-white flex items-center">
-              uffizio<span className="text-[#29a4ff] text-[18px] leading-none">.</span>
-            </div>
-            <span className="text-[8px] text-white/50 tracking-widest uppercase mt-0.5">Trakzee</span>
+            {/* Live Uffizio Logo */}
+            <img 
+              src="/images/smart/ulogo.png" 
+              alt="Uffizio Trakzee Logo" 
+              className="w-[60px] h-[24px] object-contain"
+            />
           </Link>
         </div>
 
@@ -373,7 +375,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
             title="User Profile & Settings"
             aria-label="User Profile"
           >
-            <User className="w-5 h-5" strokeWidth={1.5} />
+            <User className="w-[22px] h-[22px]" strokeWidth={1.3} />
           </button>
 
           {/* Divider */}
@@ -393,7 +395,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
             title="Notifications & Announcements"
             aria-label="Notifications"
           >
-            <Bell className="w-5 h-5" strokeWidth={1.5} />
+            <Bell className="w-[22px] h-[22px]" strokeWidth={1.3} />
             <span className="absolute top-4 right-4 w-2 h-2 bg-[#29a4ff] rounded-full animate-pulse ring-2 ring-[#07163d]" />
           </button>
         </div>
@@ -450,16 +452,20 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
           })}
         </div>
 
-        {/* BOTTOM CLOUD DOWNLOAD */}
-        <div id="tree-download" className="h-[52px] border-t border-white/10 flex items-center justify-center">
+        {/* BOTTOM CLOUD DOWNLOAD (matching live cloude_download_new.svg) */}
+        <div id="tree-download" className="h-[50px] border-t border-white/10 flex items-center justify-center">
           <button
             type="button"
             onClick={() => setIsCloudDownloadOpen(true)}
-            className="w-full h-full flex items-center justify-center hover:bg-[#234292] text-white/70 hover:text-white transition-colors cursor-pointer"
-            title="Cloud Download Manager"
+            className="w-full h-full flex items-center justify-center hover:bg-[#234292] transition-colors cursor-pointer"
+            title="Cloud Download"
             aria-label="Cloud Download"
           >
-            <CloudDownload className="w-6 h-6" strokeWidth={1.3} />
+            <img 
+              src="/images/smart/cloude_download_new.svg" 
+              alt="Cloud Download" 
+              className="h-[27px] w-auto object-contain"
+            />
           </button>
         </div>
       </aside>
@@ -471,19 +477,19 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
           onMouseEnter={() => {}}
           onMouseLeave={closeAllFlyouts}
         >
-          {/* LAYER 2: Submenu Categories (175px wide, #0d276b) */}
+          {/* LAYER 2: Submenu Categories (170px wide, #0d276b) */}
           <div
             id="subMenu"
-            className="w-[175px] h-full bg-[#0d276b] text-white border-r border-white/10 flex flex-col shadow-2xl overflow-y-auto"
+            className="w-[170px] h-full bg-[#0d276b] text-white border-r border-white/10 flex flex-col shadow-2xl overflow-y-auto"
           >
             {/* Header Title */}
-            <div className="h-[52px] px-4 flex items-center justify-between border-b border-white/10 bg-[#0a1f54] text-xs font-bold uppercase tracking-wider text-[#29a4ff]">
+            <div className="h-[50px] px-3.5 flex items-center justify-between border-b border-white/10 bg-[#0a1f54] text-xs font-bold uppercase tracking-wider text-[#29a4ff]">
               <span>{hoveredModule.title}</span>
-              <span className="text-[10px] font-normal text-white/40">{hoveredModule.categories.length} sections</span>
+              <span className="text-[10px] font-normal text-white/40">{hoveredModule.categories.length}</span>
             </div>
 
-            {/* Category Items */}
-            <ul className="flex-1 py-1 divide-y divide-white/5">
+            {/* Category Items (40px height per item) */}
+            <ul className="flex-1 py-0 divide-y divide-white/5 list-none m-0 p-0">
               {hoveredModule.categories.map((cat) => {
                 const isCatHovered = hoveredCategory?.title === cat.title;
                 return (
@@ -491,7 +497,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
                     key={cat.title}
                     onMouseEnter={() => setHoveredCategory(cat)}
                     className={cn(
-                      "h-[40px] px-3.5 flex items-center justify-between text-[12px] font-medium text-white/85 hover:text-white hover:bg-[#07163d] cursor-pointer transition-colors group",
+                      "h-[40px] px-3 flex items-center justify-between text-[12px] font-medium text-white/85 hover:text-white hover:bg-[#07163d] cursor-pointer transition-colors group",
                       isCatHovered && "bg-[#07163d] text-[#29a4ff] font-semibold"
                     )}
                   >
@@ -508,28 +514,28 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
             </ul>
           </div>
 
-          {/* LAYER 3: Deep Menu Screens (200px wide, #07163d) */}
+          {/* LAYER 3: Deep Menu Screens (180px wide, #07163d) */}
           {hoveredCategory && (
             <div
               id="deepMenu"
-              className="w-[200px] h-full bg-[#07163d] text-white border-r border-white/10 flex flex-col shadow-2xl overflow-y-auto animate-in slide-in-from-left-2 duration-150"
+              className="w-[190px] h-full bg-[#07163d] text-white border-r border-white/10 flex flex-col shadow-2xl overflow-y-auto animate-in slide-in-from-left-2 duration-150"
             >
               {/* Header Title */}
-              <div className="h-[52px] px-4 flex items-center border-b border-white/10 bg-[#040e27] text-xs font-semibold text-white/90 truncate">
+              <div className="h-[50px] px-3.5 flex items-center border-b border-white/10 bg-[#040e27] text-xs font-semibold text-white/90 truncate">
                 <span className="truncate">{hoveredCategory.title}</span>
               </div>
 
-              {/* Screens List */}
-              <ul className="flex-1 py-1 divide-y divide-white/5">
+              {/* Screens List (38px height per item) */}
+              <ul className="flex-1 py-0 divide-y divide-white/5 list-none m-0 p-0">
                 {hoveredCategory.items.map((screen) => {
                   const isCurrent = pathname === screen.href;
                   return (
-                    <li key={screen.title} className="h-[38px]">
+                    <li key={screen.title} className="h-[38px] cursor-pointer">
                       <Link
                         href={screen.href}
                         onClick={closeAllFlyouts}
                         className={cn(
-                          "w-full h-full px-4 flex items-center text-[12px] text-white/80 hover:text-white hover:bg-[#234292] hover:pl-5 transition-all truncate",
+                          "w-full h-full px-3.5 flex items-center text-[12px] text-white/80 hover:text-white hover:bg-[#234292] hover:pl-4.5 transition-all truncate",
                           isCurrent && "bg-[#29a4ff] text-white font-semibold"
                         )}
                         title={screen.title}
@@ -548,7 +554,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
       {/* 3. USER PROFILE DRAWER / FLYOUT */}
       {isUserMenuOpen && (
         <div
-          className="fixed top-[90px] left-[90px] w-[210px] bg-card text-card-foreground border border-border shadow-2xl rounded-md z-[70] py-1.5 text-xs font-medium animate-in fade-in slide-in-from-left-2 duration-150"
+          className="fixed top-[80px] left-[90px] w-[210px] bg-card text-card-foreground border border-border shadow-2xl rounded-md z-[70] py-1.5 text-xs font-medium animate-in fade-in slide-in-from-left-2 duration-150"
           onMouseLeave={() => {
             setIsUserMenuOpen(false);
             setIsAppsMenuOpen(false);
@@ -624,7 +630,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
           <button
             type="button"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="w-full flex items-center justify-between px-3.5 py-2 hover:bg-muted/70 transition-colors text-left"
+            className="w-full flex items-center justify-between px-3.5 py-2 hover:bg-muted/70 transition-colors text-left cursor-pointer"
           >
             <div className="flex items-center gap-2">
               {theme === "dark" ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-indigo-500" />}
@@ -645,7 +651,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
           <form action="/api/auth/logout" method="POST" className="border-t border-border mt-1">
             <button
               type="submit"
-              className="w-full flex items-center gap-2 px-3.5 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors text-left"
+              className="w-full flex items-center gap-2 px-3.5 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors text-left cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Logout</span>
@@ -663,7 +669,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
               type="button"
               onClick={() => setActiveNotiTab("notifications")}
               className={cn(
-                "flex-1 flex items-center justify-center text-xs font-semibold border-b-2 transition-colors",
+                "flex-1 flex items-center justify-center text-xs font-semibold border-b-2 transition-colors cursor-pointer",
                 activeNotiTab === "notifications"
                   ? "border-[#29a4ff] text-[#29a4ff] bg-card"
                   : "border-transparent text-muted-foreground hover:text-foreground"
@@ -675,7 +681,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
               type="button"
               onClick={() => setActiveNotiTab("announcements")}
               className={cn(
-                "flex-1 flex items-center justify-center text-xs font-semibold border-b-2 transition-colors",
+                "flex-1 flex items-center justify-center text-xs font-semibold border-b-2 transition-colors cursor-pointer",
                 activeNotiTab === "announcements"
                   ? "border-[#29a4ff] text-[#29a4ff] bg-card"
                   : "border-transparent text-muted-foreground hover:text-foreground"
@@ -686,7 +692,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
             <button
               type="button"
               onClick={() => setIsNotificationsOpen(false)}
-              className="w-10 h-full flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-muted transition-colors"
+              className="w-10 h-full flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-muted transition-colors cursor-pointer"
               aria-label="Close Notifications"
             >
               <X className="w-4 h-4" />
@@ -696,15 +702,15 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
           {/* Priority Filters for Notifications */}
           {activeNotiTab === "notifications" && (
             <div className="grid grid-cols-3 border-b border-border text-center text-xs">
-              <div className="py-2.5 bg-red-50 dark:bg-red-950/30 border-b-2 border-red-500 text-red-600 dark:text-red-400">
+              <div className="py-2.5 bg-red-50 dark:bg-red-950/30 border-b-2 border-red-500 text-red-600 dark:text-red-400 cursor-pointer">
                 <div className="text-sm font-bold">0</div>
                 <div className="text-[10px] uppercase font-semibold">High</div>
               </div>
-              <div className="py-2.5 bg-amber-50 dark:bg-amber-950/30 border-b-2 border-amber-500 text-amber-600 dark:text-amber-400">
+              <div className="py-2.5 bg-amber-50 dark:bg-amber-950/30 border-b-2 border-amber-500 text-amber-600 dark:text-amber-400 cursor-pointer">
                 <div className="text-sm font-bold">0</div>
                 <div className="text-[10px] uppercase font-semibold">Medium</div>
               </div>
-              <div className="py-2.5 bg-emerald-50 dark:bg-emerald-950/30 border-b-2 border-emerald-500 text-emerald-600 dark:text-emerald-400">
+              <div className="py-2.5 bg-emerald-50 dark:bg-emerald-950/30 border-b-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 cursor-pointer">
                 <div className="text-sm font-bold">0</div>
                 <div className="text-[10px] uppercase font-semibold">Low</div>
               </div>
@@ -724,22 +730,30 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
         </div>
       )}
 
-      {/* 5. UNIVERSAL SCREEN SEARCH OVERLAY (Top-right search trigger & modal) */}
-      <div className="fixed top-3 right-4 z-[50]">
+      {/* 5. UNIVERSAL SCREEN SEARCH OVERLAY (Top-right clean SVG icon matching live Trakzee) */}
+      <div className="fixed top-3.5 right-4 z-[50]">
         <button
           type="button"
+          id="universalSelectorSearchIcon"
           onClick={() => setIsSearchOpen(true)}
-          className="h-9 px-3 rounded-md bg-white dark:bg-card border border-border shadow-sm flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all group"
-          title="Search all screens (Ctrl+K)"
+          className="p-2 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer"
+          title="Search Screens (Ctrl+K)"
+          aria-label="Search Screens"
         >
-          <Search className="w-3.5 h-3.5 text-muted-foreground group-hover:text-[#29a4ff]" />
-          <span className="hidden sm:inline">Search screens...</span>
-          <kbd className="text-[10px] bg-muted px-1.5 py-0.5 rounded border border-border">Ctrl+K</kbd>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M17.7802 16.7196L12.6615 11.6009C13.653 10.3762 14.25 8.81991 14.25 7.12494C14.25 3.19648 11.0535 0 7.12498 0C3.19648 0 0 3.19645 0 7.12491C0 11.0534 3.19651 14.2498 7.12501 14.2498C8.82 14.2498 10.3763 13.6529 11.601 12.6614L16.7198 17.7801C16.866 17.9263 17.058 17.9998 17.25 17.9998C17.442 17.9998 17.634 17.9263 17.7803 17.7801C18.0735 17.4868 18.0735 17.0128 17.7802 16.7196ZM7.12501 12.7499C4.023 12.7499 1.50001 10.2269 1.50001 7.12491C1.50001 4.02293 4.023 1.49996 7.12501 1.49996C10.227 1.49996 12.75 4.02293 12.75 7.12491C12.75 10.2269 10.227 12.7499 7.12501 12.7499Z"
+              fill="currentColor"
+            />
+          </svg>
         </button>
       </div>
 
       {isSearchOpen && (
-        <div className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-20 p-4 animate-in fade-in duration-150">
+        <div 
+          className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-20 p-4 animate-in fade-in duration-150"
+          onClick={() => setIsSearchOpen(false)}
+        >
           <div
             className="w-full max-w-xl bg-card border border-border rounded-xl shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-150"
             onClick={(e) => e.stopPropagation()}
@@ -758,7 +772,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
               <button
                 type="button"
                 onClick={() => setIsSearchOpen(false)}
-                className="p-1 text-muted-foreground hover:text-foreground rounded"
+                className="p-1 text-muted-foreground hover:text-foreground rounded cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -803,17 +817,27 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
 
       {/* 6. CLOUD DOWNLOAD MANAGER DIALOG */}
       {isCloudDownloadOpen && (
-        <div className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-card border border-border rounded-xl shadow-2xl p-5 space-y-4">
+        <div 
+          className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setIsCloudDownloadOpen(false)}
+        >
+          <div 
+            className="w-full max-w-md bg-card border border-border rounded-xl shadow-2xl p-5 space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
-                <CloudDownload className="w-5 h-5 text-[#29a4ff]" />
+                <img 
+                  src="/images/smart/cloude_download_new.svg" 
+                  alt="Cloud Download" 
+                  className="h-5 w-auto"
+                />
                 <h3 className="text-sm font-semibold">Cloud Download Manager</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsCloudDownloadOpen(false)}
-                className="p-1 text-muted-foreground hover:text-foreground"
+                className="p-1 text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
