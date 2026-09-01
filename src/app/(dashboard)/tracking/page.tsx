@@ -118,13 +118,13 @@ const VEHICLES_DATA: FleetVehicle[] = [
     type: "Truck (Fuel Tanker)",
     group: "Mega Milk",
     status: "Running",
-    speed: 15,
+    speed: 10,
     voltage: "28.3V",
     batteryLevel: 95,
     gsm: 4,
     ignition: true,
-    time: "02-09-2026 12:09:00 AM",
-    address: "Muteesa 1 Road, Lungujja, Mengo, Rubaga, Kampala, P.O",
+    time: "02-09-2026 12:12:28 AM",
+    address: "Nateete (Wakaliga) Road, Mbuubi, Rubaga, Kampala, Central",
     driver: "--",
     mobile: "--",
     currentTrip: "0.06 km",
@@ -148,7 +148,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     batteryLevel: 75,
     gsm: 4,
     ignition: false,
-    time: "02-09-2026 12:08:39 AM",
+    time: "02-09-2026 12:11:39 AM",
     address: "Mugore, Kiruhura, Uganda (SE)",
     driver: "Mawanda Driver",
     mobile: "+256 703 497552",
@@ -168,13 +168,13 @@ const VEHICLES_DATA: FleetVehicle[] = [
     type: "Truck (Fuel Tanker)",
     group: "Mega Milk",
     status: "Running",
-    speed: 25,
+    speed: 0,
     voltage: "27.8V",
     batteryLevel: 95,
     gsm: 4,
     ignition: true,
-    time: "02-09-2026 12:09:03 AM",
-    address: "Kaguta Road, Kiruhura, Uganda (SE)",
+    time: "02-09-2026 12:12:38 AM",
+    address: "Kaguta Road, Ntarama, Kiruhura, Uganda (NW)",
     driver: "Ntale Driver",
     mobile: "+256 701 498210",
     currentTrip: "92.50 km",
@@ -298,7 +298,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     batteryLevel: 85,
     gsm: 4,
     ignition: false,
-    time: "01-09-2026 11:10:11 PM",
+    time: "02-09-2026 12:10:18 AM",
     address: "Old Jinja Road, Namanve, Bbuto, Kira, Wakiso",
     driver: "Ali Hussein",
     mobile: "+256 707 004992",
@@ -343,12 +343,12 @@ const VEHICLES_DATA: FleetVehicle[] = [
     type: "Heavy Tipper",
     group: "walen",
     status: "Running",
-    speed: 34,
+    speed: 29,
     voltage: "26.6V",
     batteryLevel: 92,
     gsm: 4,
     ignition: true,
-    time: "02-09-2026 12:09:02 AM",
+    time: "02-09-2026 12:12:39 AM",
     address: "Sironko Kapchorwa Road, Muyembe, Bugisa",
     driver: "Samuel Kimani",
     mobile: "+256 709 168775",
@@ -364,17 +364,14 @@ const VEHICLES_DATA: FleetVehicle[] = [
 ];
 
 export default function TrackingPage() {
-  // Left panel active tab: object, driver, address, geofence
   const [leftActiveTab, setLeftActiveTab] = React.useState<"object" | "driver" | "address" | "geofence">("object");
   const [isObjectPanelCollapsed, setIsObjectPanelCollapsed] = React.useState(false);
   
-  // Right side drawers
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = React.useState(false);
   const [isPinTabDrawerOpen, setIsPinTabDrawerOpen] = React.useState(true);
   const [activePinTab, setActivePinTab] = React.useState<"live" | "engine" | "tpms" | "ble">("live");
   const [widgetSearchQuery, setWidgetSearchQuery] = React.useState("");
 
-  // Selected vehicle & filters
   const [selectedVehicle, setSelectedVehicle] = React.useState<FleetVehicle>(VEHICLES_DATA[0]);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<string>("all");
@@ -421,7 +418,6 @@ export default function TrackingPage() {
           }}
         />
 
-        {/* Live Vector Road Arteries */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none">
           <polyline
             points="580,510 570,540 540,560 550,580 580,550 560,500 580,510"
@@ -435,7 +431,6 @@ export default function TrackingPage() {
           <rect x="535" y="495" width="24" height="15" rx="2" fill="#22c55e" />
         </svg>
 
-        {/* Map Street & Business Name Label Badges */}
         <div className="absolute top-[28%] left-[62%] -translate-x-1/2 text-white/90 font-bold text-xs drop-shadow-[0_1px_3px_black]">
           Albert Cook Rd
         </div>
@@ -456,7 +451,6 @@ export default function TrackingPage() {
           <span>Shell</span>
         </div>
 
-        {/* Selected Live Vehicle 3D Top Marker */}
         <div 
           className="absolute top-[52%] left-[57%] z-20 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group"
           onClick={() => {
@@ -469,7 +463,7 @@ export default function TrackingPage() {
             <div className="w-2 h-2 rounded-full bg-[#22c55e] animate-ping" />
           </div>
           <div className="mt-1 px-2 py-0.5 bg-[#15803d] text-white text-[10px] font-bold rounded shadow-lg whitespace-nowrap">
-            UA 347AP - Truck - 15 km/h
+            UA 347AP - Truck - 10 km/h
           </div>
         </div>
       </div>
@@ -528,14 +522,13 @@ export default function TrackingPage() {
         </div>
       </div>
 
-      {/* 4. LEFT FLOATING FLEET PANEL (#divObject with 4 interactive tabs) */}
+      {/* 4. LEFT FLOATING FLEET PANEL */}
       <div
         className={cn(
           "absolute top-3 left-3 bottom-3 z-30 w-[580px] max-w-[calc(100vw-30px)] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col transition-all duration-300 overflow-hidden",
           isObjectPanelCollapsed && "-translate-x-[600px]"
         )}
       >
-        {/* Blue Header Strip with 4 Main Tabs */}
         <div className="h-[36px] bg-[#1542b7] text-white px-3 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3 text-xs font-semibold">
             <button
@@ -888,7 +881,7 @@ export default function TrackingPage() {
         )}
       </div>
 
-      {/* 5. RIGHT FLOATING "PIN TAB / TOOLTIP WIDGET" DRAWER (Matching Images 1, 2, 3, 4, 5) */}
+      {/* 5. RIGHT FLOATING "PIN TAB / TOOLTIP WIDGET" DRAWER (Matching all 10 uploaded user screenshots) */}
       {isPinTabDrawerOpen && (
         <div className="absolute top-3 right-14 bottom-3 z-30 w-[310px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs">
           
@@ -897,7 +890,7 @@ export default function TrackingPage() {
             Pin Tab
           </div>
 
-          {/* 4 Top Category Cards (Live, Engine Param..., TPMS, BLE) */}
+          {/* 4 Top Category Cards */}
           <div className="grid grid-cols-4 gap-1.5 p-2.5 border-b border-border bg-slate-50/50 dark:bg-muted/20">
             <button
               type="button"
@@ -967,7 +960,7 @@ export default function TrackingPage() {
             <div className="font-semibold text-xs text-foreground pt-1">Select Tooltip Widget</div>
           </div>
 
-          {/* Scrollable Tooltip Widget Checkbox Trees (Images 1-5) */}
+          {/* Scrollable Tooltip Widget Checkbox Trees (Complete Suite from Screenshots) */}
           <div className="flex-1 overflow-y-auto p-3 space-y-3 divide-y divide-border/60">
             
             {/* 1. Object Info */}
@@ -977,10 +970,7 @@ export default function TrackingPage() {
                 <span>Object Info</span>
               </label>
               <div className="pl-4 space-y-1 text-[11px] text-muted-foreground">
-                <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Status</span></label>
-                  <GripVertical className="w-3 h-3 cursor-grab" />
-                </div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Status</span></label><GripVertical className="w-3 h-3 cursor-grab" /></div>
                 <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Driver Information</span></label></div>
                 <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Work Hour</span></label></div>
                 <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Odometer</span></label></div>
@@ -1041,6 +1031,8 @@ export default function TrackingPage() {
                 <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Stop</span></label></div>
                 <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Inactive</span></label></div>
                 <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Idle</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Work Hour</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Working Start</span></label></div>
                 <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Last Stop</span></label></div>
               </div>
             </div>
@@ -1051,6 +1043,9 @@ export default function TrackingPage() {
                 <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
                 <span>Speed</span>
               </label>
+              <div className="pl-4 text-[11px] text-muted-foreground">
+                <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Speed</span></label>
+              </div>
             </div>
 
             {/* 6. Alert */}
@@ -1059,6 +1054,9 @@ export default function TrackingPage() {
                 <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
                 <span>Alert</span>
               </label>
+              <div className="pl-4 text-[11px] text-muted-foreground">
+                <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Alert Information</span></label>
+              </div>
             </div>
 
             {/* 7. Temperature */}
@@ -1067,6 +1065,9 @@ export default function TrackingPage() {
                 <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
                 <span>Temperature</span>
               </label>
+              <div className="pl-4 text-[11px] text-muted-foreground">
+                <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Temperature</span></label>
+              </div>
             </div>
 
             {/* 8. Near By */}
@@ -1075,6 +1076,9 @@ export default function TrackingPage() {
                 <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
                 <span>Near By</span>
               </label>
+              <div className="pl-4 text-[11px] text-muted-foreground">
+                <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Address</span></label>
+              </div>
             </div>
 
             {/* 9. GPS Device Parameters */}
@@ -1099,6 +1103,129 @@ export default function TrackingPage() {
                 <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>ICCID</span></label></div>
                 <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>MAC</span></label></div>
                 <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>ICCID-2</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Axis X</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Axis Y</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Axis Z</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>SD status</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>BT Status</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>GNSS Status</span></label></div>
+              </div>
+            </div>
+
+            {/* 10. Network Parameter (Images 1 & 2) */}
+            <div className="space-y-1.5 pt-2">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>Network Parameter</span>
+              </label>
+              <div className="pl-4 space-y-1 text-[11px] text-muted-foreground">
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>GSM</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Cell Id</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Network Mode</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Network Type</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Operator</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>PMN Code</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>OPCO Code</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Country</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Zone</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Network Rank</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" className="w-3 h-3 rounded" /><span>MCC</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" className="w-3 h-3 rounded" /><span>MNC</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" className="w-3 h-3 rounded" /><span>LAC</span></label></div>
+              </div>
+            </div>
+
+            {/* 11. Security (Images 2 & 3) */}
+            <div className="space-y-1.5 pt-2">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>Security</span>
+              </label>
+              <div className="pl-4 space-y-1 text-[11px] text-muted-foreground">
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Immobilize</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Door</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Boot</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Buzzer</span></label></div>
+              </div>
+            </div>
+
+            {/* 12. Object Information (Images 3 & 4) */}
+            <div className="space-y-1.5 pt-2">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>Object Information</span>
+              </label>
+              <div className="pl-4 space-y-1 text-[11px] text-muted-foreground">
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Purchase Date</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Purchase Amount</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Seat Capacity</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Capacity</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Company Average</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Object Brand</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Permit Name</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Object Model</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Age</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>VIN(Chassis) Number</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Engine No.</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Object Category</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Fuel Type</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Object Info 1</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Object Info 2</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Object Info 3</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Object Info 4</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Object Info 5</span></label></div>
+              </div>
+            </div>
+
+            {/* 13. Documents (Image 4) */}
+            <div className="space-y-1.5 pt-2">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>Documents</span>
+              </label>
+              <div className="pl-4 space-y-1 text-[11px] text-muted-foreground">
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Objects Document</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Drivers Document</span></label></div>
+              </div>
+            </div>
+
+            {/* 14. Expense (Images 4 & 5) */}
+            <div className="space-y-1.5 pt-2">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>Expense</span>
+              </label>
+              <div className="pl-4 text-[11px] text-muted-foreground">
+                <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Expense Information</span></label>
+              </div>
+            </div>
+
+            {/* 15. GPS Device Information (Image 5) */}
+            <div className="space-y-1.5 pt-2">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>GPS Device Information</span>
+              </label>
+              <div className="pl-4 text-[11px] text-muted-foreground">
+                <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>GPS Device Information</span></label>
+              </div>
+            </div>
+
+            {/* 16. Driver Information (Image 5) */}
+            <div className="space-y-1.5 pt-2">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>Driver Information</span>
+              </label>
+              <div className="pl-4 space-y-1 text-[11px] text-muted-foreground">
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Driver Number</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>RFID</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Age</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Driving Experience</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>License Available</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>License To Drive</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>License Expiry</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Life Ins. Expiry</span></label></div>
               </div>
             </div>
 
