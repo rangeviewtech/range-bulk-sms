@@ -77,7 +77,10 @@ import {
   Check,
   MoreVertical,
   UploadCloud,
-  FileUp
+  FileUp,
+  Bluetooth,
+  Cloud,
+  GripVertical
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -115,13 +118,13 @@ const VEHICLES_DATA: FleetVehicle[] = [
     type: "Truck (Fuel Tanker)",
     group: "Mega Milk",
     status: "Running",
-    speed: 0,
-    voltage: "28.5V",
+    speed: 15,
+    voltage: "28.3V",
     batteryLevel: 95,
     gsm: 4,
     ignition: true,
-    time: "02-09-2026 12:06:37 AM",
-    address: "Albert Cook Road, Lungujja, Mengo, Rubaga, Kampala",
+    time: "02-09-2026 12:09:00 AM",
+    address: "Muteesa 1 Road, Lungujja, Mengo, Rubaga, Kampala, P.O",
     driver: "--",
     mobile: "--",
     currentTrip: "0.06 km",
@@ -145,7 +148,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     batteryLevel: 75,
     gsm: 4,
     ignition: false,
-    time: "02-09-2026 12:05:39 AM",
+    time: "02-09-2026 12:08:39 AM",
     address: "Mugore, Kiruhura, Uganda (SE)",
     driver: "Mawanda Driver",
     mobile: "+256 703 497552",
@@ -165,13 +168,13 @@ const VEHICLES_DATA: FleetVehicle[] = [
     type: "Truck (Fuel Tanker)",
     group: "Mega Milk",
     status: "Running",
-    speed: 70,
+    speed: 25,
     voltage: "27.8V",
     batteryLevel: 95,
     gsm: 4,
     ignition: true,
-    time: "02-09-2026 12:06:34 AM",
-    address: "Kaguta Road, Kiruhura, Western Region, Uganda ...",
+    time: "02-09-2026 12:09:03 AM",
+    address: "Kaguta Road, Kiruhura, Uganda (SE)",
     driver: "Ntale Driver",
     mobile: "+256 701 498210",
     currentTrip: "92.50 km",
@@ -340,13 +343,13 @@ const VEHICLES_DATA: FleetVehicle[] = [
     type: "Heavy Tipper",
     group: "walen",
     status: "Running",
-    speed: 46,
+    speed: 34,
     voltage: "26.6V",
     batteryLevel: 92,
     gsm: 4,
     ignition: true,
-    time: "02-09-2026 12:06:33 AM",
-    address: "Sironko Kapchorwa Road, Muyembe, Bugisa sub-",
+    time: "02-09-2026 12:09:02 AM",
+    address: "Sironko Kapchorwa Road, Muyembe, Bugisa",
     driver: "Samuel Kimani",
     mobile: "+256 709 168775",
     currentTrip: "84.30 km",
@@ -361,14 +364,15 @@ const VEHICLES_DATA: FleetVehicle[] = [
 ];
 
 export default function TrackingPage() {
-  // Mode: Live Tracking vs Playback
-  const [isPlaybackMode, setIsPlaybackMode] = React.useState(false);
-  const [isPlaybackDropdownOpen, setIsPlaybackDropdownOpen] = React.useState(false);
-
-  // Left panel active tab: object, driver, address, geofence (Images 1, 3, 4, 5)
+  // Left panel active tab: object, driver, address, geofence
   const [leftActiveTab, setLeftActiveTab] = React.useState<"object" | "driver" | "address" | "geofence">("object");
   const [isObjectPanelCollapsed, setIsObjectPanelCollapsed] = React.useState(false);
-  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = React.useState(true);
+  
+  // Right side drawers
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = React.useState(false);
+  const [isPinTabDrawerOpen, setIsPinTabDrawerOpen] = React.useState(true);
+  const [activePinTab, setActivePinTab] = React.useState<"live" | "engine" | "tpms" | "ble">("live");
+  const [widgetSearchQuery, setWidgetSearchQuery] = React.useState("");
 
   // Selected vehicle & filters
   const [selectedVehicle, setSelectedVehicle] = React.useState<FleetVehicle>(VEHICLES_DATA[0]);
@@ -407,7 +411,7 @@ export default function TrackingPage() {
   return (
     <div className="relative w-full h-screen overflow-hidden bg-[#0c1e3d] text-foreground select-none flex flex-col font-sans">
       
-      {/* 1. SATELLITE MAP CANVAS BACKGROUND (Images 1-5 satellite street view) */}
+      {/* 1. SATELLITE MAP CANVAS BACKGROUND */}
       <div className="absolute inset-0 z-0 bg-[#0a1424] overflow-hidden">
         <div 
           className="w-full h-full bg-cover bg-center transition-all duration-300"
@@ -417,9 +421,8 @@ export default function TrackingPage() {
           }}
         />
 
-        {/* Live Vector Road Arteries & Geofence Boundary Polygons */}
+        {/* Live Vector Road Arteries */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none">
-          {/* Active cyan track polyline */}
           <polyline
             points="580,510 570,540 540,560 550,580 580,550 560,500 580,510"
             fill="none"
@@ -429,11 +432,10 @@ export default function TrackingPage() {
             strokeLinejoin="round"
             className="drop-shadow-[0_0_8px_#00b4d8]"
           />
-          {/* Start Green Flag */}
           <rect x="535" y="495" width="24" height="15" rx="2" fill="#22c55e" />
         </svg>
 
-        {/* Map Street & Business Name Label Badges (Matching Image 1 & 2) */}
+        {/* Map Street & Business Name Label Badges */}
         <div className="absolute top-[28%] left-[62%] -translate-x-1/2 text-white/90 font-bold text-xs drop-shadow-[0_1px_3px_black]">
           Albert Cook Rd
         </div>
@@ -454,52 +456,36 @@ export default function TrackingPage() {
           <span>Shell</span>
         </div>
 
-        {/* Selected Live Vehicle 3D Top Marker (UA 347AP - Truck) */}
+        {/* Selected Live Vehicle 3D Top Marker */}
         <div 
           className="absolute top-[52%] left-[57%] z-20 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group"
-          onClick={() => setIsDetailDrawerOpen(true)}
+          onClick={() => {
+            setIsDetailDrawerOpen(true);
+            setIsPinTabDrawerOpen(false);
+          }}
         >
           <div className="w-6 h-12 bg-slate-300 border-2 border-slate-600 rounded-sm shadow-2xl flex flex-col items-center justify-between p-0.5 ring-4 ring-[#29a4ff]">
             <div className="w-full h-3 bg-slate-800 rounded-xs" />
             <div className="w-2 h-2 rounded-full bg-[#22c55e] animate-ping" />
           </div>
           <div className="mt-1 px-2 py-0.5 bg-[#15803d] text-white text-[10px] font-bold rounded shadow-lg whitespace-nowrap">
-            UA 347AP - Truck - 0 km/h
+            UA 347AP - Truck - 15 km/h
           </div>
         </div>
       </div>
 
-      {/* 2. TOP PLAYBACK BUTTON (Centered) */}
+      {/* 2. TOP PLAYBACK BUTTON */}
       <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center">
         <button
           type="button"
-          onClick={() => setIsPlaybackDropdownOpen(!isPlaybackDropdownOpen)}
           className="px-4 py-1.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-semibold rounded shadow-lg flex items-center gap-1.5 transition-colors cursor-pointer border border-white/20"
         >
           <Play className="w-3.5 h-3.5 fill-white" />
           <span>Playback</span>
         </button>
-
-        {isPlaybackDropdownOpen && (
-          <div className="mt-1 w-[140px] bg-white dark:bg-card border border-border shadow-2xl rounded text-xs py-1 animate-in fade-in zoom-in-95 duration-100">
-            {["Today", "Last 24 Hour", "Yesterday", "This Week", "Last Week", "This Month", "Last Month", "Custom"].map((opt) => (
-              <button
-                key={opt}
-                type="button"
-                onClick={() => {
-                  setIsPlaybackDropdownOpen(false);
-                  setIsPlaybackMode(true);
-                }}
-                className="w-full text-left px-3 py-1.5 hover:bg-muted text-foreground transition-colors cursor-pointer text-[11px]"
-              >
-                {opt}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
 
-      {/* 3. RIGHT FLOATING MAP ACTIONS TOOLBAR (Vertical strip) */}
+      {/* 3. RIGHT FLOATING MAP ACTIONS TOOLBAR */}
       <div className="absolute top-3 right-3 z-30 flex flex-col gap-1">
         <div className="bg-white dark:bg-card border border-border shadow-xl rounded flex flex-col text-muted-foreground overflow-hidden">
           <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Search Location"><Search className="w-3.5 h-3.5" /></button>
@@ -524,7 +510,17 @@ export default function TrackingPage() {
           <div className="h-[1px] bg-border" />
           <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Center Target"><Crosshair className="w-3.5 h-3.5" /></button>
           <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Settings"><Settings className="w-3.5 h-3.5" /></button>
+          <button 
+            type="button" 
+            onClick={() => {
+              setIsPinTabDrawerOpen(!isPinTabDrawerOpen);
+              setIsDetailDrawerOpen(false);
+            }}
+            className={cn("p-2 hover:bg-muted hover:text-foreground", isPinTabDrawerOpen && "text-[#2563eb]")}
+            title="Settings"
+          >
+            <Settings className="w-3.5 h-3.5" />
+          </button>
         </div>
 
         <div className="mt-auto self-end text-[9px] font-bold bg-white/90 dark:bg-card/90 px-1 py-0.5 rounded border border-border text-foreground shadow">
@@ -532,7 +528,7 @@ export default function TrackingPage() {
         </div>
       </div>
 
-      {/* 4. LEFT FLOATING FLEET PANEL (#divObject with 4 interactive tabs matching Images 1, 3, 4, 5) */}
+      {/* 4. LEFT FLOATING FLEET PANEL (#divObject with 4 interactive tabs) */}
       <div
         className={cn(
           "absolute top-3 left-3 bottom-3 z-30 w-[580px] max-w-[calc(100vw-30px)] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col transition-all duration-300 overflow-hidden",
@@ -542,7 +538,6 @@ export default function TrackingPage() {
         {/* Blue Header Strip with 4 Main Tabs */}
         <div className="h-[36px] bg-[#1542b7] text-white px-3 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3 text-xs font-semibold">
-            {/* 1. Object Tab */}
             <button
               type="button"
               onClick={() => setLeftActiveTab("object")}
@@ -555,7 +550,6 @@ export default function TrackingPage() {
               <span>Object</span>
             </button>
 
-            {/* 2. Driver Tab */}
             <button
               type="button"
               onClick={() => setLeftActiveTab("driver")}
@@ -569,7 +563,6 @@ export default function TrackingPage() {
               {leftActiveTab === "driver" && <span>Driver</span>}
             </button>
 
-            {/* 3. Address Tab */}
             <button
               type="button"
               onClick={() => setLeftActiveTab("address")}
@@ -583,7 +576,6 @@ export default function TrackingPage() {
               {leftActiveTab === "address" && <span>Address</span>}
             </button>
 
-            {/* 4. Geofence Tab */}
             <button
               type="button"
               onClick={() => setLeftActiveTab("geofence")}
@@ -599,7 +591,16 @@ export default function TrackingPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <button type="button" className="text-white/80 hover:text-white"><Settings className="w-3.5 h-3.5" /></button>
+            <button 
+              type="button" 
+              onClick={() => {
+                setIsPinTabDrawerOpen(true);
+                setIsDetailDrawerOpen(false);
+              }}
+              className="text-white/80 hover:text-white"
+            >
+              <Settings className="w-3.5 h-3.5" />
+            </button>
             <button
               type="button"
               onClick={() => setIsObjectPanelCollapsed(true)}
@@ -611,10 +612,9 @@ export default function TrackingPage() {
           </div>
         </div>
 
-        {/* TAB 1: OBJECT FLEET LIST (Images 1 & 2) */}
+        {/* TAB 1: OBJECT FLEET LIST */}
         {leftActiveTab === "object" && (
           <div className="flex-1 flex flex-col overflow-hidden">
-            {/* 6-Pill KPI Status Ribbon */}
             <div className="grid grid-cols-6 border-b border-border text-center text-[11px] font-semibold">
               <div onClick={() => setStatusFilter("Running")} className="py-1 bg-emerald-100/70 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-r border-border cursor-pointer">
                 <div className="text-xs font-bold">{counts.running}</div>
@@ -642,7 +642,6 @@ export default function TrackingPage() {
               </div>
             </div>
 
-            {/* Search Ribbon */}
             <div className="p-2 border-b border-border flex items-center gap-2 bg-slate-50/50 dark:bg-muted/20">
               <input type="checkbox" defaultChecked className="rounded border-border w-3.5 h-3.5 text-[#1542b7]" />
               <div className="flex-1 relative">
@@ -663,12 +662,10 @@ export default function TrackingPage() {
               </div>
             </div>
 
-            {/* Collapse Banner */}
             <div className="px-3 py-1 bg-slate-100/70 dark:bg-muted/40 border-b border-border text-[11px] text-muted-foreground font-semibold">
               <span>&gt; Collapse</span>
             </div>
 
-            {/* Telematics Vehicles Tree List */}
             <div className="flex-1 overflow-y-auto divide-y divide-border/60 text-xs">
               {["Mega Milk", "Weldone Logistics", "walen"].map((grpName) => {
                 const grpVehicles = filteredVehicles.filter((v) => v.group === grpName);
@@ -699,6 +696,7 @@ export default function TrackingPage() {
                               onClick={() => {
                                 setSelectedVehicle(v);
                                 setIsDetailDrawerOpen(true);
+                                setIsPinTabDrawerOpen(false);
                               }}
                               className={cn(
                                 "p-2 pl-6 flex items-start gap-2 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-muted/40",
@@ -751,10 +749,9 @@ export default function TrackingPage() {
           </div>
         )}
 
-        {/* TAB 2: DRIVER DIRECTORY (Matching Image 3) */}
+        {/* TAB 2: DRIVER DIRECTORY */}
         {leftActiveTab === "driver" && (
           <div className="flex-1 flex flex-col overflow-hidden">
-            {/* 5-Pill Driver Status Ribbon */}
             <div className="border-b border-border text-center text-[10px] font-semibold">
               <div className="grid grid-cols-4 border-b border-border">
                 <div className="py-1 bg-sky-100/70 dark:bg-sky-950/40 text-sky-800 border-r"><div className="font-bold text-xs">2</div><div>Available</div></div>
@@ -768,7 +765,6 @@ export default function TrackingPage() {
               </div>
             </div>
 
-            {/* Search Bar */}
             <div className="p-2 border-b border-border flex items-center gap-2 bg-slate-50/50 dark:bg-muted/20">
               <div className="flex-1 relative">
                 <input
@@ -782,7 +778,6 @@ export default function TrackingPage() {
               <button type="button" className="p-1 text-muted-foreground hover:text-foreground"><Filter className="w-3.5 h-3.5" /></button>
             </div>
 
-            {/* Drivers List */}
             <div className="flex-1 overflow-y-auto text-xs divide-y divide-border/50">
               <div className="px-3 py-1 bg-slate-200/60 dark:bg-muted/70 flex justify-between font-bold text-[11px]">
                 <span>Mega Milk</span>
@@ -816,7 +811,6 @@ export default function TrackingPage() {
               </div>
             </div>
 
-            {/* Bottom XLS & PDF Buttons */}
             <div className="p-2 border-t border-border bg-slate-50 dark:bg-muted/20 flex gap-2">
               <button type="button" className="flex-1 py-1.5 bg-[#2563eb] text-white rounded font-bold text-xs shadow">XLS</button>
               <button type="button" className="flex-1 py-1.5 bg-[#2563eb] text-white rounded font-bold text-xs shadow">PDF</button>
@@ -824,10 +818,9 @@ export default function TrackingPage() {
           </div>
         )}
 
-        {/* TAB 3: ADDRESS POIS (Matching Image 4) */}
+        {/* TAB 3: ADDRESS POIS */}
         {leftActiveTab === "address" && (
           <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Search Bar */}
             <div className="p-2 border-b border-border flex items-center gap-2 bg-slate-50/50 dark:bg-muted/20">
               <div className="flex-1 relative">
                 <input
@@ -843,18 +836,15 @@ export default function TrackingPage() {
               <button type="button" className="p-1 text-muted-foreground hover:text-foreground"><Filter className="w-3.5 h-3.5" /></button>
             </div>
 
-            {/* Address Table Header */}
             <div className="px-3 py-1.5 bg-slate-100 dark:bg-muted/50 border-b border-border flex items-center gap-2 text-[11px] font-bold text-muted-foreground">
               <input type="checkbox" className="w-3 h-3 rounded" />
               <span>Address Name</span>
             </div>
 
-            {/* Empty State */}
             <div className="flex-1 flex items-center justify-center p-6 text-xs text-muted-foreground">
               Address not found
             </div>
 
-            {/* Bottom XLS & PDF Buttons */}
             <div className="p-2 border-t border-border bg-slate-50 dark:bg-muted/20 flex gap-2">
               <button type="button" className="flex-1 py-1.5 bg-[#2563eb] text-white rounded font-bold text-xs shadow">XLS</button>
               <button type="button" className="flex-1 py-1.5 bg-[#2563eb] text-white rounded font-bold text-xs shadow">PDF</button>
@@ -862,10 +852,9 @@ export default function TrackingPage() {
           </div>
         )}
 
-        {/* TAB 4: GEOFENCE (Matching Image 5) */}
+        {/* TAB 4: GEOFENCE */}
         {leftActiveTab === "geofence" && (
           <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Search Bar */}
             <div className="p-2 border-b border-border flex items-center gap-2 bg-slate-50/50 dark:bg-muted/20">
               <div className="flex-1 relative">
                 <input
@@ -881,18 +870,15 @@ export default function TrackingPage() {
               <button type="button" className="p-1 text-muted-foreground hover:text-foreground"><SlidersHorizontal className="w-3.5 h-3.5" /></button>
             </div>
 
-            {/* Geofence Table Header */}
             <div className="px-3 py-1.5 bg-slate-100 dark:bg-muted/50 border-b border-border flex items-center gap-2 text-[11px] font-bold text-muted-foreground">
               <input type="checkbox" className="w-3 h-3 rounded" />
               <span>Geofence Name</span>
             </div>
 
-            {/* Empty State */}
             <div className="flex-1 flex items-center justify-center p-6 text-xs text-muted-foreground">
               Geofence not found
             </div>
 
-            {/* Bottom KML, XLS & PDF Buttons */}
             <div className="p-2 border-t border-border bg-slate-50 dark:bg-muted/20 flex gap-2">
               <button type="button" className="flex-1 py-1.5 bg-[#2563eb] text-white rounded font-bold text-xs shadow">KML</button>
               <button type="button" className="flex-1 py-1.5 bg-[#2563eb] text-white rounded font-bold text-xs shadow">XLS</button>
@@ -902,23 +888,246 @@ export default function TrackingPage() {
         )}
       </div>
 
-      {/* Collapsed Expand Toggle for Left Panel */}
-      {isObjectPanelCollapsed && (
-        <button
-          type="button"
-          onClick={() => setIsObjectPanelCollapsed(false)}
-          className="absolute top-4 left-4 z-30 p-2 bg-[#1542b7] text-white shadow-xl rounded cursor-pointer hover:bg-[#1542b7]/90 transition-all"
-          title="Expand Fleet Panel"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
-      )}
-
-      {/* 5. RIGHT FLOATING VEHICLE DETAIL CARD & ANALOG FUEL GAUGE DRAWER (Matching Image 1 & 2) */}
-      {isDetailDrawerOpen && selectedVehicle && (
+      {/* 5. RIGHT FLOATING "PIN TAB / TOOLTIP WIDGET" DRAWER (Matching Images 1, 2, 3, 4, 5) */}
+      {isPinTabDrawerOpen && (
         <div className="absolute top-3 right-14 bottom-3 z-30 w-[310px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs">
           
-          {/* Card Header Strip */}
+          {/* Header Title */}
+          <div className="p-3 pb-2 border-b border-border font-bold text-sm text-foreground">
+            Pin Tab
+          </div>
+
+          {/* 4 Top Category Cards (Live, Engine Param..., TPMS, BLE) */}
+          <div className="grid grid-cols-4 gap-1.5 p-2.5 border-b border-border bg-slate-50/50 dark:bg-muted/20">
+            <button
+              type="button"
+              onClick={() => setActivePinTab("live")}
+              className={cn(
+                "p-2 rounded border flex flex-col items-center justify-center gap-1 cursor-pointer transition-all",
+                activePinTab === "live" ? "border-[#2563eb] bg-sky-50 dark:bg-sky-950/40 text-[#2563eb] font-bold shadow-xs" : "border-border text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <MapPin className="w-4 h-4" />
+              <span className="text-[10px]">Live</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActivePinTab("engine")}
+              className={cn(
+                "p-2 rounded border flex flex-col items-center justify-center gap-1 cursor-pointer transition-all",
+                activePinTab === "engine" ? "border-[#2563eb] bg-sky-50 dark:bg-sky-950/40 text-[#2563eb] font-bold shadow-xs" : "border-border text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Cloud className="w-4 h-4" />
+              <span className="text-[10px] truncate max-w-full">Engine...</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActivePinTab("tpms")}
+              className={cn(
+                "p-2 rounded border flex flex-col items-center justify-center gap-1 cursor-pointer transition-all",
+                activePinTab === "tpms" ? "border-[#2563eb] bg-sky-50 dark:bg-sky-950/40 text-[#2563eb] font-bold shadow-xs" : "border-border text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <CircleDot className="w-4 h-4" />
+              <span className="text-[10px]">TPMS</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActivePinTab("ble")}
+              className={cn(
+                "p-2 rounded border flex flex-col items-center justify-center gap-1 cursor-pointer transition-all",
+                activePinTab === "ble" ? "border-[#2563eb] bg-sky-50 dark:bg-sky-950/40 text-[#2563eb] font-bold shadow-xs" : "border-border text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Bluetooth className="w-4 h-4" />
+              <span className="text-[10px]">BLE</span>
+            </button>
+          </div>
+
+          {/* Subheader & Search */}
+          <div className="p-3 border-b border-border space-y-2">
+            <div className="font-bold text-xs text-foreground">Tooltip Widget</div>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search"
+                value={widgetSearchQuery}
+                onChange={(e) => setWidgetSearchQuery(e.target.value)}
+                className="w-full pl-2 pr-6 py-1 text-xs border border-border rounded bg-white dark:bg-card text-foreground outline-none focus:border-[#2563eb]"
+              />
+              <RefreshCw className="w-3.5 h-3.5 absolute right-2 top-2 text-muted-foreground cursor-pointer" />
+            </div>
+            <p className="text-[9px] text-muted-foreground leading-tight">
+              *If no space available, remove some widgets to add new ones.
+            </p>
+            <div className="font-semibold text-xs text-foreground pt-1">Select Tooltip Widget</div>
+          </div>
+
+          {/* Scrollable Tooltip Widget Checkbox Trees (Images 1-5) */}
+          <div className="flex-1 overflow-y-auto p-3 space-y-3 divide-y divide-border/60">
+            
+            {/* 1. Object Info */}
+            <div className="space-y-1.5 pt-1">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>Object Info</span>
+              </label>
+              <div className="pl-4 space-y-1 text-[11px] text-muted-foreground">
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Status</span></label>
+                  <GripVertical className="w-3 h-3 cursor-grab" />
+                </div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Driver Information</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Work Hour</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Odometer</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Follow</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Share Live Location</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Navigate</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Find Near By</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Mode</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Street View</span></label></div>
+              </div>
+            </div>
+
+            {/* 2. Fuel */}
+            <div className="space-y-1.5 pt-2">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>Fuel</span>
+              </label>
+              <div className="pl-4 space-y-1 text-[11px] text-muted-foreground">
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Level</span></label><GripVertical className="w-3 h-3" /></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Refill and Drain</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Blind Area</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Waste</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Tank Capacity</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Consumption</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Consumption ( CAN )</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Carbon Emission</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Number of Tank</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Remaining</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Updated</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" className="w-3 h-3 rounded" /><span>Tank-Wise Consumption</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" className="w-3 h-3 rounded" /><span>Distance</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" className="w-3 h-3 rounded" /><span>Duration</span></label></div>
+              </div>
+            </div>
+
+            {/* 3. Location */}
+            <div className="space-y-1.5 pt-2">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>Location</span>
+              </label>
+              <div className="pl-4 space-y-1 text-[11px] text-muted-foreground">
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Address</span></label><GripVertical className="w-3 h-3" /></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" className="w-3 h-3 rounded" /><span>Geofence</span></label></div>
+              </div>
+            </div>
+
+            {/* 4. Today Activity */}
+            <div className="space-y-1.5 pt-2">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>Today Activity</span>
+              </label>
+              <div className="pl-4 space-y-1 text-[11px] text-muted-foreground">
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Distance</span></label><GripVertical className="w-3 h-3" /></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Running</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Stop</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Inactive</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Idle</span></label></div>
+                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Last Stop</span></label></div>
+              </div>
+            </div>
+
+            {/* 5. Speed */}
+            <div className="space-y-1.5 pt-2">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>Speed</span>
+              </label>
+            </div>
+
+            {/* 6. Alert */}
+            <div className="space-y-1.5 pt-2">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>Alert</span>
+              </label>
+            </div>
+
+            {/* 7. Temperature */}
+            <div className="space-y-1.5 pt-2">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>Temperature</span>
+              </label>
+            </div>
+
+            {/* 8. Near By */}
+            <div className="space-y-1.5 pt-2">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>Near By</span>
+              </label>
+            </div>
+
+            {/* 9. GPS Device Parameters */}
+            <div className="space-y-1.5 pt-2">
+              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
+                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
+                <span>GPS Device Parameters</span>
+              </label>
+              <div className="pl-4 space-y-1 text-[11px] text-muted-foreground">
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Internal Battery</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Satellite</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>External power</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Internal Battery %</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Movement</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Angle</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Sleep Mode</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Altitude</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>HDOP</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>PDOP</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Extd Battery</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>IMSI</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>ICCID</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>MAC</span></label></div>
+                <div><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>ICCID-2</span></label></div>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Footer Action Buttons */}
+          <div className="p-2 border-t border-border bg-slate-50 dark:bg-muted/20 flex gap-2">
+            <button
+              type="button"
+              onClick={() => setIsPinTabDrawerOpen(false)}
+              className="flex-1 py-1.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white rounded font-bold text-xs shadow"
+            >
+              Apply
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsPinTabDrawerOpen(false)}
+              className="flex-1 py-1.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white rounded font-bold text-xs shadow"
+            >
+              Cancel
+            </button>
+          </div>
+
+        </div>
+      )}
+
+      {/* 6. RIGHT FLOATING VEHICLE DETAIL & FUEL GAUGE DRAWER (when selected) */}
+      {isDetailDrawerOpen && selectedVehicle && !isPinTabDrawerOpen && (
+        <div className="absolute top-3 right-14 bottom-3 z-30 w-[310px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs">
           <div className="h-[34px] bg-[#1542b7] text-white px-3 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2">
               <Pin className="w-3.5 h-3.5 text-white/80" />
@@ -938,13 +1147,11 @@ export default function TrackingPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto p-3 space-y-3">
-            {/* Title & Info */}
             <div className="flex items-center justify-between border-b border-border pb-2">
               <div className="font-bold text-sm text-foreground">{selectedVehicle.plate}</div>
               <Info className="w-4 h-4 text-[#1542b7] dark:text-[#29a4ff]" />
             </div>
 
-            {/* Vehicle 3D Render Image */}
             <div className="w-full h-[85px] bg-slate-100 dark:bg-muted/40 rounded flex items-center justify-center p-2 border border-border overflow-hidden">
               <img
                 src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=400&q=80"
@@ -953,7 +1160,6 @@ export default function TrackingPage() {
               />
             </div>
 
-            {/* Status & Duration */}
             <div className="flex items-center justify-between">
               <span className={cn(
                 "px-2.5 py-0.5 rounded font-bold text-white text-[11px]",
@@ -964,7 +1170,6 @@ export default function TrackingPage() {
               <span className="text-muted-foreground font-semibold text-[11px]">00:00</span>
             </div>
 
-            {/* Current Trip & Odometer */}
             <div className="space-y-1 bg-slate-50 dark:bg-muted/20 p-2.5 rounded border border-border">
               <div className="flex justify-between text-muted-foreground">
                 <span>Current Trip</span>
@@ -972,7 +1177,6 @@ export default function TrackingPage() {
               </div>
               <div className="flex justify-between items-center pt-1">
                 <span className="text-muted-foreground">Odometer</span>
-                {/* Rolling mechanical counter */}
                 <div className="flex gap-0.5 font-mono text-xs font-bold">
                   {selectedVehicle.odometer.split("").map((ch, i) => (
                     <span key={i} className="px-1 py-0.5 bg-slate-900 text-white rounded-xs">
@@ -983,7 +1187,6 @@ export default function TrackingPage() {
               </div>
             </div>
 
-            {/* Driver Details */}
             <div className="text-[11px] space-y-1">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Driver</span>
@@ -995,7 +1198,6 @@ export default function TrackingPage() {
               </div>
             </div>
 
-            {/* Quick Action Icons Strip */}
             <div className="grid grid-cols-6 border-y border-border py-2 text-center text-muted-foreground">
               <button type="button" className="hover:text-[#1542b7] flex justify-center"><Navigation className="w-3.5 h-3.5" /></button>
               <button type="button" className="hover:text-[#1542b7] flex justify-center"><Send className="w-3.5 h-3.5" /></button>
@@ -1005,7 +1207,6 @@ export default function TrackingPage() {
               <button type="button" className="hover:text-[#1542b7] flex justify-center"><Eye className="w-3.5 h-3.5" /></button>
             </div>
 
-            {/* ANALOG FUEL DIAL GAUGE SECTION */}
             <div className="space-y-2 pt-1">
               <div className="flex items-center justify-between text-xs font-bold text-foreground">
                 <div className="flex items-center gap-1.5">
@@ -1015,7 +1216,6 @@ export default function TrackingPage() {
                 <span className="text-[10px] text-muted-foreground">Sensor Active</span>
               </div>
 
-              {/* Analog SVG Fuel Needle Gauge */}
               <div className="relative w-full h-[120px] flex items-center justify-center">
                 <svg className="w-[180px] h-[100px]" viewBox="0 0 200 110">
                   <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e2e8f0" strokeWidth="14" strokeLinecap="round" />
@@ -1035,7 +1235,6 @@ export default function TrackingPage() {
                 </div>
               </div>
 
-              {/* Fuel Telematics Stat Breakdown Table (Matching Image 1 & 2) */}
               <div className="text-[11px] space-y-1 bg-slate-50 dark:bg-muted/20 p-2 rounded border border-border">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Tanks</span>
@@ -1058,9 +1257,7 @@ export default function TrackingPage() {
                   <span className="font-bold text-foreground">{selectedVehicle.fuelConsumption}</span>
                 </div>
               </div>
-
             </div>
-
           </div>
         </div>
       )}
