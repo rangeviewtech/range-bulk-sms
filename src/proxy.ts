@@ -55,7 +55,7 @@ export async function proxy(request: NextRequest) {
     }
 
     const screenLocked = request.cookies.get('screen_locked')?.value === 'true';
-    if (screenLocked && pathname !== '/screen-lock') {
+    if (hasSession && screenLocked && pathname !== '/screen-lock') {
       return NextResponse.redirect(new URL('/screen-lock', request.url));
     }
   }
@@ -63,7 +63,7 @@ export async function proxy(request: NextRequest) {
   if (pathname === '/screen-lock') {
     const screenLocked = request.cookies.get('screen_locked')?.value === 'true';
     if (!hasSession || !screenLocked) {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
+      return NextResponse.redirect(new URL(hasSession ? '/dashboard' : '/login', request.url));
     }
   }
 
