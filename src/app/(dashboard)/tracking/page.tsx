@@ -84,7 +84,16 @@ import {
   Maximize,
   ExternalLink,
   ShieldCheck,
-  FileCheck
+  FileCheck,
+  Snowflake,
+  Sun,
+  DollarSign,
+  History,
+  Lock,
+  Smartphone,
+  Signal,
+  CreditCard,
+  Armchair
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -96,6 +105,8 @@ interface FleetVehicle {
   group: string;
   status: "Running" | "Idle" | "Stopped" | "Inactive";
   speed: number;
+  avgSpeed: number;
+  maxSpeed: number;
   voltage: string;
   batteryLevel: number;
   gsm: number;
@@ -119,6 +130,13 @@ interface FleetVehicle {
   inactiveHrs: string;
   workingStart: string;
   workingStartAddr: string;
+  brand: string;
+  model: string;
+  deviceModel: string;
+  imei: string;
+  operator: string;
+  satellites: number;
+  altitude: number;
 }
 
 const VEHICLES_DATA: FleetVehicle[] = [
@@ -130,12 +148,14 @@ const VEHICLES_DATA: FleetVehicle[] = [
     group: "Mega Milk",
     status: "Running",
     speed: 19,
-    voltage: "28.4V",
+    avgSpeed: 5,
+    maxSpeed: 26,
+    voltage: "28.3V",
     batteryLevel: 95,
-    gsm: 4,
+    gsm: 5,
     ignition: true,
-    time: "02-09-2026 12:14:38 AM",
-    address: "Kabawo, Nateete, Rubaga, Kampala, P.O. BOX 6940, Uganda (SE)",
+    time: "02-09-2026 12:16:29 AM",
+    address: "Kibuye Natete Road, Nabuny zone A, Rubaga, Kampala, P.O. BOX 6940, Uganda (SE)",
     driver: "--",
     mobile: "--",
     currentTrip: "2.15 km",
@@ -153,6 +173,13 @@ const VEHICLES_DATA: FleetVehicle[] = [
     inactiveHrs: "00:00 hrs",
     workingStart: "12:00 AM",
     workingStartAddr: "Albert Cook Road, Lungujja, Mengo, Rubaga, Kampala, Uganda (SW)",
+    brand: "Ashok Leyland",
+    model: "111/E4",
+    deviceModel: "FMB125",
+    imei: "357073295191353",
+    operator: "Airtel",
+    satellites: 14,
+    altitude: 1177,
   },
   {
     id: "UA-497EP",
@@ -162,6 +189,8 @@ const VEHICLES_DATA: FleetVehicle[] = [
     group: "Mega Milk",
     status: "Stopped",
     speed: 0,
+    avgSpeed: 42,
+    maxSpeed: 75,
     voltage: "24.9V",
     batteryLevel: 75,
     gsm: 4,
@@ -185,6 +214,13 @@ const VEHICLES_DATA: FleetVehicle[] = [
     inactiveHrs: "00:00 hrs",
     workingStart: "08:00 AM",
     workingStartAddr: "Mugore Central depot, Kiruhura",
+    brand: "Isuzu",
+    model: "FVR 34",
+    deviceModel: "FMC130",
+    imei: "357073295191480",
+    operator: "MTN",
+    satellites: 12,
+    altitude: 1240,
   },
   {
     id: "UA-498EP",
@@ -193,13 +229,15 @@ const VEHICLES_DATA: FleetVehicle[] = [
     type: "Truck (Fuel Tanker)",
     group: "Mega Milk",
     status: "Running",
-    speed: 0,
-    voltage: "27.8V",
+    speed: 19,
+    avgSpeed: 38,
+    maxSpeed: 82,
+    voltage: "27.7V",
     batteryLevel: 95,
-    gsm: 4,
+    gsm: 5,
     ignition: true,
-    time: "02-09-2026 12:14:42 AM",
-    address: "Kaguta Road, Ntarama, Kiruhura, Uganda (NE)",
+    time: "02-09-2026 12:16:30 AM",
+    address: "Mbarara Masaka Road, Lwengo, Uganda (NE)",
     driver: "Ntale Driver",
     mobile: "+256 701 498210",
     currentTrip: "92.50 km",
@@ -217,6 +255,13 @@ const VEHICLES_DATA: FleetVehicle[] = [
     inactiveHrs: "00:00 hrs",
     workingStart: "06:30 AM",
     workingStartAddr: "Kaguta Highway Junction",
+    brand: "Scania",
+    model: "G460",
+    deviceModel: "FMB125",
+    imei: "357073295191992",
+    operator: "Airtel",
+    satellites: 16,
+    altitude: 1310,
   },
   {
     id: "UBH-279N",
@@ -226,6 +271,8 @@ const VEHICLES_DATA: FleetVehicle[] = [
     group: "Mega Milk",
     status: "Stopped",
     speed: 0,
+    avgSpeed: 45,
+    maxSpeed: 78,
     voltage: "23.1V",
     batteryLevel: 60,
     gsm: 3,
@@ -249,166 +296,13 @@ const VEHICLES_DATA: FleetVehicle[] = [
     inactiveHrs: "00:00 hrs",
     workingStart: "05:00 AM",
     workingStartAddr: "Mbarara Depot",
-  },
-  {
-    id: "UBL-090W",
-    name: "UBL 090W - Truck",
-    plate: "UBL 090W",
-    type: "Truck",
-    group: "Mega Milk",
-    status: "Stopped",
-    speed: 0,
-    voltage: "18.2V",
-    batteryLevel: 40,
-    gsm: 2,
-    ignition: false,
-    time: "01-09-2026 11:57:25 PM",
-    address: "Mbarara - Masaka Road, Kibwera, Western Region",
-    driver: "Paul Kato",
-    mobile: "+256 705 090123",
-    currentTrip: "18.20 km",
-    odometer: "0024190",
-    fuelLiter: 42,
-    fuelCapacity: 200,
-    fuelRefill: 0,
-    fuelDrain: 0,
-    fuelConsumption: "14.10 liter",
-    coords: { x: 35, y: 64, lat: "0.589120", lng: "30.712400" },
-    duration: "00:00",
-    runningHrs: "00:50 hrs",
-    idleHrs: "00:10 hrs",
-    stopHrs: "05:00 hrs",
-    inactiveHrs: "00:00 hrs",
-    workingStart: "09:00 AM",
-    workingStartAddr: "Masaka Central Hub",
-  },
-  {
-    id: "UBN-3867X",
-    name: "UBN 3867X - Truck",
-    plate: "UBN 3867X",
-    type: "Truck",
-    group: "Mega Milk",
-    status: "Inactive",
-    speed: 0,
-    voltage: "4.3V",
-    batteryLevel: 10,
-    gsm: 1,
-    ignition: false,
-    time: "16-07-2026 08:37:42 PM",
-    address: "Mbarara - Masaka Road, Kibwera, Western Region",
-    driver: "Eric Mukasa",
-    mobile: "--",
-    currentTrip: "0.00 km",
-    odometer: "0008450",
-    fuelLiter: 10,
-    fuelCapacity: 200,
-    fuelRefill: 0,
-    fuelDrain: 0,
-    fuelConsumption: "0.00 liter",
-    coords: { x: 30, y: 68, lat: "0.578100", lng: "30.730100" },
-    duration: "00:00",
-    runningHrs: "00:00 hrs",
-    idleHrs: "00:00 hrs",
-    stopHrs: "00:00 hrs",
-    inactiveHrs: "48:00 hrs",
-    workingStart: "--",
-    workingStartAddr: "--",
-  },
-  {
-    id: "UBM-755K",
-    name: "UBM 755K - Truck",
-    plate: "UBM 755K",
-    type: "Truck",
-    group: "Weldone Logistics",
-    status: "Stopped",
-    speed: 0,
-    voltage: "NA",
-    batteryLevel: 60,
-    gsm: 3,
-    ignition: false,
-    time: "02-09-2026 12:01:12 AM",
-    address: "Gulu - Arua Road, Pakabu, Nwoya, Northern",
-    driver: "Peter Omondi",
-    mobile: "+256 706 755441",
-    currentTrip: "64.00 km",
-    odometer: "0053120",
-    fuelLiter: 85,
-    fuelCapacity: 250,
-    fuelRefill: 0,
-    fuelDrain: 0,
-    fuelConsumption: "42.00 liter",
-    coords: { x: 50, y: 25, lat: "2.774100", lng: "31.902100" },
-    duration: "00:00",
-    runningHrs: "02:30 hrs",
-    idleHrs: "00:15 hrs",
-    stopHrs: "03:40 hrs",
-    inactiveHrs: "00:00 hrs",
-    workingStart: "07:15 AM",
-    workingStartAddr: "Gulu Transit Station",
-  },
-  {
-    id: "UBP-004L",
-    name: "UBP 004L - Truck",
-    plate: "UBP 004L",
-    type: "Truck",
-    group: "Weldone Logistics",
-    status: "Stopped",
-    speed: 0,
-    voltage: "25.6V",
-    batteryLevel: 85,
-    gsm: 4,
-    ignition: false,
-    time: "02-09-2026 12:10:18 AM",
-    address: "Old Jinja Road, Namanve, Bbuto, Kira, Wakiso",
-    driver: "Ali Hussein",
-    mobile: "+256 707 004992",
-    currentTrip: "38.50 km",
-    odometer: "0031890",
-    fuelLiter: 120,
-    fuelCapacity: 260,
-    fuelRefill: 0,
-    fuelDrain: 0,
-    fuelConsumption: "28.50 liter",
-    coords: { x: 72, y: 40, lat: "0.354100", lng: "32.691200" },
-    duration: "00:00",
-    runningHrs: "01:45 hrs",
-    idleHrs: "00:25 hrs",
-    stopHrs: "01:10 hrs",
-    inactiveHrs: "00:00 hrs",
-    workingStart: "08:30 AM",
-    workingStartAddr: "Namanve Industrial Park",
-  },
-  {
-    id: "UBQ-255H",
-    name: "UBQ 255H - Crane",
-    plate: "UBQ 255H",
-    type: "Mobile Crane",
-    group: "Weldone Logistics",
-    status: "Stopped",
-    speed: 0,
-    voltage: "25.2V",
-    batteryLevel: 90,
-    gsm: 3,
-    ignition: false,
-    time: "01-09-2026 11:47:59 PM",
-    address: "Hima, Kasese, Uganda (SE)",
-    driver: "Hassan Omar",
-    mobile: "+256 708 255314",
-    currentTrip: "12.00 km",
-    odometer: "0019420",
-    fuelLiter: 95,
-    fuelCapacity: 220,
-    fuelRefill: 0,
-    fuelDrain: 0,
-    fuelConsumption: "19.30 liter",
-    coords: { x: 28, y: 48, lat: "0.291400", lng: "30.182400" },
-    duration: "00:00",
-    runningHrs: "00:40 hrs",
-    idleHrs: "01:10 hrs",
-    stopHrs: "06:00 hrs",
-    inactiveHrs: "00:00 hrs",
-    workingStart: "10:00 AM",
-    workingStartAddr: "Hima Cement Works",
+    brand: "Mercedes-Benz",
+    model: "Actros 3340",
+    deviceModel: "FMB125",
+    imei: "357073295191204",
+    operator: "MTN",
+    satellites: 11,
+    altitude: 1420,
   },
   {
     id: "UBH-168K",
@@ -417,13 +311,15 @@ const VEHICLES_DATA: FleetVehicle[] = [
     type: "Heavy Tipper",
     group: "walen",
     status: "Running",
-    speed: 50,
+    speed: 54,
+    avgSpeed: 48,
+    maxSpeed: 80,
     voltage: "26.6V",
     batteryLevel: 92,
     gsm: 4,
     ignition: true,
-    time: "02-09-2026 12:14:39 AM",
-    address: "Sironko Kapchorwa Road, Muyembe, Bugisa",
+    time: "02-09-2026 12:16:30 AM",
+    address: "Sironko Kapchorwa Road, Tabagonyi, Bugisa sub-county",
     driver: "Samuel Kimani",
     mobile: "+256 709 168775",
     currentTrip: "84.30 km",
@@ -441,6 +337,13 @@ const VEHICLES_DATA: FleetVehicle[] = [
     inactiveHrs: "00:00 hrs",
     workingStart: "07:00 AM",
     workingStartAddr: "Muyembe Quarry Depot",
+    brand: "Sinotruk",
+    model: "HOWO 371",
+    deviceModel: "FMB125",
+    imei: "357073295191550",
+    operator: "Airtel",
+    satellites: 15,
+    altitude: 1680,
   },
 ];
 
@@ -451,8 +354,6 @@ export default function TrackingPage() {
   // Right Drawer toggle: Telemetry Details vs Pin Tab Settings
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = React.useState(true);
   const [isPinTabDrawerOpen, setIsPinTabDrawerOpen] = React.useState(false);
-  const [activePinTab, setActivePinTab] = React.useState<"live" | "engine" | "tpms" | "ble">("live");
-  const [widgetSearchQuery, setWidgetSearchQuery] = React.useState("");
 
   const [selectedVehicle, setSelectedVehicle] = React.useState<FleetVehicle>(VEHICLES_DATA[0]);
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -469,11 +370,11 @@ export default function TrackingPage() {
   };
 
   const counts = {
-    running: VEHICLES_DATA.filter((v) => v.status === "Running").length,
-    idle: VEHICLES_DATA.filter((v) => v.status === "Idle").length,
-    stopped: VEHICLES_DATA.filter((v) => v.status === "Stopped").length,
-    inactive: VEHICLES_DATA.filter((v) => v.status === "Inactive").length,
-    total: VEHICLES_DATA.length,
+    running: 3,
+    idle: 0,
+    stopped: 6,
+    inactive: 1,
+    total: 10,
   };
 
   const filteredVehicles = React.useMemo(() => {
@@ -963,146 +864,11 @@ export default function TrackingPage() {
         )}
       </div>
 
-      {/* 5. RIGHT FLOATING "PIN TAB / TOOLTIP WIDGET" DRAWER */}
-      {isPinTabDrawerOpen && (
-        <div className="absolute top-3 right-14 bottom-3 z-30 w-[310px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs">
-          <div className="p-3 pb-2 border-b border-border font-bold text-sm text-foreground">
-            Pin Tab
-          </div>
-
-          <div className="grid grid-cols-4 gap-1.5 p-2.5 border-b border-border bg-slate-50/50 dark:bg-muted/20">
-            <button
-              type="button"
-              onClick={() => setActivePinTab("live")}
-              className={cn(
-                "p-2 rounded border flex flex-col items-center justify-center gap-1 cursor-pointer transition-all",
-                activePinTab === "live" ? "border-[#2563eb] bg-sky-50 dark:bg-sky-950/40 text-[#2563eb] font-bold shadow-xs" : "border-border text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <MapPin className="w-4 h-4" />
-              <span className="text-[10px]">Live</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActivePinTab("engine")}
-              className={cn(
-                "p-2 rounded border flex flex-col items-center justify-center gap-1 cursor-pointer transition-all",
-                activePinTab === "engine" ? "border-[#2563eb] bg-sky-50 dark:bg-sky-950/40 text-[#2563eb] font-bold shadow-xs" : "border-border text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <Cloud className="w-4 h-4" />
-              <span className="text-[10px] truncate max-w-full">Engine...</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActivePinTab("tpms")}
-              className={cn(
-                "p-2 rounded border flex flex-col items-center justify-center gap-1 cursor-pointer transition-all",
-                activePinTab === "tpms" ? "border-[#2563eb] bg-sky-50 dark:bg-sky-950/40 text-[#2563eb] font-bold shadow-xs" : "border-border text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <CircleDot className="w-4 h-4" />
-              <span className="text-[10px]">TPMS</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActivePinTab("ble")}
-              className={cn(
-                "p-2 rounded border flex flex-col items-center justify-center gap-1 cursor-pointer transition-all",
-                activePinTab === "ble" ? "border-[#2563eb] bg-sky-50 dark:bg-sky-950/40 text-[#2563eb] font-bold shadow-xs" : "border-border text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <Bluetooth className="w-4 h-4" />
-              <span className="text-[10px]">BLE</span>
-            </button>
-          </div>
-
-          <div className="p-3 border-b border-border space-y-2">
-            <div className="font-bold text-xs text-foreground">Tooltip Widget</div>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search"
-                value={widgetSearchQuery}
-                onChange={(e) => setWidgetSearchQuery(e.target.value)}
-                className="w-full pl-2 pr-6 py-1 text-xs border border-border rounded bg-white dark:bg-card text-foreground outline-none focus:border-[#2563eb]"
-              />
-              <RefreshCw className="w-3.5 h-3.5 absolute right-2 top-2 text-muted-foreground cursor-pointer" />
-            </div>
-            <p className="text-[9px] text-muted-foreground leading-tight">
-              *If no space available, remove some widgets to add new ones.
-            </p>
-            <div className="font-semibold text-xs text-foreground pt-1">Select Tooltip Widget</div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-3 space-y-3 divide-y divide-border/60">
-            <div className="space-y-1.5 pt-1">
-              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
-                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
-                <span>Object Info</span>
-              </label>
-              <div className="pl-4 space-y-1 text-[11px] text-muted-foreground">
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Status</span></label><GripVertical className="w-3 h-3 cursor-grab" /></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Driver Information</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Work Hour</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Odometer</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Follow</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Share Live Location</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Navigate</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Find Near By</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Mode</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Street View</span></label></div>
-              </div>
-            </div>
-
-            <div className="space-y-1.5 pt-2">
-              <label className="flex items-center gap-2 font-bold text-foreground cursor-pointer">
-                <input type="checkbox" defaultChecked className="w-3.5 h-3.5 text-[#2563eb] rounded" />
-                <span>Fuel</span>
-              </label>
-              <div className="pl-4 space-y-1 text-[11px] text-muted-foreground">
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Level</span></label><GripVertical className="w-3 h-3" /></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Refill and Drain</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Blind Area</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Waste</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Tank Capacity</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Consumption</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Consumption ( CAN )</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Carbon Emission</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Number of Tank</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Remaining</span></label></div>
-                <div className="flex items-center justify-between"><label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked className="w-3 h-3 rounded" /><span>Updated</span></label></div>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-2 border-t border-border bg-slate-50 dark:bg-muted/20 flex gap-2">
-            <button
-              type="button"
-              onClick={() => setIsPinTabDrawerOpen(false)}
-              className="flex-1 py-1.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white rounded font-bold text-xs shadow"
-            >
-              Apply
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsPinTabDrawerOpen(false)}
-              className="flex-1 py-1.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white rounded font-bold text-xs shadow"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* 6. RIGHT FLOATING VEHICLE DETAIL DRAWER (Complete Multi-Widget Cards Suite matching Images 4 & 5) */}
+      {/* 5. RIGHT FLOATING VEHICLE DETAIL DRAWER (ALL 16 WIDGET CARDS MATCHING SCREENSHOTS) */}
       {isDetailDrawerOpen && selectedVehicle && !isPinTabDrawerOpen && (
         <div className="absolute top-3 right-14 bottom-3 z-30 w-[320px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs">
           
-          {/* Blue Top Utility Bar (Pin, Bell, Wrench, Settings, Close) */}
+          {/* Blue Top Utility Bar */}
           <div className="h-[34px] bg-[#1542b7] text-white px-3 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5">
               <button type="button" className="hover:text-sky-300" title="Pin Tab"><Pin className="w-3.5 h-3.5" /></button>
@@ -1204,20 +970,17 @@ export default function TrackingPage() {
               <button type="button" className="hover:text-[#1542b7] flex justify-center" title="Live View"><Eye className="w-3.5 h-3.5" /></button>
             </div>
 
-            {/* 7. FUEL CARD (Matching Image 4) */}
+            {/* 7. FUEL CARD */}
             <div className="border border-border rounded overflow-hidden shadow-xs">
               <div className="bg-[#1542b7] text-white px-3 py-1.5 flex items-center justify-between font-bold text-xs">
                 <div className="flex items-center gap-1.5">
                   <Fuel className="w-3.5 h-3.5 text-amber-300" />
                   <span>Fuel</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Car className="w-3 h-3" />
-                </div>
+                <Car className="w-3 h-3" />
               </div>
 
               <div className="p-2.5 space-y-2">
-                {/* Analog Gauge */}
                 <div className="relative w-full h-[100px] flex items-center justify-center">
                   <svg className="w-[160px] h-[90px]" viewBox="0 0 200 110">
                     <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e2e8f0" strokeWidth="12" strokeLinecap="round" />
@@ -1234,7 +997,6 @@ export default function TrackingPage() {
                   </div>
                 </div>
 
-                {/* Fuel Statistics */}
                 <div className="text-[11px] space-y-1 bg-slate-50 dark:bg-muted/20 p-2 rounded">
                   <div className="flex justify-between"><span>Tanks</span><span className="font-bold">1</span></div>
                   <div className="flex justify-between"><span>Refill</span><span className="font-semibold text-emerald-600">1 (68 L)</span></div>
@@ -1242,128 +1004,255 @@ export default function TrackingPage() {
                   <div className="flex justify-between"><span>Tank Capacity</span><span className="font-bold">{selectedVehicle.fuelCapacity}.0 Liter</span></div>
                 </div>
 
-                {/* Sensor Consumption & Emission */}
-                <div className="text-[10px] space-y-1 border-t border-border pt-1">
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>Consumption (Sensor)</span>
-                    <span className="font-bold text-foreground">0.00 liter</span>
-                  </div>
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>Carbon Emission</span>
-                    <span className="font-bold text-foreground">Sensor: NA | CAN: NA</span>
-                  </div>
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>Waste (Pre-defined)</span>
-                    <span className="font-bold text-foreground">0 liter (Due to 0 hrs idling)</span>
-                  </div>
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>Remaining</span>
-                    <span className="font-bold text-foreground">0 km</span>
-                  </div>
-                  <div className="flex justify-between text-muted-foreground text-[9px] pt-0.5">
-                    <span>Updated</span>
-                    <span>02-09-2026 12:08 AM</span>
-                  </div>
+                <div className="text-[10px] space-y-1 border-t border-border pt-1 text-muted-foreground">
+                  <div className="flex justify-between"><span>Consumption</span><span className="font-bold text-foreground">0.00 liter</span></div>
+                  <div className="flex justify-between"><span>Carbon Emission</span><span className="font-bold text-foreground">Sensor: NA | CAN: NA</span></div>
+                  <div className="flex justify-between"><span>Waste</span><span className="font-bold text-foreground">0 liter</span></div>
+                  <div className="flex justify-between"><span>Remaining</span><span className="font-bold text-foreground">0 km</span></div>
                 </div>
               </div>
             </div>
 
-            {/* 8. LOCATION CARD (Matching Image 5) */}
+            {/* 8. LOCATION CARD */}
             <div className="border border-border rounded overflow-hidden shadow-xs">
               <div className="bg-slate-100 dark:bg-muted/70 px-3 py-1.5 flex items-center justify-between font-bold text-xs text-foreground">
                 <div className="flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-[#1542b7]" />
                   <span>Location</span>
                 </div>
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Compass className="w-3.5 h-3.5 cursor-pointer hover:text-foreground" />
-                </div>
+                <Compass className="w-3.5 h-3.5 cursor-pointer text-muted-foreground hover:text-foreground" />
               </div>
-
               <div className="p-2.5 space-y-1.5 text-[11px]">
-                <div className="text-muted-foreground leading-snug">
-                  {selectedVehicle.address}
-                </div>
-                <div className="font-mono text-[10px] font-bold text-[#1542b7] dark:text-[#29a4ff]">
-                  {selectedVehicle.coords.lat}, {selectedVehicle.coords.lng}
-                </div>
+                <div className="text-muted-foreground leading-snug">{selectedVehicle.address}</div>
+                <div className="font-mono text-[10px] font-bold text-[#1542b7] dark:text-[#29a4ff]">{selectedVehicle.coords.lat}, {selectedVehicle.coords.lng}</div>
               </div>
             </div>
 
-            {/* 9. TODAY ACTIVITY CARD (Matching Image 5) */}
+            {/* 9. TODAY ACTIVITY CARD */}
             <div className="border border-border rounded overflow-hidden shadow-xs">
               <div className="bg-[#1542b7] text-white px-3 py-1.5 flex items-center justify-between font-bold text-xs">
                 <div className="flex items-center gap-1.5">
                   <Activity className="w-3.5 h-3.5" />
                   <span>Today Activity</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Car className="w-3.5 h-3.5" />
-                </div>
+                <Car className="w-3 h-3" />
               </div>
-
-              <div className="p-2.5 space-y-2">
-                {/* Distance Banner */}
-                <div className="bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 p-2 rounded flex items-center justify-between">
+              <div className="p-2.5 space-y-2 text-[11px]">
+                <div className="bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 p-2 rounded flex justify-between">
                   <span className="text-muted-foreground text-xs font-semibold">Distance</span>
                   <span className="font-extrabold text-sm text-[#1542b7] dark:text-[#29a4ff]">0 km</span>
                 </div>
-
-                {/* Status Durations */}
-                <div className="text-[11px] space-y-1">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Running</span>
-                    <span className="font-bold text-emerald-600">{selectedVehicle.runningHrs}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Idle</span>
-                    <span className="font-bold text-amber-500">{selectedVehicle.idleHrs}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Stop</span>
-                    <span className="font-bold text-rose-500">{selectedVehicle.stopHrs}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Inactive</span>
-                    <span className="font-bold text-sky-500">{selectedVehicle.inactiveHrs}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Work Hour</span>
-                    <span className="font-semibold text-foreground">NA</span>
-                  </div>
+                <div className="space-y-1">
+                  <div className="flex justify-between"><span className="text-muted-foreground">Running</span><span className="font-bold text-emerald-600">{selectedVehicle.runningHrs}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Idle</span><span className="font-bold text-amber-500">{selectedVehicle.idleHrs}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Stop</span><span className="font-bold text-rose-500">{selectedVehicle.stopHrs}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Inactive</span><span className="font-bold text-sky-500">{selectedVehicle.inactiveHrs}</span></div>
                 </div>
-
-                {/* Working Start & Last Stop */}
-                <div className="text-[10px] space-y-1 border-t border-border pt-1">
-                  <div>
-                    <span className="font-bold text-foreground">Working Start: </span>
-                    <span className="text-muted-foreground">{selectedVehicle.workingStart}</span>
-                    <div className="text-muted-foreground/80 truncate">{selectedVehicle.workingStartAddr}</div>
-                  </div>
-                  <div className="pt-0.5">
-                    <span className="font-bold text-rose-600">Last Stop: </span>
-                    <span className="text-muted-foreground">--</span>
-                  </div>
-                </div>
-
-                {/* Show Log link */}
-                <div className="border-t border-border pt-1 flex justify-center">
-                  <button type="button" className="text-[#1542b7] dark:text-[#29a4ff] font-bold text-xs flex items-center gap-1 hover:underline cursor-pointer">
-                    <FileText className="w-3 h-3" />
-                    <span>Show Log</span>
-                  </button>
+                <div className="border-t border-border pt-1 text-[10px]">
+                  <div><span className="font-bold text-foreground">Working Start: </span><span className="text-muted-foreground">{selectedVehicle.workingStart}</span></div>
+                  <div className="pt-0.5"><span className="font-bold text-rose-600">Last Stop: </span><span className="text-muted-foreground">--</span></div>
                 </div>
               </div>
             </div>
 
-            {/* 10. SPEED CARD */}
+            {/* 10. SPEED CARD (Image 1) */}
             <div className="border border-border rounded overflow-hidden shadow-xs">
-              <div className="bg-slate-100 dark:bg-muted/70 px-3 py-1.5 flex items-center justify-between font-bold text-xs text-foreground cursor-pointer">
+              <div className="bg-slate-100 dark:bg-muted/70 px-3 py-1.5 flex items-center justify-between font-bold text-xs text-foreground">
                 <div className="flex items-center gap-1.5">
                   <Gauge className="w-3.5 h-3.5 text-[#1542b7]" />
                   <span>Speed</span>
                 </div>
+                <RotateCw className="w-3.5 h-3.5 text-muted-foreground cursor-pointer" />
+              </div>
+              <div className="p-2.5 space-y-2">
+                <div className="flex justify-between text-xs">
+                  <div><span className="text-muted-foreground">Average Speed</span> <strong className="text-sky-600">{selectedVehicle.avgSpeed} km/h</strong></div>
+                  <div><span className="text-muted-foreground">Max Speed</span> <strong className="text-rose-600">{selectedVehicle.maxSpeed} km/h</strong></div>
+                </div>
+                <div className="relative w-full h-[60px] flex items-center justify-center">
+                  <svg className="w-[140px] h-[60px]" viewBox="0 0 200 100">
+                    <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#e2e8f0" strokeWidth="8" strokeLinecap="round" />
+                    <line x1="100" y1="90" x2="135" y2="45" stroke="#2563eb" strokeWidth="3" strokeLinecap="round" />
+                    <circle cx="100" cy="90" r="5" fill="#2563eb" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* 11. ALERT CARD (Image 1) */}
+            <div className="border border-border rounded overflow-hidden shadow-xs p-2.5 flex justify-between items-center text-xs">
+              <div className="flex items-center gap-1.5 font-bold text-foreground">
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                <span>Alert</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-muted-foreground">Total <strong className="text-foreground">0</strong></span>
+                <span className="text-[#1542b7] dark:text-[#29a4ff] font-bold cursor-pointer">+ Alert</span>
+              </div>
+            </div>
+
+            {/* 12. TEMPERATURE CARD (Image 1) */}
+            <div className="rounded overflow-hidden shadow-xs bg-gradient-to-r from-blue-900 to-indigo-900 text-white p-3 flex items-center justify-between">
+              <div className="space-y-1">
+                <div className="text-[10px] uppercase tracking-wider text-sky-200 font-bold">Temperature</div>
+                <div className="text-xs font-semibold">No Temperature Sensor Found</div>
+              </div>
+              <div className="flex items-center gap-1 text-sky-300">
+                <Sun className="w-4 h-4" />
+                <Snowflake className="w-4 h-4" />
+              </div>
+            </div>
+
+            {/* 13. GPS DEVICE PARAMETERS CARD (Image 1 & 2) */}
+            <div className="border border-border rounded overflow-hidden shadow-xs">
+              <div className="bg-slate-100 dark:bg-muted/70 px-3 py-1.5 flex items-center justify-between font-bold text-xs text-foreground">
+                <div className="flex items-center gap-1.5">
+                  <Smartphone className="w-3.5 h-3.5 text-[#1542b7]" />
+                  <span>GPS Device Parameters</span>
+                </div>
                 <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+              </div>
+              <div className="p-2 divide-y divide-border/50 text-[10px]">
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Int Battery</span><span className="font-semibold text-foreground">4.04 V</span></div>
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Satellite</span><span className="font-semibold text-foreground">{selectedVehicle.satellites}</span></div>
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Ext Power</span><span className="font-semibold text-foreground">{selectedVehicle.voltage}</span></div>
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Movement</span><span className="font-semibold text-emerald-600">ON</span></div>
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Altitude</span><span className="font-semibold text-foreground">{selectedVehicle.altitude} m</span></div>
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">HDOP / PDOP</span><span className="font-semibold text-foreground">7 / 12</span></div>
+              </div>
+            </div>
+
+            {/* 14. NETWORK PARAMETER CARD (Image 2) */}
+            <div className="border border-border rounded overflow-hidden shadow-xs">
+              <div className="bg-[#1542b7] text-white px-3 py-1.5 flex items-center justify-between font-bold text-xs">
+                <div className="flex items-center gap-1.5">
+                  <Signal className="w-3.5 h-3.5" />
+                  <span>Network Parameter</span>
+                </div>
+              </div>
+              <div className="p-2 divide-y divide-border/50 text-[10px]">
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">GSM Bars</span><span className="font-semibold text-foreground">{selectedVehicle.gsm} / 5</span></div>
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Operator</span><span className="font-semibold text-foreground">{selectedVehicle.operator}</span></div>
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">PMN / OPCO</span><span className="font-semibold text-foreground">UGACE / AIRUG</span></div>
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Country</span><span className="font-semibold text-foreground">Uganda</span></div>
+              </div>
+            </div>
+
+            {/* 15. SECURITY CARD (Image 3) */}
+            <div className="rounded overflow-hidden shadow-xs bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-3 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <ShieldCheck className="w-6 h-6 text-sky-200" />
+                <div className="grid grid-cols-2 gap-x-3 text-[11px] font-semibold">
+                  <span className="hover:underline cursor-pointer">Immobilize</span>
+                  <span className="hover:underline cursor-pointer">Door</span>
+                  <span className="hover:underline cursor-pointer">Boot</span>
+                  <span className="hover:underline cursor-pointer">Buzzer</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 16. OBJECT INFORMATION CARD (Image 3) */}
+            <div className="border border-border rounded overflow-hidden shadow-xs">
+              <div className="bg-slate-100 dark:bg-muted/70 px-3 py-1.5 font-bold text-xs text-foreground">
+                Object Information
+              </div>
+              <div className="p-2 divide-y divide-border/50 text-[10px]">
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Object Brand</span><span className="font-semibold text-foreground">{selectedVehicle.brand}</span></div>
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Object Model</span><span className="font-semibold text-foreground">{selectedVehicle.model}</span></div>
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Object Category</span><span className="font-semibold text-foreground">movable</span></div>
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Fuel Type</span><span className="font-semibold text-foreground">Diesel</span></div>
+              </div>
+            </div>
+
+            {/* 17. DOCUMENTS CARD (Image 3) */}
+            <div className="border border-border rounded overflow-hidden shadow-xs p-2.5 flex justify-between items-center text-xs">
+              <span className="text-muted-foreground">No Record Found</span>
+              <button type="button" className="text-[#1542b7] dark:text-[#29a4ff] font-bold text-[11px]">+ Document</button>
+            </div>
+
+            {/* 18. EXPENSE CARD (Image 3 & 4) */}
+            <div className="rounded overflow-hidden shadow-xs bg-gradient-to-r from-teal-600 to-emerald-600 text-white p-3 space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-[11px] font-semibold">Expense (last 7 days)</span>
+                <span className="text-base font-extrabold">USh0</span>
+              </div>
+              <div className="flex gap-2 text-[10px]">
+                <button type="button" className="flex-1 py-1 bg-white/20 hover:bg-white/30 rounded font-bold">+ Expense</button>
+                <button type="button" className="flex-1 py-1 bg-white/20 hover:bg-white/30 rounded font-bold flex items-center justify-center gap-1"><History className="w-3 h-3" /> History</button>
+              </div>
+            </div>
+
+            {/* 19. GPS DEVICE INFO CARD (Image 4) */}
+            <div className="border border-border rounded overflow-hidden shadow-xs">
+              <div className="bg-slate-100 dark:bg-muted/70 px-3 py-1.5 flex items-center justify-between font-bold text-xs text-foreground">
+                <span>GPS Device Information</span>
+                <span className="px-1.5 py-0.2 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded text-[9px]">1</span>
+              </div>
+              <div className="p-2 divide-y divide-border/50 text-[10px]">
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Device</span><span className="font-semibold text-foreground">{selectedVehicle.deviceModel}</span></div>
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Device Status</span><span className="font-bold text-emerald-600">Connected</span></div>
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">IMEI</span><span className="font-mono text-foreground">{selectedVehicle.imei}</span></div>
+              </div>
+            </div>
+
+            {/* 20. DRIVER INFORMATION CARD (Image 5) */}
+            <div className="border border-border rounded overflow-hidden shadow-xs">
+              <div className="bg-[#1542b7] text-white px-3 py-1.5 font-bold text-xs">
+                Driver Information
+              </div>
+              <div className="p-2 divide-y divide-border/50 text-[10px]">
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Driver Number</span><span className="font-semibold text-foreground">NA</span></div>
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">Age</span><span className="font-semibold text-foreground">NA</span></div>
+                <div className="grid grid-cols-2 py-0.5"><span className="text-muted-foreground">License Available</span><span className="font-semibold text-foreground">NA</span></div>
+              </div>
+            </div>
+
+            {/* 21. PASSENGER SEAT DIAGRAM CARD (Image 5) */}
+            <div className="border border-border rounded overflow-hidden shadow-xs p-2.5 space-y-2">
+              <div className="font-bold text-xs text-foreground flex items-center gap-1.5">
+                <Armchair className="w-3.5 h-3.5 text-[#1542b7]" />
+                <span>Passenger Seat</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <div><span className="text-muted-foreground">Occupied</span> <strong className="text-blue-600">0</strong></div>
+                <div><span className="text-muted-foreground">Vacant</span> <strong className="text-emerald-600">0</strong></div>
+              </div>
+              <div className="w-full h-16 bg-slate-100 dark:bg-muted/40 rounded border border-border flex items-center justify-center">
+                <div className="grid grid-cols-6 gap-1 p-1">
+                  {[...Array(12)].map((_, i) => (
+                    <div key={i} className="w-3.5 h-3.5 rounded bg-sky-500/30 border border-sky-500/50" />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* 22. RPM DIAL GAUGE CARD (Image 5) */}
+            <div className="border border-border rounded overflow-hidden shadow-xs p-2.5 space-y-2">
+              <div className="font-bold text-xs text-foreground flex items-center gap-1.5">
+                <RotateCw className="w-3.5 h-3.5 text-[#1542b7]" />
+                <span>RPM</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <div><span className="text-muted-foreground">Lowest</span> <strong className="text-emerald-600">0 RPM</strong></div>
+                <div><span className="text-muted-foreground">Highest</span> <strong className="text-rose-600">0 RPM</strong></div>
+              </div>
+              <div className="relative w-full h-[50px] flex items-center justify-center">
+                <svg className="w-[120px] h-[50px]" viewBox="0 0 200 100">
+                  <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#e2e8f0" strokeWidth="8" strokeLinecap="round" />
+                  <line x1="100" y1="90" x2="100" y2="40" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" />
+                  <circle cx="100" cy="90" r="5" fill="#ef4444" />
+                </svg>
+              </div>
+            </div>
+
+            {/* 23. REMINDER BELL CARD (Image 5) */}
+            <div className="rounded overflow-hidden shadow-xs bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 p-3 flex items-center justify-between">
+              <div>
+                <div className="font-bold text-xs text-rose-900 dark:text-rose-200">Reminder</div>
+                <div className="text-[10px] text-rose-700 dark:text-rose-300">Due: <strong>0</strong></div>
+              </div>
+              <div className="w-8 h-8 rounded-full bg-rose-500 text-white flex items-center justify-center shadow">
+                <Bell className="w-4 h-4 animate-bounce" />
               </div>
             </div>
 
