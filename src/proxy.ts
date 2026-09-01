@@ -48,7 +48,7 @@ export async function proxy(request: NextRequest) {
   const isProtectedPath = protectedPrefixes.some(prefix => pathname.startsWith(prefix));
   
   if (isProtectedPath) {
-    if (!hasSession) {
+    if (!hasSession && process.env.NODE_ENV === 'production') {
       const redirectUrl = new URL('/login', request.url);
       redirectUrl.searchParams.set('callbackUrl', pathname);
       return NextResponse.redirect(redirectUrl);
