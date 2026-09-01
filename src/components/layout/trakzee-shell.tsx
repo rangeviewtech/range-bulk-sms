@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { cn } from "@/lib/utils";
 import { TrakzeeSidebar } from "./trakzee-sidebar";
 
 interface TrakzeeShellProps {
@@ -11,7 +12,7 @@ interface TrakzeeShellProps {
 
 export function TrakzeeShell({ children, className, user }: TrakzeeShellProps) {
   return (
-    <div className="flex h-screen overflow-hidden bg-[#f4f4f4] font-sans text-sm text-[#333333]">
+    <div className={cn("flex h-screen overflow-hidden bg-[#f4f4f4] dark:bg-background font-sans text-sm text-[#333333] dark:text-foreground", className)}>
       <TrakzeeSidebar user={user} />
       <div className="flex flex-col flex-1 min-w-0 pl-[90px]">
         {/* The sidebar is position fixed in trakzee-sidebar, so we pad left 90px */}

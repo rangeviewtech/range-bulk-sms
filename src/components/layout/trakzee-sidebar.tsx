@@ -2,197 +2,222 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { 
   Gauge,
   MapPin,
   FileText,
   PieChart,
   Settings,
-  CloudUpload,
+  CloudDownload,
   User,
   Bell,
   ChevronRight,
   LogOut,
   KeyRound,
   Users,
-  X
+  X,
+  Search,
+  Check,
+  Moon,
+  Sun,
+  Shield,
+  HelpCircle,
+  Layers,
+  ArrowRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
-// Types
-export type NavItem = {
+// Navigation Hierarchy Type
+export interface NavLeaf {
+  title: string;
+  href: string;
+}
+
+export interface NavCategory {
+  title: string;
+  items: NavLeaf[];
+}
+
+export interface NavModule {
   title: string;
   href?: string;
-  icon?: React.ReactNode;
-  iconClass?: string;
-  children?: NavItem[];
-};
+  icon: React.ReactNode;
+  categories?: NavCategory[];
+}
 
-// Data
-const TRAKZEE_NAV: NavItem[] = [
+// Complete 86-Screen Menu Hierarchy directly duplicated from https://sa-trakzee.uffizio.com/
+export const TRAKZEE_NAVIGATION: NavModule[] = [
   {
     title: "Dashboard",
     href: "/dashboard",
-    icon: <Gauge className="w-6 h-6 mb-1.5" strokeWidth={1.25} />,
+    icon: <Gauge className="w-6 h-6 mb-1.5" strokeWidth={1.3} />,
   },
   {
     title: "Tracking",
     href: "/tracking",
-    icon: <MapPin className="w-6 h-6 mb-1.5" strokeWidth={1.25} />,
+    icon: <MapPin className="w-6 h-6 mb-1.5" strokeWidth={1.3} />,
   },
   {
     title: "Reports",
-    icon: <FileText className="w-6 h-6 mb-1.5" strokeWidth={1.25} />,
-    children: [
-      { 
-        title: "Activity", 
-        children: [
-          { title: "Travel" }, 
-          { title: "Travel History" },
-          { title: "Trip" },
-          { title: "Stoppage" },
-          { title: "Idle" },
-          { title: "Inactive" },
-          { title: "Object Status" },
-          { title: "Daywise Distance" },
-          { title: "Speed vs Distance" },
-          { title: "Object Location" },
-          { title: "Overspeed Summary" }
-        ] 
+    icon: <FileText className="w-6 h-6 mb-1.5" strokeWidth={1.3} />,
+    categories: [
+      {
+        title: "Activity",
+        items: [
+          { title: "Travel", href: "/reports/activity/travel" },
+          { title: "Travel History", href: "/reports/activity/travel-history" },
+          { title: "Trip", href: "/reports/activity/trip" },
+          { title: "Stoppage", href: "/reports/activity/stoppage" },
+          { title: "Idle", href: "/reports/activity/idle" },
+          { title: "Inactive", href: "/reports/activity/inactive" },
+          { title: "Object Status", href: "/reports/activity/object-status" },
+          { title: "Daywise Distance", href: "/reports/activity/daywise-distance" },
+          { title: "Speed vs Distance", href: "/reports/activity/speed-distance" },
+          { title: "Object Location", href: "/reports/activity/object-location" },
+          { title: "Overspeed Summary", href: "/reports/activity/overspeed" },
+        ],
       },
-      { 
-        title: "Geofence-Address", 
-        children: [
-          { title: "Geofence" }, 
-          { title: "Address" },
-          { title: "Geofence Visited Summary" }
-        ] 
+      {
+        title: "Geofence-Address",
+        items: [
+          { title: "Geofence", href: "/reports/geofence" },
+          { title: "Address", href: "/reports/address" },
+          { title: "Geofence Visited Summary", href: "/reports/geofence-visited" },
+        ],
       },
-      { 
-        title: "Sensor", 
-        children: [
-          { title: "Ignition" }, 
-          { title: "Air Conditioner" },
-          { title: "Analog Data" },
-          { title: "RFID Data" },
-          { title: "Digital Ports" },
-          { title: "Air Conditioner Misused" },
-          { title: "Immobilize" }
-        ] 
+      {
+        title: "Sensor",
+        items: [
+          { title: "Ignition", href: "/reports/sensor/ignition" },
+          { title: "Air Conditioner", href: "/reports/sensor/ac" },
+          { title: "Analog Data", href: "/reports/sensor/analog" },
+          { title: "RFID Data", href: "/reports/sensor/rfid" },
+          { title: "Digital Ports", href: "/reports/sensor/digital-ports" },
+          { title: "Air Conditioner Misused", href: "/reports/sensor/ac-misused" },
+          { title: "Immobilize", href: "/reports/sensor/immobilize" },
+        ],
       },
-      { 
-        title: "Alert", 
-        children: [
-          { title: "Object Alert" }, 
-          { title: "Alert Status" }
-        ] 
+      {
+        title: "Alert",
+        items: [
+          { title: "Object Alert", href: "/reports/alert/object" },
+          { title: "Alert Status", href: "/reports/alert/status" },
+        ],
       },
-      { 
-        title: "Reminder", 
-        children: [
-          { title: "Reminder Status" }, 
-          { title: "Acknowledgement History" }
-        ] 
+      {
+        title: "Reminder",
+        items: [
+          { title: "Reminder Status", href: "/reports/reminder/status" },
+          { title: "Acknowledgement History", href: "/reports/reminder/acknowledgement" },
+        ],
       },
-      { 
-        title: "Expense", 
-        children: [
-          { title: "Expense" }, 
-          { title: "Object Cost" },
-          { title: "Maintenance History" },
-          { title: "Category Wise Expense" },
-          { title: "Object Monthly Cost" }
-        ] 
+      {
+        title: "Expense",
+        items: [
+          { title: "Expense", href: "/reports/expense/summary" },
+          { title: "Object Cost", href: "/reports/expense/object-cost" },
+          { title: "Maintenance History", href: "/reports/expense/maintenance" },
+          { title: "Category Wise Expense", href: "/reports/expense/category" },
+          { title: "Object Monthly Cost", href: "/reports/expense/monthly-cost" },
+        ],
       },
-      { 
-        title: "Fuel", 
-        children: [
-          { title: "Fill-Drain" }, 
-          { title: "Fuel Economy" },
-          { title: "Fuel Consumption" },
-          { title: "Fuel Abnormal Consumption" },
-          { title: "Digital Port - Fuel Summary" },
-          { title: "Work Hour Vs Fuel Mileage" },
-          { title: "Fuel Dashboard" },
-          { title: "Fuel Expense Summary" }
-        ] 
+      {
+        title: "Fuel",
+        items: [
+          { title: "Fill-Drain", href: "/reports/fuel/fill-drain" },
+          { title: "Fuel Economy", href: "/reports/fuel/economy" },
+          { title: "Fuel Consumption", href: "/reports/fuel/consumption" },
+          { title: "Fuel Abnormal Consumption", href: "/reports/fuel/abnormal" },
+          { title: "Digital Port - Fuel Summary", href: "/reports/fuel/digital-port" },
+          { title: "Work Hour Vs Fuel Mileage", href: "/reports/fuel/mileage" },
+          { title: "Fuel Dashboard", href: "/reports/fuel/dashboard" },
+          { title: "Fuel Expense Summary", href: "/reports/fuel/expense" },
+        ],
       },
-      { 
-        title: "Billing", 
-        children: [
-          { title: "Payment Detail" }, 
-          { title: "Postpaid Billing History" },
-          { title: "Object Expiry Log" },
-          { title: "Admin Wise Object" },
-          { title: "Object Payment Detail Summary" }
-        ] 
+      {
+        title: "Billing",
+        items: [
+          { title: "Payment Detail", href: "/reports/billing/payment" },
+          { title: "Postpaid Billing History", href: "/reports/billing/postpaid" },
+          { title: "Object Expiry Log", href: "/reports/billing/expiry-log" },
+          { title: "Admin Wise Object", href: "/reports/billing/admin-object" },
+          { title: "Object Payment Detail Summary", href: "/reports/billing/payment-summary" },
+        ],
       },
-      { title: "Logs", children: [{ title: "System Logs" }] },
-      { 
-        title: "Hardware Maintenance", 
-        children: [
-          { title: "Technician Task Summary" }, 
-          { title: "Company Service Task" }
-        ] 
+      {
+        title: "Logs",
+        items: [
+          { title: "User Access", href: "/reports/logs/user-access" },
+          { title: "User Detail", href: "/reports/logs/user-detail" },
+          { title: "Announcements", href: "/reports/logs/announcements" },
+          { title: "System Log", href: "/reports/logs/system" },
+          { title: "Device Log", href: "/reports/logs/device" },
+          { title: "Added Deleted Object Log Report", href: "/reports/logs/object-crud" },
+          { title: "Send Command Log", href: "/reports/logs/send-command" },
+          { title: "Device Communication Log", href: "/admin/communications/logs" },
+          { title: "Application Usage", href: "/reports/logs/app-usage" },
+        ],
       },
-      { 
-        title: "Document", 
-        children: [
-          { title: "Object Document status" }, 
-          { title: "Driver Document status" }
-        ] 
+      {
+        title: "Hardware Maintenance",
+        items: [
+          { title: "Technician Task Summary", href: "/reports/maintenance/technician-tasks" },
+          { title: "Company Service Task", href: "/reports/maintenance/company-tasks" },
+        ],
+      },
+      {
+        title: "Document",
+        items: [
+          { title: "Object Document status", href: "/reports/document/object" },
+          { title: "Driver Document status", href: "/reports/document/driver" },
+        ],
       },
     ],
   },
   {
     title: "Charts",
-    icon: <PieChart className="w-6 h-6 mb-1.5" strokeWidth={1.25} />,
-    children: [
-      { 
-        title: "Activity", 
-        children: [
-          { title: "Speed Vs Time" }, 
-          { title: "Battery Voltage" }, 
-          { title: "Battery Percentage" }
-        ] 
-      },
-      { 
-        title: "Alert", 
-        children: [
-          { title: "Alerts" }
-        ] 
+    icon: <PieChart className="w-6 h-6 mb-1.5" strokeWidth={1.3} />,
+    categories: [
+      {
+        title: "Activity",
+        items: [
+          { title: "Speed Vs Time", href: "/charts/activity/speed-time" },
+          { title: "Battery Voltage", href: "/charts/activity/battery-voltage" },
+          { title: "Battery Percentage", href: "/charts/activity/battery-percentage" },
+        ],
       },
       {
-        title: "Fuel", 
-        children: [
-          { title: "Fuel" }, 
-          { title: "Fill-Drain" }, 
-          { title: "Fuel Economy" }
-        ] 
+        title: "Alert",
+        items: [
+          { title: "Alerts", href: "/charts/alert" },
+        ],
       },
-      { 
-        title: "Expense", 
-        children: [
-          { title: "Cost Distribution" }, 
-          { title: "Cost By Time" }
-        ] 
+      {
+        title: "Fuel",
+        items: [
+          { title: "Fuel", href: "/charts/fuel" },
+          { title: "Fill-Drain", href: "/charts/fuel/fill-drain" },
+          { title: "Fuel Economy", href: "/charts/fuel/economy" },
+        ],
       },
-      { 
-        title: "Analytics",
-        children: [
-          { title: "Temperature" },
-          { title: "Fuel" }
-        ]
-      }
+      {
+        title: "Expense",
+        items: [
+          { title: "Cost Distribution", href: "/charts/expense/distribution" },
+          { title: "Cost By Time", href: "/charts/expense/by-time" },
+        ],
+      },
     ],
   },
   {
     title: "Settings",
-    icon: <Settings className="w-6 h-6 mb-1.5" strokeWidth={1.25} />,
-    children: [
+    icon: <Settings className="w-6 h-6 mb-1.5" strokeWidth={1.3} />,
+    categories: [
       {
         title: "General",
-        children: [
+        items: [
           { title: "Company", href: "/settings/company" },
           { title: "Company Subuser", href: "/settings/subuser" },
           { title: "Branch", href: "/settings/branch" },
@@ -205,7 +230,7 @@ const TRAKZEE_NAV: NavItem[] = [
       },
       {
         title: "Master",
-        children: [
+        items: [
           { title: "Expense", href: "/settings/master/expense" },
           { title: "Object Group", href: "/settings/master/object-group" },
           { title: "Send Command", href: "/settings/master/command" },
@@ -217,20 +242,20 @@ const TRAKZEE_NAV: NavItem[] = [
       },
       {
         title: "Technician",
-        children: [
+        items: [
           { title: "Technician", href: "/settings/technician" },
           { title: "Technician Task", href: "/settings/technician/task" },
         ],
       },
       {
         title: "Billing",
-        children: [
+        items: [
           { title: "Tariff Plan", href: "/settings/billing/tariff" },
         ],
       },
       {
         title: "Bulk Action",
-        children: [
+        items: [
           { title: "Bulk Object Update", href: "/settings/bulk/object" },
         ],
       },
@@ -239,267 +264,582 @@ const TRAKZEE_NAV: NavItem[] = [
 ];
 
 interface TrakzeeSidebarProps {
-  user?: { name?: string | null; email?: string | null; image?: string | null; } | null;
+  user?: { name?: string | null; email?: string | null; image?: string | null } | null;
 }
 
 export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
-  const [activeModule, setActiveModule] = React.useState<string | null>(null);
-  const [isNotificationsOpen, setIsNotificationsOpen] = React.useState(false);
-  const [activeTab, setActiveTab] = React.useState<'notifications' | 'announcements'>('notifications');
+  const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
 
-  // Close flyouts if cursor leaves the entire sidebar area
-  const handleMouseLeave = () => {
-    setActiveModule(null);
+  // Flyout State
+  const [hoveredModule, setHoveredModule] = React.useState<NavModule | null>(null);
+  const [hoveredCategory, setHoveredCategory] = React.useState<NavCategory | null>(null);
+
+  // Drawers & Dialogs
+  const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
+  const [isAppsMenuOpen, setIsAppsMenuOpen] = React.useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = React.useState(false);
+  const [activeNotiTab, setActiveNotiTab] = React.useState<"notifications" | "announcements">("notifications");
+  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [isCloudDownloadOpen, setIsCloudDownloadOpen] = React.useState(false);
+
+  // Flat list of all searchable screens
+  const allSearchableScreens = React.useMemo(() => {
+    const screens: Array<{ module: string; category?: string; title: string; href: string }> = [];
+    TRAKZEE_NAVIGATION.forEach((mod) => {
+      if (mod.href) {
+        screens.push({ module: mod.title, title: mod.title, href: mod.href });
+      }
+      if (mod.categories) {
+        mod.categories.forEach((cat) => {
+          cat.items.forEach((item) => {
+            screens.push({
+              module: mod.title,
+              category: cat.title,
+              title: item.title,
+              href: item.href,
+            });
+          });
+        });
+      }
+    });
+    return screens;
+  }, []);
+
+  const filteredScreens = React.useMemo(() => {
+    if (!searchQuery.trim()) return allSearchableScreens.slice(0, 15);
+    const q = searchQuery.toLowerCase();
+    return allSearchableScreens.filter(
+      (s) =>
+        s.title.toLowerCase().includes(q) ||
+        (s.category && s.category.toLowerCase().includes(q)) ||
+        s.module.toLowerCase().includes(q)
+    );
+  }, [searchQuery, allSearchableScreens]);
+
+  // Global shortcut (Ctrl+K / Cmd+K) to toggle universal search
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        setIsSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const closeAllFlyouts = () => {
+    setHoveredModule(null);
+    setHoveredCategory(null);
   };
 
   return (
     <>
-    <div 
-      className="fixed top-0 left-0 h-full w-[90px] bg-[#07163d] text-white flex flex-col z-[60] shadow-xl"
-      onMouseLeave={handleMouseLeave}
-    >
-      {/* LOGO AREA */}
-      <div 
-        className="flex items-center justify-center border-b border-white/20"
-        style={{ height: '78px', margin: '8px 6px' }}
+      {/* 1. PRIMARY SIDEBAR (90px) */}
+      <aside
+        id="left-tree"
+        className="fixed top-0 left-0 h-full w-[90px] bg-[#07163d] text-white flex flex-col z-[60] select-none shadow-2xl"
+        onMouseLeave={closeAllFlyouts}
       >
-        <div className="flex items-center gap-2">
-          {/* Using a text-based logo matching the screenshot, with the correct blue dot */}
-          <span className="font-bold text-[16px] tracking-wider text-white">uffizio<span className="text-[#3b82f6]">.</span></span>
-        </div>
-      </div>
-
-      {/* User & Notifications Area */}
-      <div className="flex justify-center gap-6 py-5 relative">
-        
-        {/* USER PROFILE */}
-        <div 
-          className="cursor-pointer group/user"
-        >
-          <User className="w-[22px] h-[22px] text-gray-300 group-hover/user:text-white transition-colors" strokeWidth={1.25} />
-          
-          {/* User Flyout (White Background) */}
-          <div className="absolute top-0 left-[90px] hidden group-hover/user:flex flex-col bg-white shadow-[0_3px_10px_rgb(0,0,0,0.2)] border border-gray-100 w-[180px] z-[60] py-1 text-[12px] font-medium text-[#444] font-sans">
-            <div className="px-4 py-2 border-b border-[#f5f5f5] truncate" title="test@example.com">
-              {user?.email || "ali@technologyhubjuba.com"}
+        {/* LOGO CONTAINER */}
+        <div className="flex items-center justify-center p-2 pt-2.5">
+          <Link
+            href="/dashboard"
+            className="w-[74px] h-[74px] rounded-full bg-[#02050f] border border-white/20 flex flex-col items-center justify-center hover:border-white/40 transition-all shadow-inner group"
+            title="Trakzee - Fleet Telematics"
+          >
+            <div className="text-[13px] font-bold tracking-wider text-white flex items-center">
+              uffizio<span className="text-[#29a4ff] text-[18px] leading-none">.</span>
             </div>
-            <Link href="/settings/security" className="px-4 py-2 border-b border-[#f5f5f5] hover:bg-gray-50 transition-colors">
-              Change Password
-            </Link>
-            <Link href="/settings/subuser" className="px-4 py-2 border-b border-[#f5f5f5] hover:bg-gray-50 transition-colors">
-              Set Subuser
-            </Link>
-            
-            {/* Applications (Nested Flyout) */}
-            <div className="relative group/apps">
-              <Link href="/applications" className="px-4 py-2 border-b border-[#f5f5f5] hover:bg-gray-50 transition-colors flex items-center justify-between">
-                <span>Applications</span>
-                <ChevronRight className="w-3 h-3 text-gray-400" strokeWidth={1.5} />
-              </Link>
-              
-              {/* Nested Applications Menu */}
-              <div className="absolute top-0 left-full hidden group-hover/apps:flex flex-col bg-white shadow-[0_3px_10px_rgb(0,0,0,0.2)] border border-gray-100 w-[160px] text-[12px] font-medium text-[#444] py-1">
-                <Link href="/lite" className="px-4 py-2 border-b border-[#f5f5f5] hover:bg-gray-50 transition-colors">
-                  Trakzee Lite
-                </Link>
-                <Link href="/standard" className="px-4 py-2 border-b border-[#f5f5f5] hover:bg-gray-50 transition-colors font-semibold text-[#333]">
-                  Trakzee Standard
-                </Link>
-                <Link href="/settings/default-app" className="px-4 py-2 hover:bg-gray-50 transition-colors">
-                  Set default Application
-                </Link>
-              </div>
-            </div>
-
-            <form action="/api/auth/logout" method="POST" className="w-full">
-              <button type="submit" className="w-full !font-sans !font-medium !text-left !px-4 !py-2 !bg-transparent !border-0 !text-[#444] hover:bg-gray-50 transition-colors cursor-pointer">
-                Logout
-              </button>
-            </form>
-          </div>
+            <span className="text-[8px] text-white/50 tracking-widest uppercase mt-0.5">Trakzee</span>
+          </Link>
         </div>
 
-        {/* NOTIFICATIONS BELL */}
-        <div className="relative cursor-pointer hover:text-white group/bell" onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}>
-          <Bell className="w-[22px] h-[22px] text-gray-300 group-hover/bell:text-white transition-colors" strokeWidth={1.25} />
-          {/* Notification dot - currently hidden as in production when count is 0 */}
-          <span className="hidden absolute top-[-2px] right-[-2px] w-2 h-2 bg-red-500 rounded-full"></span>
-        </div>
-
-      </div>
-
-      {/* Primary Navigation Modules */}
-      <div className="flex-1 flex flex-col [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-[#999] [&::-webkit-scrollbar-thumb]:rounded-[5px]">
-        {TRAKZEE_NAV.map((item, index) => (
-          <div 
-            key={item.title}
-            className="relative h-[80px] w-[90px]"
-            onMouseEnter={() => setActiveModule(item.title)}
-          >
-            {item.href && !item.children ? (
-              <Link 
-                href={item.href}
-                className={cn(
-                  "flex flex-col items-center justify-center w-full h-full cursor-pointer transition-colors",
-                  "hover:bg-[#234292]",
-                  activeModule === item.title && "bg-[#234292]"
-                )}
-              >
-                {item.icon ? item.icon : (item.iconClass && <span className={cn(item.iconClass, "mb-1")} />)}
-                <span className="text-[11px] text-center w-full truncate px-1 mt-1 font-normal text-gray-300">{item.title}</span>
-              </Link>
-            ) : (
-              <div 
-                className={cn(
-                  "flex flex-col items-center justify-center w-full h-full cursor-pointer transition-colors",
-                  "hover:bg-[#234292]",
-                  activeModule === item.title && "bg-[#234292]"
-                )}
-              >
-                {item.icon ? item.icon : (item.iconClass && <span className={cn(item.iconClass, "mb-1")} />)}
-                <span className="text-[11px] text-center w-full truncate px-1 mt-1 font-normal text-gray-300">{item.title}</span>
-              </div>
-            )}
-
-            {/* Level 2 Flyout Menu */}
-            {item.children && activeModule === item.title && (
-              <FlyoutMenu items={item.children} isRoot={true} positionUpwards={index > TRAKZEE_NAV.length / 2} />
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Bottom Cloud Icon */}
-        <div className="flex-shrink-0 w-[90px] h-[50px] flex items-center justify-center mt-auto cursor-pointer hover:bg-[#234292] transition-colors border-t border-[#1b2b52]/50">
-          <CloudUpload className="w-7 h-7 text-gray-300 hover:text-white transition-colors" strokeWidth={1} />
-        </div>
-    </div>
-
-    {/* Full Height Notifications Panel */}
-    {isNotificationsOpen && (
-      <div className="fixed top-0 left-[90px] h-full w-[300px] bg-white border-r shadow-lg flex flex-col z-40 animate-in slide-in-from-left-8 duration-200">
-        
-        {/* Tabs */}
-        <div className="flex text-xs h-[40px] border-b border-gray-200">
-          <div 
-            onClick={() => setActiveTab("notifications")}
+        {/* USER & NOTIFICATIONS BAR (70px height) */}
+        <div id="tree-user" className="flex items-center justify-center h-[65px] border-b border-white/10 relative">
+          {/* User Icon */}
+          <button
+            type="button"
+            onClick={() => {
+              setIsUserMenuOpen((prev) => !prev);
+              setIsNotificationsOpen(false);
+            }}
             className={cn(
-              "flex-1 text-center flex items-center justify-center font-medium cursor-pointer transition-colors",
-              activeTab === "notifications" ? "bg-white text-gray-700" : "bg-[#234292] text-white hover:bg-[#1b2b52]"
+              "flex-1 h-full flex items-center justify-center hover:bg-white/10 transition-colors text-white/70 hover:text-white cursor-pointer relative",
+              isUserMenuOpen && "bg-white/15 text-white"
             )}
+            title="User Profile & Settings"
+            aria-label="User Profile"
           >
-            Notifications
-          </div>
-          <div 
-            onClick={() => setActiveTab("announcements")}
+            <User className="w-5 h-5" strokeWidth={1.5} />
+          </button>
+
+          {/* Divider */}
+          <div className="w-[1px] h-[26px] bg-white/10" />
+
+          {/* Notifications Icon */}
+          <button
+            type="button"
+            onClick={() => {
+              setIsNotificationsOpen((prev) => !prev);
+              setIsUserMenuOpen(false);
+            }}
             className={cn(
-              "flex-1 text-center flex items-center justify-center font-medium cursor-pointer transition-colors pr-8",
-              activeTab === "announcements" ? "bg-white text-gray-700" : "bg-[#234292] text-white hover:bg-[#1b2b52]"
+              "flex-1 h-full flex items-center justify-center hover:bg-white/10 transition-colors text-white/70 hover:text-white cursor-pointer relative",
+              isNotificationsOpen && "bg-white/15 text-white"
             )}
+            title="Notifications & Announcements"
+            aria-label="Notifications"
           >
-            Announcements
-          </div>
-          
-          {/* Close Button */}
-          <button 
-            onClick={() => setIsNotificationsOpen(false)}
-            className="absolute right-0 top-0 h-[40px] w-[40px] flex items-center justify-center bg-[#234292] text-white hover:bg-red-500 transition-colors"
-          >
-            <X className="w-4 h-4" />
+            <Bell className="w-5 h-5" strokeWidth={1.5} />
+            <span className="absolute top-4 right-4 w-2 h-2 bg-[#29a4ff] rounded-full animate-pulse ring-2 ring-[#07163d]" />
           </button>
         </div>
 
-        {/* Sub-filters (Only show when Notifications is active) */}
-        {activeTab === "notifications" && (
-          <div className="flex bg-white border-b border-gray-200">
-            <div className="flex-1 flex flex-col items-center justify-center py-2 border-b-2 border-red-500 bg-[#ffeaeb] cursor-pointer">
-              <span className="text-red-600 font-bold text-sm">0</span>
-              <span className="text-red-600 text-[10px] mt-0.5">High</span>
+        {/* PRIMARY MODULES LIST */}
+        <div id="tree-module" className="flex-1 flex flex-col py-1 overflow-y-auto overflow-x-hidden">
+          {TRAKZEE_NAVIGATION.map((mod) => {
+            const isHovered = hoveredModule?.title === mod.title;
+            const isActive = mod.href ? pathname === mod.href : pathname.startsWith(`/${mod.title.toLowerCase()}`);
+
+            return (
+              <div
+                key={mod.title}
+                className="w-full h-[78px] relative flex flex-col items-center justify-center cursor-pointer transition-all duration-150"
+                onMouseEnter={() => {
+                  setHoveredModule(mod);
+                  setHoveredCategory(mod.categories ? mod.categories[0] : null);
+                }}
+              >
+                {mod.href && !mod.categories ? (
+                  <Link
+                    href={mod.href}
+                    className={cn(
+                      "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white hover:bg-[#234292] transition-colors relative",
+                      (isHovered || isActive) && "bg-[#234292] text-white"
+                    )}
+                  >
+                    {isActive && (
+                      <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#29a4ff]" />
+                    )}
+                    {mod.icon}
+                    <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px]">
+                      {mod.title}
+                    </span>
+                  </Link>
+                ) : (
+                  <div
+                    className={cn(
+                      "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white hover:bg-[#234292] transition-colors relative",
+                      (isHovered || isActive) && "bg-[#234292] text-white"
+                    )}
+                  >
+                    {isActive && (
+                      <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#29a4ff]" />
+                    )}
+                    {mod.icon}
+                    <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px]">
+                      {mod.title}
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* BOTTOM CLOUD DOWNLOAD */}
+        <div id="tree-download" className="h-[52px] border-t border-white/10 flex items-center justify-center">
+          <button
+            type="button"
+            onClick={() => setIsCloudDownloadOpen(true)}
+            className="w-full h-full flex items-center justify-center hover:bg-[#234292] text-white/70 hover:text-white transition-colors cursor-pointer"
+            title="Cloud Download Manager"
+            aria-label="Cloud Download"
+          >
+            <CloudDownload className="w-6 h-6" strokeWidth={1.3} />
+          </button>
+        </div>
+      </aside>
+
+      {/* 2. MULTI-LEVEL FLYOUT MENU (Layer 2 #subMenu + Layer 3 #deepMenu) */}
+      {hoveredModule && hoveredModule.categories && (
+        <div
+          className="fixed top-0 left-[90px] h-full z-[55] flex animate-in fade-in duration-150"
+          onMouseEnter={() => {}}
+          onMouseLeave={closeAllFlyouts}
+        >
+          {/* LAYER 2: Submenu Categories (175px wide, #0d276b) */}
+          <div
+            id="subMenu"
+            className="w-[175px] h-full bg-[#0d276b] text-white border-r border-white/10 flex flex-col shadow-2xl overflow-y-auto"
+          >
+            {/* Header Title */}
+            <div className="h-[52px] px-4 flex items-center justify-between border-b border-white/10 bg-[#0a1f54] text-xs font-bold uppercase tracking-wider text-[#29a4ff]">
+              <span>{hoveredModule.title}</span>
+              <span className="text-[10px] font-normal text-white/40">{hoveredModule.categories.length} sections</span>
             </div>
-            <div className="flex-1 flex flex-col items-center justify-center py-2 bg-[#fff4e6] cursor-pointer border-b-2 border-transparent hover:border-[#e98316]/50">
-              <span className="text-[#e98316] font-bold text-sm">0</span>
-              <span className="text-[#e98316] text-[10px] mt-0.5">Medium</span>
+
+            {/* Category Items */}
+            <ul className="flex-1 py-1 divide-y divide-white/5">
+              {hoveredModule.categories.map((cat) => {
+                const isCatHovered = hoveredCategory?.title === cat.title;
+                return (
+                  <li
+                    key={cat.title}
+                    onMouseEnter={() => setHoveredCategory(cat)}
+                    className={cn(
+                      "h-[40px] px-3.5 flex items-center justify-between text-[12px] font-medium text-white/85 hover:text-white hover:bg-[#07163d] cursor-pointer transition-colors group",
+                      isCatHovered && "bg-[#07163d] text-[#29a4ff] font-semibold"
+                    )}
+                  >
+                    <span className="truncate">{cat.title}</span>
+                    <ChevronRight
+                      className={cn(
+                        "w-3.5 h-3.5 text-white/40 group-hover:text-white transition-transform",
+                        isCatHovered && "text-[#29a4ff] translate-x-0.5"
+                      )}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          {/* LAYER 3: Deep Menu Screens (200px wide, #07163d) */}
+          {hoveredCategory && (
+            <div
+              id="deepMenu"
+              className="w-[200px] h-full bg-[#07163d] text-white border-r border-white/10 flex flex-col shadow-2xl overflow-y-auto animate-in slide-in-from-left-2 duration-150"
+            >
+              {/* Header Title */}
+              <div className="h-[52px] px-4 flex items-center border-b border-white/10 bg-[#040e27] text-xs font-semibold text-white/90 truncate">
+                <span className="truncate">{hoveredCategory.title}</span>
+              </div>
+
+              {/* Screens List */}
+              <ul className="flex-1 py-1 divide-y divide-white/5">
+                {hoveredCategory.items.map((screen) => {
+                  const isCurrent = pathname === screen.href;
+                  return (
+                    <li key={screen.title} className="h-[38px]">
+                      <Link
+                        href={screen.href}
+                        onClick={closeAllFlyouts}
+                        className={cn(
+                          "w-full h-full px-4 flex items-center text-[12px] text-white/80 hover:text-white hover:bg-[#234292] hover:pl-5 transition-all truncate",
+                          isCurrent && "bg-[#29a4ff] text-white font-semibold"
+                        )}
+                        title={screen.title}
+                      >
+                        <span className="truncate">{screen.title}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
-            <div className="flex-1 flex flex-col items-center justify-center py-2 bg-[#e6f4ea] cursor-pointer border-b-2 border-transparent hover:border-green-500/50">
-              <span className="text-green-600 font-bold text-sm">0</span>
-              <span className="text-green-600 text-[10px] mt-0.5">Low</span>
+          )}
+        </div>
+      )}
+
+      {/* 3. USER PROFILE DRAWER / FLYOUT */}
+      {isUserMenuOpen && (
+        <div
+          className="fixed top-[90px] left-[90px] w-[210px] bg-card text-card-foreground border border-border shadow-2xl rounded-md z-[70] py-1.5 text-xs font-medium animate-in fade-in slide-in-from-left-2 duration-150"
+          onMouseLeave={() => {
+            setIsUserMenuOpen(false);
+            setIsAppsMenuOpen(false);
+          }}
+        >
+          {/* User Email Banner */}
+          <div className="px-3.5 py-2 border-b border-border text-[11px] font-semibold text-muted-foreground truncate bg-muted/30">
+            {user?.email || "ali@technologyhubjuba.com"}
+          </div>
+
+          <Link
+            href="/settings/security"
+            onClick={() => setIsUserMenuOpen(false)}
+            className="flex items-center gap-2 px-3.5 py-2 hover:bg-muted/70 transition-colors"
+          >
+            <KeyRound className="w-3.5 h-3.5 text-muted-foreground" />
+            <span>Change Password</span>
+          </Link>
+
+          <Link
+            href="/settings/subuser"
+            onClick={() => setIsUserMenuOpen(false)}
+            className="flex items-center gap-2 px-3.5 py-2 hover:bg-muted/70 transition-colors"
+          >
+            <Users className="w-3.5 h-3.5 text-muted-foreground" />
+            <span>Set Subuser</span>
+          </Link>
+
+          {/* Applications Sub-flyout */}
+          <div
+            className="relative"
+            onMouseEnter={() => setIsAppsMenuOpen(true)}
+            onMouseLeave={() => setIsAppsMenuOpen(false)}
+          >
+            <div className="flex items-center justify-between px-3.5 py-2 hover:bg-muted/70 transition-colors cursor-pointer">
+              <div className="flex items-center gap-2">
+                <Layers className="w-3.5 h-3.5 text-muted-foreground" />
+                <span>Applications</span>
+              </div>
+              <ChevronRight className="w-3 h-3 text-muted-foreground" />
+            </div>
+
+            {isAppsMenuOpen && (
+              <div className="absolute top-0 left-full w-[170px] bg-card border border-border shadow-2xl rounded-md py-1.5 ml-1 text-xs">
+                <Link
+                  href="/lite"
+                  onClick={() => setIsUserMenuOpen(false)}
+                  className="block px-3.5 py-2 hover:bg-muted/70 transition-colors"
+                >
+                  Trakzee Lite
+                </Link>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setIsUserMenuOpen(false)}
+                  className="flex items-center justify-between px-3.5 py-2 hover:bg-muted/70 transition-colors font-semibold text-[#29a4ff]"
+                >
+                  <span>Trakzee Standard</span>
+                  <Check className="w-3.5 h-3.5 text-[#29a4ff]" />
+                </Link>
+                <div className="h-[1px] bg-border my-1" />
+                <Link
+                  href="/settings"
+                  onClick={() => setIsUserMenuOpen(false)}
+                  className="block px-3.5 py-1.5 text-[11px] text-muted-foreground hover:bg-muted/70 transition-colors"
+                >
+                  Set Default Application
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Theme Toggle */}
+          <button
+            type="button"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="w-full flex items-center justify-between px-3.5 py-2 hover:bg-muted/70 transition-colors text-left"
+          >
+            <div className="flex items-center gap-2">
+              {theme === "dark" ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-indigo-500" />}
+              <span>Theme: {theme === "dark" ? "Dark Mode" : "Light Mode"}</span>
+            </div>
+          </button>
+
+          <Link
+            href="/help"
+            onClick={() => setIsUserMenuOpen(false)}
+            className="flex items-center gap-2 px-3.5 py-2 hover:bg-muted/70 transition-colors border-t border-border mt-1"
+          >
+            <HelpCircle className="w-3.5 h-3.5 text-muted-foreground" />
+            <span>Help & Support</span>
+          </Link>
+
+          {/* Logout Action */}
+          <form action="/api/auth/logout" method="POST" className="border-t border-border mt-1">
+            <button
+              type="submit"
+              className="w-full flex items-center gap-2 px-3.5 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors text-left"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Logout</span>
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* 4. NOTIFICATIONS DRAWER */}
+      {isNotificationsOpen && (
+        <div className="fixed top-0 left-[90px] h-full w-[320px] bg-card text-card-foreground border-r border-border shadow-2xl flex flex-col z-[70] animate-in slide-in-from-left duration-200">
+          {/* Header Tabs */}
+          <div className="h-[46px] flex items-stretch border-b border-border bg-muted/40">
+            <button
+              type="button"
+              onClick={() => setActiveNotiTab("notifications")}
+              className={cn(
+                "flex-1 flex items-center justify-center text-xs font-semibold border-b-2 transition-colors",
+                activeNotiTab === "notifications"
+                  ? "border-[#29a4ff] text-[#29a4ff] bg-card"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Notifications
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveNotiTab("announcements")}
+              className={cn(
+                "flex-1 flex items-center justify-center text-xs font-semibold border-b-2 transition-colors",
+                activeNotiTab === "announcements"
+                  ? "border-[#29a4ff] text-[#29a4ff] bg-card"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Announcements
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsNotificationsOpen(false)}
+              className="w-10 h-full flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-muted transition-colors"
+              aria-label="Close Notifications"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Priority Filters for Notifications */}
+          {activeNotiTab === "notifications" && (
+            <div className="grid grid-cols-3 border-b border-border text-center text-xs">
+              <div className="py-2.5 bg-red-50 dark:bg-red-950/30 border-b-2 border-red-500 text-red-600 dark:text-red-400">
+                <div className="text-sm font-bold">0</div>
+                <div className="text-[10px] uppercase font-semibold">High</div>
+              </div>
+              <div className="py-2.5 bg-amber-50 dark:bg-amber-950/30 border-b-2 border-amber-500 text-amber-600 dark:text-amber-400">
+                <div className="text-sm font-bold">0</div>
+                <div className="text-[10px] uppercase font-semibold">Medium</div>
+              </div>
+              <div className="py-2.5 bg-emerald-50 dark:bg-emerald-950/30 border-b-2 border-emerald-500 text-emerald-600 dark:text-emerald-400">
+                <div className="text-sm font-bold">0</div>
+                <div className="text-[10px] uppercase font-semibold">Low</div>
+              </div>
+            </div>
+          )}
+
+          {/* Body Content */}
+          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center text-muted-foreground">
+            <Bell className="w-10 h-10 stroke-1 opacity-20 mb-3" />
+            <p className="text-xs font-medium">
+              {activeNotiTab === "notifications" ? "No new notifications found." : "No active announcements."}
+            </p>
+            <p className="text-[11px] text-muted-foreground/60 mt-1">
+              {activeNotiTab === "notifications" ? "Geofence, speed, and sensor alerts will appear here." : "System broadcasts will be shown here."}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* 5. UNIVERSAL SCREEN SEARCH OVERLAY (Top-right search trigger & modal) */}
+      <div className="fixed top-3 right-4 z-[50]">
+        <button
+          type="button"
+          onClick={() => setIsSearchOpen(true)}
+          className="h-9 px-3 rounded-md bg-white dark:bg-card border border-border shadow-sm flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all group"
+          title="Search all screens (Ctrl+K)"
+        >
+          <Search className="w-3.5 h-3.5 text-muted-foreground group-hover:text-[#29a4ff]" />
+          <span className="hidden sm:inline">Search screens...</span>
+          <kbd className="text-[10px] bg-muted px-1.5 py-0.5 rounded border border-border">Ctrl+K</kbd>
+        </button>
+      </div>
+
+      {isSearchOpen && (
+        <div className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-20 p-4 animate-in fade-in duration-150">
+          <div
+            className="w-full max-w-xl bg-card border border-border rounded-xl shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Search Input Bar */}
+            <div className="flex items-center px-4 py-3 border-b border-border gap-3 bg-muted/20">
+              <Search className="w-4 h-4 text-[#29a4ff]" />
+              <input
+                type="text"
+                autoFocus
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Type to search across all 86 Trakzee screens (e.g., Travel, Sensor, Fuel, Company)..."
+                className="flex-1 bg-transparent border-0 outline-none text-sm text-foreground placeholder:text-muted-foreground"
+              />
+              <button
+                type="button"
+                onClick={() => setIsSearchOpen(false)}
+                className="p-1 text-muted-foreground hover:text-foreground rounded"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Search Results */}
+            <div className="max-h-[380px] overflow-y-auto divide-y divide-border/40 p-1">
+              {filteredScreens.length > 0 ? (
+                filteredScreens.map((s) => (
+                  <Link
+                    key={`${s.module}-${s.category}-${s.title}`}
+                    href={s.href}
+                    onClick={() => setIsSearchOpen(false)}
+                    className="flex items-center justify-between px-3.5 py-2.5 hover:bg-muted/70 rounded-md transition-colors group"
+                  >
+                    <div>
+                      <div className="text-xs font-semibold text-foreground group-hover:text-[#29a4ff]">
+                        {s.title}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground">
+                        {s.module} {s.category ? `> ${s.category}` : ""}
+                      </div>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-[#29a4ff] transition-transform group-hover:translate-x-0.5" />
+                  </Link>
+                ))
+              ) : (
+                <div className="p-8 text-center text-xs text-muted-foreground">
+                  No matching screens found for &ldquo;{searchQuery}&rdquo;.
+                </div>
+              )}
+            </div>
+
+            {/* Footer Status */}
+            <div className="px-4 py-2 bg-muted/40 border-t border-border text-[11px] text-muted-foreground flex items-center justify-between">
+              <span>{allSearchableScreens.length} total screens indexed</span>
+              <span>Press ESC to close</span>
             </div>
           </div>
-        )}
-
-        {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center text-gray-400 text-sm">
-          {activeTab === "notifications" ? (
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-8 h-8 opacity-20 flex items-center justify-center"><Bell className="w-8 h-8" /></div>
-              <span>No notifications to show.</span>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-8 h-8 opacity-20 flex items-center justify-center"><FileText className="w-8 h-8" /></div>
-              <span>No announcements.</span>
-            </div>
-          )}
         </div>
-      </div>
-    )}
-    </>
-  );
-}
-
-// Recursive Flyout Menu Component
-function FlyoutMenu({ items, isRoot, positionUpwards }: { items: NavItem[], isRoot?: boolean, positionUpwards?: boolean }) {
-  const [activeItem, setActiveItem] = React.useState<string | null>(null);
-
-  return (
-    <div 
-      className={cn(
-        "absolute w-[200px] bg-[#1a3a91] text-white shadow-xl flex flex-col z-[100]",
-        isRoot ? "left-[90px]" : "left-[200px]", // shift to right by the width of the parent menu
-        positionUpwards ? "bottom-0 top-auto" : "top-0"
       )}
-      style={{ minHeight: '100%' }}
-    >
-      {items.map((item, index) => (
-        <div 
-          key={item.title}
-          className="relative group/menuitem"
-          onMouseEnter={() => setActiveItem(item.title)}
-          onMouseLeave={() => setActiveItem(null)}
-        >
-          {item.href ? (
-            <Link 
-              href={item.href}
-              className={cn(
-                "flex items-center justify-between px-4 py-3 text-[13px] hover:bg-[#112a73] transition-colors w-full cursor-pointer",
-                activeItem === item.title && "bg-[#112a73]"
-              )}
-            >
-              <span className="truncate">{item.title}</span>
-              {item.children && <ChevronRight className="w-3.5 h-3.5 opacity-70" />}
-            </Link>
-          ) : (
-            <div 
-              className={cn(
-                "flex items-center justify-between px-4 py-3 text-[13px] hover:bg-[#112a73] transition-colors w-full cursor-pointer",
-                activeItem === item.title && "bg-[#112a73]"
-              )}
-            >
-              <span className="truncate">{item.title}</span>
-              {item.children && <ChevronRight className="w-3.5 h-3.5 opacity-70" />}
-            </div>
-          )}
 
-          {/* Recursive Level 3+ Flyout */}
-          {item.children && activeItem === item.title && (
-            <FlyoutMenu 
-              items={item.children} 
-              isRoot={false} 
-              positionUpwards={index > items.length / 2} 
-            />
-          )}
+      {/* 6. CLOUD DOWNLOAD MANAGER DIALOG */}
+      {isCloudDownloadOpen && (
+        <div className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-card border border-border rounded-xl shadow-2xl p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <div className="flex items-center gap-2">
+                <CloudDownload className="w-5 h-5 text-[#29a4ff]" />
+                <h3 className="text-sm font-semibold">Cloud Download Manager</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsCloudDownloadOpen(false)}
+                className="p-1 text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-2 text-xs text-muted-foreground">
+              <p>Manage scheduled downloads, GPS telematics exports, and background data dumps.</p>
+              <div className="p-3 bg-muted/50 rounded-lg border border-border text-[11px] space-y-1">
+                <div className="font-semibold text-foreground">Active Tasks</div>
+                <div>No pending background export jobs.</div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsCloudDownloadOpen(false)}
+                className="auth-btn-secondary"
+                style={{ height: "32px", fontSize: "12px", padding: "0 14px" }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
-      ))}
-    </div>
+      )}
+    </>
   );
 }
