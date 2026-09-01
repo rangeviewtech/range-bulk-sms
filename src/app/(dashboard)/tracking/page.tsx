@@ -19,6 +19,7 @@ import {
   Power, 
   ChevronRight, 
   ChevronLeft,
+  ChevronDown,
   X,
   Compass,
   CheckCircle2,
@@ -29,447 +30,836 @@ import {
   Volume2,
   Share2,
   Plus,
-  Minus
+  Minus,
+  Settings,
+  Users,
+  AlertTriangle,
+  Grid,
+  Info,
+  Send,
+  Wrench,
+  Bell,
+  Pin,
+  Flame,
+  Wifi,
+  Key,
+  Shield,
+  Eye
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Mock Fleet Vehicles for Live Tracking
-const TRACKING_OBJECTS = [
-  { id: "VEH-101", name: "UA 347AP (Truck)", driver: "John Kiprono", group: "Mega Milk", type: "Heavy Truck", status: "Moving", speed: 78, heading: 45, fuel: 74, battery: "24.2 V", ignition: true, odo: 142850, lat: 4.859363, lng: 31.571251, address: "Customs Depot Yard B, Juba", lastUpdate: "5s ago", imei: "864910283019482" },
-  { id: "VEH-102", name: "UA 497EP (Truck)", driver: "Ahmed Ali", group: "Mega Milk", type: "Delivery Van", status: "Stopped", speed: 0, heading: 0, fuel: 48, battery: "12.6 V", ignition: false, odo: 58320, lat: 4.862100, lng: 31.584000, address: "Gudele Roundabout, Juba", lastUpdate: "1m ago", imei: "864910283019483" },
-  { id: "VEH-103", name: "UBM 755K (Truck)", driver: "Peter Omondi", group: "Weldone Logistics", type: "Prime Mover", status: "Idle", speed: 0, heading: 180, fuel: 88, battery: "24.6 V", ignition: true, odo: 310450, lat: 4.845000, lng: 31.560000, address: "Airport North Road, Juba", lastUpdate: "12s ago", imei: "864910283019484" },
-  { id: "VEH-104", name: "UBP 004L (Truck)", driver: "David Mwangi", group: "Weldone Logistics", type: "Utility Pickup", status: "Moving", speed: 54, heading: 270, fuel: 62, battery: "13.4 V", ignition: true, odo: 89400, lat: 4.871000, lng: 31.590000, address: "Munuki Sector 4, Juba", lastUpdate: "8s ago", imei: "864910283019485" },
-  { id: "VEH-105", name: "UBH 168K (Sinotruck)", driver: "Samuel Kimani", group: "walen", type: "Heavy Tipper", status: "Inactive", speed: 0, heading: 0, fuel: 90, battery: "11.8 V", ignition: false, odo: 215600, lat: 4.830000, lng: 31.540000, address: "Service Yard Gate 2, Juba", lastUpdate: "4 hrs ago", imei: "864910283019486" },
-  { id: "VEH-106", name: "UBQ 255H (Crane)", driver: "Hassan Omar", group: "Weldone Logistics", type: "Mobile Crane", status: "Stopped", speed: 0, heading: 90, fuel: 65, battery: "24.1 V", ignition: false, odo: 194200, lat: 4.851000, lng: 31.578000, address: "Nile Port Terminal, Juba", lastUpdate: "23m ago", imei: "864910283019487" },
+interface FleetVehicle {
+  id: string;
+  name: string;
+  plate: string;
+  type: string;
+  group: string;
+  status: "Running" | "Idle" | "Stopped" | "Inactive";
+  speed: number;
+  voltage: string;
+  batteryLevel: number;
+  gsm: number;
+  ignition: boolean;
+  time: string;
+  address: string;
+  driver: string;
+  mobile: string;
+  currentTrip: string;
+  odometer: string;
+  fuelLiter: number;
+  fuelCapacity: number;
+  fuelRefill: number;
+  fuelDrain: number;
+  fuelConsumption: string;
+  coords: { x: number; y: number };
+  route: Array<{ x: number; y: number }>;
+}
+
+const VEHICLES_DATA: FleetVehicle[] = [
+  {
+    id: "UA-498EP",
+    name: "UA 498EP - Truck",
+    plate: "UA 498EP",
+    type: "Truck (Fuel Tanker)",
+    group: "Mega Milk",
+    status: "Running",
+    speed: 41,
+    voltage: "27.7V",
+    batteryLevel: 95,
+    gsm: 4,
+    ignition: true,
+    time: "01-09-2026 10:45:34 PM",
+    address: "Kazo, Kiruhura, Uganda (NE)",
+    driver: "Ntale Driver",
+    mobile: "+256 701 498210",
+    currentTrip: "92.50 km",
+    odometer: "0013825",
+    fuelLiter: 150,
+    fuelCapacity: 270,
+    fuelRefill: 183,
+    fuelDrain: 60,
+    fuelConsumption: "90.91 liter",
+    coords: { x: 48, y: 44 },
+    route: [
+      { x: 53, y: 38 },
+      { x: 49, y: 39 },
+      { x: 44, y: 41 },
+      { x: 44, y: 47 },
+      { x: 46, y: 53 },
+      { x: 54, y: 61 },
+      { x: 48, y: 66 },
+      { x: 44, y: 69 },
+    ],
+  },
+  {
+    id: "UA-347AP",
+    name: "UA 347AP - Truck",
+    plate: "UA 347AP",
+    type: "Truck",
+    group: "Mega Milk",
+    status: "Stopped",
+    speed: 0,
+    voltage: "25.5V",
+    batteryLevel: 80,
+    gsm: 3,
+    ignition: false,
+    time: "01-09-2026 10:43:22 PM",
+    address: "Albert Cook Road, Lungujja, Mengo, Rubaga, Kampala",
+    driver: "John Kiprono",
+    mobile: "+256 702 347101",
+    currentTrip: "45.10 km",
+    odometer: "0048210",
+    fuelLiter: 110,
+    fuelCapacity: 250,
+    fuelRefill: 0,
+    fuelDrain: 0,
+    fuelConsumption: "34.20 liter",
+    coords: { x: 65, y: 35 },
+    route: [],
+  },
+  {
+    id: "UA-497EP",
+    name: "UA 497EP - Truck",
+    plate: "UA 497EP",
+    type: "Truck",
+    group: "Mega Milk",
+    status: "Stopped",
+    speed: 0,
+    voltage: "25.2V",
+    batteryLevel: 75,
+    gsm: 4,
+    ignition: false,
+    time: "01-09-2026 10:41:30 PM",
+    address: "Mugore, Kiruhura, Uganda (SE)",
+    driver: "Mawanda Driver",
+    mobile: "+256 703 497552",
+    currentTrip: "0.00 km",
+    odometer: "0041333",
+    fuelLiter: 55,
+    fuelCapacity: 300,
+    fuelRefill: 0,
+    fuelDrain: 0,
+    fuelConsumption: "1.46 liter",
+    coords: { x: 58, y: 52 },
+    route: [],
+  },
+  {
+    id: "UBH-279N",
+    name: "UBH 279N - Truck",
+    plate: "UBH 279N",
+    type: "Truck",
+    group: "Mega Milk",
+    status: "Running",
+    speed: 6,
+    voltage: "25.6V",
+    batteryLevel: 90,
+    gsm: 3,
+    ignition: true,
+    time: "01-09-2026 10:44:01 PM",
+    address: "Mbarara Masaka Road, Kibwera, PO BOX 1051, Uganda (NE)",
+    driver: "David Mwangi",
+    mobile: "+256 704 279883",
+    currentTrip: "112.40 km",
+    odometer: "0092104",
+    fuelLiter: 190,
+    fuelCapacity: 350,
+    fuelRefill: 200,
+    fuelDrain: 0,
+    fuelConsumption: "78.40 liter",
+    coords: { x: 38, y: 58 },
+    route: [],
+  },
+  {
+    id: "UBL-090W",
+    name: "UBL 090W - Truck",
+    plate: "UBL 090W",
+    type: "Truck",
+    group: "Mega Milk",
+    status: "Stopped",
+    speed: 0,
+    voltage: "18.1V",
+    batteryLevel: 40,
+    gsm: 2,
+    ignition: false,
+    time: "01-09-2026 09:57:13 PM",
+    address: "Mbarara - Masaka Road, Kibwera, Western Region",
+    driver: "Paul Kato",
+    mobile: "+256 705 090123",
+    currentTrip: "18.20 km",
+    odometer: "0024190",
+    fuelLiter: 42,
+    fuelCapacity: 200,
+    fuelRefill: 0,
+    fuelDrain: 0,
+    fuelConsumption: "14.10 liter",
+    coords: { x: 35, y: 64 },
+    route: [],
+  },
+  {
+    id: "UBN-3867X",
+    name: "UBN 3867X - Truck",
+    plate: "UBN 3867X",
+    type: "Truck",
+    group: "Mega Milk",
+    status: "Inactive",
+    speed: 0,
+    voltage: "4.3V",
+    batteryLevel: 10,
+    gsm: 1,
+    ignition: false,
+    time: "16-07-2026 08:37:42 PM",
+    address: "Mbarara - Masaka Road, Kibwera, Western Region",
+    driver: "Eric Mukasa",
+    mobile: "--",
+    currentTrip: "0.00 km",
+    odometer: "0008450",
+    fuelLiter: 10,
+    fuelCapacity: 200,
+    fuelRefill: 0,
+    fuelDrain: 0,
+    fuelConsumption: "0.00 liter",
+    coords: { x: 30, y: 68 },
+    route: [],
+  },
+  {
+    id: "UBM-755K",
+    name: "UBM 755K - Truck",
+    plate: "UBM 755K",
+    type: "Truck",
+    group: "Weldone Logistics",
+    status: "Stopped",
+    speed: 0,
+    voltage: "NA",
+    batteryLevel: 60,
+    gsm: 3,
+    ignition: false,
+    time: "01-09-2026 10:43:59 PM",
+    address: "B25101, Olwiyo, Nwoya, Uganda (SW)",
+    driver: "Peter Omondi",
+    mobile: "+256 706 755441",
+    currentTrip: "64.00 km",
+    odometer: "0053120",
+    fuelLiter: 85,
+    fuelCapacity: 250,
+    fuelRefill: 0,
+    fuelDrain: 0,
+    fuelConsumption: "42.00 liter",
+    coords: { x: 50, y: 25 },
+    route: [],
+  },
+  {
+    id: "UBP-004L",
+    name: "UBP 004L - Truck",
+    plate: "UBP 004L",
+    type: "Truck",
+    group: "Weldone Logistics",
+    status: "Stopped",
+    speed: 0,
+    voltage: "25.6V",
+    batteryLevel: 85,
+    gsm: 4,
+    ignition: false,
+    time: "01-09-2026 10:10:04 PM",
+    address: "Old Jinja Road, Namanve, Bbuto, Kira, Wakiso",
+    driver: "Ali Hussein",
+    mobile: "+256 707 004992",
+    currentTrip: "38.50 km",
+    odometer: "0031890",
+    fuelLiter: 120,
+    fuelCapacity: 260,
+    fuelRefill: 0,
+    fuelDrain: 0,
+    fuelConsumption: "28.50 liter",
+    coords: { x: 72, y: 40 },
+    route: [],
+  },
+  {
+    id: "UBQ-255H",
+    name: "UBQ 255H - Crane",
+    plate: "UBQ 255H",
+    type: "Mobile Crane",
+    group: "Weldone Logistics",
+    status: "Stopped",
+    speed: 0,
+    voltage: "25.3V",
+    batteryLevel: 90,
+    gsm: 3,
+    ignition: false,
+    time: "01-09-2026 10:17:59 PM",
+    address: "Hima, Kasese, Uganda (SE)",
+    driver: "Hassan Omar",
+    mobile: "+256 708 255314",
+    currentTrip: "12.00 km",
+    odometer: "0019420",
+    fuelLiter: 95,
+    fuelCapacity: 220,
+    fuelRefill: 0,
+    fuelDrain: 0,
+    fuelConsumption: "19.30 liter",
+    coords: { x: 28, y: 48 },
+    route: [],
+  },
+  {
+    id: "UBH-168K",
+    name: "UBH 168K - Sinotruck",
+    plate: "UBH 168K",
+    type: "Heavy Tipper",
+    group: "walen",
+    status: "Idle",
+    speed: 0,
+    voltage: "26.9V",
+    batteryLevel: 92,
+    gsm: 4,
+    ignition: true,
+    time: "01-09-2026 10:43:43 PM",
+    address: "Lira - Mbale Road, Bugisa sub-region, Eastern Region",
+    driver: "Samuel Kimani",
+    mobile: "+256 709 168775",
+    currentTrip: "84.30 km",
+    odometer: "0078150",
+    fuelLiter: 160,
+    fuelCapacity: 320,
+    fuelRefill: 150,
+    fuelDrain: 0,
+    fuelConsumption: "62.10 liter",
+    coords: { x: 68, y: 28 },
+    route: [],
+  },
 ];
 
 export default function TrackingPage() {
-  const [selectedStatusTab, setSelectedStatusTab] = React.useState<"all" | "Moving" | "Stopped" | "Idle" | "Inactive">("all");
+  const [selectedVehicle, setSelectedVehicle] = React.useState<FleetVehicle>(VEHICLES_DATA[0]);
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [selectedVehicle, setSelectedVehicle] = React.useState<typeof TRACKING_OBJECTS[0] | null>(TRACKING_OBJECTS[0]);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(false);
-  const [mapLayer, setMapLayer] = React.useState<"streets" | "satellite" | "hybrid">("streets");
-  const [showGeofences, setShowGeofences] = React.useState(true);
-  const [showTraffic, setShowTraffic] = React.useState(false);
+  const [statusFilter, setStatusFilter] = React.useState<string>("all");
+  const [isObjectPanelCollapsed, setIsObjectPanelCollapsed] = React.useState(false);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = React.useState(true);
+  const [isPlaybackOpen, setIsPlaybackOpen] = React.useState(false);
+  const [mapType, setMapType] = React.useState<"satellite" | "streets" | "hybrid">("satellite");
 
-  const filteredObjects = React.useMemo(() => {
-    return TRACKING_OBJECTS.filter((obj) => {
-      const matchTab = selectedStatusTab === "all" || obj.status === selectedStatusTab;
-      const matchQuery = !searchQuery || 
-        obj.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        obj.driver.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        obj.address.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchTab && matchQuery;
+  const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>({
+    "Mega Milk": true,
+    "Weldone Logistics": true,
+    "walen": true,
+  });
+
+  const toggleGroup = (groupName: string) => {
+    setExpandedGroups((prev) => ({ ...prev, [groupName]: !prev[groupName] }));
+  };
+
+  const counts = {
+    running: VEHICLES_DATA.filter((v) => v.status === "Running").length,
+    idle: VEHICLES_DATA.filter((v) => v.status === "Idle").length,
+    stopped: VEHICLES_DATA.filter((v) => v.status === "Stopped").length,
+    inactive: VEHICLES_DATA.filter((v) => v.status === "Inactive").length,
+    total: VEHICLES_DATA.length,
+  };
+
+  const filteredVehicles = React.useMemo(() => {
+    return VEHICLES_DATA.filter((v) => {
+      const matchesStatus = statusFilter === "all" || v.status === statusFilter;
+      const matchesSearch = !searchQuery || 
+        v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        v.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        v.driver.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesStatus && matchesSearch;
     });
-  }, [selectedStatusTab, searchQuery]);
+  }, [statusFilter, searchQuery]);
 
   return (
-    <div className="flex-1 flex flex-col h-screen bg-[#f1f3f7] dark:bg-background text-foreground select-none relative overflow-hidden font-sans">
+    <div className="relative w-full h-screen overflow-hidden bg-[#0c1e3d] text-foreground select-none flex flex-col font-sans">
       
-      {/* 1. TOP BLUE BANNER (Exact #1542b7, 40px height matching Dashboard) */}
-      <div className="h-[40px] bg-[#1542b7] text-white flex items-center justify-between px-4 shrink-0 shadow-sm z-20">
-        <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-[#29a4ff]" />
-          <h1 className="text-[14px] font-semibold tracking-wide">Live Tracking</h1>
-          <span className="text-[11px] text-white/70 ml-2 hidden sm:inline">
-            Real-time GPS telematics map & fleet dispatch
-          </span>
-        </div>
+      {/* 1. SATELLITE MAP CANVAS BACKGROUND (High-res Earth Telematics Canvas) */}
+      <div className="absolute inset-0 z-0 bg-[#0a1424] overflow-hidden">
+        {/* Real-time Satellite Imagery Canvas Overlay */}
+        <div 
+          className="w-full h-full bg-cover bg-center transition-all duration-300"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=2400&q=80')`,
+            filter: "brightness(0.85) contrast(1.1)",
+          }}
+        />
 
-        <div className="flex items-center gap-3">
-          {/* Refresh Map Button */}
-          <button 
-            type="button"
-            className="p-1 hover:text-[#29a4ff] transition-colors cursor-pointer"
-            title="Refresh GPS Telemetry"
-          >
-            <RotateCw className="w-[16px] h-[16px]" />
-          </button>
+        {/* GPS Trajectory Polyline Route Path */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none">
+          <polyline
+            points="530,340 490,360 440,410 440,470 460,530 540,610 480,660 440,690"
+            fill="none"
+            stroke="#00b4d8"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="drop-shadow-[0_0_8px_#00b4d8]"
+          />
+          {/* Start Flag */}
+          <rect x="525" y="325" width="28" height="18" rx="3" fill="#22c55e" />
+          <text x="532" y="338" fill="white" fontSize="10" fontWeight="bold">Start</text>
+        </svg>
 
-          {/* Toggle Geofences */}
-          <button
-            type="button"
-            onClick={() => setShowGeofences(!showGeofences)}
-            className={cn(
-              "px-2 py-0.5 rounded text-[11px] font-medium transition-colors cursor-pointer border",
-              showGeofences ? "bg-white/20 border-white/40 text-white" : "border-white/20 text-white/60 hover:text-white"
-            )}
-          >
-            Geofences: {showGeofences ? "ON" : "OFF"}
-          </button>
-
-          {/* Fullscreen Button */}
-          <button
-            type="button"
-            className="p-1 hover:text-[#29a4ff] transition-colors cursor-pointer"
-            title="Toggle Fullscreen Map"
-          >
-            <Maximize2 className="w-[16px] h-[16px]" />
-          </button>
-        </div>
-      </div>
-
-      {/* 2. SUB-HEADER TOOLBAR STRIP (Breadcrumb + Controls) */}
-      <div className="h-[38px] bg-white dark:bg-card border-b border-border flex items-center justify-between px-4 shrink-0 shadow-[0_1px_3px_rgba(0,0,0,0.05)] z-10 text-xs">
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground">Home</span>
-          <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/60" />
-          <span className="font-semibold text-foreground">Tracking</span>
-          <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1542b7]/10 text-[#1542b7] dark:text-[#29a4ff] border border-[#1542b7]/20">
-            {TRACKING_OBJECTS.length} Active Vehicles
-          </span>
-        </div>
-
-        {/* Map Layers & Tool Options */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center rounded border border-border overflow-hidden bg-muted/40 p-0.5">
-            <button
-              type="button"
-              onClick={() => setMapLayer("streets")}
-              className={cn("px-2 py-0.5 rounded text-[11px] font-medium transition-colors", mapLayer === "streets" ? "bg-white dark:bg-card text-[#1542b7] dark:text-[#29a4ff] shadow-sm font-semibold" : "text-muted-foreground hover:text-foreground")}
+        {/* Live Vehicle Markers On Map */}
+        {filteredVehicles.map((v) => {
+          const isSelected = selectedVehicle.id === v.id;
+          return (
+            <div
+              key={v.id}
+              onClick={() => {
+                setSelectedVehicle(v);
+                setIsDetailDrawerOpen(true);
+              }}
+              style={{ top: `${v.coords.y}%`, left: `${v.coords.x}%` }}
+              className={cn(
+                "absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer z-10 transition-transform duration-200 group hover:scale-125",
+                isSelected && "scale-125 z-20"
+              )}
             >
-              Streets
-            </button>
-            <button
-              type="button"
-              onClick={() => setMapLayer("satellite")}
-              className={cn("px-2 py-0.5 rounded text-[11px] font-medium transition-colors", mapLayer === "satellite" ? "bg-white dark:bg-card text-[#1542b7] dark:text-[#29a4ff] shadow-sm font-semibold" : "text-muted-foreground hover:text-foreground")}
-            >
-              Satellite
-            </button>
-            <button
-              type="button"
-              onClick={() => setMapLayer("hybrid")}
-              className={cn("px-2 py-0.5 rounded text-[11px] font-medium transition-colors", mapLayer === "hybrid" ? "bg-white dark:bg-card text-[#1542b7] dark:text-[#29a4ff] shadow-sm font-semibold" : "text-muted-foreground hover:text-foreground")}
-            >
-              Hybrid
-            </button>
-          </div>
-        </div>
-      </div>
+              {/* Vehicle 3D Top Marker */}
+              <div className={cn(
+                "w-7 h-10 rounded-sm shadow-2xl flex flex-col items-center justify-between p-1 border border-white/80 transition-all",
+                v.status === "Running" && "bg-[#22c55e]",
+                v.status === "Stopped" && "bg-[#ea580c]",
+                v.status === "Idle" && "bg-[#eab308]",
+                v.status === "Inactive" && "bg-[#0284c7]",
+                isSelected && "ring-4 ring-[#29a4ff] shadow-[0_0_20px_#29a4ff]"
+              )}>
+                <div className="w-4 h-2 bg-slate-900/60 rounded-xs" />
+                <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              </div>
 
-      {/* 3. MAIN INTERACTIVE MAP & FLEET OBJECT TREE SPLIT CANVAS */}
-      <div className="flex-1 relative flex overflow-hidden">
-        
-        {/* LEFT COLLAPSIBLE FLEET OBJECT TREE PANEL (310px) */}
-        <div
-          className={cn(
-            "h-full bg-white dark:bg-card border-r border-border flex flex-col z-20 transition-all duration-300 shadow-lg shrink-0",
-            isSidebarCollapsed ? "w-0 -translate-x-full overflow-hidden" : "w-[310px] translate-x-0"
-          )}
-        >
-          {/* Panel Header */}
-          <div className="p-2.5 border-b border-border bg-slate-50/60 dark:bg-muted/30 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Radio className="w-3.5 h-3.5 text-[#29a4ff] animate-pulse" />
-              <h2 className="text-xs font-bold text-foreground">Fleet Objects ({TRACKING_OBJECTS.length})</h2>
+              {/* Vehicle Info Badge */}
+              <div className={cn(
+                "mt-1 px-2 py-0.5 rounded text-[10px] font-bold text-white whitespace-nowrap shadow-lg transition-all",
+                v.status === "Running" ? "bg-[#15803d]" : "bg-[#c2410c]"
+              )}>
+                {v.plate} &bull; {v.speed} km/h
+              </div>
             </div>
+          );
+        })}
+      </div>
+
+      {/* 2. TOP PLAYBACK FLOATING BUTTON (Centered matching Images 2, 3, 4, 5) */}
+      <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center">
+        <button
+          type="button"
+          onClick={() => setIsPlaybackOpen(!isPlaybackOpen)}
+          className="px-4 py-1.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-semibold rounded shadow-lg flex items-center gap-1.5 transition-colors cursor-pointer border border-white/20"
+        >
+          <Play className="w-3.5 h-3.5 fill-white" />
+          <span>Playback</span>
+        </button>
+
+        {/* Playback Interval Dropdown */}
+        {isPlaybackOpen && (
+          <div className="mt-1 w-[130px] bg-white dark:bg-card border border-border shadow-2xl rounded text-xs py-1 animate-in fade-in zoom-in-95 duration-100">
+            {["Today", "Last 24 Hour", "Yesterday", "This Week", "Last Week", "This Month", "Last Month", "Custom"].map((opt) => (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => setIsPlaybackOpen(false)}
+                className="w-full text-left px-3 py-1.5 hover:bg-muted text-foreground transition-colors cursor-pointer text-[11px]"
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* 3. RIGHT FLOATING MAP ACTIONS TOOLBAR (Vertical strip matching Images 1-5) */}
+      <div className="absolute top-3 right-3 z-30 flex flex-col gap-1">
+        <div className="bg-white dark:bg-card border border-border shadow-xl rounded flex flex-col text-muted-foreground overflow-hidden">
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground transition-colors" title="Search Location"><Search className="w-4 h-4" /></button>
+          <div className="h-[1px] bg-border" />
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground transition-colors" title="Map Layers"><Layers className="w-4 h-4" /></button>
+          <div className="h-[1px] bg-border" />
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground transition-colors" title="Traffic Layer"><Radio className="w-4 h-4" /></button>
+          <div className="h-[1px] bg-border" />
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground transition-colors" title="Measurement Tool"><SlidersHorizontal className="w-4 h-4" /></button>
+          <div className="h-[1px] bg-border" />
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground transition-colors" title="Geofences"><Shield className="w-4 h-4" /></button>
+          <div className="h-[1px] bg-border" />
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground transition-colors" title="POI Markers"><MapPin className="w-4 h-4" /></button>
+          <div className="h-[1px] bg-border" />
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground transition-colors" title="Share Live Location"><Share2 className="w-4 h-4" /></button>
+          <div className="h-[1px] bg-border" />
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground transition-colors" title="Zoom In"><Plus className="w-4 h-4" /></button>
+          <div className="h-[1px] bg-border" />
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground transition-colors" title="Zoom Out"><Minus className="w-4 h-4" /></button>
+        </div>
+      </div>
+
+      {/* 4. LEFT FLOATING OBJECT FLEET GRID PANEL (#divObject matching Images 1, 2, 4, 5) */}
+      <div
+        className={cn(
+          "absolute top-3 left-3 bottom-3 z-30 w-[630px] max-w-[calc(100vw-30px)] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col transition-all duration-300 overflow-hidden",
+          isObjectPanelCollapsed && "-translate-x-[640px]"
+        )}
+      >
+        {/* Blue Header Strip */}
+        <div className="h-[36px] bg-[#1542b7] text-white px-3 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3 text-xs font-semibold">
+            <button type="button" className="flex items-center gap-1.5 text-white hover:text-[#29a4ff]">
+              <Navigation className="w-3.5 h-3.5" />
+              <span>Object</span>
+            </button>
+            <button type="button" className="text-white/70 hover:text-white"><Users className="w-3.5 h-3.5" /></button>
+            <button type="button" className="text-white/70 hover:text-white"><AlertTriangle className="w-3.5 h-3.5" /></button>
+            <button type="button" className="text-white/70 hover:text-white"><Grid className="w-3.5 h-3.5" /></button>
+          </div>
+          <div className="flex items-center gap-2">
+            <button type="button" className="text-white/80 hover:text-white"><Settings className="w-3.5 h-3.5" /></button>
             <button
               type="button"
-              onClick={() => setIsSidebarCollapsed(true)}
-              className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
-              title="Collapse Fleet List"
+              onClick={() => setIsObjectPanelCollapsed(true)}
+              className="text-white/80 hover:text-white"
+              title="Collapse Object Panel"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
           </div>
+        </div>
 
-          {/* Status Filter Tabs (All, Run, Stop, Idle, Inactive) */}
-          <div className="grid grid-cols-5 border-b border-border text-[11px] font-semibold text-center bg-slate-50/40 dark:bg-muted/10">
-            <button
-              type="button"
-              onClick={() => setSelectedStatusTab("all")}
-              className={cn("py-1.5 border-b-2 transition-colors cursor-pointer", selectedStatusTab === "all" ? "border-[#1542b7] text-[#1542b7] dark:text-[#29a4ff] bg-white dark:bg-card" : "border-transparent text-muted-foreground hover:text-foreground")}
-            >
-              All ({TRACKING_OBJECTS.length})
-            </button>
-            <button
-              type="button"
-              onClick={() => setSelectedStatusTab("Moving")}
-              className={cn("py-1.5 border-b-2 transition-colors cursor-pointer", selectedStatusTab === "Moving" ? "border-emerald-600 text-emerald-600 bg-white dark:bg-card" : "border-transparent text-muted-foreground hover:text-foreground")}
-            >
-              Run ({TRACKING_OBJECTS.filter(x => x.status === "Moving").length})
-            </button>
-            <button
-              type="button"
-              onClick={() => setSelectedStatusTab("Stopped")}
-              className={cn("py-1.5 border-b-2 transition-colors cursor-pointer", selectedStatusTab === "Stopped" ? "border-orange-600 text-orange-600 bg-white dark:bg-card" : "border-transparent text-muted-foreground hover:text-foreground")}
-            >
-              Stop ({TRACKING_OBJECTS.filter(x => x.status === "Stopped").length})
-            </button>
-            <button
-              type="button"
-              onClick={() => setSelectedStatusTab("Idle")}
-              className={cn("py-1.5 border-b-2 transition-colors cursor-pointer", selectedStatusTab === "Idle" ? "border-amber-500 text-amber-600 bg-white dark:bg-card" : "border-transparent text-muted-foreground hover:text-foreground")}
-            >
-              Idle ({TRACKING_OBJECTS.filter(x => x.status === "Idle").length})
-            </button>
-            <button
-              type="button"
-              onClick={() => setSelectedStatusTab("Inactive")}
-              className={cn("py-1.5 border-b-2 transition-colors cursor-pointer", selectedStatusTab === "Inactive" ? "border-sky-600 text-sky-600 bg-white dark:bg-card" : "border-transparent text-muted-foreground hover:text-foreground")}
-            >
-              Off ({TRACKING_OBJECTS.filter(x => x.status === "Inactive").length})
-            </button>
+        {/* 6-Pill Status Filter Ribbon */}
+        <div className="grid grid-cols-6 border-b border-border text-center text-[11px] font-semibold">
+          <div 
+            onClick={() => setStatusFilter("Running")}
+            className="py-1.5 bg-emerald-100/70 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-r border-border cursor-pointer hover:brightness-95"
+          >
+            <div className="text-xs font-bold">{counts.running}</div>
+            <div className="text-[9px] uppercase">Running</div>
+          </div>
+          <div 
+            onClick={() => setStatusFilter("Idle")}
+            className="py-1.5 bg-amber-100/70 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-r border-border cursor-pointer hover:brightness-95"
+          >
+            <div className="text-xs font-bold">{counts.idle}</div>
+            <div className="text-[9px] uppercase">Idle</div>
+          </div>
+          <div 
+            onClick={() => setStatusFilter("Stopped")}
+            className="py-1.5 bg-rose-100/70 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border-r border-border cursor-pointer hover:brightness-95"
+          >
+            <div className="text-xs font-bold">{counts.stopped}</div>
+            <div className="text-[9px] uppercase">Stopped</div>
+          </div>
+          <div 
+            onClick={() => setStatusFilter("Inactive")}
+            className="py-1.5 bg-sky-100/70 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300 border-r border-border cursor-pointer hover:brightness-95"
+          >
+            <div className="text-xs font-bold">{counts.inactive}</div>
+            <div className="text-[9px] uppercase">Inactive</div>
+          </div>
+          <div className="py-1.5 bg-slate-100 dark:bg-muted/40 text-muted-foreground border-r border-border cursor-pointer">
+            <div className="text-xs font-bold">0</div>
+            <div className="text-[9px] uppercase">NoData</div>
+          </div>
+          <div 
+            onClick={() => setStatusFilter("all")}
+            className="py-1.5 bg-slate-200/60 dark:bg-muted text-foreground cursor-pointer hover:brightness-95"
+          >
+            <div className="text-xs font-bold">{counts.total}</div>
+            <div className="text-[9px] uppercase">Total</div>
+          </div>
+        </div>
+
+        {/* Search & Actions Ribbon */}
+        <div className="p-2 border-b border-border flex items-center gap-2 bg-slate-50/50 dark:bg-muted/20">
+          <input type="checkbox" defaultChecked className="rounded border-border w-3.5 h-3.5 text-[#1542b7]" />
+          <div className="flex-1 relative">
+            <input
+              type="text"
+              placeholder="Search by IMEI, VIN, Registration, Object Model, SIM Number, etc."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-2 pr-6 py-1 text-xs border border-border rounded bg-white dark:bg-card text-foreground outline-none focus:border-[#1542b7]"
+            />
+            <Search className="w-3.5 h-3.5 absolute right-2 top-2 text-muted-foreground" />
+          </div>
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <button type="button" className="p-1 hover:text-foreground"><RotateCw className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1 hover:text-foreground"><Compass className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1 hover:text-foreground"><Filter className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1 hover:text-foreground"><SlidersHorizontal className="w-3.5 h-3.5" /></button>
+          </div>
+        </div>
+
+        {/* Group Header & Collapse Bar */}
+        <div className="px-3 py-1 bg-slate-100/70 dark:bg-muted/40 border-b border-border flex items-center justify-between text-[11px] text-muted-foreground font-semibold">
+          <span>&gt; Collapse</span>
+        </div>
+
+        {/* Detailed Telematics Vehicles Tree View */}
+        <div className="flex-1 overflow-y-auto divide-y divide-border/60 text-xs">
+          {["Mega Milk", "Weldone Logistics", "walen"].map((grpName) => {
+            const grpVehicles = filteredVehicles.filter((v) => v.group === grpName);
+            const isExpanded = !!expandedGroups[grpName];
+            if (grpVehicles.length === 0) return null;
+
+            return (
+              <div key={grpName} className="space-y-0.5">
+                {/* Group Banner */}
+                <div 
+                  onClick={() => toggleGroup(grpName)}
+                  className="px-3 py-1.5 bg-slate-200/60 dark:bg-muted/70 flex items-center justify-between cursor-pointer font-bold text-foreground text-[11px]"
+                >
+                  <div className="flex items-center gap-2">
+                    <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", !isExpanded && "-rotate-90")} />
+                    <input type="checkbox" defaultChecked onClick={(e) => e.stopPropagation()} className="w-3 h-3 rounded" />
+                    <span>{grpName}</span>
+                  </div>
+                  <span className="text-muted-foreground font-semibold">[{grpVehicles.length}]</span>
+                </div>
+
+                {/* Vehicles Rows */}
+                {isExpanded && (
+                  <div className="divide-y divide-border/40">
+                    {grpVehicles.map((v) => {
+                      const isSelected = selectedVehicle.id === v.id;
+                      return (
+                        <div
+                          key={v.id}
+                          onClick={() => {
+                            setSelectedVehicle(v);
+                            setIsDetailDrawerOpen(true);
+                          }}
+                          className={cn(
+                            "p-2 pl-6 flex items-start gap-2 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-muted/40",
+                            isSelected && "bg-sky-50 dark:bg-sky-950/30 border-l-4 border-[#1542b7]"
+                          )}
+                        >
+                          <input type="checkbox" defaultChecked onClick={(e) => e.stopPropagation()} className="mt-1 w-3 h-3 rounded shrink-0" />
+                          
+                          {/* Status Dot */}
+                          <div className="mt-1 shrink-0">
+                            <span
+                              className={cn(
+                                "w-2.5 h-2.5 rounded-full block",
+                                v.status === "Running" && "bg-emerald-500 ring-2 ring-emerald-300",
+                                v.status === "Stopped" && "bg-rose-500",
+                                v.status === "Idle" && "bg-amber-400",
+                                v.status === "Inactive" && "bg-sky-500"
+                              )}
+                            />
+                          </div>
+
+                          {/* Row Details Grid */}
+                          <div className="flex-1 min-w-0 space-y-0.5">
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-[#1542b7] dark:text-[#29a4ff] truncate">{v.name}</span>
+                              <span className="text-[10px] font-bold text-foreground">{v.speed} km/h</span>
+                            </div>
+
+                            <div className="text-[10px] text-muted-foreground flex items-center justify-between">
+                              <span>{v.time}</span>
+                              <div className="flex items-center gap-1.5">
+                                <Key className={cn("w-3 h-3", v.ignition ? "text-emerald-600" : "text-rose-500")} />
+                                <Battery className="w-3 h-3 text-emerald-600" />
+                                <Wifi className="w-3 h-3 text-emerald-600" />
+                                <span className="font-bold text-emerald-700 dark:text-emerald-400">{v.voltage}</span>
+                              </div>
+                            </div>
+
+                            <div className="text-[10px] text-muted-foreground/80 truncate">
+                              {v.address}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Collapsed Expand Toggle for Left Panel */}
+      {isObjectPanelCollapsed && (
+        <button
+          type="button"
+          onClick={() => setIsObjectPanelCollapsed(false)}
+          className="absolute top-4 left-4 z-30 p-2 bg-[#1542b7] text-white shadow-xl rounded cursor-pointer hover:bg-[#1542b7]/90 transition-all"
+          title="Expand Fleet Objects"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      )}
+
+      {/* 5. RIGHT FLOATING VEHICLE DETAIL CARD & ANALOG FUEL GAUGE DRAWER (matching Images 2, 3, 4, 5) */}
+      {isDetailDrawerOpen && selectedVehicle && (
+        <div className="absolute top-3 right-14 bottom-3 z-30 w-[310px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs">
+          
+          {/* Card Header Strip */}
+          <div className="h-[34px] bg-[#1542b7] text-white px-3 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2">
+              <Pin className="w-3.5 h-3.5 text-white/80" />
+              <Bell className="w-3.5 h-3.5 text-white/80" />
+              <Wrench className="w-3.5 h-3.5 text-white/80" />
+            </div>
+            <div className="flex items-center gap-2">
+              <Settings className="w-3.5 h-3.5 text-white/80" />
+              <button 
+                type="button" 
+                onClick={() => setIsDetailDrawerOpen(false)}
+                className="hover:text-destructive"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
-          {/* Search Box */}
-          <div className="p-2 border-b border-border bg-slate-50/30">
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search vehicle, driver, plate..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-card border border-border rounded outline-none focus:border-[#1542b7]"
+          <div className="flex-1 overflow-y-auto p-3 space-y-3">
+            {/* Title & Info */}
+            <div className="flex items-center justify-between border-b border-border pb-2">
+              <div className="font-bold text-sm text-foreground">{selectedVehicle.plate}</div>
+              <Info className="w-4 h-4 text-[#1542b7] dark:text-[#29a4ff]" />
+            </div>
+
+            {/* Vehicle 3D Render Image */}
+            <div className="w-full h-[85px] bg-slate-100 dark:bg-muted/40 rounded flex items-center justify-center p-2 border border-border overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=400&q=80"
+                alt="Fuel Tanker Truck"
+                className="h-full w-auto object-contain"
               />
             </div>
-          </div>
 
-          {/* Vehicle List Items */}
-          <div className="flex-1 overflow-y-auto divide-y divide-border/60">
-            {filteredObjects.map((v) => {
-              const isSelected = selectedVehicle?.id === v.id;
-              return (
-                <div
-                  key={v.id}
-                  onClick={() => setSelectedVehicle(v)}
-                  className={cn(
-                    "p-2.5 cursor-pointer transition-all duration-150 flex items-start gap-2.5 hover:bg-slate-50 dark:hover:bg-muted/40",
-                    isSelected && "bg-[#1542b7]/10 dark:bg-[#1542b7]/20 border-l-4 border-[#1542b7] pl-2"
-                  )}
-                >
-                  {/* Status Indicator Dot */}
-                  <div className="mt-1 shrink-0">
-                    <span
-                      className={cn(
-                        "w-2.5 h-2.5 rounded-full block",
-                        v.status === "Moving" && "bg-emerald-500 animate-pulse ring-2 ring-emerald-300 dark:ring-emerald-900",
-                        v.status === "Stopped" && "bg-orange-500",
-                        v.status === "Idle" && "bg-amber-400",
-                        v.status === "Inactive" && "bg-sky-400"
-                      )}
-                    />
-                  </div>
-
-                  {/* Vehicle Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-foreground truncate">{v.name}</span>
-                      <span className={cn(
-                        "text-[10px] font-bold px-1.5 py-0.2 rounded",
-                        v.status === "Moving" && "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400",
-                        v.status === "Stopped" && "bg-orange-100 text-orange-800 dark:bg-orange-950/40 dark:text-orange-400",
-                        v.status === "Idle" && "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400",
-                        v.status === "Inactive" && "bg-sky-100 text-sky-800 dark:bg-sky-950/40 dark:text-sky-400"
-                      )}>
-                        {v.speed} km/h
-                      </span>
-                    </div>
-
-                    <div className="text-[11px] text-muted-foreground truncate mt-0.5">
-                      {v.driver} &bull; {v.group}
-                    </div>
-
-                    <div className="text-[10px] text-muted-foreground/80 truncate mt-0.5 flex items-center gap-1">
-                      <MapPin className="w-2.5 h-2.5" />
-                      <span>{v.address}</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Collapsed Expand Toggle Button */}
-        {isSidebarCollapsed && (
-          <button
-            type="button"
-            onClick={() => setIsSidebarCollapsed(false)}
-            className="absolute top-4 left-4 z-30 p-2 bg-white dark:bg-card border border-border shadow-md rounded-md hover:bg-muted text-foreground transition-all cursor-pointer"
-            title="Expand Fleet List"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        )}
-
-        {/* RIGHT MAP CANVAS AREA */}
-        <div className="flex-1 relative flex flex-col h-full overflow-hidden bg-slate-200 dark:bg-slate-900">
-          
-          {/* Simulated High-Res Vector Map with Road Grid and Geofence Overlays */}
-          <div className="absolute inset-0 overflow-hidden select-none">
-            {/* Map Grid Pattern */}
-            <div className="w-full h-full opacity-60 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:24px_24px]" />
-            
-            {/* Simulated Road Arteries */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none stroke-slate-300 dark:stroke-slate-700/60" strokeWidth="4">
-              <path d="M-50,200 Q300,220 600,180 T1200,300 T1800,250" fill="none" strokeWidth="8" className="stroke-slate-300/80 dark:stroke-slate-700" />
-              <path d="M400,-50 Q450,300 420,600 T500,1100" fill="none" strokeWidth="6" className="stroke-slate-300/80 dark:stroke-slate-700" />
-              <path d="M100,500 L900,100" fill="none" strokeWidth="4" strokeDasharray="6,6" className="stroke-amber-400/40" />
-            </svg>
-
-            {/* Geofence Polygon Overlay */}
-            {showGeofences && (
-              <div className="absolute top-[28%] left-[34%] w-[260px] h-[190px] border-2 border-dashed border-[#29a4ff] bg-[#29a4ff]/10 rounded-2xl pointer-events-none flex items-start p-2">
-                <span className="text-[10px] font-bold bg-[#1542b7] text-white px-2 py-0.5 rounded shadow">
-                  Zone: Juba Customs Yard B
-                </span>
-              </div>
-            )}
-
-            {/* Interactive Vehicle Markers on Map */}
-            {filteredObjects.map((obj, i) => {
-              const isSelected = selectedVehicle?.id === obj.id;
-              // Map mock coordinates to screen positions
-              const offsets = [
-                { top: "35%", left: "42%" },
-                { top: "25%", left: "60%" },
-                { top: "45%", left: "38%" },
-                { top: "55%", left: "50%" },
-                { top: "70%", left: "30%" },
-                { top: "40%", left: "75%" },
-              ];
-              const pos = offsets[i % offsets.length];
-
-              return (
-                <div
-                  key={obj.id}
-                  onClick={() => setSelectedVehicle(obj)}
-                  style={{ top: pos.top, left: pos.left }}
-                  className={cn(
-                    "absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-transform duration-200 hover:scale-125 z-20 group",
-                    isSelected && "scale-125 z-30"
-                  )}
-                >
-                  {/* Pin Graphic */}
-                  <div className={cn(
-                    "p-1.5 rounded-full shadow-lg border-2 flex items-center justify-center transition-all",
-                    obj.status === "Moving" && "bg-emerald-600 border-white text-white",
-                    obj.status === "Stopped" && "bg-orange-600 border-white text-white",
-                    obj.status === "Idle" && "bg-amber-500 border-white text-white",
-                    obj.status === "Inactive" && "bg-sky-600 border-white text-white",
-                    isSelected && "ring-4 ring-[#29a4ff] shadow-2xl scale-110"
-                  )}>
-                    <Car className="w-3.5 h-3.5" />
-                  </div>
-
-                  {/* Marker Tooltip Badge */}
-                  <div className="absolute left-1/2 -translate-x-1/2 top-full mt-1 px-2 py-0.5 bg-slate-900/90 text-white text-[10px] font-bold rounded shadow-md whitespace-nowrap pointer-events-none group-hover:block transition-all">
-                    {obj.name} &bull; {obj.speed} km/h
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Map Controls Floating in Top Right */}
-          <div className="absolute top-4 right-4 z-20 flex flex-col gap-1.5">
-            <div className="bg-white dark:bg-card border border-border shadow-md rounded-md overflow-hidden flex flex-col">
-              <button type="button" className="p-2 hover:bg-muted text-foreground cursor-pointer" title="Zoom In">
-                <Plus className="w-4 h-4" />
-              </button>
-              <div className="h-[1px] bg-border" />
-              <button type="button" className="p-2 hover:bg-muted text-foreground cursor-pointer" title="Zoom Out">
-                <Minus className="w-4 h-4" />
-              </button>
+            {/* Status & Duration */}
+            <div className="flex items-center justify-between">
+              <span className={cn(
+                "px-2.5 py-0.5 rounded font-bold text-white text-[11px]",
+                selectedVehicle.status === "Running" ? "bg-emerald-600" : "bg-rose-600"
+              )}>
+                {selectedVehicle.status}
+              </span>
+              <span className="text-muted-foreground font-semibold text-[11px]">00:24</span>
             </div>
-            
-            <button
-              type="button"
-              className="p-2 bg-white dark:bg-card border border-border shadow-md rounded-md hover:bg-muted text-foreground cursor-pointer"
-              title="Reset Center"
-            >
-              <Compass className="w-4 h-4 text-[#1542b7] dark:text-[#29a4ff]" />
-            </button>
-          </div>
 
-          {/* BOTTOM LIVE TELEMETRY DASHBOARD STRIP (Selected Vehicle Telematics) */}
-          {selectedVehicle && (
-            <div className="absolute bottom-3 left-3 right-3 z-20 bg-white/95 dark:bg-card/95 backdrop-blur-md border border-border rounded-lg shadow-2xl p-3 animate-in slide-in-from-bottom-3 duration-200">
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                
-                {/* Vehicle Identity */}
-                <div className="flex items-center gap-3">
-                  <div className={cn(
-                    "w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold shadow-md",
-                    selectedVehicle.status === "Moving" ? "bg-emerald-600" : "bg-orange-600"
-                  )}>
-                    <Car className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-foreground">{selectedVehicle.name}</span>
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-muted text-muted-foreground">
-                        IMEI: {selectedVehicle.imei}
-                      </span>
-                    </div>
-                    <div className="text-xs text-muted-foreground flex items-center gap-1.5 mt-0.5">
-                      <MapPin className="w-3 h-3 text-[#1542b7] dark:text-[#29a4ff]" />
-                      <span>{selectedVehicle.address} ({selectedVehicle.lat.toFixed(4)}, {selectedVehicle.lng.toFixed(4)})</span>
-                    </div>
-                  </div>
+            {/* Current Trip & Odometer */}
+            <div className="space-y-1 bg-slate-50 dark:bg-muted/20 p-2.5 rounded border border-border">
+              <div className="flex justify-between text-muted-foreground">
+                <span>Current Trip</span>
+                <span className="font-bold text-foreground">{selectedVehicle.currentTrip}</span>
+              </div>
+              <div className="flex justify-between items-center pt-1">
+                <span className="text-muted-foreground">Odometer</span>
+                {/* Rolling mechanical counter */}
+                <div className="flex gap-0.5 font-mono text-xs font-bold">
+                  {selectedVehicle.odometer.split("").map((ch, i) => (
+                    <span key={i} className="px-1 py-0.5 bg-slate-900 text-white rounded-xs">
+                      {ch}
+                    </span>
+                  ))}
                 </div>
-
-                {/* Real-time Telemetry Metrics Pill Bar */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs w-full md:w-auto">
-                  {/* Speed */}
-                  <div className="p-2 rounded bg-slate-50 dark:bg-muted/40 border border-border flex items-center gap-2">
-                    <Gauge className="w-4 h-4 text-[#1542b7] dark:text-[#29a4ff]" />
-                    <div>
-                      <div className="text-[10px] text-muted-foreground uppercase font-semibold">Speed</div>
-                      <div className="font-bold text-foreground">{selectedVehicle.speed} km/h</div>
-                    </div>
-                  </div>
-
-                  {/* Ignition */}
-                  <div className="p-2 rounded bg-slate-50 dark:bg-muted/40 border border-border flex items-center gap-2">
-                    <Power className={cn("w-4 h-4", selectedVehicle.ignition ? "text-emerald-600" : "text-rose-500")} />
-                    <div>
-                      <div className="text-[10px] text-muted-foreground uppercase font-semibold">Ignition</div>
-                      <div className={cn("font-bold", selectedVehicle.ignition ? "text-emerald-600" : "text-rose-500")}>
-                        {selectedVehicle.ignition ? "ON" : "OFF"}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Fuel */}
-                  <div className="p-2 rounded bg-slate-50 dark:bg-muted/40 border border-border flex items-center gap-2">
-                    <Fuel className="w-4 h-4 text-amber-500" />
-                    <div>
-                      <div className="text-[10px] text-muted-foreground uppercase font-semibold">Fuel Level</div>
-                      <div className="font-bold text-foreground">{selectedVehicle.fuel}% (74 L)</div>
-                    </div>
-                  </div>
-
-                  {/* Odometer */}
-                  <div className="p-2 rounded bg-slate-50 dark:bg-muted/40 border border-border flex items-center gap-2">
-                    <Navigation className="w-4 h-4 text-indigo-500" />
-                    <div>
-                      <div className="text-[10px] text-muted-foreground uppercase font-semibold">Odometer</div>
-                      <div className="font-bold text-foreground">{selectedVehicle.odo.toLocaleString()} km</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center gap-2 shrink-0">
-                  <Link
-                    href={`/reports/activity/travel?vehicle=${selectedVehicle.id}`}
-                    className="px-3 py-1.5 rounded text-xs font-semibold bg-[#1542b7] hover:bg-[#1542b7]/90 text-white shadow-sm transition-colors"
-                  >
-                    Travel History
-                  </Link>
-                </div>
-
               </div>
             </div>
-          )}
 
+            {/* Driver Details */}
+            <div className="text-[11px] space-y-1">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Driver</span>
+                <span className="font-semibold text-foreground">{selectedVehicle.driver}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Mobile</span>
+                <span className="text-foreground">{selectedVehicle.mobile}</span>
+              </div>
+            </div>
+
+            {/* Quick Action Icons Strip */}
+            <div className="grid grid-cols-6 border-y border-border py-2 text-center text-muted-foreground">
+              <button type="button" className="hover:text-[#1542b7] flex justify-center"><Navigation className="w-3.5 h-3.5" /></button>
+              <button type="button" className="hover:text-[#1542b7] flex justify-center"><Send className="w-3.5 h-3.5" /></button>
+              <button type="button" className="hover:text-[#1542b7] flex justify-center"><Share2 className="w-3.5 h-3.5" /></button>
+              <button type="button" className="hover:text-[#1542b7] flex justify-center"><ShieldAlert className="w-3.5 h-3.5" /></button>
+              <button type="button" className="hover:text-[#1542b7] flex justify-center"><Layers className="w-3.5 h-3.5" /></button>
+              <button type="button" className="hover:text-[#1542b7] flex justify-center"><Eye className="w-3.5 h-3.5" /></button>
+            </div>
+
+            {/* ANALOG FUEL DIAL GAUGE SECTION (Exact matching Images 2, 3, 4, 5) */}
+            <div className="space-y-2 pt-1">
+              <div className="flex items-center justify-between text-xs font-bold text-foreground">
+                <div className="flex items-center gap-1.5">
+                  <Fuel className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Fuel Telemetry</span>
+                </div>
+                <span className="text-[10px] text-muted-foreground">Sensor Active</span>
+              </div>
+
+              {/* Analog SVG Fuel Needle Gauge */}
+              <div className="relative w-full h-[120px] flex items-center justify-center">
+                <svg className="w-[180px] h-[100px]" viewBox="0 0 200 110">
+                  {/* Gauge Background Arcs */}
+                  <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e2e8f0" strokeWidth="14" strokeLinecap="round" />
+                  {/* Color segments (Red empty -> Yellow -> Green full) */}
+                  <path d="M 20 100 A 80 80 0 0 1 60 45" fill="none" stroke="#ef4444" strokeWidth="14" strokeLinecap="round" />
+                  <path d="M 60 45 A 80 80 0 0 1 140 45" fill="none" stroke="#f59e0b" strokeWidth="14" />
+                  <path d="M 140 45 A 80 80 0 0 1 180 100" fill="none" stroke="#10b981" strokeWidth="14" strokeLinecap="round" />
+                  
+                  {/* Needle Pivot & Arm */}
+                  <line x1="100" y1="95" x2="140" y2="45" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" />
+                  <circle cx="100" cy="95" r="7" fill="#1e293b" />
+                  
+                  {/* Labels E and F */}
+                  <text x="25" y="105" fontSize="10" fontWeight="bold" fill="#ef4444">E</text>
+                  <text x="170" y="105" fontSize="10" fontWeight="bold" fill="#10b981">F</text>
+                </svg>
+
+                {/* Center Digital Fuel Readout */}
+                <div className="absolute bottom-1 flex flex-col items-center">
+                  <span className="text-sm font-extrabold text-foreground">{selectedVehicle.fuelLiter} liter</span>
+                </div>
+              </div>
+
+              {/* Fuel Telematics Stat Breakdown Table */}
+              <div className="text-[11px] space-y-1 bg-slate-50 dark:bg-muted/20 p-2 rounded border border-border">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Tanks</span>
+                  <span className="font-bold text-foreground">1</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Refill</span>
+                  <span className="font-semibold text-emerald-600">2 ({selectedVehicle.fuelRefill} L)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Drain</span>
+                  <span className="font-semibold text-rose-600">1 ({selectedVehicle.fuelDrain} L)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Tank Capacity</span>
+                  <span className="font-bold text-foreground">{selectedVehicle.fuelCapacity}.0 Liter</span>
+                </div>
+                <div className="flex justify-between border-t border-border pt-1">
+                  <span className="text-muted-foreground">Consumption Sensor</span>
+                  <span className="font-bold text-foreground">{selectedVehicle.fuelConsumption}</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
         </div>
-
-      </div>
+      )}
 
     </div>
   );
