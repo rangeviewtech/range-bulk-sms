@@ -504,7 +504,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
         {hoveredModule && hoveredModule.categories && (
           <div
             id="flyout-container"
-            className="absolute left-[90px] flex shadow-[0_16px_48px_rgba(0,0,0,0.5)] select-none pointer-events-auto transition-all duration-150 ease-out"
+            className="absolute left-[90px] flex select-none pointer-events-auto"
             style={{ 
               top: `${flyoutTop}px` 
             }}
@@ -512,7 +512,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
             {/* LAYER 2: Submenu Categories (170px wide, #1542b7 / rgb(21, 66, 183)) */}
             <div
               id="subMenu"
-              className="w-[170px] bg-[#1542b7] text-white flex flex-col shadow-2xl border-r border-white/10 max-h-[85vh] overflow-y-auto animate-flyout-sub backdrop-blur-md"
+              className="w-[170px] bg-[#1542b7] text-white flex flex-col border-r border-white/10 max-h-[85vh] overflow-y-auto animate-flyout-sub shadow-[4px_6px_16px_rgba(0,0,0,0.3)] z-10 shrink-0"
             >
               <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5">
                 {hoveredModule.categories.map((cat, idx) => {
@@ -549,7 +549,7 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
               <div
                 id="deepMenu"
                 key={hoveredCategory.title}
-                className="w-[180px] bg-[#1542b7] text-white flex flex-col shadow-2xl h-fit max-h-[80vh] overflow-y-auto border-r border-white/10 animate-flyout-deep backdrop-blur-md transition-all duration-150"
+                className="w-[180px] bg-[#1542b7] text-white flex flex-col h-fit max-h-[80vh] overflow-y-auto border-r border-white/10 animate-flyout-deep shadow-[4px_6px_18px_rgba(0,0,0,0.35)] shrink-0"
                 style={{
                   marginTop: `${deepMenuTopOffset}px`
                 }}
