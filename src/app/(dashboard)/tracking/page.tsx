@@ -145,6 +145,7 @@ interface FleetVehicle extends MapVehicle {
   operator: string;
   satellites: number;
   altitude: number;
+  expiryDate?: string;
 }
 
 const VEHICLES_DATA: FleetVehicle[] = [
@@ -190,6 +191,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     operator: "Airtel",
     satellites: 14,
     altitude: 1177,
+    expiryDate: "--",
   },
   {
     id: "UA-497EP",
@@ -233,6 +235,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     operator: "MTN",
     satellites: 12,
     altitude: 1240,
+    expiryDate: "--",
   },
   {
     id: "UA-498EP",
@@ -276,6 +279,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     operator: "Airtel",
     satellites: 16,
     altitude: 1310,
+    expiryDate: "--",
   },
   {
     id: "UBH-279N",
@@ -319,6 +323,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     operator: "MTN",
     satellites: 11,
     altitude: 1420,
+    expiryDate: "--",
   },
   {
     id: "UBL-090W",
@@ -362,6 +367,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     operator: "Airtel",
     satellites: 13,
     altitude: 1290,
+    expiryDate: "--",
   },
   {
     id: "UBN-3867X",
@@ -405,6 +411,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     operator: "MTN",
     satellites: 0,
     altitude: 1280,
+    expiryDate: "--",
   },
   {
     id: "UBM-755K",
@@ -448,6 +455,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     operator: "Airtel",
     satellites: 14,
     altitude: 1050,
+    expiryDate: "--",
   },
   {
     id: "UBP-004L",
@@ -491,6 +499,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     operator: "MTN",
     satellites: 15,
     altitude: 1190,
+    expiryDate: "--",
   },
   {
     id: "UBQ-255H",
@@ -534,6 +543,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     operator: "Airtel",
     satellites: 13,
     altitude: 980,
+    expiryDate: "--",
   },
   {
     id: "UA-807DX",
@@ -577,6 +587,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     operator: "MTN",
     satellites: 14,
     altitude: 1080,
+    expiryDate: "--",
   },
   {
     id: "UBH-168K",
@@ -620,6 +631,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     operator: "Airtel",
     satellites: 15,
     altitude: 1680,
+    expiryDate: "--",
   },
 ];
 
@@ -653,7 +665,8 @@ export default function TrackingPage() {
     passengerSeat: false,
     address: true,
     driver: true,
-    notes: true,
+    expiryDate: true,
+    objectActivity: false,
   });
 
   const [tempColumnsConfig, setTempColumnsConfig] = React.useState({ ...columnsConfig });
@@ -1032,7 +1045,7 @@ export default function TrackingPage() {
                                   </div>
 
                                   <div className="flex-1 min-w-0 space-y-0.5">
-                                    {/* Line 1: Vehicle Name & Timestamp */}
+                                    {/* Line 1: Vehicle Name & Speed */}
                                     <div className="flex items-center justify-between">
                                       <div className="flex items-center gap-1 truncate">
                                         <span className="font-bold text-[#1a56db] dark:text-[#29a4ff] truncate">{v.name}</span>
@@ -1046,29 +1059,39 @@ export default function TrackingPage() {
                                       <span>{v.time}</span>
                                       <div className="flex items-center gap-1.5">
                                         {columnsConfig.ignition && (
-                                          <Key className={cn("w-3 h-3", v.ignition ? "text-emerald-600" : "text-rose-500")} />
+                                          <span title={v.ignition ? "Ignition ON" : "Ignition OFF"}>
+                                            <Key className={cn("w-3 h-3", v.ignition ? "text-emerald-600" : "text-rose-500")} />
+                                          </span>
                                         )}
                                         {columnsConfig.power && (
-                                          <Battery className={cn("w-3 h-3", v.batteryLevel > 20 ? "text-emerald-600" : "text-rose-500")} />
+                                          <span title={`Battery: ${v.batteryLevel}%`}>
+                                            <Battery className={cn("w-3 h-3", v.batteryLevel > 20 ? "text-emerald-600" : "text-rose-500")} />
+                                          </span>
                                         )}
                                         {columnsConfig.gsm && (
-                                          <Signal className="w-3 h-3 text-emerald-600" />
+                                          <span title="GSM Signal: Good">
+                                            <Signal className="w-3 h-3 text-emerald-600" />
+                                          </span>
                                         )}
                                         {columnsConfig.gps && (
-                                          <Wifi className="w-3 h-3 text-emerald-600" />
+                                          <span title="GPS Signal: 3D Fix">
+                                            <Wifi className="w-3 h-3 text-emerald-600" />
+                                          </span>
                                         )}
-                                        <Lock className="w-3 h-3 text-muted-foreground" />
+                                        <span title="Immobilizer: Normal">
+                                          <Lock className="w-3 h-3 text-muted-foreground" />
+                                        </span>
                                         {columnsConfig.voltage && (
-                                          <span className="font-bold text-emerald-700 dark:text-emerald-400">{v.voltage}</span>
+                                          <span className="font-bold text-emerald-700 dark:text-emerald-400" title="External Voltage">{v.voltage}</span>
                                         )}
                                       </div>
                                     </div>
 
-                                    {/* Line 3: Truncated Address with Hover Tooltip */}
+                                    {/* Line 3: Truncated Address with Hover Tooltip + Blank Data Columns (Driver, Expiry Date) */}
                                     <div className="text-[10px] text-muted-foreground flex items-center justify-between">
                                       {columnsConfig.address && (
                                         <div 
-                                          className="truncate max-w-[260px] hover:text-[#2558c4] cursor-pointer"
+                                          className="truncate max-w-[250px] hover:text-[#2558c4] cursor-pointer"
                                           onMouseEnter={(e) => {
                                             const rect = e.currentTarget.getBoundingClientRect();
                                             setHoveredAddress({ id: v.id, text: v.fullAddress, top: rect.top, left: rect.right + 10 });
@@ -1079,18 +1102,29 @@ export default function TrackingPage() {
                                         </div>
                                       )}
                                       
-                                      <div className="flex items-center gap-4 shrink-0 text-emerald-600 dark:text-emerald-400 font-semibold">
-                                        {columnsConfig.driver && <span>--</span>}
-                                        {columnsConfig.notes && (
+                                      <div className="flex items-center gap-6 shrink-0 text-emerald-600 dark:text-emerald-400 font-semibold">
+                                        {columnsConfig.driver && (
                                           <span 
-                                            className="text-muted-foreground/60 cursor-pointer hover:text-foreground"
+                                            className="text-emerald-600 dark:text-emerald-400 cursor-pointer hover:underline"
+                                            onMouseEnter={(e) => {
+                                              const rect = e.currentTarget.getBoundingClientRect();
+                                              setHoveredHeaderTip({ text: "Driver", top: rect.top - 20, left: rect.left - 10 });
+                                            }}
+                                            onMouseLeave={() => setHoveredHeaderTip(null)}
+                                          >
+                                            {v.driver}
+                                          </span>
+                                        )}
+                                        {columnsConfig.expiryDate && (
+                                          <span 
+                                            className="text-emerald-600 dark:text-emerald-400 cursor-pointer hover:underline"
                                             onMouseEnter={(e) => {
                                               const rect = e.currentTarget.getBoundingClientRect();
                                               setHoveredHeaderTip({ text: "Expiry Date", top: rect.top - 20, left: rect.left - 20 });
                                             }}
                                             onMouseLeave={() => setHoveredHeaderTip(null)}
                                           >
-                                            --
+                                            {v.expiryDate || "--"}
                                           </span>
                                         )}
                                       </div>
@@ -1259,7 +1293,7 @@ export default function TrackingPage() {
         </div>
       )}
 
-      {/* FLOATING EXPIRY DATE TIP */}
+      {/* FLOATING EXPIRY DATE / DRIVER TOOLTIP */}
       {hoveredHeaderTip && (
         <div 
           className="fixed z-50 bg-slate-900 text-white border border-slate-700 shadow-xl px-2 py-1 rounded text-[10px] font-semibold pointer-events-none animate-in fade-in duration-100"
@@ -1468,11 +1502,48 @@ export default function TrackingPage() {
                 </div>
               </div>
 
+              {/* Driver Category */}
+              <div className="border border-border rounded p-2 space-y-1.5 bg-slate-50/50 dark:bg-muted/10">
+                <div className="flex items-center justify-between font-semibold text-xs text-foreground">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={tempColumnsConfig.driver} 
+                      onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, driver: e.target.checked })}
+                      className="rounded text-[#2558c4] w-3.5 h-3.5" 
+                    />
+                    <span>Driver</span>
+                  </label>
+                  <GripVertical className="w-3.5 h-3.5 text-muted-foreground/60 cursor-grab" />
+                </div>
+              </div>
+
+              {/* Expiry Date Category */}
+              <div className="border border-border rounded p-2 space-y-1.5 bg-slate-50/50 dark:bg-muted/10">
+                <div className="flex items-center justify-between font-semibold text-xs text-foreground">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={tempColumnsConfig.expiryDate} 
+                      onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, expiryDate: e.target.checked })}
+                      className="rounded text-[#2558c4] w-3.5 h-3.5" 
+                    />
+                    <span>Expiry Date</span>
+                  </label>
+                  <GripVertical className="w-3.5 h-3.5 text-muted-foreground/60 cursor-grab" />
+                </div>
+              </div>
+
               {/* Object Activity Category */}
               <div className="border border-border rounded p-2 space-y-1.5 bg-slate-50/50 dark:bg-muted/10">
                 <div className="flex items-center justify-between font-semibold text-xs text-foreground">
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" className="rounded text-[#2558c4] w-3.5 h-3.5" />
+                    <input 
+                      type="checkbox" 
+                      checked={tempColumnsConfig.objectActivity}
+                      onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, objectActivity: e.target.checked })}
+                      className="rounded text-[#2558c4] w-3.5 h-3.5" 
+                    />
                     <span>Object Activity</span>
                   </label>
                   <GripVertical className="w-3.5 h-3.5 text-muted-foreground/60 cursor-grab" />
