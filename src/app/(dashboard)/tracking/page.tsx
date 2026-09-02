@@ -694,8 +694,8 @@ export default function TrackingPage() {
   const counts = {
     running: 1,
     idle: 0,
-    stopped: 9,
-    inactive: 1,
+    stopped: 8,
+    inactive: 2,
     nodata: 0,
     total: 11,
   };
@@ -749,9 +749,14 @@ export default function TrackingPage() {
       </div>
 
       {/* 3. RIGHT MAP ACTIONS TOOLBAR */}
-      <div className="absolute top-2 right-2 bottom-3 z-30 flex flex-col justify-between items-end pointer-events-none">
-        <div className="flex flex-col items-end gap-1.5 pointer-events-auto">
-          {/* Top Blue Double Chevrons Expand Button (Matching media_1788374386333.png) */}
+      <div 
+        className={cn(
+          "absolute top-2 bottom-3 z-30 flex flex-col justify-between items-end pointer-events-none transition-all duration-200",
+          (isDetailDrawerOpen || isObjectListSettingsOpen) ? "right-[328px]" : "right-2"
+        )}
+      >
+        <div className="flex flex-col items-center gap-1.5 pointer-events-auto">
+          {/* Top Blue Double Chevrons Expand Button */}
           <button
             type="button"
             onClick={() => {
@@ -764,8 +769,8 @@ export default function TrackingPage() {
             <ChevronsRight className={cn("w-4 h-4 transition-transform", !isDetailDrawerOpen && "rotate-180")} />
           </button>
 
-          {/* Right Map Action Buttons - Narrow white strip matching Production */}
-          <div className="relative bg-white dark:bg-card border border-border shadow-lg rounded flex flex-col text-muted-foreground overflow-visible">
+          {/* Right Map Action Buttons */}
+          <div className="relative w-8 bg-white dark:bg-card border border-border shadow-lg rounded flex flex-col items-center py-1 text-muted-foreground overflow-visible gap-0.5">
             <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Search Location"><Search className="w-3.5 h-3.5" /></button>
             
             {/* Layer Selector */}
@@ -865,8 +870,8 @@ export default function TrackingPage() {
       {/* 4. LEFT FLEET OBJECT PANEL WITH COLLAPSE HANDLE (MATCHING MEDIA_1788374330745.PNG) */}
       <div
         className={cn(
-          "absolute top-2 left-2 bottom-2 z-30 w-[620px] max-w-[calc(100vw-20px)] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col transition-all duration-300 overflow-visible",
-          isObjectPanelCollapsed && "-translate-x-[640px]"
+          "absolute top-2 left-2 bottom-2 z-30 w-[800px] max-w-[calc(100vw-20px)] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col transition-all duration-300 overflow-visible",
+          isObjectPanelCollapsed && "-translate-x-[820px]"
         )}
       >
         {/* Trapezoid Collapse/Expand Handle on Right Border */}
@@ -887,7 +892,7 @@ export default function TrackingPage() {
         </button>
 
         {/* Top Navigation Strip */}
-        <div className="h-[34px] bg-[#2558c4] text-white px-3 flex items-center justify-between shrink-0 rounded-t">
+        <div className="h-[34px] bg-[#1e40af] text-white px-3 flex items-center justify-between shrink-0 rounded-t">
           <div className="flex items-center gap-2 text-xs font-semibold">
             <button
               type="button"
@@ -1064,109 +1069,78 @@ export default function TrackingPage() {
                                     setIsDetailDrawerOpen(true);
                                     setIsObjectListSettingsOpen(false);
                                   }}
-                                  className={cn(
-                                    "p-2 pl-6 flex items-start gap-2 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-muted/40 border-b border-border/50",
+                                  className={cn(                                    "p-2 pl-3 flex items-center gap-2 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-muted/40 border-b border-border/50",
                                     isSelected && "bg-[#e2e8f0] dark:bg-sky-950/60"
                                   )}
                                 >
-                                  <input type="checkbox" defaultChecked onClick={(e) => e.stopPropagation()} className="mt-1 w-3 h-3 rounded shrink-0" />
+                                  <input type="checkbox" defaultChecked onClick={(e) => e.stopPropagation()} className="w-3 h-3 rounded shrink-0" />
                                   
-                                  <div className="mt-1 shrink-0">
+                                  <div className="shrink-0 flex items-center justify-center w-4 h-4 bg-blue-600 rounded-sm relative">
                                     <span
                                       className={cn(
-                                        "w-2.5 h-2.5 rounded-full block",
-                                        v.status === "Running" && "bg-emerald-500 ring-2 ring-emerald-300",
+                                        "w-2 h-2 rounded-full block",
+                                        v.status === "Running" && "bg-emerald-400",
                                         v.status === "Stopped" && "bg-rose-500",
                                         v.status === "Idle" && "bg-amber-400",
-                                        v.status === "Inactive" && "bg-sky-500"
+                                        v.status === "Inactive" && "bg-sky-400"
                                       )}
                                     />
                                   </div>
 
-                                  <div className="flex-1 min-w-0 space-y-0.5">
-                                    {/* Line 1: Vehicle Name & Speed */}
-                                    <div className="flex items-center justify-between">
-                                      <div className="flex items-center gap-1 truncate">
-                                        <span className="font-bold text-[#1a56db] dark:text-[#29a4ff] truncate">{v.name}</span>
-                                        <Edit3 className="w-2.5 h-2.5 text-muted-foreground/60 hover:text-foreground cursor-pointer shrink-0" />
+                                  <div className="flex-1 flex items-center min-w-0 gap-2">
+                                    {/* Name & Time Column */}
+                                    <div className="flex flex-col min-w-[150px] max-w-[180px]">
+                                      <div className="flex items-center gap-1">
+                                        <span className="font-bold text-[#1a56db] dark:text-[#29a4ff] text-[11px] truncate">{v.name}</span>
                                       </div>
+                                      <span className="text-[9px] text-muted-foreground">{v.time}</span>
                                     </div>
 
-                                    {/* Line 2: Timestamp + Telemetry Icons + Voltage */}
-                                    <div className="text-[10px] text-muted-foreground flex items-center justify-between">
-                                      <span>{v.time}</span>
-                                      <div className="flex items-center gap-1.5">
-                                        <span className="text-foreground mr-1">{v.speed}</span>
-                                        {columnsConfig.ignition && (
-                                          <span title={v.ignition ? "Ignition ON" : "Ignition OFF"}>
-                                            <Key className={cn("w-3 h-3", v.ignition ? "text-emerald-600" : "text-rose-500")} />
-                                          </span>
-                                        )}
-                                        {columnsConfig.power && (
-                                          <span title={`Battery: ${v.batteryLevel}%`}>
-                                            <Battery className={cn("w-3 h-3", v.batteryLevel > 20 ? "text-emerald-600" : "text-rose-500")} />
-                                          </span>
-                                        )}
-                                        {columnsConfig.gsm && (
-                                          <span title="GSM Signal: Good">
-                                            <Signal className="w-3 h-3 text-emerald-600" />
-                                          </span>
-                                        )}
-                                        {columnsConfig.gps && (
-                                          <span title="GPS Signal: 3D Fix">
-                                            <Wifi className="w-3 h-3 text-emerald-600" />
-                                          </span>
-                                        )}
-                                        <span title="Immobilizer: Normal">
-                                          <Lock className="w-3 h-3 text-muted-foreground" />
-                                        </span>
-                                        {columnsConfig.voltage && (
-                                          <span className="font-bold text-emerald-700 dark:text-emerald-400" title="External Voltage">{v.voltage}</span>
-                                        )}
-                                      </div>
+                                    {/* Speed Column */}
+                                    <div className="w-[30px] shrink-0 text-center text-[10px] text-foreground font-semibold">
+                                      {v.speed === 0 ? "0" : v.speed}
                                     </div>
 
-                                    {/* Line 3: Truncated Address with Hover Tooltip + Blank Data Columns (Driver, Expiry Date) */}
-                                    <div className="text-[10px] text-muted-foreground flex items-center justify-between">
-                                      {columnsConfig.address && (
-                                        <div 
-                                          className="truncate max-w-[280px] hover:text-[#2558c4] cursor-pointer"
-                                          onMouseEnter={(e) => {
-                                            const rect = e.currentTarget.getBoundingClientRect();
-                                            setHoveredAddress({ id: v.id, text: v.fullAddress, top: rect.top, left: rect.right + 10 });
-                                          }}
-                                          onMouseLeave={() => setHoveredAddress(null)}
-                                        >
-                                          {v.address}
-                                        </div>
+                                    {/* Telemetry Icons Column */}
+                                    <div className="flex items-center gap-1.5 shrink-0 w-[80px]">
+                                      {columnsConfig.ignition && (
+                                        <Key className={cn("w-3 h-3", v.ignition ? "text-emerald-600" : "text-rose-500")} />
                                       )}
-                                      
-                                      <div className="flex items-center gap-6 shrink-0 text-emerald-600 dark:text-emerald-400 font-semibold">
-                                        {columnsConfig.driver && (
-                                          <span 
-                                            className="text-emerald-600 dark:text-emerald-400 cursor-pointer hover:underline"
-                                            onMouseEnter={(e) => {
-                                              const rect = e.currentTarget.getBoundingClientRect();
-                                              setHoveredHeaderTip({ text: "Driver", top: rect.top - 20, left: rect.left - 10 });
-                                            }}
-                                            onMouseLeave={() => setHoveredHeaderTip(null)}
-                                          >
-                                            {v.driver}
-                                          </span>
-                                        )}
-                                        {columnsConfig.expiryDate && (
-                                          <span 
-                                            className="text-emerald-600 dark:text-emerald-400 cursor-pointer hover:underline"
-                                            onMouseEnter={(e) => {
-                                              const rect = e.currentTarget.getBoundingClientRect();
-                                              setHoveredHeaderTip({ text: "Expiry Date", top: rect.top - 20, left: rect.left - 20 });
-                                            }}
-                                            onMouseLeave={() => setHoveredHeaderTip(null)}
-                                          >
-                                            {v.expiryDate || "--"}
-                                          </span>
-                                        )}
+                                      {columnsConfig.power && (
+                                        <Battery className={cn("w-3 h-3", v.batteryLevel > 20 ? "text-emerald-600" : "text-rose-500")} />
+                                      )}
+                                      {columnsConfig.gsm && (
+                                        <Signal className="w-3 h-3 text-emerald-600" />
+                                      )}
+                                      {columnsConfig.gps && (
+                                        <Wifi className="w-3 h-3 text-emerald-600" />
+                                      )}
+                                      <Lock className="w-3 h-3 text-emerald-600" />
+                                    </div>
+
+                                    {/* Voltage Column */}
+                                    <div className="w-[40px] shrink-0 text-[10px] font-bold text-emerald-700 dark:text-emerald-400">
+                                      {columnsConfig.voltage && v.voltage}
+                                    </div>
+
+                                    {/* Address Column */}
+                                    {columnsConfig.address && (
+                                      <div 
+                                        className="flex-1 min-w-[150px] text-[10px] text-muted-foreground truncate hover:text-[#2558c4] cursor-pointer"
+                                        onMouseEnter={(e) => {
+                                          const rect = e.currentTarget.getBoundingClientRect();
+                                          setHoveredAddress({ id: v.id, text: v.fullAddress, top: rect.top, left: rect.right + 10 });
+                                        }}
+                                        onMouseLeave={() => setHoveredAddress(null)}
+                                      >
+                                        {v.address}
                                       </div>
+                                    )}
+
+                                    {/* Driver & Expiry Columns */}
+                                    <div className="flex items-center gap-4 shrink-0 text-[10px] w-[50px] justify-end">
+                                      {columnsConfig.driver && <span className="text-emerald-600 dark:text-emerald-400 cursor-pointer">{v.driver}</span>}
+                                      {columnsConfig.expiryDate && <span className="text-emerald-600 dark:text-emerald-400 cursor-pointer">{v.expiryDate}</span>}
                                     </div>
                                   </div>
                                 </div>
@@ -1616,31 +1590,8 @@ export default function TrackingPage() {
 
       {/* 6. RIGHT FLOATING VEHICLE DETAIL DRAWER (ALL 16 CARDS MATCHING PRODUCTION EXACTLY) */}
       {isDetailDrawerOpen && selectedVehicle && !isObjectListSettingsOpen && (
-        <div className="absolute top-2 right-12 bottom-2 z-30 w-[320px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs select-none">
+        <div className="absolute top-2 right-2 bottom-2 z-30 w-[320px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs select-none">
           
-          {/* Top Utility Bar - Round colored icon buttons matching Production close-up */}
-          <div className="h-[34px] bg-[#1e293b] text-white px-2 flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-1.5">
-              <button type="button" className="w-7 h-7 rounded-full bg-[#eab308] hover:bg-[#ca8a04] text-white flex items-center justify-center" title="Location"><MapPin className="w-3 h-3" /></button>
-              <button type="button" className="w-7 h-7 rounded-full bg-[#334155] hover:bg-[#475569] text-white flex items-center justify-center" title="Alerts"><Bell className="w-3 h-3" /></button>
-              <button type="button" className="w-7 h-7 rounded-full bg-[#334155] hover:bg-[#475569] text-white flex items-center justify-center" title="Maintenance"><Wrench className="w-3 h-3" /></button>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <button 
-                type="button" 
-                onClick={() => {
-                  setTempColumnsConfig({ ...columnsConfig });
-                  setIsObjectListSettingsOpen(true);
-                  setIsDetailDrawerOpen(false);
-                }}
-                className="w-7 h-7 rounded-full bg-[#334155] hover:bg-[#475569] text-white flex items-center justify-center"
-                title="Configure Tooltip Widgets"
-              >
-                <Settings className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
-
           <div className="flex-1 overflow-y-auto p-3 space-y-3">
             
             {/* 1. Vehicle Title & Info */}
@@ -1706,14 +1657,14 @@ export default function TrackingPage() {
               </div>
             </div>
 
-            {/* 6. Quick Action Icons Strip - Dark Circle Buttons matching Production */}
-            <div className="grid grid-cols-6 border-y border-border py-2 text-center">
-              <button type="button" className="flex justify-center" title="Live View"><div className="w-6 h-6 rounded-full bg-[#334155] hover:bg-[#1e293b] text-white flex items-center justify-center"><Eye className="w-3 h-3" /></div></button>
-              <button type="button" className="flex justify-center" title="Share"><div className="w-6 h-6 rounded-full bg-[#334155] hover:bg-[#1e293b] text-white flex items-center justify-center"><Share2 className="w-3 h-3" /></div></button>
-              <button type="button" className="flex justify-center" title="Navigate"><div className="w-6 h-6 rounded-full bg-[#334155] hover:bg-[#1e293b] text-white flex items-center justify-center"><Navigation className="w-3 h-3" /></div></button>
-              <button type="button" className="flex justify-center" title="Security"><div className="w-6 h-6 rounded-full bg-[#334155] hover:bg-[#1e293b] text-white flex items-center justify-center"><ShieldAlert className="w-3 h-3" /></div></button>
-              <button type="button" className="flex justify-center" title="Users"><div className="w-6 h-6 rounded-full bg-[#334155] hover:bg-[#1e293b] text-white flex items-center justify-center"><Users className="w-3 h-3" /></div></button>
-              <button type="button" className="flex justify-center" title="Compass"><div className="w-6 h-6 rounded-full bg-[#334155] hover:bg-[#1e293b] text-white flex items-center justify-center"><Compass className="w-3 h-3" /></div></button>
+            {/* 6. Quick Action Icons (Outlined icons matching production) */}
+            <div className="flex items-center justify-between px-2 pt-1 border-b border-border pb-3">
+              <button className="text-blue-600 hover:text-blue-800"><Eye className="w-4 h-4" /></button>
+              <button className="text-blue-600 hover:text-blue-800"><Share2 className="w-4 h-4" /></button>
+              <button className="text-blue-600 hover:text-blue-800"><Navigation className="w-4 h-4" /></button>
+              <button className="text-blue-600 hover:text-blue-800"><ShieldAlert className="w-4 h-4" /></button>
+              <button className="text-blue-600 hover:text-blue-800"><Users className="w-4 h-4" /></button>
+              <button className="text-blue-600 hover:text-blue-800"><Compass className="w-4 h-4" /></button>
             </div>
 
             {/* 7. FUEL CARD - matching production layout */}
