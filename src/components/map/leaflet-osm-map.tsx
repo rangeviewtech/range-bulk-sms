@@ -62,7 +62,18 @@ export function LeafletOsmMap({
     tileLayerRef.current = tileLayer;
     setMap(mapInstance);
 
+    // Invalidate size on mount and window resize so map takes full width immediately
+    const handleResize = () => {
+      mapInstance.invalidateSize();
+    };
+    window.addEventListener("resize", handleResize);
+    const timer = setTimeout(() => {
+      mapInstance.invalidateSize();
+    }, 150);
+
     return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(timer);
       mapInstance.remove();
       setMap(null);
     };

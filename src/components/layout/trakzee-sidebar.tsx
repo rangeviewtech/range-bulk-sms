@@ -762,23 +762,25 @@ export function TrakzeeSidebar({ user }: TrakzeeSidebarProps) {
       )}
 
       {/* 5. UNIVERSAL SCREEN SEARCH OVERLAY */}
-      <div className="fixed top-3.5 right-4 z-[50]">
-        <button
-          type="button"
-          id="universalSelectorSearchIcon"
-          onClick={() => setIsSearchOpen(true)}
-          className="p-2 text-muted-foreground hover:text-foreground hover:scale-115 transition-all duration-200 cursor-pointer"
-          title="Search Screens (Ctrl+K)"
-          aria-label="Search Screens"
-        >
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M17.7802 16.7196L12.6615 11.6009C13.653 10.3762 14.25 8.81991 14.25 7.12494C14.25 3.19648 11.0535 0 7.12498 0C3.19648 0 0 3.19645 0 7.12491C0 11.0534 3.19651 14.2498 7.12501 14.2498C8.82 14.2498 10.3763 13.6529 11.601 12.6614L16.7198 17.7801C16.866 17.9263 17.058 17.9998 17.25 17.9998C17.442 17.9998 17.634 17.9263 17.7803 17.7801C18.0735 17.4868 18.0735 17.0128 17.7802 16.7196ZM7.12501 12.7499C4.023 12.7499 1.50001 10.2269 1.50001 7.12491C1.50001 4.02293 4.023 1.49996 7.12501 1.49996C10.227 1.49996 12.75 4.02293 12.75 7.12491C12.75 10.2269 10.227 12.7499 7.12501 12.7499Z"
-              fill="currentColor"
-            />
-          </svg>
-        </button>
-      </div>
+      {pathname !== "/tracking" && (
+        <div className="fixed top-3.5 right-4 z-[50]">
+          <button
+            type="button"
+            id="universalSelectorSearchIcon"
+            onClick={() => setIsSearchOpen(true)}
+            className="p-2 text-muted-foreground hover:text-foreground hover:scale-115 transition-all duration-200 cursor-pointer"
+            title="Search Screens (Ctrl+K)"
+            aria-label="Search Screens"
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M17.7802 16.7196L12.6615 11.6009C13.653 10.3762 14.25 8.81991 14.25 7.12494C14.25 3.19648 11.0535 0 7.12498 0C3.19648 0 0 3.19645 0 7.12491C0 11.0534 3.19651 14.2498 7.12501 14.2498C8.82 14.2498 10.3763 13.6529 11.601 12.6614L16.7198 17.7801C16.866 17.9263 17.058 17.9998 17.25 17.9998C17.442 17.9998 17.634 17.9263 17.7803 17.7801C18.0735 17.4868 18.0735 17.0128 17.7802 16.7196ZM7.12501 12.7499C4.023 12.7499 1.50001 10.2269 1.50001 7.12491C1.50001 4.02293 4.023 1.49996 7.12501 1.49996C10.227 1.49996 12.75 4.02293 12.75 7.12491C12.75 10.2269 10.227 12.7499 7.12501 12.7499Z"
+                fill="currentColor"
+              />
+            </svg>
+          </button>
+        </div>
+      )}
 
       {isSearchOpen && (
         <div 
