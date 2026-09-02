@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { 
   MapPin, 
@@ -99,26 +100,30 @@ import {
   Edit3
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { MapVehicle } from "@/components/map/leaflet-osm-map";
 
-interface FleetVehicle {
-  id: string;
-  name: string;
-  plate: string;
-  type: string;
+// Dynamic import for Leaflet map (client-only)
+const LeafletOsmMap = dynamic(
+  () => import("@/components/map/leaflet-osm-map").then((mod) => mod.LeafletOsmMap),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full bg-[#e5e3df] flex items-center justify-center text-muted-foreground text-xs font-semibold">
+        Loading OpenStreetMap...
+      </div>
+    )
+  }
+);
+
+interface FleetVehicle extends MapVehicle {
   group: string;
   subGroup: string;
-  status: "Running" | "Idle" | "Stopped" | "Inactive";
-  speed: number;
   avgSpeed: number;
   maxSpeed: number;
-  voltage: string;
   batteryLevel: number;
   gsm: number;
   ignition: boolean;
-  time: string;
-  address: string;
   fullAddress: string;
-  driver: string;
   mobile: string;
   currentTrip: string;
   odometer: string;
@@ -127,8 +132,6 @@ interface FleetVehicle {
   fuelRefill: number;
   fuelDrain: number;
   fuelConsumption: string;
-  lat: number;
-  lng: number;
   duration: string;
   runningHrs: string;
   idleHrs: string;
@@ -633,10 +636,10 @@ export default function TrackingPage() {
 
   const [hoveredAddress, setHoveredAddress] = React.useState<{ id: string; text: string; top: number; left: number } | null>(null);
 
-  // Map Zoom & Pan State
+  // Map Zoom & Layer State
   const [zoomLevel, setZoomLevel] = React.useState<number>(13);
-  const [centerLat, setCenterLat] = React.useState<number>(0.2985);
-  const [centerLng, setCenterLng] = React.useState<number>(32.5350);
+  const [mapLayerType, setMapLayerType] = React.useState<"osm" | "humanitarian" | "satellite">("osm");
+  const [showLayerMenu, setShowLayerMenu] = React.useState(false);
 
   const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>({
     "Mega Milk": true,
@@ -671,97 +674,67 @@ export default function TrackingPage() {
     });
   }, [statusFilter, searchQuery]);
 
-  // Convert lat/lng to OpenStreetMap tile grid coords
-  const lon2tile = (lon: number, zoom: number) => Math.floor(((lon + 180) / 360) * Math.pow(2, zoom));
-  const lat2tile = (lat: number, zoom: number) =>
-    Math.floor(
-      ((1 - Math.log(Math.tan((lat * Math.PI) / 180) + 1 / Math.cos((lat * Math.PI) / 180)) / Math.PI) / 2) *
-        Math.pow(2, zoom)
-    );
-
-  const tileCenter = React.useMemo(() => {
-    const x = lon2tile(centerLng, zoomLevel);
-    const y = lat2tile(centerLat, zoomLevel);
-    return { x, y };
-  }, [centerLat, centerLng, zoomLevel]);
-
-  // Generate 5x5 OpenStreetMap grid tiles around center
-  const osmTiles = React.useMemo(() => {
-    const tiles: { x: number; y: number; offsetX: number; offsetY: number; url: string }[] = [];
-    const span = 2;
-    for (let dx = -span; dx <= span; dx++) {
-      for (let dy = -span; dy <= span; dy++) {
-        const tx = tileCenter.x + dx;
-        const ty = tileCenter.y + dy;
-        tiles.push({
-          x: tx,
-          y: ty,
-          offsetX: dx * 256,
-          offsetY: dy * 256,
-          url: `https://tile.openstreetmap.org/${zoomLevel}/${tx}/${ty}.png`,
-        });
-      }
-    }
-    return tiles;
-  }, [tileCenter, zoomLevel]);
-
   return (
     <div className="relative w-full h-screen overflow-hidden bg-[#e5e3df] text-foreground select-none flex flex-col font-sans">
       
-      {/* 1. INTERACTIVE OPENSTREETMAP (OSM) TILE ENGINE */}
-      <div className="absolute inset-0 z-0 bg-[#e5e3df] overflow-hidden">
-        {/* OpenStreetMap Dynamic Tile Grid Layer */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="relative w-0 h-0">
-            {osmTiles.map((tile) => (
-              <img
-                key={`${tile.x}-${tile.y}-${zoomLevel}`}
-                src={tile.url}
-                alt="OpenStreetMap"
-                className="absolute w-[256px] h-[256px] max-w-none transition-opacity duration-200"
-                style={{
-                  left: `${tile.offsetX - 128}px`,
-                  top: `${tile.offsetY - 128}px`,
-                }}
-                loading="lazy"
-                onError={(e) => {
-                  // Fallback tile background
-                  (e.target as HTMLElement).style.backgroundColor = "#e0ded9";
-                }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Selected Vehicle Live Marker on OSM Coordinates */}
-        <div 
-          className="absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group"
-          onClick={() => {
+      {/* 1. REAL LIVE LEAFLET OPENSTREETMAP (OSM) MAP COMPONENT */}
+      <div className="absolute inset-0 z-0">
+        <LeafletOsmMap
+          vehicles={filteredVehicles}
+          selectedVehicle={selectedVehicle}
+          onSelectVehicle={(v) => {
+            const fullV = VEHICLES_DATA.find((item) => item.id === v.id);
+            if (fullV) setSelectedVehicle(fullV);
             setIsDetailDrawerOpen(true);
             setIsPinTabDrawerOpen(false);
           }}
-        >
-          <div className="w-7 h-13 bg-slate-100 border-2 border-slate-700 rounded-sm shadow-2xl flex flex-col items-center justify-between p-0.5 ring-4 ring-[#2558c4]">
-            <div className="w-full h-3 bg-slate-800 rounded-xs" />
-            <div className="w-2.5 h-2.5 rounded-full bg-[#22c55e] animate-ping" />
-          </div>
-          <div className="mt-1 px-2 py-0.5 bg-[#15803d] text-white text-[10px] font-bold rounded shadow-lg whitespace-nowrap">
-            {selectedVehicle.name} - {selectedVehicle.speed} km/h
-          </div>
-        </div>
-
-        {/* OpenStreetMap Legal Attribution */}
-        <div className="absolute bottom-1 right-12 z-10 bg-white/80 dark:bg-card/80 text-[10px] px-1.5 py-0.5 rounded text-muted-foreground border border-border">
-          © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer" className="text-[#1a56db] hover:underline">OpenStreetMap</a> contributors
-        </div>
+          zoomLevel={zoomLevel}
+          mapLayerType={mapLayerType}
+        />
       </div>
 
       {/* 2. RIGHT MAP ACTIONS TOOLBAR */}
       <div className="absolute top-2 right-2 bottom-3 z-30 flex flex-col justify-between items-end pointer-events-none">
-        <div className="bg-white dark:bg-card border border-border shadow-xl rounded flex flex-col text-muted-foreground overflow-hidden pointer-events-auto">
+        <div className="relative bg-white dark:bg-card border border-border shadow-xl rounded flex flex-col text-muted-foreground overflow-visible pointer-events-auto">
           <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Search Location"><Search className="w-3.5 h-3.5" /></button>
           <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Map Layers"><Layers className="w-3.5 h-3.5" /></button>
+          
+          {/* Layer Selector */}
+          <button 
+            type="button" 
+            onClick={() => setShowLayerMenu(!showLayerMenu)}
+            className={cn("p-2 hover:bg-muted hover:text-foreground", showLayerMenu && "text-[#2558c4]")} 
+            title="Map Layers"
+          >
+            <Layers className="w-3.5 h-3.5" />
+          </button>
+
+          {showLayerMenu && (
+            <div className="absolute right-10 top-6 bg-white dark:bg-card border border-border shadow-2xl rounded p-2 text-xs font-semibold w-48 space-y-1 z-50">
+              <div 
+                onClick={() => { setMapLayerType("osm"); setShowLayerMenu(false); }}
+                className={cn("p-1.5 rounded cursor-pointer hover:bg-muted flex items-center justify-between", mapLayerType === "osm" && "bg-sky-50 text-[#2558c4]")}
+              >
+                <span>OpenStreetMap Standard</span>
+                {mapLayerType === "osm" && <Check className="w-3 h-3 text-[#2558c4]" />}
+              </div>
+              <div 
+                onClick={() => { setMapLayerType("humanitarian"); setShowLayerMenu(false); }}
+                className={cn("p-1.5 rounded cursor-pointer hover:bg-muted flex items-center justify-between", mapLayerType === "humanitarian" && "bg-sky-50 text-[#2558c4]")}
+              >
+                <span>OSM Humanitarian</span>
+                {mapLayerType === "humanitarian" && <Check className="w-3 h-3 text-[#2558c4]" />}
+              </div>
+              <div 
+                onClick={() => { setMapLayerType("satellite"); setShowLayerMenu(false); }}
+                className={cn("p-1.5 rounded cursor-pointer hover:bg-muted flex items-center justify-between", mapLayerType === "satellite" && "bg-sky-50 text-[#2558c4]")}
+              >
+                <span>Satellite / Hybrid</span>
+                {mapLayerType === "satellite" && <Check className="w-3 h-3 text-[#2558c4]" />}
+              </div>
+            </div>
+          )}
+
           <div className="h-[1px] bg-border" />
           <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Radar / Antenna"><Radio className="w-3.5 h-3.5" /></button>
           <div className="h-[1px] bg-border" />
@@ -775,7 +748,17 @@ export default function TrackingPage() {
           <div className="h-[1px] bg-border" />
           <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="User Directory"><User className="w-3.5 h-3.5" /></button>
           <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Target"><Crosshair className="w-3.5 h-3.5" /></button>
+          <button 
+            type="button" 
+            onClick={() => {
+              // Recenter on selected vehicle
+              setZoomLevel(15);
+            }}
+            className="p-2 hover:bg-muted hover:text-foreground" 
+            title="Center Target"
+          >
+            <Crosshair className="w-3.5 h-3.5" />
+          </button>
           <div className="h-[1px] bg-border" />
           <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Ruler / Measure"><SlidersHorizontal className="w-3.5 h-3.5" /></button>
           <div className="h-[1px] bg-border" />
@@ -797,7 +780,7 @@ export default function TrackingPage() {
           <div className="bg-white dark:bg-card border border-border rounded shadow flex flex-col overflow-hidden text-muted-foreground">
             <button 
               type="button" 
-              onClick={() => setZoomLevel((z) => Math.min(z + 1, 18))} 
+              onClick={() => setZoomLevel((z) => Math.min(z + 1, 19))} 
               className="p-1.5 hover:bg-muted hover:text-foreground"
               title="Zoom In"
             >
@@ -815,7 +798,7 @@ export default function TrackingPage() {
           </div>
 
           <div className="text-[9px] font-bold bg-white/90 dark:bg-card/90 px-1.5 py-0.5 rounded border border-border text-foreground shadow">
-            {zoomLevel >= 13 ? "1 km" : zoomLevel >= 8 ? "50 km" : "1000 km"}
+            {zoomLevel >= 15 ? "500 m" : zoomLevel >= 13 ? "1 km" : zoomLevel >= 8 ? "50 km" : "1000 km"}
           </div>
         </div>
       </div>
@@ -984,7 +967,7 @@ export default function TrackingPage() {
                           className="px-5 py-1 bg-slate-100 dark:bg-muted/40 flex items-center justify-between cursor-pointer font-bold text-muted-foreground text-[10px]"
                         >
                           <div className="flex items-center gap-1.5">
-                            <ChevronDown className={cn("w-3 h-3 transition-transform", !isSubExpanded && "-rotate-90")} />
+                            <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", !isSubExpanded && "-rotate-90")} />
                             <input type="checkbox" defaultChecked onClick={(e) => e.stopPropagation()} className="w-3 h-3 rounded" />
                             <span>{grpName}</span>
                           </div>
@@ -1000,8 +983,6 @@ export default function TrackingPage() {
                                   key={v.id}
                                   onClick={() => {
                                     setSelectedVehicle(v);
-                                    setCenterLat(v.lat);
-                                    setCenterLng(v.lng);
                                     setIsDetailDrawerOpen(true);
                                     setIsPinTabDrawerOpen(false);
                                   }}
