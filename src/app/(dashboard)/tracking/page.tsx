@@ -813,7 +813,7 @@ export default function TrackingPage() {
             <div className="h-[1px] bg-border" />
             <button 
               type="button" 
-              onClick={() => setZoomLevel((z) => Math.max(z - 1, 3))} 
+              onClick={() => setZoomLevel((z) => Math.max(z - 1, 4))} 
               className="p-1.5 hover:bg-muted hover:text-foreground"
               title="Zoom Out"
             >

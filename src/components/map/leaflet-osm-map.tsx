@@ -39,7 +39,7 @@ export function LeafletOsmMap({
   const markersRef = React.useRef<Record<string, L.Marker>>({});
   const tileLayerRef = React.useRef<L.TileLayer | null>(null);
 
-  // Initialize Map
+  // Initialize Map with safe boundary bounds and minZoom to prevent blank gaps
   React.useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -48,7 +48,14 @@ export function LeafletOsmMap({
 
     const mapInstance = L.map(mapContainerRef.current, {
       center: [initialLat, initialLng],
-      zoom: zoomLevel,
+      zoom: Math.max(zoomLevel, 4),
+      minZoom: 4,
+      maxZoom: 19,
+      maxBounds: [
+        [-85, -180],
+        [85, 180],
+      ],
+      maxBoundsViscosity: 1.0,
       zoomControl: false,
       attributionControl: false,
     });
@@ -56,6 +63,11 @@ export function LeafletOsmMap({
     // Default OpenStreetMap Tile Layer
     const tileLayer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
+      minZoom: 4,
+      bounds: [
+        [-85, -180],
+        [85, 180],
+      ],
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(mapInstance);
 
@@ -99,17 +111,23 @@ export function LeafletOsmMap({
 
     const newTileLayer = L.tileLayer(url, {
       maxZoom: 19,
+      minZoom: 4,
+      bounds: [
+        [-85, -180],
+        [85, 180],
+      ],
       attribution,
     }).addTo(map);
 
     tileLayerRef.current = newTileLayer;
   }, [map, mapLayerType]);
 
-  // Update Zoom Level
+  // Update Zoom Level safely
   React.useEffect(() => {
     if (!map) return;
-    if (map.getZoom() !== zoomLevel) {
-      map.setZoom(zoomLevel);
+    const clampedZoom = Math.max(4, Math.min(19, zoomLevel));
+    if (map.getZoom() !== clampedZoom) {
+      map.setZoom(clampedZoom);
     }
   }, [map, zoomLevel]);
 
