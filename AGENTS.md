@@ -2,6 +2,26 @@
 
 When acting as an AI coding agent for this repository, you must adhere strictly to the following instructions:
 
+## Critical Execution Directives
+
+- **Do not stop after identifying differences.** You must actually **IMPLEMENT** the required fixes across the project.
+- **Do not give recommendations instead of changes.**
+- **Inspect → compare → identify → implement → test → compare again → refine.**
+- Repeat the browser comparison cycle until the development system closely matches the production/original system in both UI/UX and functionality.
+- When you discover a discrepancy, trace it back to the correct shared component, design token, asset, page component, or business logic rather than applying unnecessary isolated hacks.
+- Preserve existing functionality and existing architecture wherever possible.
+- Never replace working functionality with mocked or placeholder functionality.
+- Never redesign the product simply because you can make it look different.
+- **Priority Hierarchy:**
+  1. **ORIGINAL PRODUCTION PARITY**
+  2. **FUNCTIONAL CORRECTNESS**
+  3. **VISUAL CONSISTENCY**
+  4. **RESPONSIVE CONSISTENCY**
+  5. **PERFORMANCE**
+  6. **ACCESSIBILITY**
+  7. **MAINTAINABLE IMPLEMENTATION**
+- Perform the work deeply across the entire application, not only the currently visible page.
+
 ## Core Directives
 
 1. **Read Architecture First:** Always understand the concepts in `ARCHITECTURE.md` and `DESIGN_SYSTEM.md` before generating code.
