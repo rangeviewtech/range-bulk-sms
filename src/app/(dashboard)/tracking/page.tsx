@@ -352,7 +352,7 @@ export default function TrackingPage() {
   const [leftActiveTab, setLeftActiveTab] = React.useState<"object" | "driver" | "address" | "geofence">("object");
   const [isObjectPanelCollapsed, setIsObjectPanelCollapsed] = React.useState(false);
   
-  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = React.useState(true);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = React.useState(false);
   const [isPinTabDrawerOpen, setIsPinTabDrawerOpen] = React.useState(false);
 
   const [selectedVehicle, setSelectedVehicle] = React.useState<FleetVehicle>(VEHICLES_DATA[0]);
