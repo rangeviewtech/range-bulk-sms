@@ -157,21 +157,21 @@ const VEHICLES_DATA: FleetVehicle[] = [
     type: "Truck",
     group: "Mega Milk",
     subGroup: "Mega Milk",
-    status: "Idle",
-    speed: 0,
+    status: "Running",
+    speed: 39,
     avgSpeed: 5,
     maxSpeed: 26,
-    voltage: "28.4V",
+    voltage: "28.3V",
     batteryLevel: 95,
     gsm: 5,
     ignition: true,
-    time: "02-09-2026 10:03:29 PM",
-    address: "Kaguto Road,Kiruhura, Uganda (NW)",
-    fullAddress: "Kaguto Road,Kiruhura, Western Region, Uganda (NW)",
+    time: "02-09-2026 10:53:52 PM",
+    address: "Kaguta Road,Kiruhura,Western Region, Western Region, Uganda ...",
+    fullAddress: "Kaguta Road,Kiruhura,Western Region, Western Region, Uganda (NW)",
     driver: "--",
     mobile: "--",
-    currentTrip: "35.21 km",
-    odometer: "0092684",
+    currentTrip: "38.70 km",
+    odometer: "0092688",
     fuelLiter: 134,
     fuelCapacity: 230,
     fuelRefill: 64,
@@ -179,7 +179,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     fuelConsumption: "56.91 liter",
     lat: -0.1983,
     lng: 30.8251,
-    duration: "00:03",
+    duration: "00:01",
     runningHrs: "00:04 hrs",
     idleHrs: "00:05 hrs",
     stopHrs: "04:10 hrs",
@@ -693,9 +693,9 @@ export default function TrackingPage() {
 
   const counts = {
     running: 1,
-    idle: 1,
-    stopped: 7,
-    inactive: 2,
+    idle: 0,
+    stopped: 9,
+    inactive: 1,
     nodata: 0,
     total: 11,
   };
@@ -764,23 +764,22 @@ export default function TrackingPage() {
             <ChevronsRight className={cn("w-4 h-4 transition-transform", !isDetailDrawerOpen && "rotate-180")} />
           </button>
 
-          {/* Right Map Action Buttons */}
-          <div className="relative bg-white dark:bg-card border border-border shadow-xl rounded flex flex-col text-muted-foreground overflow-visible">
-            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Search Location"><Search className="w-3.5 h-3.5" /></button>
-            <div className="h-[1px] bg-border" />
+          {/* Right Map Action Buttons - Narrow white strip matching Production */}
+          <div className="relative bg-white dark:bg-card border border-border shadow-lg rounded flex flex-col text-muted-foreground overflow-visible">
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Search Location"><Search className="w-3.5 h-3.5" /></button>
             
             {/* Layer Selector */}
             <button 
               type="button" 
               onClick={() => setShowLayerMenu(!showLayerMenu)}
-              className={cn("p-2 hover:bg-muted hover:text-foreground", showLayerMenu && "text-[#2558c4]")} 
+              className={cn("p-1.5 hover:bg-muted hover:text-foreground", showLayerMenu && "text-[#2558c4]")} 
               title="Map Layers"
             >
               <Layers className="w-3.5 h-3.5" />
             </button>
 
             {showLayerMenu && (
-              <div className="absolute right-10 top-6 bg-white dark:bg-card border border-border shadow-2xl rounded p-2 text-xs font-semibold w-48 space-y-1 z-50">
+              <div className="absolute right-9 top-6 bg-white dark:bg-card border border-border shadow-2xl rounded p-2 text-xs font-semibold w-48 space-y-1 z-50">
                 <div 
                   onClick={() => { setMapLayerType("satellite"); setShowLayerMenu(false); }}
                   className={cn("p-1.5 rounded cursor-pointer hover:bg-muted flex items-center justify-between", mapLayerType === "satellite" && "bg-sky-50 text-[#2558c4]")}
@@ -805,32 +804,21 @@ export default function TrackingPage() {
               </div>
             )}
 
-            <div className="h-[1px] bg-border" />
-            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Radar / Antenna"><Radio className="w-3.5 h-3.5" /></button>
-            <div className="h-[1px] bg-border" />
-            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Traffic Grid"><Grid className="w-3.5 h-3.5" /></button>
-            <div className="h-[1px] bg-border" />
-            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="POIs"><MapPin className="w-3.5 h-3.5" /></button>
-            <div className="h-[1px] bg-border" />
-            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Tags"><Tag className="w-3.5 h-3.5" /></button>
-            <div className="h-[1px] bg-border" />
-            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Share"><Share2 className="w-3.5 h-3.5" /></button>
-            <div className="h-[1px] bg-border" />
-            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="User Directory"><User className="w-3.5 h-3.5" /></button>
-            <div className="h-[1px] bg-border" />
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Radar"><Radio className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Grid"><Grid className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="POIs"><MapPin className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Share"><Share2 className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Users"><User className="w-3.5 h-3.5" /></button>
             <button 
               type="button" 
-              onClick={() => {
-                setZoomLevel(15);
-              }}
-              className="p-2 hover:bg-muted hover:text-foreground" 
+              onClick={() => { setZoomLevel(15); }}
+              className="p-1.5 hover:bg-muted hover:text-foreground" 
               title="Center Target"
             >
               <Crosshair className="w-3.5 h-3.5" />
             </button>
-            <div className="h-[1px] bg-border" />
-            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Ruler / Measure"><SlidersHorizontal className="w-3.5 h-3.5" /></button>
-            <div className="h-[1px] bg-border" />
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Geofence"><Flag className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Map Pins"><Pin className="w-3.5 h-3.5" /></button>
             <button 
               type="button" 
               onClick={() => {
@@ -838,7 +826,7 @@ export default function TrackingPage() {
                 setIsObjectListSettingsOpen(!isObjectListSettingsOpen);
                 setIsDetailDrawerOpen(false);
               }}
-              className={cn("p-2 hover:bg-muted hover:text-foreground", isObjectListSettingsOpen && "text-[#2563eb]")}
+              className={cn("p-1.5 hover:bg-muted hover:text-foreground", isObjectListSettingsOpen && "text-[#2563eb]")}
               title="Object List Settings"
             >
               <Settings className="w-3.5 h-3.5" />
@@ -877,8 +865,8 @@ export default function TrackingPage() {
       {/* 4. LEFT FLEET OBJECT PANEL WITH COLLAPSE HANDLE (MATCHING MEDIA_1788374330745.PNG) */}
       <div
         className={cn(
-          "absolute top-2 left-2 bottom-2 z-30 w-[590px] max-w-[calc(100vw-20px)] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col transition-all duration-300 overflow-visible",
-          isObjectPanelCollapsed && "-translate-x-[600px]"
+          "absolute top-2 left-2 bottom-2 z-30 w-[620px] max-w-[calc(100vw-20px)] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col transition-all duration-300 overflow-visible",
+          isObjectPanelCollapsed && "-translate-x-[640px]"
         )}
       >
         {/* Trapezoid Collapse/Expand Handle on Right Border */}
@@ -1077,8 +1065,8 @@ export default function TrackingPage() {
                                     setIsObjectListSettingsOpen(false);
                                   }}
                                   className={cn(
-                                    "p-2 pl-6 flex items-start gap-2 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-muted/40",
-                                    isSelected && "bg-[#e6f0fa] dark:bg-sky-950/60 border-l-4 border-[#2558c4]"
+                                    "p-2 pl-6 flex items-start gap-2 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-muted/40 border-b border-border/50",
+                                    isSelected && "bg-[#e2e8f0] dark:bg-sky-950/60"
                                   )}
                                 >
                                   <input type="checkbox" defaultChecked onClick={(e) => e.stopPropagation()} className="mt-1 w-3 h-3 rounded shrink-0" />
@@ -1102,13 +1090,13 @@ export default function TrackingPage() {
                                         <span className="font-bold text-[#1a56db] dark:text-[#29a4ff] truncate">{v.name}</span>
                                         <Edit3 className="w-2.5 h-2.5 text-muted-foreground/60 hover:text-foreground cursor-pointer shrink-0" />
                                       </div>
-                                      <span className="text-[10px] font-bold text-foreground">{v.speed}</span>
                                     </div>
 
                                     {/* Line 2: Timestamp + Telemetry Icons + Voltage */}
                                     <div className="text-[10px] text-muted-foreground flex items-center justify-between">
                                       <span>{v.time}</span>
                                       <div className="flex items-center gap-1.5">
+                                        <span className="text-foreground mr-1">{v.speed}</span>
                                         {columnsConfig.ignition && (
                                           <span title={v.ignition ? "Ignition ON" : "Ignition OFF"}>
                                             <Key className={cn("w-3 h-3", v.ignition ? "text-emerald-600" : "text-rose-500")} />
@@ -1142,7 +1130,7 @@ export default function TrackingPage() {
                                     <div className="text-[10px] text-muted-foreground flex items-center justify-between">
                                       {columnsConfig.address && (
                                         <div 
-                                          className="truncate max-w-[250px] hover:text-[#2558c4] cursor-pointer"
+                                          className="truncate max-w-[280px] hover:text-[#2558c4] cursor-pointer"
                                           onMouseEnter={(e) => {
                                             const rect = e.currentTarget.getBoundingClientRect();
                                             setHoveredAddress({ id: v.id, text: v.fullAddress, top: rect.top, left: rect.right + 10 });
@@ -1630,14 +1618,14 @@ export default function TrackingPage() {
       {isDetailDrawerOpen && selectedVehicle && !isObjectListSettingsOpen && (
         <div className="absolute top-2 right-12 bottom-2 z-30 w-[320px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs select-none">
           
-          {/* Blue Top Utility Bar with Exact Production Icons */}
-          <div className="h-[34px] bg-[#2558c4] text-white px-3 flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-3">
-              <button type="button" className="hover:text-sky-300 cursor-pointer" title="Pin / Location"><MapPin className="w-3.5 h-3.5" /></button>
-              <button type="button" className="hover:text-sky-300 cursor-pointer" title="Alerts"><Bell className="w-3.5 h-3.5" /></button>
-              <button type="button" className="hover:text-sky-300 cursor-pointer" title="Maintenance"><Wrench className="w-3.5 h-3.5" /></button>
+          {/* Top Utility Bar - Round colored icon buttons matching Production close-up */}
+          <div className="h-[34px] bg-[#1e293b] text-white px-2 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-1.5">
+              <button type="button" className="w-7 h-7 rounded-full bg-[#eab308] hover:bg-[#ca8a04] text-white flex items-center justify-center" title="Location"><MapPin className="w-3 h-3" /></button>
+              <button type="button" className="w-7 h-7 rounded-full bg-[#334155] hover:bg-[#475569] text-white flex items-center justify-center" title="Alerts"><Bell className="w-3 h-3" /></button>
+              <button type="button" className="w-7 h-7 rounded-full bg-[#334155] hover:bg-[#475569] text-white flex items-center justify-center" title="Maintenance"><Wrench className="w-3 h-3" /></button>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <button 
                 type="button" 
                 onClick={() => {
@@ -1645,10 +1633,10 @@ export default function TrackingPage() {
                   setIsObjectListSettingsOpen(true);
                   setIsDetailDrawerOpen(false);
                 }}
-                className="hover:text-sky-300 cursor-pointer"
+                className="w-7 h-7 rounded-full bg-[#334155] hover:bg-[#475569] text-white flex items-center justify-center"
                 title="Configure Tooltip Widgets"
               >
-                <Settings className="w-3.5 h-3.5" />
+                <Settings className="w-3 h-3" />
               </button>
             </div>
           </div>
@@ -1682,16 +1670,16 @@ export default function TrackingPage() {
             </div>
 
             {/* 4. Current Trip & Odometer */}
-            <div className="space-y-1 bg-slate-50 dark:bg-muted/20 p-2.5 rounded border border-border">
-              <div className="flex justify-between text-muted-foreground">
-                <span>Current Trip</span>
+            <div className="space-y-1 text-[11px]">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Current Trip</span>
                 <span className="font-bold text-foreground">{selectedVehicle.currentTrip}</span>
               </div>
-              <div className="flex justify-between items-center pt-1">
+              <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Odometer</span>
                 <div className="flex gap-0.5 font-mono text-xs font-bold">
                   {selectedVehicle.odometer.split("").map((ch, i) => (
-                    <span key={i} className="px-1 py-0.5 bg-slate-900 text-white rounded-xs">
+                    <span key={i} className="px-1 py-0.5 bg-white dark:bg-card border border-slate-300 dark:border-slate-600 text-foreground rounded-xs">
                       {ch}
                     </span>
                   ))}
@@ -1718,24 +1706,27 @@ export default function TrackingPage() {
               </div>
             </div>
 
-            {/* 6. Quick Action Icons Strip */}
-            <div className="grid grid-cols-6 border-y border-border py-2 text-center text-muted-foreground">
-              <button type="button" className="hover:text-[#2558c4] flex justify-center" title="Navigate"><Navigation className="w-3.5 h-3.5" /></button>
-              <button type="button" className="hover:text-[#2558c4] flex justify-center" title="Send"><Send className="w-3.5 h-3.5" /></button>
-              <button type="button" className="hover:text-[#2558c4] flex justify-center" title="Share"><Share2 className="w-3.5 h-3.5" /></button>
-              <button type="button" className="hover:text-[#2558c4] flex justify-center" title="Security"><ShieldAlert className="w-3.5 h-3.5" /></button>
-              <button type="button" className="hover:text-[#2558c4] flex justify-center" title="Layers"><Layers className="w-3.5 h-3.5" /></button>
-              <button type="button" className="hover:text-[#2558c4] flex justify-center" title="Live View"><Eye className="w-3.5 h-3.5" /></button>
+            {/* 6. Quick Action Icons Strip - Dark Circle Buttons matching Production */}
+            <div className="grid grid-cols-6 border-y border-border py-2 text-center">
+              <button type="button" className="flex justify-center" title="Live View"><div className="w-6 h-6 rounded-full bg-[#334155] hover:bg-[#1e293b] text-white flex items-center justify-center"><Eye className="w-3 h-3" /></div></button>
+              <button type="button" className="flex justify-center" title="Share"><div className="w-6 h-6 rounded-full bg-[#334155] hover:bg-[#1e293b] text-white flex items-center justify-center"><Share2 className="w-3 h-3" /></div></button>
+              <button type="button" className="flex justify-center" title="Navigate"><div className="w-6 h-6 rounded-full bg-[#334155] hover:bg-[#1e293b] text-white flex items-center justify-center"><Navigation className="w-3 h-3" /></div></button>
+              <button type="button" className="flex justify-center" title="Security"><div className="w-6 h-6 rounded-full bg-[#334155] hover:bg-[#1e293b] text-white flex items-center justify-center"><ShieldAlert className="w-3 h-3" /></div></button>
+              <button type="button" className="flex justify-center" title="Users"><div className="w-6 h-6 rounded-full bg-[#334155] hover:bg-[#1e293b] text-white flex items-center justify-center"><Users className="w-3 h-3" /></div></button>
+              <button type="button" className="flex justify-center" title="Compass"><div className="w-6 h-6 rounded-full bg-[#334155] hover:bg-[#1e293b] text-white flex items-center justify-center"><Compass className="w-3 h-3" /></div></button>
             </div>
 
-            {/* 7. FUEL CARD */}
+            {/* 7. FUEL CARD - matching production layout */}
             <div className="border border-border rounded overflow-hidden shadow-xs">
-              <div className="bg-[#2558c4] text-white px-3 py-1.5 flex items-center justify-between font-bold text-xs">
+              <div className="bg-white dark:bg-card px-3 py-1.5 flex items-center justify-between font-bold text-xs text-foreground border-b border-border">
                 <div className="flex items-center gap-1.5">
-                  <Fuel className="w-3.5 h-3.5 text-amber-300" />
+                  <Fuel className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
                   <span>Fuel</span>
                 </div>
-                <Car className="w-3 h-3" />
+                <div className="flex items-center gap-1">
+                  <button type="button" className="p-1 border border-[#2558c4] text-[#2558c4] rounded-xs" title="Vehicle"><Car className="w-3 h-3" /></button>
+                  <button type="button" className="p-1 border border-border text-muted-foreground rounded-xs hover:text-foreground" title="Graph"><LineChart className="w-3 h-3" /></button>
+                </div>
               </div>
 
               <div className="p-2.5 space-y-2">

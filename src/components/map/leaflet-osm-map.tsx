@@ -229,9 +229,7 @@ export function LeafletOsmMap({
             <div style="width: 10px; height: 10px; border-radius: 50%; background-color: ${statusBg}; ${
         v.status === "Running" ? "box-shadow: 0 0 8px #22c55e;" : ""
       }"></div>
-          </div>
-          <div style="margin-top: 3px; background-color: ${statusBg}; color: #ffffff; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.4); white-space: nowrap; border: 1px solid rgba(255,255,255,0.4);">
-            ${v.name} - ${v.speed} km/h
+            <div style="width: 100%; height: 4px; background-color: #cbd5e1; border-radius: 1px;"></div>
           </div>
         </div>
       `;
@@ -239,8 +237,8 @@ export function LeafletOsmMap({
       const customIcon = L.divIcon({
         className: "custom-osm-vehicle-icon",
         html: htmlContent,
-        iconSize: [140, 75],
-        iconAnchor: [70, 75],
+        iconSize: [28, 44],
+        iconAnchor: [14, 44],
       });
 
       if (markersRef.current[v.id]) {
