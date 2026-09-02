@@ -97,7 +97,8 @@ import {
   CreditCard,
   Armchair,
   DoorClosed,
-  Edit3
+  Edit3,
+  ChevronsRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { MapVehicle } from "@/components/map/leaflet-osm-map";
@@ -156,29 +157,29 @@ const VEHICLES_DATA: FleetVehicle[] = [
     type: "Truck",
     group: "Mega Milk",
     subGroup: "Mega Milk",
-    status: "Stopped",
+    status: "Idle",
     speed: 0,
     avgSpeed: 5,
     maxSpeed: 26,
-    voltage: "28.3V",
+    voltage: "28.4V",
     batteryLevel: 95,
     gsm: 5,
-    ignition: false,
-    time: "02-09-2026 07:27:49 PM",
-    address: "Bigusha,Kiruhura, Uganda (SE)",
-    fullAddress: "Bigusha,Kiruhura, Uganda (SE)",
+    ignition: true,
+    time: "02-09-2026 10:03:29 PM",
+    address: "Kaguto Road,Kiruhura, Uganda (NW)",
+    fullAddress: "Kaguto Road,Kiruhura, Western Region, Uganda (NW)",
     driver: "--",
     mobile: "--",
-    currentTrip: "2.15 km",
-    odometer: "0082318",
-    fuelLiter: 186,
+    currentTrip: "35.21 km",
+    odometer: "0092684",
+    fuelLiter: 134,
     fuelCapacity: 230,
-    fuelRefill: 68,
+    fuelRefill: 64,
     fuelDrain: 0,
-    fuelConsumption: "0.00 liter",
+    fuelConsumption: "56.91 liter",
     lat: -0.1983,
     lng: 30.8251,
-    duration: "00:08",
+    duration: "00:03",
     runningHrs: "00:04 hrs",
     idleHrs: "00:05 hrs",
     stopHrs: "04:10 hrs",
@@ -204,13 +205,13 @@ const VEHICLES_DATA: FleetVehicle[] = [
     speed: 0,
     avgSpeed: 42,
     maxSpeed: 75,
-    voltage: "24.8V",
+    voltage: "25.4V",
     batteryLevel: 75,
     gsm: 4,
     ignition: false,
-    time: "02-09-2026 07:26:06 PM",
-    address: "Mugore,Kiruhura, Uganda (SE)",
-    fullAddress: "Mugore,Kiruhura, Uganda (SE)",
+    time: "02-09-2026 10:02:38 PM",
+    address: "Mugore,Kiruhura, Uganda (NE)",
+    fullAddress: "Mugore,Kiruhura, Western Region, Uganda (NE)",
     driver: "--",
     mobile: "+256 703 497552",
     currentTrip: "0.00 km",
@@ -244,15 +245,15 @@ const VEHICLES_DATA: FleetVehicle[] = [
     type: "Truck (Fuel Tanker)",
     group: "Mega Milk",
     subGroup: "Mega Milk",
-    status: "Running",
+    status: "Stopped",
     speed: 0,
     avgSpeed: 38,
     maxSpeed: 82,
     voltage: "25.4V",
     batteryLevel: 95,
     gsm: 5,
-    ignition: true,
-    time: "02-09-2026 07:27:43 PM",
+    ignition: false,
+    time: "02-09-2026 10:02:34 PM",
     address: "Kabawo,Nateete,Rubaga,Kampala,P.O. BOX 6940, Uganda (NE)",
     fullAddress: "Kabawo,Nateete,Rubaga,Kampala,P.O. BOX 6940, Uganda (NE)",
     driver: "--",
@@ -296,7 +297,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     batteryLevel: 60,
     gsm: 3,
     ignition: false,
-    time: "02-09-2026 07:00:12 PM",
+    time: "02-09-2026 09:37:05 PM",
     address: "Mbarara - Masaka Road,Kibwera,Western Region,",
     fullAddress: "Mbarara - Masaka Road,Kibwera,PO BOX 1051, Western Region, Uganda (SE)",
     driver: "--",
@@ -340,7 +341,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     batteryLevel: 50,
     gsm: 3,
     ignition: false,
-    time: "02-09-2026 06:35:28 PM",
+    time: "02-09-2026 09:49:31 PM",
     address: "Mbarara - Masaka Road,Kibwera,Western Region,",
     fullAddress: "Mbarara - Masaka Road,Kibwera,Western Region, Uganda (SE)",
     driver: "--",
@@ -428,9 +429,9 @@ const VEHICLES_DATA: FleetVehicle[] = [
     batteryLevel: 80,
     gsm: 4,
     ignition: false,
-    time: "02-09-2026 06:52:55 PM",
-    address: "RN27,Goli, Uganda (SW)",
-    fullAddress: "RN27,Goli, Uganda (SW)",
+    time: "02-09-2026 10:02:09 PM",
+    address: "RN27,Goli, Uganda (SE)",
+    fullAddress: "RN27,Goli, Uganda (SE)",
     driver: "--",
     mobile: "--",
     currentTrip: "12.30 km",
@@ -464,15 +465,15 @@ const VEHICLES_DATA: FleetVehicle[] = [
     type: "Truck",
     group: "Weldone Logistics",
     subGroup: "Weldone Logistics",
-    status: "Idle",
+    status: "Stopped",
     speed: 0,
     avgSpeed: 28,
     maxSpeed: 60,
-    voltage: "25.6V",
+    voltage: "25.5V",
     batteryLevel: 90,
     gsm: 5,
-    ignition: true,
-    time: "02-09-2026 07:12:19 PM",
+    ignition: false,
+    time: "02-09-2026 09:12:40 PM",
     address: "Old Jinja Road,Namanve,Bbuto,Kira,Wakiso,002...",
     fullAddress: "Old Jinja Road,Namanve,Bbuto,Kira,Wakiso,00256, Uganda (SW)",
     driver: "--",
@@ -512,11 +513,11 @@ const VEHICLES_DATA: FleetVehicle[] = [
     speed: 0,
     avgSpeed: 20,
     maxSpeed: 45,
-    voltage: "25.5V",
+    voltage: "25.4V",
     batteryLevel: 85,
     gsm: 4,
     ignition: false,
-    time: "02-09-2026 07:08:01 PM",
+    time: "02-09-2026 08:38:02 PM",
     address: "Hima,Kasese, Uganda (SE)",
     fullAddress: "Hima,Kasese, Uganda (SE)",
     driver: "--",
@@ -556,11 +557,11 @@ const VEHICLES_DATA: FleetVehicle[] = [
     speed: 0,
     avgSpeed: 55,
     maxSpeed: 95,
-    voltage: "12.8V",
+    voltage: "12.9V",
     batteryLevel: 90,
     gsm: 4,
     ignition: false,
-    time: "02-09-2026 07:26:48 PM",
+    time: "02-09-2026 10:03:32 PM",
     address: "Apac Road,Te-Obia,Central,Lira Municipality,Northern Region,...",
     fullAddress: "Apac Road,Te-Obia,Central,Lira Municipality,Northern Region, Uganda (SW)",
     driver: "--",
@@ -597,16 +598,16 @@ const VEHICLES_DATA: FleetVehicle[] = [
     group: "walen",
     subGroup: "walen",
     status: "Running",
-    speed: 33,
+    speed: 7,
     avgSpeed: 48,
     maxSpeed: 80,
-    voltage: "26.4V",
+    voltage: "26.6V",
     batteryLevel: 92,
     gsm: 4,
     ignition: true,
-    time: "02-09-2026 07:26:40 PM",
-    address: "Sironko Kapchorwa Road,Muyembe,Bugisu",
-    fullAddress: "Sironko Kapchorwa Road,Muyembe,Bugisu sub-region, Uganda (SE)",
+    time: "02-09-2026 10:03:14 PM",
+    address: "Busia Road,Tororo, Uganda (SE)",
+    fullAddress: "Busia Road,Tororo, Eastern Region, Uganda (SE)",
     driver: "--",
     mobile: "--",
     currentTrip: "84.30 km",
@@ -616,8 +617,8 @@ const VEHICLES_DATA: FleetVehicle[] = [
     fuelRefill: 150,
     fuelDrain: 0,
     fuelConsumption: "62.10 liter",
-    lat: 1.2914,
-    lng: 34.3412,
+    lat: 0.6914,
+    lng: 34.1812,
     duration: "00:25",
     runningHrs: "03:10 hrs",
     idleHrs: "00:10 hrs",
@@ -639,10 +640,10 @@ export default function TrackingPage() {
   const [leftActiveTab, setLeftActiveTab] = React.useState<"object" | "driver" | "address" | "geofence">("object");
   const [isObjectPanelCollapsed, setIsObjectPanelCollapsed] = React.useState(false);
   
-  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = React.useState(false);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = React.useState(true);
   const [isObjectListSettingsOpen, setIsObjectListSettingsOpen] = React.useState(false);
 
-  const [selectedVehicle, setSelectedVehicle] = React.useState<FleetVehicle>(VEHICLES_DATA[2]); // UA 498EP
+  const [selectedVehicle, setSelectedVehicle] = React.useState<FleetVehicle>(VEHICLES_DATA[0]); // UA 347AP
   const [searchQuery, setSearchQuery] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<string>("all");
 
@@ -672,9 +673,9 @@ export default function TrackingPage() {
   const [tempColumnsConfig, setTempColumnsConfig] = React.useState({ ...columnsConfig });
   const [settingsSearch, setSettingsSearch] = React.useState("");
 
-  // Map Zoom & Layer State
-  const [zoomLevel, setZoomLevel] = React.useState<number>(13);
-  const [mapLayerType, setMapLayerType] = React.useState<"osm" | "humanitarian" | "satellite">("osm");
+  // Map Zoom & Layer State (Default to Satellite matching production)
+  const [zoomLevel, setZoomLevel] = React.useState<number>(8);
+  const [mapLayerType, setMapLayerType] = React.useState<"osm" | "humanitarian" | "satellite">("satellite");
   const [showLayerMenu, setShowLayerMenu] = React.useState(false);
 
   const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>({
@@ -691,10 +692,10 @@ export default function TrackingPage() {
   };
 
   const counts = {
-    running: 2,
+    running: 1,
     idle: 1,
     stopped: 7,
-    inactive: 1,
+    inactive: 2,
     nodata: 0,
     total: 11,
   };
@@ -713,7 +714,7 @@ export default function TrackingPage() {
   return (
     <div className="relative w-full h-screen overflow-hidden bg-[#e5e3df] text-foreground select-none flex flex-col font-sans">
       
-      {/* 1. REAL LIVE LEAFLET OPENSTREETMAP (OSM) MAP COMPONENT */}
+      {/* 1. REAL LIVE LEAFLET OPENSTREETMAP / SATELLITE MAP COMPONENT */}
       <div className="absolute inset-0 z-0">
         <LeafletOsmMap
           vehicles={filteredVehicles}
@@ -729,87 +730,120 @@ export default function TrackingPage() {
         />
       </div>
 
-      {/* 2. RIGHT MAP ACTIONS TOOLBAR */}
+      {/* 2. TOP PLAYBACK RIBBON (MATCHING MEDIA_1788374352320.PNG) */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
+        <button
+          type="button"
+          onClick={() => {
+            alert("Playback mode activated for " + selectedVehicle.plate);
+          }}
+          className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-5 py-1 text-xs font-bold shadow-md flex items-center gap-1.5 transition-colors cursor-pointer"
+          style={{
+            clipPath: "polygon(0 0, 100% 0, 88% 100%, 12% 100%)",
+          }}
+          title="Playback Route History"
+        >
+          <Play className="w-3.5 h-3.5 fill-white" />
+          <span>Playback</span>
+        </button>
+      </div>
+
+      {/* 3. RIGHT MAP ACTIONS TOOLBAR */}
       <div className="absolute top-2 right-2 bottom-3 z-30 flex flex-col justify-between items-end pointer-events-none">
-        <div className="relative bg-white dark:bg-card border border-border shadow-xl rounded flex flex-col text-muted-foreground overflow-visible pointer-events-auto">
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Search Location"><Search className="w-3.5 h-3.5" /></button>
-          <div className="h-[1px] bg-border" />
-          
-          {/* Layer Selector */}
-          <button 
-            type="button" 
-            onClick={() => setShowLayerMenu(!showLayerMenu)}
-            className={cn("p-2 hover:bg-muted hover:text-foreground", showLayerMenu && "text-[#2558c4]")} 
-            title="Map Layers"
+        <div className="flex flex-col items-end gap-1.5 pointer-events-auto">
+          {/* Top Blue Double Chevrons Expand Button (Matching media_1788374386333.png) */}
+          <button
+            type="button"
+            onClick={() => {
+              setIsDetailDrawerOpen(!isDetailDrawerOpen);
+              setIsObjectListSettingsOpen(false);
+            }}
+            className="w-8 h-8 rounded bg-[#1e40af] hover:bg-[#1e3a8a] text-white flex items-center justify-center shadow-lg cursor-pointer transition-colors"
+            title="Toggle Detail Drawer"
           >
-            <Layers className="w-3.5 h-3.5" />
+            <ChevronsRight className={cn("w-4 h-4 transition-transform", !isDetailDrawerOpen && "rotate-180")} />
           </button>
 
-          {showLayerMenu && (
-            <div className="absolute right-10 top-6 bg-white dark:bg-card border border-border shadow-2xl rounded p-2 text-xs font-semibold w-48 space-y-1 z-50">
-              <div 
-                onClick={() => { setMapLayerType("osm"); setShowLayerMenu(false); }}
-                className={cn("p-1.5 rounded cursor-pointer hover:bg-muted flex items-center justify-between", mapLayerType === "osm" && "bg-sky-50 text-[#2558c4]")}
-              >
-                <span>OpenStreetMap Standard</span>
-                {mapLayerType === "osm" && <Check className="w-3 h-3 text-[#2558c4]" />}
-              </div>
-              <div 
-                onClick={() => { setMapLayerType("humanitarian"); setShowLayerMenu(false); }}
-                className={cn("p-1.5 rounded cursor-pointer hover:bg-muted flex items-center justify-between", mapLayerType === "humanitarian" && "bg-sky-50 text-[#2558c4]")}
-              >
-                <span>OSM Humanitarian</span>
-                {mapLayerType === "humanitarian" && <Check className="w-3 h-3 text-[#2558c4]" />}
-              </div>
-              <div 
-                onClick={() => { setMapLayerType("satellite"); setShowLayerMenu(false); }}
-                className={cn("p-1.5 rounded cursor-pointer hover:bg-muted flex items-center justify-between", mapLayerType === "satellite" && "bg-sky-50 text-[#2558c4]")}
-              >
-                <span>Satellite / Hybrid</span>
-                {mapLayerType === "satellite" && <Check className="w-3 h-3 text-[#2558c4]" />}
-              </div>
-            </div>
-          )}
+          {/* Right Map Action Buttons */}
+          <div className="relative bg-white dark:bg-card border border-border shadow-xl rounded flex flex-col text-muted-foreground overflow-visible">
+            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Search Location"><Search className="w-3.5 h-3.5" /></button>
+            <div className="h-[1px] bg-border" />
+            
+            {/* Layer Selector */}
+            <button 
+              type="button" 
+              onClick={() => setShowLayerMenu(!showLayerMenu)}
+              className={cn("p-2 hover:bg-muted hover:text-foreground", showLayerMenu && "text-[#2558c4]")} 
+              title="Map Layers"
+            >
+              <Layers className="w-3.5 h-3.5" />
+            </button>
 
-          <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Radar / Antenna"><Radio className="w-3.5 h-3.5" /></button>
-          <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Traffic Grid"><Grid className="w-3.5 h-3.5" /></button>
-          <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="POIs"><MapPin className="w-3.5 h-3.5" /></button>
-          <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Tags"><Tag className="w-3.5 h-3.5" /></button>
-          <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Share"><Share2 className="w-3.5 h-3.5" /></button>
-          <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="User Directory"><User className="w-3.5 h-3.5" /></button>
-          <div className="h-[1px] bg-border" />
-          <button 
-            type="button" 
-            onClick={() => {
-              // Recenter on selected vehicle
-              setZoomLevel(15);
-            }}
-            className="p-2 hover:bg-muted hover:text-foreground" 
-            title="Center Target"
-          >
-            <Crosshair className="w-3.5 h-3.5" />
-          </button>
-          <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Ruler / Measure"><SlidersHorizontal className="w-3.5 h-3.5" /></button>
-          <div className="h-[1px] bg-border" />
-          <button 
-            type="button" 
-            onClick={() => {
-              setTempColumnsConfig({ ...columnsConfig });
-              setIsObjectListSettingsOpen(!isObjectListSettingsOpen);
-              setIsDetailDrawerOpen(false);
-            }}
-            className={cn("p-2 hover:bg-muted hover:text-foreground", isObjectListSettingsOpen && "text-[#2563eb]")}
-            title="Object List Settings"
-          >
-            <Settings className="w-3.5 h-3.5" />
-          </button>
+            {showLayerMenu && (
+              <div className="absolute right-10 top-6 bg-white dark:bg-card border border-border shadow-2xl rounded p-2 text-xs font-semibold w-48 space-y-1 z-50">
+                <div 
+                  onClick={() => { setMapLayerType("satellite"); setShowLayerMenu(false); }}
+                  className={cn("p-1.5 rounded cursor-pointer hover:bg-muted flex items-center justify-between", mapLayerType === "satellite" && "bg-sky-50 text-[#2558c4]")}
+                >
+                  <span>Satellite / Hybrid</span>
+                  {mapLayerType === "satellite" && <Check className="w-3 h-3 text-[#2558c4]" />}
+                </div>
+                <div 
+                  onClick={() => { setMapLayerType("osm"); setShowLayerMenu(false); }}
+                  className={cn("p-1.5 rounded cursor-pointer hover:bg-muted flex items-center justify-between", mapLayerType === "osm" && "bg-sky-50 text-[#2558c4]")}
+                >
+                  <span>OpenStreetMap Standard</span>
+                  {mapLayerType === "osm" && <Check className="w-3 h-3 text-[#2558c4]" />}
+                </div>
+                <div 
+                  onClick={() => { setMapLayerType("humanitarian"); setShowLayerMenu(false); }}
+                  className={cn("p-1.5 rounded cursor-pointer hover:bg-muted flex items-center justify-between", mapLayerType === "humanitarian" && "bg-sky-50 text-[#2558c4]")}
+                >
+                  <span>OSM Humanitarian</span>
+                  {mapLayerType === "humanitarian" && <Check className="w-3 h-3 text-[#2558c4]" />}
+                </div>
+              </div>
+            )}
+
+            <div className="h-[1px] bg-border" />
+            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Radar / Antenna"><Radio className="w-3.5 h-3.5" /></button>
+            <div className="h-[1px] bg-border" />
+            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Traffic Grid"><Grid className="w-3.5 h-3.5" /></button>
+            <div className="h-[1px] bg-border" />
+            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="POIs"><MapPin className="w-3.5 h-3.5" /></button>
+            <div className="h-[1px] bg-border" />
+            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Tags"><Tag className="w-3.5 h-3.5" /></button>
+            <div className="h-[1px] bg-border" />
+            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Share"><Share2 className="w-3.5 h-3.5" /></button>
+            <div className="h-[1px] bg-border" />
+            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="User Directory"><User className="w-3.5 h-3.5" /></button>
+            <div className="h-[1px] bg-border" />
+            <button 
+              type="button" 
+              onClick={() => {
+                setZoomLevel(15);
+              }}
+              className="p-2 hover:bg-muted hover:text-foreground" 
+              title="Center Target"
+            >
+              <Crosshair className="w-3.5 h-3.5" />
+            </button>
+            <div className="h-[1px] bg-border" />
+            <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Ruler / Measure"><SlidersHorizontal className="w-3.5 h-3.5" /></button>
+            <div className="h-[1px] bg-border" />
+            <button 
+              type="button" 
+              onClick={() => {
+                setTempColumnsConfig({ ...columnsConfig });
+                setIsObjectListSettingsOpen(!isObjectListSettingsOpen);
+                setIsDetailDrawerOpen(false);
+              }}
+              className={cn("p-2 hover:bg-muted hover:text-foreground", isObjectListSettingsOpen && "text-[#2563eb]")}
+              title="Object List Settings"
+            >
+              <Settings className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
 
         {/* Map Zoom Controls & Scale Indicator */}
@@ -840,15 +874,32 @@ export default function TrackingPage() {
         </div>
       </div>
 
-      {/* 3. LEFT FLEET OBJECT PANEL */}
+      {/* 4. LEFT FLEET OBJECT PANEL WITH COLLAPSE HANDLE (MATCHING MEDIA_1788374330745.PNG) */}
       <div
         className={cn(
-          "absolute top-2 left-2 bottom-2 z-30 w-[590px] max-w-[calc(100vw-20px)] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col transition-all duration-300 overflow-hidden",
-          isObjectPanelCollapsed && "-translate-x-[610px]"
+          "absolute top-2 left-2 bottom-2 z-30 w-[590px] max-w-[calc(100vw-20px)] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col transition-all duration-300 overflow-visible",
+          isObjectPanelCollapsed && "-translate-x-[600px]"
         )}
       >
+        {/* Trapezoid Collapse/Expand Handle on Right Border */}
+        <button
+          type="button"
+          onClick={() => setIsObjectPanelCollapsed(!isObjectPanelCollapsed)}
+          className="absolute -right-3.5 top-1/2 -translate-y-1/2 w-4 h-16 bg-[#94a3b8]/90 hover:bg-[#64748b] text-white flex items-center justify-center cursor-pointer rounded-r-md shadow-md z-40 transition-colors"
+          style={{
+            clipPath: "polygon(0 0, 100% 18%, 100% 82%, 0 100%)",
+          }}
+          title={isObjectPanelCollapsed ? "Expand Panel" : "Collapse Panel"}
+        >
+          {isObjectPanelCollapsed ? (
+            <ChevronRight className="w-3.5 h-3.5" />
+          ) : (
+            <ChevronLeft className="w-3.5 h-3.5" />
+          )}
+        </button>
+
         {/* Top Navigation Strip */}
-        <div className="h-[34px] bg-[#2558c4] text-white px-3 flex items-center justify-between shrink-0">
+        <div className="h-[34px] bg-[#2558c4] text-white px-3 flex items-center justify-between shrink-0 rounded-t">
           <div className="flex items-center gap-2 text-xs font-semibold">
             <button
               type="button"
@@ -1027,7 +1078,7 @@ export default function TrackingPage() {
                                   }}
                                   className={cn(
                                     "p-2 pl-6 flex items-start gap-2 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-muted/40",
-                                    isSelected && "bg-sky-50/80 dark:bg-sky-950/40 border-l-4 border-[#2558c4]"
+                                    isSelected && "bg-[#e6f0fa] dark:bg-sky-950/60 border-l-4 border-[#2558c4]"
                                   )}
                                 >
                                   <input type="checkbox" defaultChecked onClick={(e) => e.stopPropagation()} className="mt-1 w-3 h-3 rounded shrink-0" />
@@ -1303,7 +1354,7 @@ export default function TrackingPage() {
         </div>
       )}
 
-      {/* 4. OBJECT LIST SETTINGS DRAWER (EXACT 100% PARITY WITH PRODUCTION MEDIA_1788366432773.PNG) */}
+      {/* 5. OBJECT LIST SETTINGS DRAWER (EXACT 100% PARITY WITH PRODUCTION MEDIA_1788366432773.PNG) */}
       {isObjectListSettingsOpen && (
         <div className="absolute top-2 right-12 bottom-2 z-30 w-[300px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs select-none">
           {/* Header */}
@@ -1575,16 +1626,16 @@ export default function TrackingPage() {
         </div>
       )}
 
-      {/* 5. RIGHT FLOATING VEHICLE DETAIL DRAWER (ALL 16 CARDS) */}
+      {/* 6. RIGHT FLOATING VEHICLE DETAIL DRAWER (ALL 16 CARDS MATCHING PRODUCTION EXACTLY) */}
       {isDetailDrawerOpen && selectedVehicle && !isObjectListSettingsOpen && (
-        <div className="absolute top-2 right-12 bottom-2 z-30 w-[320px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs">
+        <div className="absolute top-2 right-12 bottom-2 z-30 w-[320px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs select-none">
           
-          {/* Blue Top Utility Bar */}
+          {/* Blue Top Utility Bar with Exact Production Icons */}
           <div className="h-[34px] bg-[#2558c4] text-white px-3 flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-2.5">
-              <button type="button" className="hover:text-sky-300" title="Pin Tab"><Pin className="w-3.5 h-3.5" /></button>
-              <button type="button" className="hover:text-sky-300" title="Alerts"><Bell className="w-3.5 h-3.5" /></button>
-              <button type="button" className="hover:text-sky-300" title="Maintenance"><Wrench className="w-3.5 h-3.5" /></button>
+            <div className="flex items-center gap-3">
+              <button type="button" className="hover:text-sky-300 cursor-pointer" title="Pin / Location"><MapPin className="w-3.5 h-3.5" /></button>
+              <button type="button" className="hover:text-sky-300 cursor-pointer" title="Alerts"><Bell className="w-3.5 h-3.5" /></button>
+              <button type="button" className="hover:text-sky-300 cursor-pointer" title="Maintenance"><Wrench className="w-3.5 h-3.5" /></button>
             </div>
             <div className="flex items-center gap-2">
               <button 
@@ -1594,18 +1645,10 @@ export default function TrackingPage() {
                   setIsObjectListSettingsOpen(true);
                   setIsDetailDrawerOpen(false);
                 }}
-                className="hover:text-sky-300"
+                className="hover:text-sky-300 cursor-pointer"
                 title="Configure Tooltip Widgets"
               >
                 <Settings className="w-3.5 h-3.5" />
-              </button>
-              <button 
-                type="button" 
-                onClick={() => setIsDetailDrawerOpen(false)}
-                className="hover:text-rose-300"
-                title="Close"
-              >
-                <ChevronRight className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -1618,7 +1661,7 @@ export default function TrackingPage() {
               <Info className="w-4 h-4 text-[#2558c4] dark:text-[#29a4ff] cursor-pointer" />
             </div>
 
-            {/* 2. Vehicle 3D Render Image */}
+            {/* 2. Vehicle 3D Render Image (Fuel Tanker White Truck) */}
             <div className="w-full h-[85px] bg-slate-100 dark:bg-muted/40 rounded flex items-center justify-center p-2 border border-border overflow-hidden">
               <img
                 src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=400&q=80"
@@ -1658,9 +1701,12 @@ export default function TrackingPage() {
 
             {/* 5. Driver & Mobile */}
             <div className="text-[11px] space-y-1">
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Driver</span>
-                <span className="font-semibold text-foreground">{selectedVehicle.driver}</span>
+                <div className="flex items-center gap-1">
+                  <span className="font-semibold text-foreground">{selectedVehicle.driver}</span>
+                  <Edit3 className="w-2.5 h-2.5 text-muted-foreground/60 hover:text-foreground cursor-pointer" />
+                </div>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Mobile</span>
@@ -1699,8 +1745,8 @@ export default function TrackingPage() {
                     <path d="M 20 100 A 80 80 0 0 1 60 45" fill="none" stroke="#ef4444" strokeWidth="12" strokeLinecap="round" />
                     <path d="M 60 45 A 80 80 0 0 1 140 45" fill="none" stroke="#f59e0b" strokeWidth="12" />
                     <path d="M 140 45 A 80 80 0 0 1 180 100" fill="none" stroke="#10b981" strokeWidth="12" strokeLinecap="round" />
-                    <line x1="100" y1="95" x2="152" y2="52" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" />
-                    <circle cx="100" cy="95" r="6" fill="#1e293b" />
+                    <line x1="100" y1="95" x2="135" y2="48" stroke="#0284c7" strokeWidth="3.5" strokeLinecap="round" />
+                    <circle cx="100" cy="95" r="6" fill="#0284c7" />
                     <text x="25" y="105" fontSize="10" fontWeight="bold" fill="#ef4444">E</text>
                     <text x="170" y="105" fontSize="10" fontWeight="bold" fill="#10b981">F</text>
                   </svg>
@@ -1711,16 +1757,15 @@ export default function TrackingPage() {
 
                 <div className="text-[11px] space-y-1 bg-slate-50 dark:bg-muted/20 p-2 rounded">
                   <div className="flex justify-between"><span>Tanks</span><span className="font-bold">1</span></div>
-                  <div className="flex justify-between"><span>Refill</span><span className="font-semibold text-emerald-600">1 (68 L)</span></div>
+                  <div className="flex justify-between"><span>Refill</span><span className="font-semibold text-emerald-600">1 (64 L)</span></div>
                   <div className="flex justify-between"><span>Drain</span><span className="font-semibold text-muted-foreground">NA (0)</span></div>
                   <div className="flex justify-between"><span>Tank Capacity</span><span className="font-bold">{selectedVehicle.fuelCapacity}.0 Liter</span></div>
                 </div>
 
                 <div className="text-[10px] space-y-1 border-t border-border pt-1 text-muted-foreground">
-                  <div className="flex justify-between"><span>Consumption</span><span className="font-bold text-foreground">0.00 liter</span></div>
-                  <div className="flex justify-between"><span>Carbon Emission</span><span className="font-bold text-foreground">Sensor: NA | CAN: NA</span></div>
-                  <div className="flex justify-between"><span>Waste</span><span className="font-bold text-foreground">0 liter</span></div>
-                  <div className="flex justify-between"><span>Remaining</span><span className="font-bold text-foreground">0 km</span></div>
+                  <div className="flex justify-between"><span>Consumption</span><span className="font-bold text-foreground">Sensor: {selectedVehicle.fuelConsumption} | CAN: 0.00 liter</span></div>
+                  <div className="flex justify-between"><span>Carbon Emission</span><span className="font-bold text-foreground">Sensor: 0.00 | CAN: NA</span></div>
+                  <div className="flex justify-between"><span>Waste</span><span className="font-bold text-foreground">Pre-defined: 0 Liter</span></div>
                 </div>
               </div>
             </div>
@@ -1752,7 +1797,7 @@ export default function TrackingPage() {
               <div className="p-2.5 space-y-2 text-[11px]">
                 <div className="bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 p-2 rounded flex justify-between">
                   <span className="text-muted-foreground text-xs font-semibold">Distance</span>
-                  <span className="font-extrabold text-sm text-[#2558c4] dark:text-[#29a4ff]">0 km</span>
+                  <span className="font-extrabold text-sm text-[#2558c4] dark:text-[#29a4ff]">{selectedVehicle.currentTrip}</span>
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between"><span className="text-muted-foreground">Running</span><span className="font-bold text-emerald-600">{selectedVehicle.runningHrs}</span></div>

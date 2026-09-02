@@ -27,17 +27,32 @@ interface LeafletOsmMapProps {
   mapLayerType?: "osm" | "humanitarian" | "satellite";
 }
 
+// Sample GPS route trajectory between Western Region and Kampala/Entebbe (matching production)
+const ROUTE_COORDINATES: [number, number][] = [
+  [-0.6010, 30.6810],
+  [-0.5841, 30.6521],
+  [-0.2155, 30.8410],
+  [-0.1983, 30.8251],
+  [0.0512, 31.8541],
+  [0.1812, 32.2541],
+  [0.2212, 32.4210],
+  [0.2985, 32.5350],
+  [0.3152, 32.5810],
+];
+
 export function LeafletOsmMap({
   vehicles,
   selectedVehicle,
   onSelectVehicle,
   zoomLevel,
-  mapLayerType = "osm",
+  mapLayerType = "satellite",
 }: LeafletOsmMapProps) {
   const mapContainerRef = React.useRef<HTMLDivElement>(null);
   const [map, setMap] = React.useState<L.Map | null>(null);
   const markersRef = React.useRef<Record<string, L.Marker>>({});
   const tileLayerRef = React.useRef<L.TileLayer | null>(null);
+  const polylineRef = React.useRef<L.Polyline | null>(null);
+  const destMarkerRef = React.useRef<L.Marker | null>(null);
 
   // Initialize Map with safe boundary bounds and minZoom to prevent blank gaps
   React.useEffect(() => {
@@ -48,7 +63,7 @@ export function LeafletOsmMap({
 
     const mapInstance = L.map(mapContainerRef.current, {
       center: [initialLat, initialLng],
-      zoom: Math.max(zoomLevel, 4),
+      zoom: Math.max(zoomLevel, 8),
       minZoom: 4,
       maxZoom: 19,
       maxBounds: [
@@ -60,8 +75,14 @@ export function LeafletOsmMap({
       attributionControl: false,
     });
 
-    // Default OpenStreetMap Tile Layer
-    const tileLayer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    // Default to Satellite / Hybrid (matching production) or OpenStreetMap
+    const defaultUrl = mapLayerType === "satellite"
+      ? "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+      : mapLayerType === "humanitarian"
+      ? "https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+      : "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+
+    const tileLayer = L.tileLayer(defaultUrl, {
       maxZoom: 19,
       minZoom: 4,
       bounds: [
@@ -131,7 +152,7 @@ export function LeafletOsmMap({
     }
   }, [map, zoomLevel]);
 
-  // Update Center when selected vehicle changes
+  // Update Center and draw Route Polyline when selected vehicle changes
   React.useEffect(() => {
     if (!map || !selectedVehicle) return;
 
@@ -139,6 +160,47 @@ export function LeafletOsmMap({
       animate: true,
       duration: 0.8,
     });
+
+    // Draw route polyline trajectory (bright cyan/blue matching production)
+    if (polylineRef.current) {
+      map.removeLayer(polylineRef.current);
+    }
+
+    const routePoints: [number, number][] = [
+      ...ROUTE_COORDINATES,
+      [selectedVehicle.lat, selectedVehicle.lng]
+    ];
+
+    const polyline = L.polyline(routePoints, {
+      color: "#0284c7",
+      weight: 4,
+      opacity: 0.9,
+      smoothFactor: 1,
+    }).addTo(map);
+
+    polylineRef.current = polyline;
+
+    // Add Destination Marker (Kampala green badge matching production)
+    if (destMarkerRef.current) {
+      map.removeLayer(destMarkerRef.current);
+    }
+
+    const destHtml = `
+      <div style="background-color: #65a30d; color: #ffffff; font-weight: bold; font-size: 11px; padding: 3px 8px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.5); display: flex; items-center; gap: 4px; white-space: nowrap;">
+        <span>Kampala</span>
+      </div>
+    `;
+
+    const destIcon = L.divIcon({
+      className: "custom-dest-badge",
+      html: destHtml,
+      iconSize: [80, 26],
+      iconAnchor: [40, 13],
+    });
+
+    const destMarker = L.marker([0.3152, 32.5810], { icon: destIcon, zIndexOffset: 500 }).addTo(map);
+    destMarkerRef.current = destMarker;
+
   }, [map, selectedVehicle?.id, selectedVehicle?.lat, selectedVehicle?.lng]);
 
   // Render & Update Vehicle Markers with high visibility
