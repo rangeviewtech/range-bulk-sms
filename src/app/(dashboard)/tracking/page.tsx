@@ -90,11 +90,13 @@ import {
   DollarSign,
   History,
   Lock,
+  Unlock,
   Smartphone,
   Signal,
   CreditCard,
   Armchair,
-  DoorClosed
+  DoorClosed,
+  Edit3
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -104,6 +106,7 @@ interface FleetVehicle {
   plate: string;
   type: string;
   group: string;
+  subGroup: string;
   status: "Running" | "Idle" | "Stopped" | "Inactive";
   speed: number;
   avgSpeed: number;
@@ -114,6 +117,7 @@ interface FleetVehicle {
   ignition: boolean;
   time: string;
   address: string;
+  fullAddress: string;
   driver: string;
   mobile: string;
   currentTrip: string;
@@ -130,7 +134,6 @@ interface FleetVehicle {
   stopHrs: string;
   inactiveHrs: string;
   workingStart: string;
-  workingStartAddr: string;
   brand: string;
   model: string;
   deviceModel: string;
@@ -145,18 +148,20 @@ const VEHICLES_DATA: FleetVehicle[] = [
     id: "UA-347AP",
     name: "UA 347AP - Truck",
     plate: "UA 347AP",
-    type: "Truck (Fuel Tanker)",
+    type: "Truck",
     group: "Mega Milk",
-    status: "Running",
-    speed: 6,
+    subGroup: "Mega Milk",
+    status: "Stopped",
+    speed: 0,
     avgSpeed: 5,
     maxSpeed: 26,
-    voltage: "28.3V",
+    voltage: "25.5V",
     batteryLevel: 95,
     gsm: 5,
-    ignition: true,
-    time: "02-09-2026 12:16:57 AM",
-    address: "Kiribedda, Nateete, Rubaga, Kampala, P.O. BOX 6940, Uganda (SE)",
+    ignition: false,
+    time: "02-09-2026 04:33:16 PM",
+    address: "Byanamira,Kiruhura, Uganda (NE)",
+    fullAddress: "Byanamira,Kiruhura, Uganda (NE)",
     driver: "--",
     mobile: "--",
     currentTrip: "2.15 km",
@@ -170,10 +175,9 @@ const VEHICLES_DATA: FleetVehicle[] = [
     duration: "00:08",
     runningHrs: "00:04 hrs",
     idleHrs: "00:05 hrs",
-    stopHrs: "00:00 hrs",
+    stopHrs: "04:10 hrs",
     inactiveHrs: "00:00 hrs",
     workingStart: "12:00 AM",
-    workingStartAddr: "Albert Cook Road, Lungujja, Mengo, Rubaga, Kampala, Uganda (SW)",
     brand: "Ashok Leyland",
     model: "111/E4",
     deviceModel: "FMB125",
@@ -188,17 +192,19 @@ const VEHICLES_DATA: FleetVehicle[] = [
     plate: "UA 497EP",
     type: "Truck",
     group: "Mega Milk",
+    subGroup: "Mega Milk",
     status: "Stopped",
     speed: 0,
     avgSpeed: 42,
     maxSpeed: 75,
-    voltage: "24.9V",
+    voltage: "24.8V",
     batteryLevel: 75,
     gsm: 4,
     ignition: false,
-    time: "02-09-2026 12:14:40 AM",
-    address: "Mugore, Kiruhura, Uganda (SE)",
-    driver: "Mawanda Driver",
+    time: "02-09-2026 04:31:48 PM",
+    address: "Mugore,Kiruhura, Uganda (SE)",
+    fullAddress: "Mugore,Kiruhura, Uganda (SE)",
+    driver: "--",
     mobile: "+256 703 497552",
     currentTrip: "0.00 km",
     odometer: "0041333",
@@ -214,7 +220,6 @@ const VEHICLES_DATA: FleetVehicle[] = [
     stopHrs: "04:10 hrs",
     inactiveHrs: "00:00 hrs",
     workingStart: "08:00 AM",
-    workingStartAddr: "Mugore Central depot, Kiruhura",
     brand: "Isuzu",
     model: "FVR 34",
     deviceModel: "FMC130",
@@ -229,17 +234,19 @@ const VEHICLES_DATA: FleetVehicle[] = [
     plate: "UA 498EP",
     type: "Truck (Fuel Tanker)",
     group: "Mega Milk",
+    subGroup: "Mega Milk",
     status: "Running",
-    speed: 51,
+    speed: 6,
     avgSpeed: 38,
     maxSpeed: 82,
-    voltage: "27.8V",
+    voltage: "28.1V",
     batteryLevel: 95,
     gsm: 5,
     ignition: true,
-    time: "02-09-2026 12:16:54 AM",
-    address: "Mbarara Masaka Road, Lwengo, Uganda (NE)",
-    driver: "Ntale Driver",
+    time: "02-09-2026 04:33:31 PM",
+    address: "Kabawo,Nateete,Rubaga,Kampala,P.O. BOX 6940, Uganda (SE)",
+    fullAddress: "Kabawo,Nateete,Rubaga,Kampala,P.O. BOX 6940, Uganda (SE)",
+    driver: "--",
     mobile: "+256 701 498210",
     currentTrip: "92.50 km",
     odometer: "0013825",
@@ -255,7 +262,6 @@ const VEHICLES_DATA: FleetVehicle[] = [
     stopHrs: "00:10 hrs",
     inactiveHrs: "00:00 hrs",
     workingStart: "06:30 AM",
-    workingStartAddr: "Kaguta Highway Junction",
     brand: "Scania",
     model: "G460",
     deviceModel: "FMB125",
@@ -270,18 +276,20 @@ const VEHICLES_DATA: FleetVehicle[] = [
     plate: "UBH 279N",
     type: "Truck",
     group: "Mega Milk",
+    subGroup: "Mega Milk",
     status: "Stopped",
     speed: 0,
     avgSpeed: 45,
     maxSpeed: 78,
-    voltage: "23.1V",
+    voltage: "22V",
     batteryLevel: 60,
     gsm: 3,
     ignition: false,
-    time: "01-09-2026 11:58:10 PM",
-    address: "Mbarara Masaka Road, Kibwera, PO BOX 1051, Uganda (SE)",
-    driver: "David Mwangi",
-    mobile: "+256 704 279883",
+    time: "02-09-2026 03:33:54 PM",
+    address: "Mbarara - Masaka Road,Kibwera,Western Region,",
+    fullAddress: "Mbarara - Masaka Road,Kibwera,PO BOX 1051, Western Region, Uganda (SE)",
+    driver: "--",
+    mobile: "--",
     currentTrip: "112.40 km",
     odometer: "0092104",
     fuelLiter: 190,
@@ -296,7 +304,6 @@ const VEHICLES_DATA: FleetVehicle[] = [
     stopHrs: "02:15 hrs",
     inactiveHrs: "00:00 hrs",
     workingStart: "05:00 AM",
-    workingStartAddr: "Mbarara Depot",
     brand: "Mercedes-Benz",
     model: "Actros 3340",
     deviceModel: "FMB125",
@@ -306,23 +313,277 @@ const VEHICLES_DATA: FleetVehicle[] = [
     altitude: 1420,
   },
   {
+    id: "UBL-090W",
+    name: "UBL 090W - Truck",
+    plate: "UBL 090W",
+    type: "Truck",
+    group: "Mega Milk",
+    subGroup: "Mega Milk",
+    status: "Stopped",
+    speed: 0,
+    avgSpeed: 40,
+    maxSpeed: 70,
+    voltage: "18.2V",
+    batteryLevel: 50,
+    gsm: 3,
+    ignition: false,
+    time: "02-09-2026 04:00:14 PM",
+    address: "Mbarara - Masaka Road,Kibwera,Western Region,",
+    fullAddress: "Mbarara - Masaka Road,Kibwera,Western Region, Uganda (SE)",
+    driver: "--",
+    mobile: "--",
+    currentTrip: "45.10 km",
+    odometer: "0054210",
+    fuelLiter: 110,
+    fuelCapacity: 250,
+    fuelRefill: 0,
+    fuelDrain: 0,
+    fuelConsumption: "32.40 liter",
+    coords: { x: 42, y: 54, lat: "0.581200", lng: "30.684100" },
+    duration: "00:00",
+    runningHrs: "02:10 hrs",
+    idleHrs: "00:15 hrs",
+    stopHrs: "01:45 hrs",
+    inactiveHrs: "00:00 hrs",
+    workingStart: "08:30 AM",
+    brand: "Fuso",
+    model: "Canter",
+    deviceModel: "FMB125",
+    imei: "357073295191311",
+    operator: "Airtel",
+    satellites: 13,
+    altitude: 1290,
+  },
+  {
+    id: "UBN-3867X",
+    name: "UBN 3867X - Truck",
+    plate: "UBN 3867X",
+    type: "Truck",
+    group: "Mega Milk",
+    subGroup: "Mega Milk",
+    status: "Inactive",
+    speed: 0,
+    avgSpeed: 0,
+    maxSpeed: 0,
+    voltage: "4.3V",
+    batteryLevel: 10,
+    gsm: 1,
+    ignition: false,
+    time: "16-07-2026 08:37:42 PM",
+    address: "Mbarara - Masaka Road,Kibwera,Western Region,",
+    fullAddress: "Mbarara - Masaka Road,Kibwera,Western Region, Uganda (SE)",
+    driver: "--",
+    mobile: "--",
+    currentTrip: "0.00 km",
+    odometer: "0011980",
+    fuelLiter: 20,
+    fuelCapacity: 200,
+    fuelRefill: 0,
+    fuelDrain: 0,
+    fuelConsumption: "0.00 liter",
+    coords: { x: 40, y: 56, lat: "0.591200", lng: "30.674100" },
+    duration: "00:00",
+    runningHrs: "00:00 hrs",
+    idleHrs: "00:00 hrs",
+    stopHrs: "00:00 hrs",
+    inactiveHrs: "120:00 hrs",
+    workingStart: "--",
+    brand: "Tata",
+    model: "Prima",
+    deviceModel: "FMB125",
+    imei: "357073295191422",
+    operator: "MTN",
+    satellites: 0,
+    altitude: 1280,
+  },
+  {
+    id: "UBM-755K",
+    name: "UBM 755K - Truck",
+    plate: "UBM 755K",
+    type: "Truck",
+    group: "Weldone Logistics",
+    subGroup: "Weldone Logistics",
+    status: "Stopped",
+    speed: 0,
+    avgSpeed: 35,
+    maxSpeed: 65,
+    voltage: "NA",
+    batteryLevel: 80,
+    gsm: 4,
+    ignition: false,
+    time: "02-09-2026 04:33:26 PM",
+    address: "Goli, Uganda (SW)",
+    fullAddress: "Goli, Uganda (SW)",
+    driver: "--",
+    mobile: "--",
+    currentTrip: "12.30 km",
+    odometer: "0067340",
+    fuelLiter: 95,
+    fuelCapacity: 250,
+    fuelRefill: 0,
+    fuelDrain: 0,
+    fuelConsumption: "14.20 liter",
+    coords: { x: 62, y: 35, lat: "2.381200", lng: "31.214100" },
+    duration: "00:00",
+    runningHrs: "01:05 hrs",
+    idleHrs: "00:10 hrs",
+    stopHrs: "03:20 hrs",
+    inactiveHrs: "00:00 hrs",
+    workingStart: "09:00 AM",
+    brand: "Hino",
+    model: "500",
+    deviceModel: "FMB125",
+    imei: "357073295191771",
+    operator: "Airtel",
+    satellites: 14,
+    altitude: 1050,
+  },
+  {
+    id: "UBP-004L",
+    name: "UBP 004L - Truck",
+    plate: "UBP 004L",
+    type: "Truck",
+    group: "Weldone Logistics",
+    subGroup: "Weldone Logistics",
+    status: "Idle",
+    speed: 0,
+    avgSpeed: 28,
+    maxSpeed: 60,
+    voltage: "25.6V",
+    batteryLevel: 90,
+    gsm: 5,
+    ignition: true,
+    time: "02-09-2026 04:11:59 PM",
+    address: "Old Jinja Road,Namanve,Bbuto,Kira,Wakiso,002...",
+    fullAddress: "Old Jinja Road,Namanve,Bbuto,Kira,Wakiso,00256, Uganda (SW)",
+    driver: "--",
+    mobile: "--",
+    currentTrip: "18.40 km",
+    odometer: "0038910",
+    fuelLiter: 140,
+    fuelCapacity: 280,
+    fuelRefill: 50,
+    fuelDrain: 0,
+    fuelConsumption: "8.50 liter",
+    coords: { x: 56, y: 49, lat: "0.351200", lng: "32.684100" },
+    duration: "00:05",
+    runningHrs: "00:45 hrs",
+    idleHrs: "00:25 hrs",
+    stopHrs: "01:10 hrs",
+    inactiveHrs: "00:00 hrs",
+    workingStart: "10:00 AM",
+    brand: "MAN",
+    model: "TGS",
+    deviceModel: "FMB125",
+    imei: "357073295191884",
+    operator: "MTN",
+    satellites: 15,
+    altitude: 1190,
+  },
+  {
+    id: "UBQ-255H",
+    name: "UBQ 255H - Crane",
+    plate: "UBQ 255H",
+    type: "Crane",
+    group: "Weldone Logistics",
+    subGroup: "Weldone Logistics",
+    status: "Stopped",
+    speed: 0,
+    avgSpeed: 20,
+    maxSpeed: 45,
+    voltage: "25.7V",
+    batteryLevel: 85,
+    gsm: 4,
+    ignition: false,
+    time: "02-09-2026 04:01:57 PM",
+    address: "Hima,Kasese, Uganda (SE)",
+    fullAddress: "Hima,Kasese, Uganda (SE)",
+    driver: "--",
+    mobile: "--",
+    currentTrip: "5.00 km",
+    odometer: "0023400",
+    fuelLiter: 210,
+    fuelCapacity: 400,
+    fuelRefill: 0,
+    fuelDrain: 0,
+    fuelConsumption: "15.00 liter",
+    coords: { x: 34, y: 50, lat: "0.281200", lng: "30.184100" },
+    duration: "00:00",
+    runningHrs: "00:30 hrs",
+    idleHrs: "00:10 hrs",
+    stopHrs: "05:00 hrs",
+    inactiveHrs: "00:00 hrs",
+    workingStart: "07:30 AM",
+    brand: "Liebherr",
+    model: "LTM 1050",
+    deviceModel: "FMB125",
+    imei: "357073295191199",
+    operator: "Airtel",
+    satellites: 13,
+    altitude: 980,
+  },
+  {
+    id: "UA-807DX",
+    name: "UA 807DX - Ambula...",
+    plate: "UA 807DX",
+    type: "Ambulance",
+    group: "walen",
+    subGroup: "walen",
+    status: "Stopped",
+    speed: 0,
+    avgSpeed: 55,
+    maxSpeed: 95,
+    voltage: "12.7V",
+    batteryLevel: 90,
+    gsm: 4,
+    ignition: false,
+    time: "02-09-2026 04:33:29 PM",
+    address: "TeObia,Central,Lira Municipality,Apac, Uganda (SW)",
+    fullAddress: "TeObia,Central,Lira Municipality,Apac, Uganda (SW)",
+    driver: "--",
+    mobile: "--",
+    currentTrip: "34.00 km",
+    odometer: "0048120",
+    fuelLiter: 60,
+    fuelCapacity: 80,
+    fuelRefill: 0,
+    fuelDrain: 0,
+    fuelConsumption: "12.10 liter",
+    coords: { x: 60, y: 25, lat: "2.251200", lng: "32.904100" },
+    duration: "00:00",
+    runningHrs: "01:10 hrs",
+    idleHrs: "00:05 hrs",
+    stopHrs: "02:30 hrs",
+    inactiveHrs: "00:00 hrs",
+    workingStart: "08:15 AM",
+    brand: "Toyota",
+    model: "HiAce",
+    deviceModel: "FMB125",
+    imei: "357073295191662",
+    operator: "MTN",
+    satellites: 14,
+    altitude: 1080,
+  },
+  {
     id: "UBH-168K",
     name: "UBH 168K - Sinotruck",
     plate: "UBH 168K",
     type: "Heavy Tipper",
     group: "walen",
+    subGroup: "walen",
     status: "Running",
-    speed: 44,
+    speed: 15,
     avgSpeed: 48,
     maxSpeed: 80,
-    voltage: "26.6V",
+    voltage: "27.8V",
     batteryLevel: 92,
     gsm: 4,
     ignition: true,
-    time: "02-09-2026 12:16:56 AM",
-    address: "Sironko Kapchorwa Road, Bunambutye, Bugisa",
-    driver: "Samuel Kimani",
-    mobile: "+256 709 168775",
+    time: "02-09-2026 04:33:31 PM",
+    address: "Sironko Kapchorwa Road,Kalakeju,Nakapiripirit, Uganda",
+    fullAddress: "Sironko Kapchorwa Road,Kalakeju,Nakapiripirit, Uganda (SE)",
+    driver: "--",
+    mobile: "--",
     currentTrip: "84.30 km",
     odometer: "0078150",
     fuelLiter: 160,
@@ -337,7 +598,6 @@ const VEHICLES_DATA: FleetVehicle[] = [
     stopHrs: "00:30 hrs",
     inactiveHrs: "00:00 hrs",
     workingStart: "07:00 AM",
-    workingStartAddr: "Muyembe Quarry Depot",
     brand: "Sinotruk",
     model: "HOWO 371",
     deviceModel: "FMB125",
@@ -355,14 +615,19 @@ export default function TrackingPage() {
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = React.useState(false);
   const [isPinTabDrawerOpen, setIsPinTabDrawerOpen] = React.useState(false);
 
-  const [selectedVehicle, setSelectedVehicle] = React.useState<FleetVehicle>(VEHICLES_DATA[0]);
+  const [selectedVehicle, setSelectedVehicle] = React.useState<FleetVehicle>(VEHICLES_DATA[2]); // UA 498EP
   const [searchQuery, setSearchQuery] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<string>("all");
 
+  const [hoveredAddress, setHoveredAddress] = React.useState<{ id: string; text: string; top: number; left: number } | null>(null);
+
   const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>({
     "Mega Milk": true,
+    "Mega Milk-sub": true,
     "Weldone Logistics": true,
+    "Weldone Logistics-sub": true,
     "walen": true,
+    "walen-sub": true,
   });
 
   const toggleGroup = (groupName: string) => {
@@ -370,11 +635,12 @@ export default function TrackingPage() {
   };
 
   const counts = {
-    running: 3,
-    idle: 0,
-    stopped: 6,
+    running: 2,
+    idle: 1,
+    stopped: 7,
     inactive: 1,
-    total: 10,
+    nodata: 0,
+    total: 11,
   };
 
   const filteredVehicles = React.useMemo(() => {
@@ -389,59 +655,47 @@ export default function TrackingPage() {
   }, [statusFilter, searchQuery]);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#0c1e3d] text-foreground select-none flex flex-col font-sans">
+    <div className="relative w-full h-screen overflow-hidden bg-[#06101e] text-foreground select-none flex flex-col font-sans">
       
-      {/* 1. SATELLITE MAP CANVAS BACKGROUND */}
-      <div className="absolute inset-0 z-0 bg-[#0a1424] overflow-hidden">
+      {/* 1. SATELLITE EARTH MAP CANVAS BACKGROUND MATCHING PRODUCTION STEP 9522 */}
+      <div className="absolute inset-0 z-0 bg-[#06101e] overflow-hidden">
         <div 
           className="w-full h-full bg-cover bg-center transition-all duration-300"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=2400&q=80')`,
-            filter: "brightness(0.9) contrast(1.05)",
+            backgroundImage: `url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2600&q=85')`,
+            filter: "brightness(0.95) contrast(1.1)",
           }}
         />
 
-        <svg className="absolute inset-0 w-full h-full pointer-events-none">
-          <polyline
-            points="580,510 570,540 540,560 550,580 580,550 560,500 580,510"
-            fill="none"
-            stroke="#00b4d8"
-            strokeWidth="3.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="drop-shadow-[0_0_8px_#00b4d8]"
-          />
-          <rect x="535" y="495" width="24" height="15" rx="2" fill="#22c55e" />
-        </svg>
-
-        <div className="absolute top-[28%] left-[62%] -translate-x-1/2 text-white/90 font-bold text-xs drop-shadow-[0_1px_3px_black]">
-          Albert Cook Rd
+        {/* Global Geographic Labels */}
+        <div className="absolute top-[28%] left-[72%] text-white/80 font-semibold text-[10px] drop-shadow-[0_1px_3px_black] pointer-events-none">
+          South Korea
         </div>
-        <div className="absolute top-[32%] left-[66%] -translate-x-1/2 bg-white/90 dark:bg-card/90 px-2 py-0.5 rounded border shadow text-[10px] font-bold text-foreground flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full bg-blue-600" />
-          <span>HAWK EVENTS COMPANY LIMITED</span>
+        <div className="absolute top-[27%] left-[78%] text-white/80 font-semibold text-[10px] drop-shadow-[0_1px_3px_black] pointer-events-none">
+          Japan
         </div>
-        <div className="absolute top-[42%] left-[72%] -translate-x-1/2 bg-white/90 dark:bg-card/90 px-2 py-0.5 rounded border shadow text-[10px] font-bold text-foreground flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full bg-blue-600" />
-          <span>Beda Shots Photography</span>
+        <div className="absolute top-[53%] left-[71%] text-white/80 font-semibold text-[10px] drop-shadow-[0_1px_3px_black] pointer-events-none">
+          Philippines
         </div>
-        <div className="absolute top-[68%] left-[58%] -translate-x-1/2 bg-white/90 dark:bg-card/90 px-2 py-0.5 rounded border shadow text-[10px] font-bold text-foreground flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full bg-blue-600" />
-          <span>Mengo Market</span>
+        <div className="absolute top-[64%] left-[68%] text-white/80 font-semibold text-[10px] drop-shadow-[0_1px_3px_black] pointer-events-none">
+          Indonesia
         </div>
-        <div className="absolute top-[72%] left-[60%] -translate-x-1/2 bg-white/90 dark:bg-card/90 px-2 py-0.5 rounded border shadow text-[10px] font-bold text-foreground flex items-center gap-1">
-          <Fuel className="w-3 h-3 text-amber-500" />
-          <span>Shell</span>
+        <div className="absolute top-[67%] left-[80%] text-white/80 font-semibold text-[10px] drop-shadow-[0_1px_3px_black] pointer-events-none">
+          Papua New Guinea
+        </div>
+        <div className="absolute top-[82%] left-[76%] text-white/90 font-bold text-[12px] drop-shadow-[0_1px_3px_black] pointer-events-none">
+          Australia
         </div>
 
+        {/* Selected Vehicle Marker on Map */}
         <div 
-          className="absolute top-[52%] left-[57%] z-20 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group"
+          className="absolute top-[52%] left-[58%] z-20 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group"
           onClick={() => {
             setIsDetailDrawerOpen(true);
             setIsPinTabDrawerOpen(false);
           }}
         >
-          <div className="w-6 h-12 bg-slate-300 border-2 border-slate-600 rounded-sm shadow-2xl flex flex-col items-center justify-between p-0.5 ring-4 ring-[#29a4ff]">
+          <div className="w-6 h-12 bg-slate-300 border-2 border-slate-700 rounded-sm shadow-2xl flex flex-col items-center justify-between p-0.5 ring-4 ring-[#29a4ff]">
             <div className="w-full h-3 bg-slate-800 rounded-xs" />
             <div className="w-2 h-2 rounded-full bg-[#22c55e] animate-ping" />
           </div>
@@ -451,41 +705,28 @@ export default function TrackingPage() {
         </div>
       </div>
 
-      {/* 2. TOP PLAYBACK BUTTON */}
-      <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center">
-        <button
-          type="button"
-          className="px-4 py-1.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-semibold rounded shadow-lg flex items-center gap-1.5 transition-colors cursor-pointer border border-white/20"
-        >
-          <Play className="w-3.5 h-3.5 fill-white" />
-          <span>Playback</span>
-        </button>
-      </div>
-
-      {/* 3. RIGHT FLOATING MAP ACTIONS TOOLBAR */}
-      <div className="absolute top-3 right-3 z-30 flex flex-col gap-1">
-        <div className="bg-white dark:bg-card border border-border shadow-xl rounded flex flex-col text-muted-foreground overflow-hidden">
+      {/* 2. RIGHT MAP ACTIONS TOOLBAR (MATCHING STEP 9522) */}
+      <div className="absolute top-2 right-2 bottom-3 z-30 flex flex-col justify-between items-end pointer-events-none">
+        <div className="bg-white dark:bg-card border border-border shadow-xl rounded flex flex-col text-muted-foreground overflow-hidden pointer-events-auto">
           <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Search Location"><Search className="w-3.5 h-3.5" /></button>
           <div className="h-[1px] bg-border" />
           <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Map Layers"><Layers className="w-3.5 h-3.5" /></button>
           <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Traffic Light"><Grid className="w-3.5 h-3.5" /></button>
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Radar / Antenna"><Radio className="w-3.5 h-3.5" /></button>
           <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Driver Directory"><User className="w-3.5 h-3.5" /></button>
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Traffic Grid"><Grid className="w-3.5 h-3.5" /></button>
           <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="POI Markers"><MapPin className="w-3.5 h-3.5" /></button>
-          <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Antenna / Radar"><Radio className="w-3.5 h-3.5" /></button>
-          <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Phone Call"><Phone className="w-3.5 h-3.5" /></button>
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="POIs"><MapPin className="w-3.5 h-3.5" /></button>
           <div className="h-[1px] bg-border" />
           <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Tags"><Tag className="w-3.5 h-3.5" /></button>
           <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Share Location"><Share2 className="w-3.5 h-3.5" /></button>
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Share"><Share2 className="w-3.5 h-3.5" /></button>
           <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Measure Ruler"><SlidersHorizontal className="w-3.5 h-3.5" /></button>
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="User Directory"><User className="w-3.5 h-3.5" /></button>
           <div className="h-[1px] bg-border" />
-          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Center Target"><Crosshair className="w-3.5 h-3.5" /></button>
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Target"><Crosshair className="w-3.5 h-3.5" /></button>
+          <div className="h-[1px] bg-border" />
+          <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Ruler / Measure"><SlidersHorizontal className="w-3.5 h-3.5" /></button>
           <div className="h-[1px] bg-border" />
           <button 
             type="button" 
@@ -500,29 +741,39 @@ export default function TrackingPage() {
           </button>
         </div>
 
-        <div className="mt-auto self-end text-[9px] font-bold bg-white/90 dark:bg-card/90 px-1 py-0.5 rounded border border-border text-foreground shadow">
-          0.005 km
+        {/* Map Scale & Zoom Controls */}
+        <div className="flex flex-col items-end gap-2 pointer-events-auto">
+          <div className="bg-white dark:bg-card border border-border rounded shadow flex flex-col overflow-hidden text-muted-foreground">
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground"><Plus className="w-3.5 h-3.5" /></button>
+            <div className="h-[1px] bg-border" />
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground"><Minus className="w-3.5 h-3.5" /></button>
+          </div>
+
+          <div className="text-[9px] font-bold bg-white/90 dark:bg-card/90 px-1.5 py-0.5 rounded border border-border text-foreground shadow">
+            1000 km
+          </div>
         </div>
       </div>
 
-      {/* 4. LEFT FLOATING FLEET PANEL */}
+      {/* 3. LEFT FLEET OBJECT PANEL (100% PARITY WITH STEP 9522) */}
       <div
         className={cn(
-          "absolute top-3 left-3 bottom-3 z-30 w-[580px] max-w-[calc(100vw-30px)] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col transition-all duration-300 overflow-hidden",
-          isObjectPanelCollapsed && "-translate-x-[600px]"
+          "absolute top-2 left-2 bottom-2 z-30 w-[590px] max-w-[calc(100vw-20px)] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col transition-all duration-300 overflow-hidden",
+          isObjectPanelCollapsed && "-translate-x-[610px]"
         )}
       >
-        <div className="h-[36px] bg-[#1542b7] text-white px-3 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3 text-xs font-semibold">
+        {/* Top Navigation Strip */}
+        <div className="h-[34px] bg-[#2558c4] text-white px-3 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2 text-xs font-semibold">
             <button
               type="button"
               onClick={() => setLeftActiveTab("object")}
               className={cn(
-                "flex items-center gap-1.5 px-2 py-1 rounded transition-colors",
-                leftActiveTab === "object" ? "bg-blue-600/60 text-white font-bold" : "text-white/80 hover:text-white"
+                "flex items-center gap-1.5 px-2.5 py-0.5 rounded transition-colors",
+                leftActiveTab === "object" ? "bg-white/20 text-white font-bold" : "text-white/80 hover:text-white"
               )}
             >
-              <Navigation className="w-3.5 h-3.5" />
+              <Navigation className="w-3 h-3 rotate-45" />
               <span>Object</span>
             </button>
 
@@ -530,12 +781,12 @@ export default function TrackingPage() {
               type="button"
               onClick={() => setLeftActiveTab("driver")}
               className={cn(
-                "flex items-center gap-1.5 px-2 py-1 rounded transition-colors",
-                leftActiveTab === "driver" ? "bg-blue-600/60 text-white font-bold" : "text-white/80 hover:text-white"
+                "flex items-center gap-1.5 px-2.5 py-0.5 rounded transition-colors",
+                leftActiveTab === "driver" ? "bg-white/20 text-white font-bold" : "text-white/80 hover:text-white"
               )}
               title="Drivers"
             >
-              <Users className="w-3.5 h-3.5" />
+              <Users className="w-3 h-3" />
               {leftActiveTab === "driver" && <span>Driver</span>}
             </button>
 
@@ -543,12 +794,12 @@ export default function TrackingPage() {
               type="button"
               onClick={() => setLeftActiveTab("address")}
               className={cn(
-                "flex items-center gap-1.5 px-2 py-1 rounded transition-colors",
-                leftActiveTab === "address" ? "bg-blue-600/60 text-white font-bold" : "text-white/80 hover:text-white"
+                "flex items-center gap-1.5 px-2.5 py-0.5 rounded transition-colors",
+                leftActiveTab === "address" ? "bg-white/20 text-white font-bold" : "text-white/80 hover:text-white"
               )}
               title="Address POIs"
             >
-              <MapPin className="w-3.5 h-3.5" />
+              <MapPin className="w-3 h-3" />
               {leftActiveTab === "address" && <span>Address</span>}
             </button>
 
@@ -556,12 +807,12 @@ export default function TrackingPage() {
               type="button"
               onClick={() => setLeftActiveTab("geofence")}
               className={cn(
-                "flex items-center gap-1.5 px-2 py-1 rounded transition-colors",
-                leftActiveTab === "geofence" ? "bg-blue-600/60 text-white font-bold" : "text-white/80 hover:text-white"
+                "flex items-center gap-1.5 px-2.5 py-0.5 rounded transition-colors",
+                leftActiveTab === "geofence" ? "bg-white/20 text-white font-bold" : "text-white/80 hover:text-white"
               )}
               title="Geofences"
             >
-              <Grid className="w-3.5 h-3.5" />
+              <Grid className="w-3 h-3" />
               {leftActiveTab === "geofence" && <span>Geofence</span>}
             </button>
           </div>
@@ -577,145 +828,178 @@ export default function TrackingPage() {
             >
               <Settings className="w-3.5 h-3.5" />
             </button>
-            <button
-              type="button"
-              onClick={() => setIsObjectPanelCollapsed(true)}
-              className="text-white/80 hover:text-white"
-              title="Collapse Panel"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
           </div>
         </div>
 
         {/* TAB 1: OBJECT FLEET LIST */}
         {leftActiveTab === "object" && (
           <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="grid grid-cols-6 border-b border-border text-center text-[11px] font-semibold">
+            {/* Status Summary Ribbon (2 Running, 1 Idle, 7 Stopped, 1 Inactive, 0 NoData, 11 Total) */}
+            <div className="grid grid-cols-6 border-b border-border text-center text-[10px] font-semibold">
               <div onClick={() => setStatusFilter("Running")} className="py-1 bg-emerald-100/70 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-r border-border cursor-pointer">
                 <div className="text-xs font-bold">{counts.running}</div>
-                <div className="text-[9px] uppercase">Running</div>
+                <div className="text-[9px]">Running</div>
               </div>
               <div onClick={() => setStatusFilter("Idle")} className="py-1 bg-amber-100/70 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-r border-border cursor-pointer">
                 <div className="text-xs font-bold">{counts.idle}</div>
-                <div className="text-[9px] uppercase">Idle</div>
+                <div className="text-[9px]">Idle</div>
               </div>
               <div onClick={() => setStatusFilter("Stopped")} className="py-1 bg-rose-100/70 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border-r border-border cursor-pointer">
                 <div className="text-xs font-bold">{counts.stopped}</div>
-                <div className="text-[9px] uppercase">Stopped</div>
+                <div className="text-[9px]">Stopped</div>
               </div>
               <div onClick={() => setStatusFilter("Inactive")} className="py-1 bg-sky-100/70 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300 border-r border-border cursor-pointer">
                 <div className="text-xs font-bold">{counts.inactive}</div>
-                <div className="text-[9px] uppercase">Inactive</div>
+                <div className="text-[9px]">Inactive</div>
               </div>
               <div className="py-1 bg-slate-100 dark:bg-muted/40 text-muted-foreground border-r border-border">
-                <div className="text-xs font-bold">0</div>
-                <div className="text-[9px] uppercase">NoData</div>
+                <div className="text-xs font-bold">{counts.nodata}</div>
+                <div className="text-[9px]">NoData</div>
               </div>
               <div onClick={() => setStatusFilter("all")} className="py-1 bg-slate-200/60 dark:bg-muted text-foreground cursor-pointer">
                 <div className="text-xs font-bold">{counts.total}</div>
-                <div className="text-[9px] uppercase">Total</div>
+                <div className="text-[9px]">Total</div>
               </div>
             </div>
 
+            {/* Search and Action Strip */}
             <div className="p-2 border-b border-border flex items-center gap-2 bg-slate-50/50 dark:bg-muted/20">
-              <input type="checkbox" defaultChecked className="rounded border-border w-3.5 h-3.5 text-[#1542b7]" />
+              <input type="checkbox" defaultChecked className="rounded border-border w-3.5 h-3.5 text-[#2558c4]" />
               <div className="flex-1 relative">
                 <input
                   type="text"
                   placeholder="Search by IMEI, VIN, Registration, Object Model, SIM Number, etc."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-2 pr-6 py-1 text-xs border border-border rounded bg-white dark:bg-card text-foreground outline-none focus:border-[#1542b7]"
+                  className="w-full pl-2 pr-6 py-1 text-xs border border-border rounded bg-white dark:bg-card text-foreground outline-none focus:border-[#2558c4]"
                 />
                 <Search className="w-3.5 h-3.5 absolute right-2 top-2 text-muted-foreground" />
               </div>
               <div className="flex items-center gap-1 text-muted-foreground">
-                <button type="button" className="p-1 hover:text-foreground"><RotateCw className="w-3.5 h-3.5" /></button>
-                <button type="button" className="p-1 hover:text-foreground"><Compass className="w-3.5 h-3.5" /></button>
-                <button type="button" className="p-1 hover:text-foreground"><Filter className="w-3.5 h-3.5" /></button>
-                <button type="button" className="p-1 hover:text-foreground"><SlidersHorizontal className="w-3.5 h-3.5" /></button>
+                <button type="button" className="p-1 hover:text-foreground" title="Refresh"><RotateCw className="w-3.5 h-3.5" /></button>
+                <button type="button" className="p-1 hover:text-foreground" title="Compass"><Compass className="w-3.5 h-3.5" /></button>
+                <button type="button" className="p-1 hover:text-foreground" title="Filter"><Filter className="w-3.5 h-3.5" /></button>
+                <button type="button" className="p-1 hover:text-foreground" title="Sort"><SlidersHorizontal className="w-3.5 h-3.5" /></button>
               </div>
             </div>
 
-            <div className="px-3 py-1 bg-slate-100/70 dark:bg-muted/40 border-b border-border text-[11px] text-muted-foreground font-semibold">
-              <span>&gt; Collapse</span>
+            <div className="px-3 py-1 bg-slate-100/70 dark:bg-muted/40 border-b border-border text-[11px] text-muted-foreground font-semibold flex items-center gap-1 cursor-pointer">
+              <span>✕</span>
+              <span>Collapse</span>
             </div>
 
+            {/* 2-Tier Grouped Fleet List */}
             <div className="flex-1 overflow-y-auto divide-y divide-border/60 text-xs">
               {["Mega Milk", "Weldone Logistics", "walen"].map((grpName) => {
                 const grpVehicles = filteredVehicles.filter((v) => v.group === grpName);
                 const isExpanded = !!expandedGroups[grpName];
+                const isSubExpanded = !!expandedGroups[`${grpName}-sub`];
                 if (grpVehicles.length === 0) return null;
 
                 return (
                   <div key={grpName} className="space-y-0.5">
+                    {/* Top Tier Group Header */}
                     <div 
                       onClick={() => toggleGroup(grpName)}
-                      className="px-3 py-1.5 bg-slate-200/60 dark:bg-muted/70 flex items-center justify-between cursor-pointer font-bold text-foreground text-[11px]"
+                      className="px-3 py-1 bg-slate-200/70 dark:bg-muted/70 flex items-center justify-between cursor-pointer font-bold text-foreground text-[11px]"
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
                         <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", !isExpanded && "-rotate-90")} />
                         <input type="checkbox" defaultChecked onClick={(e) => e.stopPropagation()} className="w-3 h-3 rounded" />
                         <span>{grpName}</span>
                       </div>
-                      <span className="text-muted-foreground font-semibold">[{grpVehicles.length}]</span>
+                      <span className="text-muted-foreground font-semibold text-[10px]">[{grpVehicles.length}]</span>
                     </div>
 
                     {isExpanded && (
-                      <div className="divide-y divide-border/40">
-                        {grpVehicles.map((v) => {
-                          const isSelected = selectedVehicle.id === v.id;
-                          return (
-                            <div
-                              key={v.id}
-                              onClick={() => {
-                                setSelectedVehicle(v);
-                                setIsDetailDrawerOpen(true);
-                                setIsPinTabDrawerOpen(false);
-                              }}
-                              className={cn(
-                                "p-2 pl-6 flex items-start gap-2 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-muted/40",
-                                isSelected && "bg-sky-50 dark:bg-sky-950/30 border-l-4 border-[#1542b7]"
-                              )}
-                            >
-                              <input type="checkbox" defaultChecked onClick={(e) => e.stopPropagation()} className="mt-1 w-3 h-3 rounded shrink-0" />
-                              
-                              <div className="mt-1 shrink-0">
-                                <span
+                      <div className="space-y-0.5">
+                        {/* Sub-Tier Group Row */}
+                        <div 
+                          onClick={() => toggleGroup(`${grpName}-sub`)}
+                          className="px-5 py-1 bg-slate-100 dark:bg-muted/40 flex items-center justify-between cursor-pointer font-bold text-muted-foreground text-[10px]"
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <ChevronDown className={cn("w-3 h-3 transition-transform", !isSubExpanded && "-rotate-90")} />
+                            <input type="checkbox" defaultChecked onClick={(e) => e.stopPropagation()} className="w-3 h-3 rounded" />
+                            <span>{grpName}</span>
+                          </div>
+                          <span className="text-muted-foreground font-semibold">[{grpVehicles.length}]</span>
+                        </div>
+
+                        {isSubExpanded && (
+                          <div className="divide-y divide-border/40">
+                            {grpVehicles.map((v) => {
+                              const isSelected = selectedVehicle.id === v.id;
+                              return (
+                                <div
+                                  key={v.id}
+                                  onClick={() => {
+                                    setSelectedVehicle(v);
+                                    setIsDetailDrawerOpen(true);
+                                    setIsPinTabDrawerOpen(false);
+                                  }}
                                   className={cn(
-                                    "w-2.5 h-2.5 rounded-full block",
-                                    v.status === "Running" && "bg-emerald-500 ring-2 ring-emerald-300",
-                                    v.status === "Stopped" && "bg-rose-500",
-                                    v.status === "Idle" && "bg-amber-400",
-                                    v.status === "Inactive" && "bg-sky-500"
+                                    "p-2 pl-6 flex items-start gap-2 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-muted/40",
+                                    isSelected && "bg-sky-50/80 dark:bg-sky-950/40 border-l-4 border-[#2558c4]"
                                   )}
-                                />
-                              </div>
+                                >
+                                  <input type="checkbox" defaultChecked onClick={(e) => e.stopPropagation()} className="mt-1 w-3 h-3 rounded shrink-0" />
+                                  
+                                  <div className="mt-1 shrink-0">
+                                    <span
+                                      className={cn(
+                                        "w-2.5 h-2.5 rounded-full block",
+                                        v.status === "Running" && "bg-emerald-500 ring-2 ring-emerald-300",
+                                        v.status === "Stopped" && "bg-rose-500",
+                                        v.status === "Idle" && "bg-amber-400",
+                                        v.status === "Inactive" && "bg-sky-500"
+                                      )}
+                                    />
+                                  </div>
 
-                              <div className="flex-1 min-w-0 space-y-0.5">
-                                <div className="flex items-center justify-between">
-                                  <span className="font-bold text-[#1542b7] dark:text-[#29a4ff] truncate">{v.name}</span>
-                                  <span className="text-[10px] font-bold text-foreground">{v.speed}</span>
-                                </div>
+                                  <div className="flex-1 min-w-0 space-y-0.5">
+                                    {/* Line 1: Vehicle Name & Timestamp */}
+                                    <div className="flex items-center justify-between">
+                                      <span className="font-bold text-[#1a56db] dark:text-[#29a4ff] truncate">{v.name}</span>
+                                      <span className="text-[10px] font-bold text-foreground">{v.speed}</span>
+                                    </div>
 
-                                <div className="text-[10px] text-muted-foreground flex items-center justify-between">
-                                  <span>{v.time}</span>
-                                  <div className="flex items-center gap-1.5">
-                                    <Key className={cn("w-3 h-3", v.ignition ? "text-emerald-600" : "text-rose-500")} />
-                                    <Battery className="w-3 h-3 text-emerald-600" />
-                                    <Wifi className="w-3 h-3 text-emerald-600" />
-                                    <span className="font-bold text-emerald-700 dark:text-emerald-400">{v.voltage}</span>
+                                    {/* Line 2: Timestamp + Telemetry Icons + Voltage */}
+                                    <div className="text-[10px] text-muted-foreground flex items-center justify-between">
+                                      <span>{v.time}</span>
+                                      <div className="flex items-center gap-1.5">
+                                        <Key className={cn("w-3 h-3", v.ignition ? "text-emerald-600" : "text-rose-500")} />
+                                        <Battery className={cn("w-3 h-3", v.batteryLevel > 20 ? "text-emerald-600" : "text-rose-500")} />
+                                        <Signal className="w-3 h-3 text-emerald-600" />
+                                        <Wifi className="w-3 h-3 text-emerald-600" />
+                                        <Lock className="w-3 h-3 text-muted-foreground" />
+                                        <span className="font-bold text-emerald-700 dark:text-emerald-400">{v.voltage}</span>
+                                      </div>
+                                    </div>
+
+                                    {/* Line 3: Truncated Address with Hover Tooltip + Column Badges */}
+                                    <div className="text-[10px] text-muted-foreground flex items-center justify-between">
+                                      <div 
+                                        className="truncate max-w-[260px] hover:text-[#2558c4] cursor-pointer"
+                                        onMouseEnter={(e) => {
+                                          const rect = e.currentTarget.getBoundingClientRect();
+                                          setHoveredAddress({ id: v.id, text: v.fullAddress, top: rect.top, left: rect.right + 10 });
+                                        }}
+                                        onMouseLeave={() => setHoveredAddress(null)}
+                                      >
+                                        {v.address}
+                                      </div>
+                                      <div className="flex items-center gap-4 shrink-0 text-emerald-600 dark:text-emerald-400 font-semibold">
+                                        <span>--</span>
+                                        <span className="text-muted-foreground/60">--</span>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
-
-                                <div className="text-[10px] text-muted-foreground/80 truncate">
-                                  {v.address}
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -746,7 +1030,7 @@ export default function TrackingPage() {
                 <input
                   type="text"
                   placeholder="Search"
-                  className="w-full pl-2 pr-6 py-1 text-xs border border-border rounded bg-white dark:bg-card text-foreground outline-none focus:border-[#1542b7]"
+                  className="w-full pl-2 pr-6 py-1 text-xs border border-border rounded bg-white dark:bg-card text-foreground outline-none focus:border-[#2558c4]"
                 />
                 <Search className="w-3.5 h-3.5 absolute right-2 top-2 text-muted-foreground" />
               </div>
@@ -763,7 +1047,7 @@ export default function TrackingPage() {
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-sky-500" />
                   <div>
-                    <div className="font-bold text-[#1542b7] dark:text-[#29a4ff]">Ntale Driver</div>
+                    <div className="font-bold text-[#1a56db] dark:text-[#29a4ff]">Ntale Driver</div>
                     <div className="text-[10px] text-muted-foreground">UA 498EP</div>
                   </div>
                 </div>
@@ -776,7 +1060,7 @@ export default function TrackingPage() {
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-sky-500" />
                   <div>
-                    <div className="font-bold text-[#1542b7] dark:text-[#29a4ff]">Mawanda Driver</div>
+                    <div className="font-bold text-[#1a56db] dark:text-[#29a4ff]">Mawanda Driver</div>
                     <div className="text-[10px] text-muted-foreground">UA 497EP</div>
                   </div>
                 </div>
@@ -802,7 +1086,7 @@ export default function TrackingPage() {
                 <input
                   type="text"
                   placeholder="Search"
-                  className="w-full pl-2 pr-6 py-1 text-xs border border-border rounded bg-white dark:bg-card text-foreground outline-none focus:border-[#1542b7]"
+                  className="w-full pl-2 pr-6 py-1 text-xs border border-border rounded bg-white dark:bg-card text-foreground outline-none focus:border-[#2558c4]"
                 />
                 <Search className="w-3.5 h-3.5 absolute right-2 top-2 text-muted-foreground" />
               </div>
@@ -836,7 +1120,7 @@ export default function TrackingPage() {
                 <input
                   type="text"
                   placeholder="Search"
-                  className="w-full pl-2 pr-6 py-1 text-xs border border-border rounded bg-white dark:bg-card text-foreground outline-none focus:border-[#1542b7]"
+                  className="w-full pl-2 pr-6 py-1 text-xs border border-border rounded bg-white dark:bg-card text-foreground outline-none focus:border-[#2558c4]"
                 />
                 <Search className="w-3.5 h-3.5 absolute right-2 top-2 text-muted-foreground" />
               </div>
@@ -864,12 +1148,22 @@ export default function TrackingPage() {
         )}
       </div>
 
-      {/* 5. RIGHT FLOATING VEHICLE DETAIL DRAWER (ALL CARDS MATCHING EXACT SCREENSHOTS) */}
+      {/* FLOATING ADDRESS TOOLTIP ON HOVER (MATCHING SCREENSHOT 2) */}
+      {hoveredAddress && (
+        <div 
+          className="fixed z-50 bg-white dark:bg-card border border-border shadow-2xl p-2 rounded text-[11px] font-medium text-foreground max-w-[280px] pointer-events-none animate-in fade-in duration-100"
+          style={{ top: `${hoveredAddress.top}px`, left: `${hoveredAddress.left}px` }}
+        >
+          {hoveredAddress.text}
+        </div>
+      )}
+
+      {/* 4. RIGHT FLOATING VEHICLE DETAIL DRAWER (ALL 16 CARDS) */}
       {isDetailDrawerOpen && selectedVehicle && !isPinTabDrawerOpen && (
-        <div className="absolute top-3 right-14 bottom-3 z-30 w-[320px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs">
+        <div className="absolute top-2 right-12 bottom-2 z-30 w-[320px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs">
           
           {/* Blue Top Utility Bar */}
-          <div className="h-[34px] bg-[#1542b7] text-white px-3 flex items-center justify-between shrink-0">
+          <div className="h-[34px] bg-[#2558c4] text-white px-3 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5">
               <button type="button" className="hover:text-sky-300" title="Pin Tab"><Pin className="w-3.5 h-3.5" /></button>
               <button type="button" className="hover:text-sky-300" title="Alerts"><Bell className="w-3.5 h-3.5" /></button>
@@ -903,7 +1197,7 @@ export default function TrackingPage() {
             {/* 1. Vehicle Title & Info */}
             <div className="flex items-center justify-between border-b border-border pb-2">
               <div className="font-bold text-sm text-foreground">{selectedVehicle.plate}</div>
-              <Info className="w-4 h-4 text-[#1542b7] dark:text-[#29a4ff] cursor-pointer" />
+              <Info className="w-4 h-4 text-[#2558c4] dark:text-[#29a4ff] cursor-pointer" />
             </div>
 
             {/* 2. Vehicle 3D Render Image */}
@@ -919,7 +1213,7 @@ export default function TrackingPage() {
             <div className="flex items-center justify-between">
               <span className={cn(
                 "px-2.5 py-0.5 rounded font-bold text-white text-[11px]",
-                selectedVehicle.status === "Running" ? "bg-emerald-600" : "bg-rose-600"
+                selectedVehicle.status === "Running" ? "bg-emerald-600" : selectedVehicle.status === "Idle" ? "bg-amber-500" : "bg-rose-600"
               )}>
                 {selectedVehicle.status}
               </span>
@@ -954,7 +1248,7 @@ export default function TrackingPage() {
                 <span className="text-muted-foreground">Mobile</span>
                 <span className="text-foreground">{selectedVehicle.mobile}</span>
               </div>
-              <div className="flex justify-between items-center pt-0.5 text-[#1542b7] dark:text-[#29a4ff] font-semibold cursor-pointer">
+              <div className="flex justify-between items-center pt-0.5 text-[#2558c4] dark:text-[#29a4ff] font-semibold cursor-pointer">
                 <span>More Details</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </div>
@@ -962,17 +1256,17 @@ export default function TrackingPage() {
 
             {/* 6. Quick Action Icons Strip */}
             <div className="grid grid-cols-6 border-y border-border py-2 text-center text-muted-foreground">
-              <button type="button" className="hover:text-[#1542b7] flex justify-center" title="Navigate"><Navigation className="w-3.5 h-3.5" /></button>
-              <button type="button" className="hover:text-[#1542b7] flex justify-center" title="Send"><Send className="w-3.5 h-3.5" /></button>
-              <button type="button" className="hover:text-[#1542b7] flex justify-center" title="Share"><Share2 className="w-3.5 h-3.5" /></button>
-              <button type="button" className="hover:text-[#1542b7] flex justify-center" title="Security"><ShieldAlert className="w-3.5 h-3.5" /></button>
-              <button type="button" className="hover:text-[#1542b7] flex justify-center" title="Layers"><Layers className="w-3.5 h-3.5" /></button>
-              <button type="button" className="hover:text-[#1542b7] flex justify-center" title="Live View"><Eye className="w-3.5 h-3.5" /></button>
+              <button type="button" className="hover:text-[#2558c4] flex justify-center" title="Navigate"><Navigation className="w-3.5 h-3.5" /></button>
+              <button type="button" className="hover:text-[#2558c4] flex justify-center" title="Send"><Send className="w-3.5 h-3.5" /></button>
+              <button type="button" className="hover:text-[#2558c4] flex justify-center" title="Share"><Share2 className="w-3.5 h-3.5" /></button>
+              <button type="button" className="hover:text-[#2558c4] flex justify-center" title="Security"><ShieldAlert className="w-3.5 h-3.5" /></button>
+              <button type="button" className="hover:text-[#2558c4] flex justify-center" title="Layers"><Layers className="w-3.5 h-3.5" /></button>
+              <button type="button" className="hover:text-[#2558c4] flex justify-center" title="Live View"><Eye className="w-3.5 h-3.5" /></button>
             </div>
 
             {/* 7. FUEL CARD */}
             <div className="border border-border rounded overflow-hidden shadow-xs">
-              <div className="bg-[#1542b7] text-white px-3 py-1.5 flex items-center justify-between font-bold text-xs">
+              <div className="bg-[#2558c4] text-white px-3 py-1.5 flex items-center justify-between font-bold text-xs">
                 <div className="flex items-center gap-1.5">
                   <Fuel className="w-3.5 h-3.5 text-amber-300" />
                   <span>Fuel</span>
@@ -1017,20 +1311,20 @@ export default function TrackingPage() {
             <div className="border border-border rounded overflow-hidden shadow-xs">
               <div className="bg-slate-100 dark:bg-muted/70 px-3 py-1.5 flex items-center justify-between font-bold text-xs text-foreground">
                 <div className="flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-[#1542b7]" />
+                  <MapPin className="w-3.5 h-3.5 text-[#2558c4]" />
                   <span>Location</span>
                 </div>
                 <Compass className="w-3.5 h-3.5 cursor-pointer text-muted-foreground hover:text-foreground" />
               </div>
               <div className="p-2.5 space-y-1.5 text-[11px]">
-                <div className="text-muted-foreground leading-snug">{selectedVehicle.address}</div>
-                <div className="font-mono text-[10px] font-bold text-[#1542b7] dark:text-[#29a4ff]">{selectedVehicle.coords.lat}, {selectedVehicle.coords.lng}</div>
+                <div className="text-muted-foreground leading-snug">{selectedVehicle.fullAddress}</div>
+                <div className="font-mono text-[10px] font-bold text-[#2558c4] dark:text-[#29a4ff]">{selectedVehicle.coords.lat}, {selectedVehicle.coords.lng}</div>
               </div>
             </div>
 
             {/* 9. TODAY ACTIVITY CARD */}
             <div className="border border-border rounded overflow-hidden shadow-xs">
-              <div className="bg-[#1542b7] text-white px-3 py-1.5 flex items-center justify-between font-bold text-xs">
+              <div className="bg-[#2558c4] text-white px-3 py-1.5 flex items-center justify-between font-bold text-xs">
                 <div className="flex items-center gap-1.5">
                   <Activity className="w-3.5 h-3.5" />
                   <span>Today Activity</span>
@@ -1040,7 +1334,7 @@ export default function TrackingPage() {
               <div className="p-2.5 space-y-2 text-[11px]">
                 <div className="bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 p-2 rounded flex justify-between">
                   <span className="text-muted-foreground text-xs font-semibold">Distance</span>
-                  <span className="font-extrabold text-sm text-[#1542b7] dark:text-[#29a4ff]">0 km</span>
+                  <span className="font-extrabold text-sm text-[#2558c4] dark:text-[#29a4ff]">0 km</span>
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between"><span className="text-muted-foreground">Running</span><span className="font-bold text-emerald-600">{selectedVehicle.runningHrs}</span></div>
@@ -1055,7 +1349,7 @@ export default function TrackingPage() {
               </div>
             </div>
 
-            {/* 10. FUEL CONSUMPTION CIRCLE (Image 5) */}
+            {/* 10. FUEL CONSUMPTION CIRCLE */}
             <div className="border border-border rounded overflow-hidden shadow-xs p-2.5 space-y-2">
               <div className="flex items-center justify-between font-bold text-xs text-foreground">
                 <div className="flex items-center gap-1.5">
@@ -1079,11 +1373,11 @@ export default function TrackingPage() {
               <div className="text-[9px] text-muted-foreground text-center">Due to 0 hrs idling</div>
             </div>
 
-            {/* 11. PASSENGER SEAT DIAGRAM CARD (Image 5) */}
+            {/* 11. PASSENGER SEAT DIAGRAM */}
             <div className="border border-border rounded overflow-hidden shadow-xs p-2.5 space-y-2">
               <div className="font-bold text-xs text-foreground flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
-                  <Armchair className="w-3.5 h-3.5 text-[#1542b7]" />
+                  <Armchair className="w-3.5 h-3.5 text-[#2558c4]" />
                   <span>Passenger Seat</span>
                 </div>
                 <div className="flex gap-2 text-[10px]">
@@ -1100,10 +1394,10 @@ export default function TrackingPage() {
               </div>
             </div>
 
-            {/* 12. RPM DIAL GAUGE CARD (Image 5) */}
+            {/* 12. RPM DIAL GAUGE */}
             <div className="border border-border rounded overflow-hidden shadow-xs p-2.5 space-y-2">
               <div className="font-bold text-xs text-foreground flex items-center gap-1.5">
-                <RotateCw className="w-3.5 h-3.5 text-[#1542b7]" />
+                <RotateCw className="w-3.5 h-3.5 text-[#2558c4]" />
                 <span>RPM</span>
               </div>
               <div className="flex justify-between text-xs">
@@ -1120,7 +1414,7 @@ export default function TrackingPage() {
               </div>
             </div>
 
-            {/* 13. REMINDER BELL CARD (Matching Image 1 & Screenshot media_1788297454474.png) */}
+            {/* 13. REMINDER BELL CARD */}
             <div className="rounded overflow-hidden shadow-xs bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 p-3 space-y-2.5">
               <div className="flex items-center justify-between">
                 <div>
@@ -1148,11 +1442,11 @@ export default function TrackingPage() {
               </button>
             </div>
 
-            {/* 14. DOOR CARD (Matching Screenshot media_1788297454474.png) */}
+            {/* 14. DOOR CARD */}
             <div className="border border-border rounded overflow-hidden shadow-xs">
               <div className="bg-slate-100 dark:bg-muted/70 px-3 py-1.5 flex items-center justify-between font-bold text-xs text-foreground">
                 <div className="flex items-center gap-1.5">
-                  <DoorClosed className="w-3.5 h-3.5 text-[#1542b7]" />
+                  <DoorClosed className="w-3.5 h-3.5 text-[#2558c4]" />
                   <span>Door</span>
                 </div>
               </div>
