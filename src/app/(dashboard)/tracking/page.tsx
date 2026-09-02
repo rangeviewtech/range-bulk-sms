@@ -98,7 +98,8 @@ import {
   Armchair,
   DoorClosed,
   Edit3,
-  ChevronsRight
+  ChevronsRight,
+  ArrowDownAZ
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { MapVehicle } from "@/components/map/leaflet-osm-map";
@@ -796,7 +797,7 @@ export default function TrackingPage() {
                   onClick={() => { setMapLayerType("osm"); setShowLayerMenu(false); }}
                   className={cn("p-1.5 rounded cursor-pointer hover:bg-muted flex items-center justify-between", mapLayerType === "osm" && "bg-sky-50 text-[#2558c4]")}
                 >
-                  <span>OpenStreetMap Standard</span>
+                  <span>OpenStreetMap</span>
                   {mapLayerType === "osm" && <Check className="w-3 h-3 text-[#2558c4]" />}
                 </div>
                 <div 
@@ -808,22 +809,11 @@ export default function TrackingPage() {
                 </div>
               </div>
             )}
-
-            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Radar"><Radio className="w-3.5 h-3.5" /></button>
-            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Grid"><Grid className="w-3.5 h-3.5" /></button>
-            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="POIs"><MapPin className="w-3.5 h-3.5" /></button>
-            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Share"><Share2 className="w-3.5 h-3.5" /></button>
-            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Users"><User className="w-3.5 h-3.5" /></button>
-            <button 
-              type="button" 
-              onClick={() => { setZoomLevel(15); }}
-              className="p-1.5 hover:bg-muted hover:text-foreground" 
-              title="Center Target"
-            >
-              <Crosshair className="w-3.5 h-3.5" />
-            </button>
-            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Geofence"><Flag className="w-3.5 h-3.5" /></button>
-            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Map Pins"><Pin className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Follow Object"><Crosshair className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Routing"><Navigation className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="POIs"><Flag className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Share Location"><Share2 className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Street View"><Users className="w-3.5 h-3.5" /></button>
             <button 
               type="button" 
               onClick={() => {
@@ -878,10 +868,7 @@ export default function TrackingPage() {
         <button
           type="button"
           onClick={() => setIsObjectPanelCollapsed(!isObjectPanelCollapsed)}
-          className="absolute -right-3.5 top-1/2 -translate-y-1/2 w-4 h-16 bg-[#94a3b8]/90 hover:bg-[#64748b] text-white flex items-center justify-center cursor-pointer rounded-r-md shadow-md z-40 transition-colors"
-          style={{
-            clipPath: "polygon(0 0, 100% 18%, 100% 82%, 0 100%)",
-          }}
+          className="absolute -right-4 top-1/2 -translate-y-1/2 w-4 h-12 bg-slate-300 dark:bg-muted hover:bg-slate-400 dark:hover:bg-muted/80 text-foreground flex items-center justify-center cursor-pointer rounded-r-md shadow-md z-40 transition-colors border border-l-0 border-border"
           title={isObjectPanelCollapsed ? "Expand Panel" : "Collapse Panel"}
         >
           {isObjectPanelCollapsed ? (
@@ -966,30 +953,30 @@ export default function TrackingPage() {
         {leftActiveTab === "object" && (
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Status Summary Ribbon */}
-            <div className="grid grid-cols-6 border-b border-border text-center text-[10px] font-semibold">
-              <div onClick={() => setStatusFilter("Running")} className="py-1 bg-emerald-100/70 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-r border-border cursor-pointer">
-                <div className="text-xs font-bold">{counts.running}</div>
-                <div className="text-[9px]">Running</div>
+            <div className="flex border-b border-border text-center text-[10px] font-semibold bg-white dark:bg-card shrink-0">
+              <div onClick={() => setStatusFilter("Running")} className="flex-1 py-1.5 border-t-4 border-t-emerald-500 cursor-pointer hover:bg-slate-50">
+                <div className="text-sm font-bold text-emerald-500">{counts.running}</div>
+                <div className="text-[9px] text-muted-foreground font-normal">Running</div>
               </div>
-              <div onClick={() => setStatusFilter("Idle")} className="py-1 bg-amber-100/70 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-r border-border cursor-pointer">
-                <div className="text-xs font-bold">{counts.idle}</div>
-                <div className="text-[9px]">Idle</div>
+              <div onClick={() => setStatusFilter("Idle")} className="flex-1 py-1.5 border-t-4 border-t-amber-400 cursor-pointer hover:bg-slate-50 border-l border-border/40">
+                <div className="text-sm font-bold text-amber-500">{counts.idle}</div>
+                <div className="text-[9px] text-muted-foreground font-normal">Idle</div>
               </div>
-              <div onClick={() => setStatusFilter("Stopped")} className="py-1 bg-rose-100/70 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border-r border-border cursor-pointer">
-                <div className="text-xs font-bold">{counts.stopped}</div>
-                <div className="text-[9px]">Stopped</div>
+              <div onClick={() => setStatusFilter("Stopped")} className="flex-1 py-1.5 border-t-4 border-t-rose-500 cursor-pointer hover:bg-slate-50 border-l border-border/40">
+                <div className="text-sm font-bold text-rose-500">{counts.stopped}</div>
+                <div className="text-[9px] text-muted-foreground font-normal">Stopped</div>
               </div>
-              <div onClick={() => setStatusFilter("Inactive")} className="py-1 bg-sky-100/70 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300 border-r border-border cursor-pointer">
-                <div className="text-xs font-bold">{counts.inactive}</div>
-                <div className="text-[9px]">Inactive</div>
+              <div onClick={() => setStatusFilter("Inactive")} className="flex-1 py-1.5 border-t-4 border-t-sky-500 cursor-pointer hover:bg-slate-50 border-l border-border/40">
+                <div className="text-sm font-bold text-sky-500">{counts.inactive}</div>
+                <div className="text-[9px] text-muted-foreground font-normal">Inactive</div>
               </div>
-              <div className="py-1 bg-slate-100 dark:bg-muted/40 text-muted-foreground border-r border-border">
-                <div className="text-xs font-bold">{counts.nodata}</div>
-                <div className="text-[9px]">NoData</div>
+              <div className="flex-1 py-1.5 border-t-4 border-t-slate-300 border-l border-border/40">
+                <div className="text-sm font-bold text-slate-400">{counts.nodata}</div>
+                <div className="text-[9px] text-muted-foreground font-normal">NoData</div>
               </div>
-              <div onClick={() => setStatusFilter("all")} className="py-1 bg-slate-200/60 dark:bg-muted text-foreground cursor-pointer">
-                <div className="text-xs font-bold">{counts.total}</div>
-                <div className="text-[9px]">Total</div>
+              <div onClick={() => setStatusFilter("all")} className="flex-1 py-1.5 border-t-4 border-t-slate-400 cursor-pointer hover:bg-slate-50 border-l border-border/40 bg-slate-100/50">
+                <div className="text-sm font-bold text-slate-600">{counts.total}</div>
+                <div className="text-[9px] text-muted-foreground font-normal">Total</div>
               </div>
             </div>
 
@@ -1008,9 +995,9 @@ export default function TrackingPage() {
               </div>
               <div className="flex items-center gap-1 text-muted-foreground">
                 <button type="button" className="p-1 hover:text-foreground" title="Refresh"><RotateCw className="w-3.5 h-3.5" /></button>
-                <button type="button" className="p-1 hover:text-foreground" title="Compass"><Compass className="w-3.5 h-3.5" /></button>
+                <button type="button" className="p-1 hover:text-foreground" title="Target"><Crosshair className="w-3.5 h-3.5" /></button>
                 <button type="button" className="p-1 hover:text-foreground" title="Filter"><Filter className="w-3.5 h-3.5" /></button>
-                <button type="button" className="p-1 hover:text-foreground" title="Sort"><SlidersHorizontal className="w-3.5 h-3.5" /></button>
+                <button type="button" className="p-1 hover:text-foreground" title="Sort"><ArrowDownAZ className="w-3.5 h-3.5" /></button>
               </div>
             </div>
 
@@ -1032,11 +1019,10 @@ export default function TrackingPage() {
                     {/* Top Tier Group Header */}
                     <div 
                       onClick={() => toggleGroup(grpName)}
-                      className="px-3 py-1 bg-slate-200/70 dark:bg-muted/70 flex items-center justify-between cursor-pointer font-bold text-foreground text-[11px]"
+                      className="px-2 py-1.5 bg-slate-200/70 dark:bg-muted/70 flex items-center justify-between cursor-pointer font-bold text-foreground text-[11px]"
                     >
                       <div className="flex items-center gap-1.5">
                         <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", !isExpanded && "-rotate-90")} />
-                        <input type="checkbox" defaultChecked onClick={(e) => e.stopPropagation()} className="w-3 h-3 rounded" />
                         <span>{grpName}</span>
                       </div>
                       <span className="text-muted-foreground font-semibold text-[10px]">[{grpVehicles.length}]</span>
@@ -1069,8 +1055,9 @@ export default function TrackingPage() {
                                     setIsDetailDrawerOpen(true);
                                     setIsObjectListSettingsOpen(false);
                                   }}
-                                  className={cn(                                    "p-2 pl-3 flex items-center gap-2 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-muted/40 border-b border-border/50",
-                                    isSelected && "bg-[#e2e8f0] dark:bg-sky-950/60"
+                                  className={cn(                                    "p-2 pl-3 flex items-center gap-2 cursor-pointer transition-colors hover:bg-slate-100 dark:hover:bg-muted/40 border-b border-border/50",
+                                    "odd:bg-slate-50 even:bg-white dark:odd:bg-card dark:even:bg-muted/10",
+                                    isSelected && "bg-[#e2e8f0] odd:bg-[#e2e8f0] even:bg-[#e2e8f0] dark:bg-sky-950/60 dark:odd:bg-sky-950/60 dark:even:bg-sky-950/60"
                                   )}
                                 >
                                   <input type="checkbox" defaultChecked onClick={(e) => e.stopPropagation()} className="w-3 h-3 rounded shrink-0" />
@@ -1622,17 +1609,17 @@ export default function TrackingPage() {
 
             {/* 4. Current Trip & Odometer */}
             <div className="space-y-1 text-[11px]">
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center text-[11px] mt-1">
                 <span className="text-muted-foreground">Current Trip</span>
-                <span className="font-bold text-foreground">{selectedVehicle.currentTrip}</span>
+                <span className="font-bold">72.89 km</span>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center text-[11px]">
                 <span className="text-muted-foreground">Odometer</span>
-                <div className="flex gap-0.5 font-mono text-xs font-bold">
-                  {selectedVehicle.odometer.split("").map((ch, i) => (
-                    <span key={i} className="px-1 py-0.5 bg-white dark:bg-card border border-slate-300 dark:border-slate-600 text-foreground rounded-xs">
-                      {ch}
-                    </span>
+                <div className="flex gap-0.5">
+                  {["0","0","9","2","7","2","2"].map((d, i) => (
+                    <div key={i} className="w-4 h-5 flex items-center justify-center bg-white border border-border text-[10px] font-bold rounded-xs shadow-sm">
+                      {d}
+                    </div>
                   ))}
                 </div>
               </div>
@@ -1668,47 +1655,48 @@ export default function TrackingPage() {
             </div>
 
             {/* 7. FUEL CARD - matching production layout */}
-            <div className="border border-border rounded overflow-hidden shadow-xs">
-              <div className="bg-white dark:bg-card px-3 py-1.5 flex items-center justify-between font-bold text-xs text-foreground border-b border-border">
+            <div className="border border-border rounded flex flex-col mt-3">
+              <div className="flex items-center justify-between p-2 border-b border-border text-foreground font-bold text-[11px]">
                 <div className="flex items-center gap-1.5">
-                  <Fuel className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
+                  <Fuel className="w-3.5 h-3.5 text-muted-foreground" />
                   <span>Fuel</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <button type="button" className="p-1 border border-[#2558c4] text-[#2558c4] rounded-xs" title="Vehicle"><Car className="w-3 h-3" /></button>
-                  <button type="button" className="p-1 border border-border text-muted-foreground rounded-xs hover:text-foreground" title="Graph"><LineChart className="w-3 h-3" /></button>
+                  <button className="p-1 border border-blue-200 rounded text-blue-600 hover:bg-blue-50"><Car className="w-3 h-3" /></button>
+                  <button className="p-1 border border-border rounded text-muted-foreground hover:bg-muted"><LineChart className="w-3 h-3" /></button>
                 </div>
               </div>
-
-              <div className="p-2.5 space-y-2">
-                <div className="relative w-full h-[100px] flex items-center justify-center">
-                  <svg className="w-[160px] h-[90px]" viewBox="0 0 200 110">
-                    <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e2e8f0" strokeWidth="12" strokeLinecap="round" />
-                    <path d="M 20 100 A 80 80 0 0 1 60 45" fill="none" stroke="#ef4444" strokeWidth="12" strokeLinecap="round" />
-                    <path d="M 60 45 A 80 80 0 0 1 140 45" fill="none" stroke="#f59e0b" strokeWidth="12" />
-                    <path d="M 140 45 A 80 80 0 0 1 180 100" fill="none" stroke="#10b981" strokeWidth="12" strokeLinecap="round" />
-                    <line x1="100" y1="95" x2="135" y2="48" stroke="#0284c7" strokeWidth="3.5" strokeLinecap="round" />
-                    <circle cx="100" cy="95" r="6" fill="#0284c7" />
-                    <text x="25" y="105" fontSize="10" fontWeight="bold" fill="#ef4444">E</text>
-                    <text x="170" y="105" fontSize="10" fontWeight="bold" fill="#10b981">F</text>
+              <div className="p-3 flex flex-col items-center border-b border-border/50 bg-white">
+                <div className="relative w-32 h-[72px] flex items-end justify-center">
+                  {/* SVG Semi-circle gauge */}
+                  <svg className="absolute top-0 w-full h-[64px]" viewBox="0 0 100 50">
+                    <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#e2e8f0" strokeWidth="8" strokeLinecap="round" />
+                    <path d="M 10 50 A 40 40 0 0 1 30 20" fill="none" stroke="#ef4444" strokeWidth="8" strokeLinecap="round" />
+                    <path d="M 30 20 A 40 40 0 0 1 70 20" fill="none" stroke="#f59e0b" strokeWidth="8" />
+                    <path d="M 70 20 A 40 40 0 0 1 90 50" fill="none" stroke="#10b981" strokeWidth="8" strokeLinecap="round" />
+                    {/* Needle */}
+                    <line x1="50" y1="50" x2="70" y2="25" stroke="#0ea5e9" strokeWidth="2.5" strokeLinecap="round" />
+                    <circle cx="50" cy="50" r="4" fill="#0ea5e9" />
                   </svg>
-                  <div className="absolute bottom-0 flex flex-col items-center">
-                    <span className="text-xs font-extrabold text-foreground">{selectedVehicle.fuelLiter} liter</span>
+                  <div className="w-full flex justify-between px-2 pb-1 relative z-10">
+                    <span className="font-bold text-[10px] text-red-500">E</span>
+                    <span className="font-bold text-[10px] text-emerald-500">F</span>
                   </div>
                 </div>
+                <div className="font-bold text-xs mt-2">134 liter</div>
+              </div>
+              
+              <div className="p-2 space-y-1.5 text-[10px] border-b border-border/50">
+                <div className="flex justify-between"><span className="text-muted-foreground">Tanks</span><span className="font-semibold">1</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Refill</span><span className="font-semibold text-emerald-600 dark:text-emerald-400">1 (64 L)</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Drain</span><span className="font-semibold">NA (0)</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Tank Capacity</span><span className="font-semibold">230.0 Liter</span></div>
+              </div>
 
-                <div className="text-[11px] space-y-1 bg-slate-50 dark:bg-muted/20 p-2 rounded">
-                  <div className="flex justify-between"><span>Tanks</span><span className="font-bold">1</span></div>
-                  <div className="flex justify-between"><span>Refill</span><span className="font-semibold text-emerald-600">1 (64 L)</span></div>
-                  <div className="flex justify-between"><span>Drain</span><span className="font-semibold text-muted-foreground">NA (0)</span></div>
-                  <div className="flex justify-between"><span>Tank Capacity</span><span className="font-bold">{selectedVehicle.fuelCapacity}.0 Liter</span></div>
-                </div>
-
-                <div className="text-[10px] space-y-1 border-t border-border pt-1 text-muted-foreground">
-                  <div className="flex justify-between"><span>Consumption</span><span className="font-bold text-foreground">Sensor: {selectedVehicle.fuelConsumption} | CAN: 0.00 liter</span></div>
-                  <div className="flex justify-between"><span>Carbon Emission</span><span className="font-bold text-foreground">Sensor: 0.00 | CAN: NA</span></div>
-                  <div className="flex justify-between"><span>Waste</span><span className="font-bold text-foreground">Pre-defined: 0 Liter</span></div>
-                </div>
+              <div className="p-2 space-y-1.5 text-[9px] text-muted-foreground">
+                <div className="flex justify-between"><span>Consumption</span><span className="font-semibold text-foreground">Sensor: 56.91 liter | CAN: 0.00 liter</span></div>
+                <div className="flex justify-between"><span>Carbon Emission</span><span className="font-semibold text-foreground">Sensor: 0.00 | CAN: NA</span></div>
+                <div className="flex justify-between"><span>Waste</span><span className="font-semibold text-foreground">Pre-defined: 0 Liter</span></div>
               </div>
             </div>
 
