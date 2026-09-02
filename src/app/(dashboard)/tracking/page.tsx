@@ -159,13 +159,13 @@ const VEHICLES_DATA: FleetVehicle[] = [
     speed: 0,
     avgSpeed: 5,
     maxSpeed: 26,
-    voltage: "25.5V",
+    voltage: "28.3V",
     batteryLevel: 95,
     gsm: 5,
     ignition: false,
-    time: "02-09-2026 04:33:16 PM",
-    address: "Byanamira,Kiruhura, Uganda (NE)",
-    fullAddress: "Byanamira,Kiruhura, Uganda (NE)",
+    time: "02-09-2026 07:27:49 PM",
+    address: "Bigusha,Kiruhura, Uganda (SE)",
+    fullAddress: "Bigusha,Kiruhura, Uganda (SE)",
     driver: "--",
     mobile: "--",
     currentTrip: "2.15 km",
@@ -206,7 +206,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     batteryLevel: 75,
     gsm: 4,
     ignition: false,
-    time: "02-09-2026 04:31:48 PM",
+    time: "02-09-2026 07:26:06 PM",
     address: "Mugore,Kiruhura, Uganda (SE)",
     fullAddress: "Mugore,Kiruhura, Uganda (SE)",
     driver: "--",
@@ -242,16 +242,16 @@ const VEHICLES_DATA: FleetVehicle[] = [
     group: "Mega Milk",
     subGroup: "Mega Milk",
     status: "Running",
-    speed: 6,
+    speed: 0,
     avgSpeed: 38,
     maxSpeed: 82,
-    voltage: "28.1V",
+    voltage: "25.4V",
     batteryLevel: 95,
     gsm: 5,
     ignition: true,
-    time: "02-09-2026 04:33:31 PM",
-    address: "Kabawo,Nateete,Rubaga,Kampala,P.O. BOX 6940, Uganda (SE)",
-    fullAddress: "Kabawo,Nateete,Rubaga,Kampala,P.O. BOX 6940, Uganda (SE)",
+    time: "02-09-2026 07:27:43 PM",
+    address: "Kabawo,Nateete,Rubaga,Kampala,P.O. BOX 6940, Uganda (NE)",
+    fullAddress: "Kabawo,Nateete,Rubaga,Kampala,P.O. BOX 6940, Uganda (NE)",
     driver: "--",
     mobile: "+256 701 498210",
     currentTrip: "92.50 km",
@@ -288,11 +288,11 @@ const VEHICLES_DATA: FleetVehicle[] = [
     speed: 0,
     avgSpeed: 45,
     maxSpeed: 78,
-    voltage: "22V",
+    voltage: "22.1V",
     batteryLevel: 60,
     gsm: 3,
     ignition: false,
-    time: "02-09-2026 03:33:54 PM",
+    time: "02-09-2026 07:00:12 PM",
     address: "Mbarara - Masaka Road,Kibwera,Western Region,",
     fullAddress: "Mbarara - Masaka Road,Kibwera,PO BOX 1051, Western Region, Uganda (SE)",
     driver: "--",
@@ -331,11 +331,11 @@ const VEHICLES_DATA: FleetVehicle[] = [
     speed: 0,
     avgSpeed: 40,
     maxSpeed: 70,
-    voltage: "18.2V",
+    voltage: "18.1V",
     batteryLevel: 50,
     gsm: 3,
     ignition: false,
-    time: "02-09-2026 04:00:14 PM",
+    time: "02-09-2026 06:35:28 PM",
     address: "Mbarara - Masaka Road,Kibwera,Western Region,",
     fullAddress: "Mbarara - Masaka Road,Kibwera,Western Region, Uganda (SE)",
     driver: "--",
@@ -421,9 +421,9 @@ const VEHICLES_DATA: FleetVehicle[] = [
     batteryLevel: 80,
     gsm: 4,
     ignition: false,
-    time: "02-09-2026 04:33:26 PM",
-    address: "Goli, Uganda (SW)",
-    fullAddress: "Goli, Uganda (SW)",
+    time: "02-09-2026 06:52:55 PM",
+    address: "RN27,Goli, Uganda (SW)",
+    fullAddress: "RN27,Goli, Uganda (SW)",
     driver: "--",
     mobile: "--",
     currentTrip: "12.30 km",
@@ -464,7 +464,7 @@ const VEHICLES_DATA: FleetVehicle[] = [
     batteryLevel: 90,
     gsm: 5,
     ignition: true,
-    time: "02-09-2026 04:11:59 PM",
+    time: "02-09-2026 07:12:19 PM",
     address: "Old Jinja Road,Namanve,Bbuto,Kira,Wakiso,002...",
     fullAddress: "Old Jinja Road,Namanve,Bbuto,Kira,Wakiso,00256, Uganda (SW)",
     driver: "--",
@@ -503,11 +503,11 @@ const VEHICLES_DATA: FleetVehicle[] = [
     speed: 0,
     avgSpeed: 20,
     maxSpeed: 45,
-    voltage: "25.7V",
+    voltage: "25.5V",
     batteryLevel: 85,
     gsm: 4,
     ignition: false,
-    time: "02-09-2026 04:01:57 PM",
+    time: "02-09-2026 07:08:01 PM",
     address: "Hima,Kasese, Uganda (SE)",
     fullAddress: "Hima,Kasese, Uganda (SE)",
     driver: "--",
@@ -546,13 +546,13 @@ const VEHICLES_DATA: FleetVehicle[] = [
     speed: 0,
     avgSpeed: 55,
     maxSpeed: 95,
-    voltage: "12.7V",
+    voltage: "12.8V",
     batteryLevel: 90,
     gsm: 4,
     ignition: false,
-    time: "02-09-2026 04:33:29 PM",
-    address: "TeObia,Central,Lira Municipality,Apac, Uganda (SW)",
-    fullAddress: "TeObia,Central,Lira Municipality,Apac, Uganda (SW)",
+    time: "02-09-2026 07:26:48 PM",
+    address: "Apac Road,Te-Obia,Central,Lira Municipality,Northern Region,...",
+    fullAddress: "Apac Road,Te-Obia,Central,Lira Municipality,Northern Region, Uganda (SW)",
     driver: "--",
     mobile: "--",
     currentTrip: "34.00 km",
@@ -586,16 +586,16 @@ const VEHICLES_DATA: FleetVehicle[] = [
     group: "walen",
     subGroup: "walen",
     status: "Running",
-    speed: 15,
+    speed: 33,
     avgSpeed: 48,
     maxSpeed: 80,
-    voltage: "27.8V",
+    voltage: "26.4V",
     batteryLevel: 92,
     gsm: 4,
     ignition: true,
-    time: "02-09-2026 04:33:31 PM",
-    address: "Sironko Kapchorwa Road,Kalakeju,Nakapiripirit, Uganda",
-    fullAddress: "Sironko Kapchorwa Road,Kalakeju,Nakapiripirit, Uganda (SE)",
+    time: "02-09-2026 07:26:40 PM",
+    address: "Sironko Kapchorwa Road,Muyembe,Bugisu",
+    fullAddress: "Sironko Kapchorwa Road,Muyembe,Bugisu sub-region, Uganda (SE)",
     driver: "--",
     mobile: "--",
     currentTrip: "84.30 km",
@@ -628,13 +628,36 @@ export default function TrackingPage() {
   const [isObjectPanelCollapsed, setIsObjectPanelCollapsed] = React.useState(false);
   
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = React.useState(false);
-  const [isPinTabDrawerOpen, setIsPinTabDrawerOpen] = React.useState(false);
+  const [isObjectListSettingsOpen, setIsObjectListSettingsOpen] = React.useState(false);
 
   const [selectedVehicle, setSelectedVehicle] = React.useState<FleetVehicle>(VEHICLES_DATA[2]); // UA 498EP
   const [searchQuery, setSearchQuery] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<string>("all");
 
   const [hoveredAddress, setHoveredAddress] = React.useState<{ id: string; text: string; top: number; left: number } | null>(null);
+  const [hoveredHeaderTip, setHoveredHeaderTip] = React.useState<{ text: string; top: number; left: number } | null>(null);
+
+  // Object List Column Visibility Config
+  const [columnsConfig, setColumnsConfig] = React.useState({
+    objectNumber: true,
+    objectName: true,
+    ignition: true,
+    power: true,
+    gsm: true,
+    gps: true,
+    ac: false,
+    sos: false,
+    immobilize: false,
+    voltage: true,
+    obd: false,
+    passengerSeat: false,
+    address: true,
+    driver: true,
+    notes: true,
+  });
+
+  const [tempColumnsConfig, setTempColumnsConfig] = React.useState({ ...columnsConfig });
+  const [settingsSearch, setSettingsSearch] = React.useState("");
 
   // Map Zoom & Layer State
   const [zoomLevel, setZoomLevel] = React.useState<number>(13);
@@ -686,7 +709,7 @@ export default function TrackingPage() {
             const fullV = VEHICLES_DATA.find((item) => item.id === v.id);
             if (fullV) setSelectedVehicle(fullV);
             setIsDetailDrawerOpen(true);
-            setIsPinTabDrawerOpen(false);
+            setIsObjectListSettingsOpen(false);
           }}
           zoomLevel={zoomLevel}
           mapLayerType={mapLayerType}
@@ -765,11 +788,12 @@ export default function TrackingPage() {
           <button 
             type="button" 
             onClick={() => {
-              setIsPinTabDrawerOpen(!isPinTabDrawerOpen);
+              setTempColumnsConfig({ ...columnsConfig });
+              setIsObjectListSettingsOpen(!isObjectListSettingsOpen);
               setIsDetailDrawerOpen(false);
             }}
-            className={cn("p-2 hover:bg-muted hover:text-foreground", isPinTabDrawerOpen && "text-[#2563eb]")}
-            title="Settings"
+            className={cn("p-2 hover:bg-muted hover:text-foreground", isObjectListSettingsOpen && "text-[#2563eb]")}
+            title="Object List Settings"
           >
             <Settings className="w-3.5 h-3.5" />
           </button>
@@ -869,10 +893,12 @@ export default function TrackingPage() {
             <button 
               type="button" 
               onClick={() => {
-                setIsPinTabDrawerOpen(true);
+                setTempColumnsConfig({ ...columnsConfig });
+                setIsObjectListSettingsOpen(true);
                 setIsDetailDrawerOpen(false);
               }}
-              className="text-white/80 hover:text-white"
+              className="text-white/80 hover:text-white cursor-pointer"
+              title="Object List Column Settings"
             >
               <Settings className="w-3.5 h-3.5" />
             </button>
@@ -967,7 +993,7 @@ export default function TrackingPage() {
                           className="px-5 py-1 bg-slate-100 dark:bg-muted/40 flex items-center justify-between cursor-pointer font-bold text-muted-foreground text-[10px]"
                         >
                           <div className="flex items-center gap-1.5">
-                            <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", !isSubExpanded && "-rotate-90")} />
+                            <ChevronDown className={cn("w-3 h-3 transition-transform", !isSubExpanded && "-rotate-90")} />
                             <input type="checkbox" defaultChecked onClick={(e) => e.stopPropagation()} className="w-3 h-3 rounded" />
                             <span>{grpName}</span>
                           </div>
@@ -984,7 +1010,7 @@ export default function TrackingPage() {
                                   onClick={() => {
                                     setSelectedVehicle(v);
                                     setIsDetailDrawerOpen(true);
-                                    setIsPinTabDrawerOpen(false);
+                                    setIsObjectListSettingsOpen(false);
                                   }}
                                   className={cn(
                                     "p-2 pl-6 flex items-start gap-2 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-muted/40",
@@ -1008,7 +1034,10 @@ export default function TrackingPage() {
                                   <div className="flex-1 min-w-0 space-y-0.5">
                                     {/* Line 1: Vehicle Name & Timestamp */}
                                     <div className="flex items-center justify-between">
-                                      <span className="font-bold text-[#1a56db] dark:text-[#29a4ff] truncate">{v.name}</span>
+                                      <div className="flex items-center gap-1 truncate">
+                                        <span className="font-bold text-[#1a56db] dark:text-[#29a4ff] truncate">{v.name}</span>
+                                        <Edit3 className="w-2.5 h-2.5 text-muted-foreground/60 hover:text-foreground cursor-pointer shrink-0" />
+                                      </div>
                                       <span className="text-[10px] font-bold text-foreground">{v.speed}</span>
                                     </div>
 
@@ -1016,30 +1045,54 @@ export default function TrackingPage() {
                                     <div className="text-[10px] text-muted-foreground flex items-center justify-between">
                                       <span>{v.time}</span>
                                       <div className="flex items-center gap-1.5">
-                                        <Key className={cn("w-3 h-3", v.ignition ? "text-emerald-600" : "text-rose-500")} />
-                                        <Battery className={cn("w-3 h-3", v.batteryLevel > 20 ? "text-emerald-600" : "text-rose-500")} />
-                                        <Signal className="w-3 h-3 text-emerald-600" />
-                                        <Wifi className="w-3 h-3 text-emerald-600" />
+                                        {columnsConfig.ignition && (
+                                          <Key className={cn("w-3 h-3", v.ignition ? "text-emerald-600" : "text-rose-500")} />
+                                        )}
+                                        {columnsConfig.power && (
+                                          <Battery className={cn("w-3 h-3", v.batteryLevel > 20 ? "text-emerald-600" : "text-rose-500")} />
+                                        )}
+                                        {columnsConfig.gsm && (
+                                          <Signal className="w-3 h-3 text-emerald-600" />
+                                        )}
+                                        {columnsConfig.gps && (
+                                          <Wifi className="w-3 h-3 text-emerald-600" />
+                                        )}
                                         <Lock className="w-3 h-3 text-muted-foreground" />
-                                        <span className="font-bold text-emerald-700 dark:text-emerald-400">{v.voltage}</span>
+                                        {columnsConfig.voltage && (
+                                          <span className="font-bold text-emerald-700 dark:text-emerald-400">{v.voltage}</span>
+                                        )}
                                       </div>
                                     </div>
 
                                     {/* Line 3: Truncated Address with Hover Tooltip */}
                                     <div className="text-[10px] text-muted-foreground flex items-center justify-between">
-                                      <div 
-                                        className="truncate max-w-[260px] hover:text-[#2558c4] cursor-pointer"
-                                        onMouseEnter={(e) => {
-                                          const rect = e.currentTarget.getBoundingClientRect();
-                                          setHoveredAddress({ id: v.id, text: v.fullAddress, top: rect.top, left: rect.right + 10 });
-                                        }}
-                                        onMouseLeave={() => setHoveredAddress(null)}
-                                      >
-                                        {v.address}
-                                      </div>
+                                      {columnsConfig.address && (
+                                        <div 
+                                          className="truncate max-w-[260px] hover:text-[#2558c4] cursor-pointer"
+                                          onMouseEnter={(e) => {
+                                            const rect = e.currentTarget.getBoundingClientRect();
+                                            setHoveredAddress({ id: v.id, text: v.fullAddress, top: rect.top, left: rect.right + 10 });
+                                          }}
+                                          onMouseLeave={() => setHoveredAddress(null)}
+                                        >
+                                          {v.address}
+                                        </div>
+                                      )}
+                                      
                                       <div className="flex items-center gap-4 shrink-0 text-emerald-600 dark:text-emerald-400 font-semibold">
-                                        <span>--</span>
-                                        <span className="text-muted-foreground/60">--</span>
+                                        {columnsConfig.driver && <span>--</span>}
+                                        {columnsConfig.notes && (
+                                          <span 
+                                            className="text-muted-foreground/60 cursor-pointer hover:text-foreground"
+                                            onMouseEnter={(e) => {
+                                              const rect = e.currentTarget.getBoundingClientRect();
+                                              setHoveredHeaderTip({ text: "Expiry Date", top: rect.top - 20, left: rect.left - 20 });
+                                            }}
+                                            onMouseLeave={() => setHoveredHeaderTip(null)}
+                                          >
+                                            --
+                                          </span>
+                                        )}
                                       </div>
                                     </div>
                                   </div>
@@ -1206,8 +1259,253 @@ export default function TrackingPage() {
         </div>
       )}
 
-      {/* 4. RIGHT FLOATING VEHICLE DETAIL DRAWER (ALL 16 CARDS) */}
-      {isDetailDrawerOpen && selectedVehicle && !isPinTabDrawerOpen && (
+      {/* FLOATING EXPIRY DATE TIP */}
+      {hoveredHeaderTip && (
+        <div 
+          className="fixed z-50 bg-slate-900 text-white border border-slate-700 shadow-xl px-2 py-1 rounded text-[10px] font-semibold pointer-events-none animate-in fade-in duration-100"
+          style={{ top: `${hoveredHeaderTip.top}px`, left: `${hoveredHeaderTip.left}px` }}
+        >
+          {hoveredHeaderTip.text}
+        </div>
+      )}
+
+      {/* 4. OBJECT LIST SETTINGS DRAWER (EXACT 100% PARITY WITH PRODUCTION MEDIA_1788366432773.PNG) */}
+      {isObjectListSettingsOpen && (
+        <div className="absolute top-2 right-12 bottom-2 z-30 w-[300px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs select-none">
+          {/* Header */}
+          <div className="p-3 border-b border-border flex items-center justify-between font-bold text-foreground">
+            <span className="text-sm">Object List</span>
+            <button 
+              type="button" 
+              onClick={() => setIsObjectListSettingsOpen(false)}
+              className="text-muted-foreground hover:text-foreground cursor-pointer p-1"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Search Bar */}
+          <div className="p-2 border-b border-border flex items-center gap-2 bg-slate-50 dark:bg-muted/20">
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                placeholder="Search"
+                value={settingsSearch}
+                onChange={(e) => setSettingsSearch(e.target.value)}
+                className="w-full pl-7 pr-2 py-1 text-xs border border-border rounded bg-white dark:bg-card text-foreground outline-none focus:border-[#2558c4]"
+              />
+              <Search className="w-3.5 h-3.5 absolute left-2 top-2 text-muted-foreground" />
+            </div>
+            <button 
+              type="button" 
+              onClick={() => setSettingsSearch("")}
+              className="p-1 text-muted-foreground hover:text-foreground cursor-pointer"
+              title="Reset"
+            >
+              <RotateCw className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Body Content */}
+          <div className="flex-1 overflow-y-auto p-3 space-y-3">
+            <div className="text-[10px] text-muted-foreground italic leading-tight">
+              *If no space available, remove some widgets to add new ones.
+            </div>
+
+            {/* Object Name Section */}
+            <div className="space-y-1.5 border-b border-border pb-3">
+              <div className="font-bold text-xs text-foreground">Object Name</div>
+              <label className="flex items-center gap-2 cursor-pointer text-xs text-muted-foreground hover:text-foreground">
+                <input 
+                  type="checkbox" 
+                  checked={tempColumnsConfig.objectNumber} 
+                  onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, objectNumber: e.target.checked })}
+                  className="rounded text-[#2558c4] w-3.5 h-3.5" 
+                />
+                <span>Object Number</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer text-xs text-muted-foreground hover:text-foreground">
+                <input 
+                  type="checkbox" 
+                  checked={tempColumnsConfig.objectName} 
+                  onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, objectName: e.target.checked })}
+                  className="rounded text-[#2558c4] w-3.5 h-3.5" 
+                />
+                <span>Object Name</span>
+              </label>
+            </div>
+
+            {/* Choose Columns Section */}
+            <div className="space-y-2">
+              <div className="font-bold text-xs text-foreground">Choose Columns</div>
+
+              {/* Sensors Category */}
+              <div className="border border-border rounded p-2 space-y-1.5 bg-slate-50/50 dark:bg-muted/10">
+                <div className="flex items-center justify-between font-semibold text-xs text-foreground">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" className="rounded text-[#2558c4] w-3.5 h-3.5" />
+                    <span>Sensors</span>
+                  </label>
+                  <GripVertical className="w-3.5 h-3.5 text-muted-foreground/60 cursor-grab" />
+                </div>
+
+                <div className="pl-4 space-y-1 text-[11px] text-muted-foreground">
+                  <label className="flex items-center gap-2 cursor-pointer hover:text-foreground">
+                    <input 
+                      type="checkbox" 
+                      checked={tempColumnsConfig.ignition} 
+                      onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, ignition: e.target.checked })}
+                      className="rounded text-[#2558c4] w-3 h-3" 
+                    />
+                    <span>Ignition</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer hover:text-foreground">
+                    <input 
+                      type="checkbox" 
+                      checked={tempColumnsConfig.power} 
+                      onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, power: e.target.checked })}
+                      className="rounded text-[#2558c4] w-3 h-3" 
+                    />
+                    <span>Power</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer hover:text-foreground">
+                    <input 
+                      type="checkbox" 
+                      checked={tempColumnsConfig.gsm} 
+                      onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, gsm: e.target.checked })}
+                      className="rounded text-[#2558c4] w-3 h-3" 
+                    />
+                    <span>GSM</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer hover:text-foreground">
+                    <input 
+                      type="checkbox" 
+                      checked={tempColumnsConfig.gps} 
+                      onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, gps: e.target.checked })}
+                      className="rounded text-[#2558c4] w-3 h-3" 
+                    />
+                    <span>GPS</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer hover:text-foreground">
+                    <input 
+                      type="checkbox" 
+                      checked={tempColumnsConfig.ac} 
+                      onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, ac: e.target.checked })}
+                      className="rounded text-[#2558c4] w-3 h-3" 
+                    />
+                    <span>Air Condition</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer hover:text-foreground">
+                    <input 
+                      type="checkbox" 
+                      checked={tempColumnsConfig.sos} 
+                      onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, sos: e.target.checked })}
+                      className="rounded text-[#2558c4] w-3 h-3" 
+                    />
+                    <span>SOS</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer hover:text-foreground">
+                    <input 
+                      type="checkbox" 
+                      checked={tempColumnsConfig.immobilize} 
+                      onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, immobilize: e.target.checked })}
+                      className="rounded text-[#2558c4] w-3 h-3" 
+                    />
+                    <span>Immobilize</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer hover:text-foreground">
+                    <input 
+                      type="checkbox" 
+                      checked={tempColumnsConfig.voltage} 
+                      onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, voltage: e.target.checked })}
+                      className="rounded text-[#2558c4] w-3 h-3" 
+                    />
+                    <span>External voltage</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer hover:text-foreground">
+                    <input 
+                      type="checkbox" 
+                      checked={tempColumnsConfig.obd} 
+                      onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, obd: e.target.checked })}
+                      className="rounded text-[#2558c4] w-3 h-3" 
+                    />
+                    <span>OBD</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer hover:text-foreground">
+                    <input 
+                      type="checkbox" 
+                      checked={tempColumnsConfig.passengerSeat} 
+                      onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, passengerSeat: e.target.checked })}
+                      className="rounded text-[#2558c4] w-3 h-3" 
+                    />
+                    <span>Passenger Seat</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Address Category */}
+              <div className="border border-border rounded p-2 space-y-1.5 bg-slate-50/50 dark:bg-muted/10">
+                <div className="flex items-center justify-between font-semibold text-xs text-foreground">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={tempColumnsConfig.address} 
+                      onChange={(e) => setTempColumnsConfig({ ...tempColumnsConfig, address: e.target.checked })}
+                      className="rounded text-[#2558c4] w-3.5 h-3.5" 
+                    />
+                    <span>Address</span>
+                  </label>
+                  <GripVertical className="w-3.5 h-3.5 text-muted-foreground/60 cursor-grab" />
+                </div>
+              </div>
+
+              {/* Object Activity Category */}
+              <div className="border border-border rounded p-2 space-y-1.5 bg-slate-50/50 dark:bg-muted/10">
+                <div className="flex items-center justify-between font-semibold text-xs text-foreground">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" className="rounded text-[#2558c4] w-3.5 h-3.5" />
+                    <span>Object Activity</span>
+                  </label>
+                  <GripVertical className="w-3.5 h-3.5 text-muted-foreground/60 cursor-grab" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer Action Buttons */}
+          <div className="p-2 border-t border-border bg-slate-50 dark:bg-muted/20 flex gap-2">
+            <button 
+              type="button" 
+              onClick={() => {
+                setColumnsConfig({ ...tempColumnsConfig });
+                setIsObjectListSettingsOpen(false);
+              }}
+              className="flex-1 py-1.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white rounded font-bold text-xs shadow transition-colors cursor-pointer"
+            >
+              Save
+            </button>
+            <button 
+              type="button" 
+              onClick={() => setIsObjectListSettingsOpen(false)}
+              className="flex-1 py-1.5 bg-white dark:bg-card border border-border hover:bg-muted text-foreground rounded font-bold text-xs shadow-xs transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 5. RIGHT FLOATING VEHICLE DETAIL DRAWER (ALL 16 CARDS) */}
+      {isDetailDrawerOpen && selectedVehicle && !isObjectListSettingsOpen && (
         <div className="absolute top-2 right-12 bottom-2 z-30 w-[320px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs">
           
           {/* Blue Top Utility Bar */}
@@ -1221,7 +1519,8 @@ export default function TrackingPage() {
               <button 
                 type="button" 
                 onClick={() => {
-                  setIsPinTabDrawerOpen(true);
+                  setTempColumnsConfig({ ...columnsConfig });
+                  setIsObjectListSettingsOpen(true);
                   setIsDetailDrawerOpen(false);
                 }}
                 className="hover:text-sky-300"
