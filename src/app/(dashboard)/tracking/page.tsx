@@ -127,7 +127,8 @@ interface FleetVehicle {
   fuelRefill: number;
   fuelDrain: number;
   fuelConsumption: string;
-  coords: { x: number; y: number; lat: string; lng: string };
+  lat: number;
+  lng: number;
   duration: string;
   runningHrs: string;
   idleHrs: string;
@@ -171,7 +172,8 @@ const VEHICLES_DATA: FleetVehicle[] = [
     fuelRefill: 68,
     fuelDrain: 0,
     fuelConsumption: "0.00 liter",
-    coords: { x: 55, y: 52, lat: "0.3006866", lng: "32.5363015" },
+    lat: -0.1983,
+    lng: 30.8251,
     duration: "00:08",
     runningHrs: "00:04 hrs",
     idleHrs: "00:05 hrs",
@@ -213,7 +215,8 @@ const VEHICLES_DATA: FleetVehicle[] = [
     fuelRefill: 0,
     fuelDrain: 0,
     fuelConsumption: "1.46 liter",
-    coords: { x: 58, y: 52, lat: "0.201412", lng: "30.821102" },
+    lat: -0.2155,
+    lng: 30.8410,
     duration: "00:00",
     runningHrs: "01:20 hrs",
     idleHrs: "00:15 hrs",
@@ -255,7 +258,8 @@ const VEHICLES_DATA: FleetVehicle[] = [
     fuelRefill: 183,
     fuelDrain: 60,
     fuelConsumption: "90.91 liter",
-    coords: { x: 48, y: 44, lat: "0.224190", lng: "30.791400" },
+    lat: 0.2985,
+    lng: 32.5350,
     duration: "00:12",
     runningHrs: "03:40 hrs",
     idleHrs: "00:20 hrs",
@@ -297,7 +301,8 @@ const VEHICLES_DATA: FleetVehicle[] = [
     fuelRefill: 200,
     fuelDrain: 0,
     fuelConsumption: "78.40 liter",
-    coords: { x: 38, y: 58, lat: "0.601240", lng: "30.654120" },
+    lat: -0.5841,
+    lng: 30.6521,
     duration: "00:00",
     runningHrs: "04:10 hrs",
     idleHrs: "00:30 hrs",
@@ -339,7 +344,8 @@ const VEHICLES_DATA: FleetVehicle[] = [
     fuelRefill: 0,
     fuelDrain: 0,
     fuelConsumption: "32.40 liter",
-    coords: { x: 42, y: 54, lat: "0.581200", lng: "30.684100" },
+    lat: -0.5910,
+    lng: 30.6720,
     duration: "00:00",
     runningHrs: "02:10 hrs",
     idleHrs: "00:15 hrs",
@@ -381,7 +387,8 @@ const VEHICLES_DATA: FleetVehicle[] = [
     fuelRefill: 0,
     fuelDrain: 0,
     fuelConsumption: "0.00 liter",
-    coords: { x: 40, y: 56, lat: "0.591200", lng: "30.674100" },
+    lat: -0.6010,
+    lng: 30.6810,
     duration: "00:00",
     runningHrs: "00:00 hrs",
     idleHrs: "00:00 hrs",
@@ -423,7 +430,8 @@ const VEHICLES_DATA: FleetVehicle[] = [
     fuelRefill: 0,
     fuelDrain: 0,
     fuelConsumption: "14.20 liter",
-    coords: { x: 62, y: 35, lat: "2.381200", lng: "31.214100" },
+    lat: 2.3812,
+    lng: 31.2141,
     duration: "00:00",
     runningHrs: "01:05 hrs",
     idleHrs: "00:10 hrs",
@@ -465,7 +473,8 @@ const VEHICLES_DATA: FleetVehicle[] = [
     fuelRefill: 50,
     fuelDrain: 0,
     fuelConsumption: "8.50 liter",
-    coords: { x: 56, y: 49, lat: "0.351200", lng: "32.684100" },
+    lat: 0.3512,
+    lng: 32.6841,
     duration: "00:05",
     runningHrs: "00:45 hrs",
     idleHrs: "00:25 hrs",
@@ -507,7 +516,8 @@ const VEHICLES_DATA: FleetVehicle[] = [
     fuelRefill: 0,
     fuelDrain: 0,
     fuelConsumption: "15.00 liter",
-    coords: { x: 34, y: 50, lat: "0.281200", lng: "30.184100" },
+    lat: 0.2812,
+    lng: 30.1841,
     duration: "00:00",
     runningHrs: "00:30 hrs",
     idleHrs: "00:10 hrs",
@@ -549,7 +559,8 @@ const VEHICLES_DATA: FleetVehicle[] = [
     fuelRefill: 0,
     fuelDrain: 0,
     fuelConsumption: "12.10 liter",
-    coords: { x: 60, y: 25, lat: "2.251200", lng: "32.904100" },
+    lat: 2.2512,
+    lng: 32.9041,
     duration: "00:00",
     runningHrs: "01:10 hrs",
     idleHrs: "00:05 hrs",
@@ -591,7 +602,8 @@ const VEHICLES_DATA: FleetVehicle[] = [
     fuelRefill: 150,
     fuelDrain: 0,
     fuelConsumption: "62.10 liter",
-    coords: { x: 68, y: 28, lat: "1.291400", lng: "34.341200" },
+    lat: 1.2914,
+    lng: 34.3412,
     duration: "00:25",
     runningHrs: "03:10 hrs",
     idleHrs: "00:10 hrs",
@@ -620,6 +632,11 @@ export default function TrackingPage() {
   const [statusFilter, setStatusFilter] = React.useState<string>("all");
 
   const [hoveredAddress, setHoveredAddress] = React.useState<{ id: string; text: string; top: number; left: number } | null>(null);
+
+  // Map Zoom & Pan State
+  const [zoomLevel, setZoomLevel] = React.useState<number>(13);
+  const [centerLat, setCenterLat] = React.useState<number>(0.2985);
+  const [centerLng, setCenterLng] = React.useState<number>(32.5350);
 
   const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>({
     "Mega Milk": true,
@@ -654,58 +671,92 @@ export default function TrackingPage() {
     });
   }, [statusFilter, searchQuery]);
 
+  // Convert lat/lng to OpenStreetMap tile grid coords
+  const lon2tile = (lon: number, zoom: number) => Math.floor(((lon + 180) / 360) * Math.pow(2, zoom));
+  const lat2tile = (lat: number, zoom: number) =>
+    Math.floor(
+      ((1 - Math.log(Math.tan((lat * Math.PI) / 180) + 1 / Math.cos((lat * Math.PI) / 180)) / Math.PI) / 2) *
+        Math.pow(2, zoom)
+    );
+
+  const tileCenter = React.useMemo(() => {
+    const x = lon2tile(centerLng, zoomLevel);
+    const y = lat2tile(centerLat, zoomLevel);
+    return { x, y };
+  }, [centerLat, centerLng, zoomLevel]);
+
+  // Generate 5x5 OpenStreetMap grid tiles around center
+  const osmTiles = React.useMemo(() => {
+    const tiles: { x: number; y: number; offsetX: number; offsetY: number; url: string }[] = [];
+    const span = 2;
+    for (let dx = -span; dx <= span; dx++) {
+      for (let dy = -span; dy <= span; dy++) {
+        const tx = tileCenter.x + dx;
+        const ty = tileCenter.y + dy;
+        tiles.push({
+          x: tx,
+          y: ty,
+          offsetX: dx * 256,
+          offsetY: dy * 256,
+          url: `https://tile.openstreetmap.org/${zoomLevel}/${tx}/${ty}.png`,
+        });
+      }
+    }
+    return tiles;
+  }, [tileCenter, zoomLevel]);
+
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#06101e] text-foreground select-none flex flex-col font-sans">
+    <div className="relative w-full h-screen overflow-hidden bg-[#e5e3df] text-foreground select-none flex flex-col font-sans">
       
-      {/* 1. SATELLITE EARTH MAP CANVAS BACKGROUND MATCHING PRODUCTION STEP 9522 */}
-      <div className="absolute inset-0 z-0 bg-[#06101e] overflow-hidden">
-        <div 
-          className="w-full h-full bg-cover bg-center transition-all duration-300"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2600&q=85')`,
-            filter: "brightness(0.95) contrast(1.1)",
-          }}
-        />
-
-        {/* Global Geographic Labels */}
-        <div className="absolute top-[28%] left-[72%] text-white/80 font-semibold text-[10px] drop-shadow-[0_1px_3px_black] pointer-events-none">
-          South Korea
-        </div>
-        <div className="absolute top-[27%] left-[78%] text-white/80 font-semibold text-[10px] drop-shadow-[0_1px_3px_black] pointer-events-none">
-          Japan
-        </div>
-        <div className="absolute top-[53%] left-[71%] text-white/80 font-semibold text-[10px] drop-shadow-[0_1px_3px_black] pointer-events-none">
-          Philippines
-        </div>
-        <div className="absolute top-[64%] left-[68%] text-white/80 font-semibold text-[10px] drop-shadow-[0_1px_3px_black] pointer-events-none">
-          Indonesia
-        </div>
-        <div className="absolute top-[67%] left-[80%] text-white/80 font-semibold text-[10px] drop-shadow-[0_1px_3px_black] pointer-events-none">
-          Papua New Guinea
-        </div>
-        <div className="absolute top-[82%] left-[76%] text-white/90 font-bold text-[12px] drop-shadow-[0_1px_3px_black] pointer-events-none">
-          Australia
+      {/* 1. INTERACTIVE OPENSTREETMAP (OSM) TILE ENGINE */}
+      <div className="absolute inset-0 z-0 bg-[#e5e3df] overflow-hidden">
+        {/* OpenStreetMap Dynamic Tile Grid Layer */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="relative w-0 h-0">
+            {osmTiles.map((tile) => (
+              <img
+                key={`${tile.x}-${tile.y}-${zoomLevel}`}
+                src={tile.url}
+                alt="OpenStreetMap"
+                className="absolute w-[256px] h-[256px] max-w-none transition-opacity duration-200"
+                style={{
+                  left: `${tile.offsetX - 128}px`,
+                  top: `${tile.offsetY - 128}px`,
+                }}
+                loading="lazy"
+                onError={(e) => {
+                  // Fallback tile background
+                  (e.target as HTMLElement).style.backgroundColor = "#e0ded9";
+                }}
+              />
+            ))}
+          </div>
         </div>
 
-        {/* Selected Vehicle Marker on Map */}
+        {/* Selected Vehicle Live Marker on OSM Coordinates */}
         <div 
-          className="absolute top-[52%] left-[58%] z-20 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group"
+          className="absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group"
           onClick={() => {
             setIsDetailDrawerOpen(true);
             setIsPinTabDrawerOpen(false);
           }}
         >
-          <div className="w-6 h-12 bg-slate-300 border-2 border-slate-700 rounded-sm shadow-2xl flex flex-col items-center justify-between p-0.5 ring-4 ring-[#29a4ff]">
+          <div className="w-7 h-13 bg-slate-100 border-2 border-slate-700 rounded-sm shadow-2xl flex flex-col items-center justify-between p-0.5 ring-4 ring-[#2558c4]">
             <div className="w-full h-3 bg-slate-800 rounded-xs" />
-            <div className="w-2 h-2 rounded-full bg-[#22c55e] animate-ping" />
+            <div className="w-2.5 h-2.5 rounded-full bg-[#22c55e] animate-ping" />
           </div>
           <div className="mt-1 px-2 py-0.5 bg-[#15803d] text-white text-[10px] font-bold rounded shadow-lg whitespace-nowrap">
             {selectedVehicle.name} - {selectedVehicle.speed} km/h
           </div>
         </div>
+
+        {/* OpenStreetMap Legal Attribution */}
+        <div className="absolute bottom-1 right-12 z-10 bg-white/80 dark:bg-card/80 text-[10px] px-1.5 py-0.5 rounded text-muted-foreground border border-border">
+          © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer" className="text-[#1a56db] hover:underline">OpenStreetMap</a> contributors
+        </div>
       </div>
 
-      {/* 2. RIGHT MAP ACTIONS TOOLBAR (MATCHING STEP 9522) */}
+      {/* 2. RIGHT MAP ACTIONS TOOLBAR */}
       <div className="absolute top-2 right-2 bottom-3 z-30 flex flex-col justify-between items-end pointer-events-none">
         <div className="bg-white dark:bg-card border border-border shadow-xl rounded flex flex-col text-muted-foreground overflow-hidden pointer-events-auto">
           <button type="button" className="p-2 hover:bg-muted hover:text-foreground" title="Search Location"><Search className="w-3.5 h-3.5" /></button>
@@ -741,21 +792,35 @@ export default function TrackingPage() {
           </button>
         </div>
 
-        {/* Map Scale & Zoom Controls */}
+        {/* Map Zoom Controls & Scale Indicator */}
         <div className="flex flex-col items-end gap-2 pointer-events-auto">
           <div className="bg-white dark:bg-card border border-border rounded shadow flex flex-col overflow-hidden text-muted-foreground">
-            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground"><Plus className="w-3.5 h-3.5" /></button>
+            <button 
+              type="button" 
+              onClick={() => setZoomLevel((z) => Math.min(z + 1, 18))} 
+              className="p-1.5 hover:bg-muted hover:text-foreground"
+              title="Zoom In"
+            >
+              <Plus className="w-3.5 h-3.5" />
+            </button>
             <div className="h-[1px] bg-border" />
-            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground"><Minus className="w-3.5 h-3.5" /></button>
+            <button 
+              type="button" 
+              onClick={() => setZoomLevel((z) => Math.max(z - 1, 3))} 
+              className="p-1.5 hover:bg-muted hover:text-foreground"
+              title="Zoom Out"
+            >
+              <Minus className="w-3.5 h-3.5" />
+            </button>
           </div>
 
           <div className="text-[9px] font-bold bg-white/90 dark:bg-card/90 px-1.5 py-0.5 rounded border border-border text-foreground shadow">
-            1000 km
+            {zoomLevel >= 13 ? "1 km" : zoomLevel >= 8 ? "50 km" : "1000 km"}
           </div>
         </div>
       </div>
 
-      {/* 3. LEFT FLEET OBJECT PANEL (100% PARITY WITH STEP 9522) */}
+      {/* 3. LEFT FLEET OBJECT PANEL */}
       <div
         className={cn(
           "absolute top-2 left-2 bottom-2 z-30 w-[590px] max-w-[calc(100vw-20px)] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col transition-all duration-300 overflow-hidden",
@@ -834,7 +899,7 @@ export default function TrackingPage() {
         {/* TAB 1: OBJECT FLEET LIST */}
         {leftActiveTab === "object" && (
           <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Status Summary Ribbon (2 Running, 1 Idle, 7 Stopped, 1 Inactive, 0 NoData, 11 Total) */}
+            {/* Status Summary Ribbon */}
             <div className="grid grid-cols-6 border-b border-border text-center text-[10px] font-semibold">
               <div onClick={() => setStatusFilter("Running")} className="py-1 bg-emerald-100/70 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-r border-border cursor-pointer">
                 <div className="text-xs font-bold">{counts.running}</div>
@@ -935,6 +1000,8 @@ export default function TrackingPage() {
                                   key={v.id}
                                   onClick={() => {
                                     setSelectedVehicle(v);
+                                    setCenterLat(v.lat);
+                                    setCenterLng(v.lng);
                                     setIsDetailDrawerOpen(true);
                                     setIsPinTabDrawerOpen(false);
                                   }}
@@ -977,7 +1044,7 @@ export default function TrackingPage() {
                                       </div>
                                     </div>
 
-                                    {/* Line 3: Truncated Address with Hover Tooltip + Column Badges */}
+                                    {/* Line 3: Truncated Address with Hover Tooltip */}
                                     <div className="text-[10px] text-muted-foreground flex items-center justify-between">
                                       <div 
                                         className="truncate max-w-[260px] hover:text-[#2558c4] cursor-pointer"
@@ -1148,7 +1215,7 @@ export default function TrackingPage() {
         )}
       </div>
 
-      {/* FLOATING ADDRESS TOOLTIP ON HOVER (MATCHING SCREENSHOT 2) */}
+      {/* FLOATING ADDRESS TOOLTIP ON HOVER */}
       {hoveredAddress && (
         <div 
           className="fixed z-50 bg-white dark:bg-card border border-border shadow-2xl p-2 rounded text-[11px] font-medium text-foreground max-w-[280px] pointer-events-none animate-in fade-in duration-100"
@@ -1318,7 +1385,7 @@ export default function TrackingPage() {
               </div>
               <div className="p-2.5 space-y-1.5 text-[11px]">
                 <div className="text-muted-foreground leading-snug">{selectedVehicle.fullAddress}</div>
-                <div className="font-mono text-[10px] font-bold text-[#2558c4] dark:text-[#29a4ff]">{selectedVehicle.coords.lat}, {selectedVehicle.coords.lng}</div>
+                <div className="font-mono text-[10px] font-bold text-[#2558c4] dark:text-[#29a4ff]">{selectedVehicle.lat}, {selectedVehicle.lng}</div>
               </div>
             </div>
 
