@@ -410,7 +410,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
           </div>
 
           {/* PRIMARY MODULES LIST */}
-          <div id="tree-module" className="flex-1 flex flex-col py-4 overflow-y-auto overflow-x-hidden gap-1">
+          <div id="tree-module" className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden no-scrollbar">
             {allowedNavigation.map((mod) => {
               const isHovered = hoveredModule?.title === mod.title;
               const isActive = mod.href ? pathname === mod.href : pathname.startsWith(`/${mod.title.toLowerCase()}`);
@@ -418,7 +418,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               return (
                 <div
                   key={mod.title}
-                  className="w-full h-[78px] relative flex flex-col items-center justify-center cursor-pointer group"
+                  className="w-full aspect-square shrink-0 relative flex flex-col items-center justify-center cursor-pointer group"
                   onMouseEnter={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
                     const subMenuHeight = (mod.categories?.length || 0) * ITEM_HEIGHT;
