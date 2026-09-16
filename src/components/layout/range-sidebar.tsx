@@ -323,21 +323,19 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
     setCategoryIndex(0);
   };
 
-  // Compute smart top offset for #deepMenu so it NEVER overflows the bottom of #subMenu
+  // Compute smart top offset for #deepMenu so it NEVER overflows the bottom of the screen or #subMenu
   const deepMenuTopOffset = React.useMemo(() => {
     if (!hoveredModule || !hoveredModule.categories || !hoveredCategory) return 0;
-    const subMenuTotalHeight = hoveredModule.categories.length * ITEM_HEIGHT;
     const deepMenuTotalHeight = hoveredCategory.items.length * ITEM_HEIGHT;
-    const naturalTop = categoryIndex * ITEM_HEIGHT;
+    const naturalTop = 32 + (categoryIndex * ITEM_HEIGHT);
 
-    if (deepMenuTotalHeight <= subMenuTotalHeight) {
-      // Clamp so deepMenu never exceeds bottom of subMenu
-      const maxTop = subMenuTotalHeight - deepMenuTotalHeight;
-      return Math.max(0, Math.min(naturalTop, maxTop));
-    } else {
-      return 0;
+    if (typeof window !== "undefined") {
+      // Ensure flyoutTop + offset + deepMenuTotalHeight <= window.innerHeight - 16
+      const maxAllowedOffset = Math.max(0, window.innerHeight - flyoutTop - deepMenuTotalHeight - 16);
+      return Math.min(naturalTop, maxAllowedOffset);
     }
-  }, [hoveredModule, hoveredCategory, categoryIndex]);
+    return 0;
+  }, [hoveredModule, hoveredCategory, categoryIndex, flyoutTop]);
 
   return (
     <>
@@ -410,7 +408,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
           </div>
 
           {/* PRIMARY MODULES LIST */}
-          <div id="tree-module" className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden no-scrollbar">
+          <div id="tree-module" className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden no-scrollbar pb-8">
             {allowedNavigation.map((mod) => {
               const isHovered = hoveredModule?.title === mod.title;
               const isActive = mod.href ? pathname === mod.href : pathname.startsWith(`/${mod.title.toLowerCase()}`);
@@ -421,9 +419,17 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                   className="w-full aspect-square shrink-0 relative flex flex-col items-center justify-center cursor-pointer group"
                   onMouseEnter={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
-                    const subMenuHeight = (mod.categories?.length || 0) * ITEM_HEIGHT;
-                    const maxTop = typeof window !== 'undefined' ? Math.max(10, window.innerHeight - subMenuHeight - 20) : rect.top;
-                    setFlyoutTop(Math.min(rect.top, maxTop));
+                    const maxCategoryItems = Math.max(
+                      1,
+                      ...(mod.categories?.map((c) => c.items.length) || [1])
+                    );
+                    const subMenuHeight = (mod.categories?.length || 0) * ITEM_HEIGHT + 32;
+                    const deepMenuHeight = maxCategoryItems * ITEM_HEIGHT;
+                    const totalFlyoutHeight = Math.max(subMenuHeight, deepMenuHeight);
+                    const maxTop = typeof window !== 'undefined'
+                      ? Math.max(10, window.innerHeight - totalFlyoutHeight - 16)
+                      : rect.top;
+                    setFlyoutTop(Math.max(10, Math.min(rect.top, maxTop)));
                     setHoveredModule(mod);
                     // Don't auto-select first category — cascading reveal:
                     // Layer 1 (categories) shows first, Layer 2 (deep menu) only on category hover
@@ -482,7 +488,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
             {/* LAYER 2: Submenu Categories (170px wide, #1542b7 / rgb(21, 66, 183)) */}
             <div
               id="subMenu"
-              className="w-[170px] bg-[#04648C] text-white flex flex-col border-r border-white/10 max-h-[85vh] overflow-y-auto animate-flyout-sub shadow-[4px_6px_16px_rgba(0,0,0,0.3)] z-10 shrink-0"
+              className="w-[170px] bg-[#04648C] text-white flex flex-col border-r border-white/10 max-h-[calc(100vh-32px)] overflow-y-auto no-scrollbar animate-flyout-sub shadow-[4px_6px_16px_rgba(0,0,0,0.3)] z-10 shrink-0"
             >
               {/* Module title header */}
               <div className="px-3 py-2 text-[10px] uppercase font-bold tracking-wider text-white/50 border-b border-white/10 bg-[#04648C]/80">
@@ -497,6 +503,11 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                       onMouseEnter={() => {
                         setHoveredCategory(cat);
                         setCategoryIndex(idx);
+                        if (typeof window !== 'undefined') {
+                          const catHeight = cat.items.length * ITEM_HEIGHT;
+                          const maxAllowedTop = window.innerHeight - catHeight - 16;
+                          setFlyoutTop((prev) => Math.min(prev, Math.max(10, maxAllowedTop)));
+                        }
                       }}
                       className={cn(
                         "h-[38px] px-3 flex items-center justify-between text-[12px] font-medium text-white/90 hover:text-white trakzee-menu-item cursor-pointer transition-all duration-150 group",
@@ -523,7 +534,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               <div
                 id="deepMenu"
                 key={hoveredCategory.title}
-                className="w-[180px] bg-[#04648C] text-white flex flex-col h-fit max-h-[80vh] overflow-y-auto border-r border-white/10 animate-flyout-deep shadow-[4px_6px_18px_rgba(0,0,0,0.35)] shrink-0"
+                className="w-[180px] bg-[#04648C] text-white flex flex-col h-fit max-h-[calc(100vh-32px)] overflow-y-auto no-scrollbar border-r border-white/10 animate-flyout-deep shadow-[4px_6px_18px_rgba(0,0,0,0.35)] shrink-0"
                 style={{
                   marginTop: `${deepMenuTopOffset}px`
                 }}
