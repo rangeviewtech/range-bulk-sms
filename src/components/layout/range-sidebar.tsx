@@ -357,13 +357,14 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
           <div id="tree-logo" className="flex items-center justify-center p-2 pt-2.5">
             <Link
               href="/dashboard"
-              className="w-[78px] h-[78px] rounded-full bg-[#02050f] border border-white/20 flex flex-col items-center justify-center trakzee-logo-badge group overflow-hidden"
+              className="w-[78px] h-[78px] rounded-2xl bg-[#031d33]/90 hover:bg-[#052846] border border-white/15 flex flex-col items-center justify-center trakzee-logo-badge group overflow-hidden transition-all duration-300 shadow-md"
               title="Range SMS - Enterprise Bulk SMS"
             >
-              {/* Range Logo Text */}
-              <div className="font-bold text-white text-lg tracking-wider transition-transform duration-300 group-hover:scale-105">
-                RANGE
-              </div>
+              <img
+                src="/images/brand/range-icon.svg"
+                alt="Range Bulk SMS Platform"
+                className="w-11 h-11 object-contain transition-transform duration-300 group-hover:scale-110"
+              />
             </Link>
           </div>
 
@@ -404,8 +405,8 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               aria-label="Notifications"
             >
               <Bell className="w-[22px] h-[22px] transition-transform duration-200 group-hover:scale-110" strokeWidth={1.3} />
-              <span className="absolute top-4 right-4 w-2 h-2 bg-[#29a4ff] rounded-full animate-ping opacity-75 ring-2 ring-[#07163d]" />
-              <span className="absolute top-4 right-4 w-2 h-2 bg-[#29a4ff] rounded-full ring-2 ring-[#07163d]" />
+              <span className="absolute top-4 right-4 w-2 h-2 bg-[#FBCA07] rounded-full animate-ping opacity-75 ring-2 ring-[#07163d]" />
+              <span className="absolute top-4 right-4 w-2 h-2 bg-[#FBCA07] rounded-full ring-2 ring-[#07163d]" />
             </button>
           </div>
 
@@ -434,11 +435,11 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                       href={mod.href}
                       className={cn(
                         "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group",
-                        (isHovered || isActive) && "bg-[#1542b7] text-white shadow-inner"
+                        (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
                       )}
                     >
                       {isActive && (
-                        <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#29a4ff] shadow-[0_0_10px_#29a4ff] animate-indicator-slide" />
+                        <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#FBCA07] shadow-[0_0_10px_#FBCA07] animate-indicator-slide" />
                       )}
                       {mod.icon}
                       <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px] group-hover:font-semibold transition-all">
@@ -449,11 +450,11 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                     <div
                       className={cn(
                         "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group",
-                        (isHovered || isActive) && "bg-[#1542b7] text-white shadow-inner"
+                        (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
                       )}
                     >
                       {isActive && (
-                        <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#29a4ff] shadow-[0_0_10px_#29a4ff] animate-indicator-slide" />
+                        <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#FBCA07] shadow-[0_0_10px_#FBCA07] animate-indicator-slide" />
                       )}
                       {mod.icon}
                       <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px] group-hover:font-semibold transition-all">
@@ -496,7 +497,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
             {/* LAYER 2: Submenu Categories (170px wide, #1542b7 / rgb(21, 66, 183)) */}
             <div
               id="subMenu"
-              className="w-[170px] bg-[#1542b7] text-white flex flex-col border-r border-white/10 max-h-[85vh] overflow-y-auto animate-flyout-sub shadow-[4px_6px_16px_rgba(0,0,0,0.3)] z-10 shrink-0"
+              className="w-[170px] bg-[#04648C] text-white flex flex-col border-r border-white/10 max-h-[85vh] overflow-y-auto animate-flyout-sub shadow-[4px_6px_16px_rgba(0,0,0,0.3)] z-10 shrink-0"
             >
               <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5">
                 {hoveredModule.categories.map((cat, idx) => {
@@ -511,7 +512,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                       className={cn(
                         "h-[38px] px-3 flex items-center justify-between text-[12px] font-medium text-white/90 hover:text-white trakzee-menu-item cursor-pointer transition-all duration-150 group",
                         isCatHovered 
-                          ? "bg-[#07163d] text-white font-semibold shadow-inner border-l-2 border-[#29a4ff]" 
+                          ? "bg-[#07163d] text-white font-semibold shadow-inner border-l-2 border-[#FBCA07]" 
                           : "hover:bg-[#07163d]/80 border-l-2 border-transparent"
                       )}
                     >
@@ -519,7 +520,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                       <ChevronRight
                         className={cn(
                           "w-3.5 h-3.5 text-white/50 group-hover:text-white transition-all duration-200",
-                          isCatHovered ? "text-[#29a4ff] translate-x-1" : "group-hover:translate-x-0.5"
+                          isCatHovered ? "text-[#FBCA07] translate-x-1" : "group-hover:translate-x-0.5"
                         )}
                       />
                     </li>
@@ -533,7 +534,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               <div
                 id="deepMenu"
                 key={hoveredCategory.title}
-                className="w-[180px] bg-[#1542b7] text-white flex flex-col h-fit max-h-[80vh] overflow-y-auto border-r border-white/10 animate-flyout-deep shadow-[4px_6px_18px_rgba(0,0,0,0.35)] shrink-0"
+                className="w-[180px] bg-[#04648C] text-white flex flex-col h-fit max-h-[80vh] overflow-y-auto border-r border-white/10 animate-flyout-deep shadow-[4px_6px_18px_rgba(0,0,0,0.35)] shrink-0"
                 style={{
                   marginTop: `${deepMenuTopOffset}px`
                 }}
@@ -549,7 +550,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                           className={cn(
                             "w-full h-full px-3.5 flex items-center text-[12px] text-white/90 hover:text-white trakzee-menu-item transition-all duration-150 truncate border-l-2",
                             isCurrent 
-                              ? "bg-[#07163d] text-white font-semibold border-[#29a4ff]" 
+                              ? "bg-[#07163d] text-white font-semibold border-[#FBCA07]" 
                               : "border-transparent hover:bg-[#07163d]/90 hover:border-white/30"
                           )}
                           title={screen.title}
@@ -624,10 +625,10 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                 <Link
                   href="/dashboard"
                   onClick={() => setIsUserMenuOpen(false)}
-                  className="flex items-center justify-between px-3.5 py-2 hover:bg-muted/70 transition-colors font-semibold text-[#29a4ff]"
+                  className="flex items-center justify-between px-3.5 py-2 hover:bg-muted/70 transition-colors font-semibold text-[#04648C]"
                 >
                   <span>Range SMS App</span>
-                  <Check className="w-3.5 h-3.5 text-[#29a4ff]" />
+                  <Check className="w-3.5 h-3.5 text-[#04648C]" />
                 </Link>
                 <div className="h-[1px] bg-border my-1" />
                 <Link
@@ -686,7 +687,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               className={cn(
                 "flex-1 flex items-center justify-center text-xs font-semibold border-b-2 transition-colors cursor-pointer",
                 activeNotiTab === "notifications"
-                  ? "border-[#29a4ff] text-[#29a4ff] bg-card"
+                  ? "border-[#04648C] text-[#04648C] bg-card"
                   : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
@@ -698,7 +699,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               className={cn(
                 "flex-1 flex items-center justify-center text-xs font-semibold border-b-2 transition-colors cursor-pointer",
                 activeNotiTab === "announcements"
-                  ? "border-[#29a4ff] text-[#29a4ff] bg-card"
+                  ? "border-[#04648C] text-[#04648C] bg-card"
                   : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
@@ -777,7 +778,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
           >
             {/* Search Input Bar */}
             <div className="flex items-center px-4 py-3 border-b border-border gap-3 bg-muted/20">
-              <Search className="w-4 h-4 text-[#29a4ff]" />
+              <Search className="w-4 h-4 text-[#04648C] dark:text-[#FBCA07]" />
               <input
                 type="text"
                 autoFocus
@@ -806,14 +807,14 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                     className="flex items-center justify-between px-3.5 py-2.5 hover:bg-muted/70 rounded-md transition-all duration-150 group"
                   >
                     <div>
-                      <div className="text-xs font-semibold text-foreground group-hover:text-[#29a4ff] transition-colors">
+                      <div className="text-xs font-semibold text-foreground group-hover:text-[#04648C] dark:group-hover:text-[#FBCA07] transition-colors">
                         {s.title}
                       </div>
                       <div className="text-[10px] text-muted-foreground">
                         {s.module} {s.category ? `> ${s.category}` : ""}
                       </div>
                     </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-[#29a4ff] transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-[#04648C] dark:group-hover:text-[#FBCA07] transition-transform group-hover:translate-x-1" />
                   </Link>
                 ))
               ) : (

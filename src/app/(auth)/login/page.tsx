@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
  
 'use client';
@@ -428,7 +428,7 @@ export default function LoginPage() {
                       setView('forgot');
                     }}
                     style={{ color: 'hsl(var(--foreground))', fontSize: '12px', textDecoration: 'none', fontFamily: FONT_STACK, transition: 'color 0.2s' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = '#29A4FF')}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = '#04648C')}
                     onMouseLeave={(e) => (e.currentTarget.style.color = 'hsl(var(--foreground))')}
                   >
                     {dict.auth.forgotPasswordLink}
@@ -473,8 +473,8 @@ export default function LoginPage() {
                     padding: '6px 28px',
                     fontSize: '13.5px',
                     lineHeight: '19.5px',
-                    backgroundColor: '#29A4FF',
-                    color: '#ffffff',
+                    backgroundColor: '#FBCA07',
+                    color: '#141B2D',
                     fontWeight: 700,
                     borderRadius: '7px',
                     border: '0',
@@ -501,7 +501,7 @@ export default function LoginPage() {
                   href="/register"
                   style={{
                     fontSize: '12px',
-                    color: '#29A4FF',
+                    color: '#04648C',
                     textDecoration: 'none',
                     fontWeight: 600,
                     fontFamily: FONT_STACK,

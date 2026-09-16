@@ -63,8 +63,7 @@ export function CookieBanner() {
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <div
-            className="w-9 h-9 shrink-0 rounded-lg flex items-center justify-center border border-[#29A4FF]/25"
-            style={{ backgroundColor: 'rgba(41, 164, 255, 0.1)', color: '#29A4FF' }}
+            className="w-9 h-9 shrink-0 rounded-lg flex items-center justify-center border border-[#04648C]/25 dark:border-[#FBCA07]/25 text-[#04648C] dark:text-[#FBCA07] bg-[#04648C]/10 dark:bg-[#FBCA07]/10"
           >
             <Cookie size={20} />
           </div>

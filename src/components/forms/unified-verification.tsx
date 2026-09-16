@@ -181,7 +181,7 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
                   fontSize: '11px',
                   fontWeight: isActive ? 600 : 400,
                   backgroundColor: isActive ? 'hsl(var(--card))' : 'transparent',
-                  color: isActive ? '#29A4FF' : 'hsl(var(--muted-foreground))',
+                  color: isActive ? '#04648C' : 'hsl(var(--muted-foreground))',
                   border: 'none',
                   borderRadius: '6px',
                   cursor: 'pointer',
@@ -259,8 +259,8 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
               padding: '6px 28px',
               fontSize: '13.5px',
               lineHeight: '19.5px',
-              backgroundColor: '#29A4FF',
-              color: '#ffffff',
+              backgroundColor: '#FBCA07',
+              color: '#141B2D',
               fontWeight: 700,
               borderRadius: '7px',
               border: '0',
@@ -293,7 +293,7 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#29A4FF',
+                  color: '#04648C',
                   fontSize: '12px',
                   fontWeight: 600,
                   cursor: 'pointer',
@@ -314,7 +314,7 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
         <div className="text-center auth-stagger-5" style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', gap: '6px', alignItems: 'center' }}>
           <Link
             href="/login"
-            style={{ color: '#29A4FF', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s' }}
+            style={{ color: '#04648C', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s' }}
             className="hover:opacity-80"
           >
             {dict.auth.signInLink}

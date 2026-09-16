@@ -18,10 +18,10 @@
 
 export const appAssets = {
   // Brand Logos & Icons
-  logo: process.env.NEXT_PUBLIC_ASSET_LOGO || '/images/smart/app-logo.svg',
-  logoLight: process.env.NEXT_PUBLIC_ASSET_LOGO_LIGHT || '/images/smart/app-logo-light.svg',
-  icon: process.env.NEXT_PUBLIC_ASSET_ICON || '/images/smart/app-icon.svg',
-  iconLight: process.env.NEXT_PUBLIC_ASSET_ICON_LIGHT || '/images/smart/app-icon-light.svg',
+  logo: process.env.NEXT_PUBLIC_ASSET_LOGO || '/images/brand/range-logo-light.svg',
+  logoLight: process.env.NEXT_PUBLIC_ASSET_LOGO_LIGHT || '/images/brand/range-logo-dark.svg',
+  icon: process.env.NEXT_PUBLIC_ASSET_ICON || '/images/brand/range-icon.svg',
+  iconLight: process.env.NEXT_PUBLIC_ASSET_ICON_LIGHT || '/images/brand/range-icon.svg',
   qrCode: process.env.NEXT_PUBLIC_ASSET_QR || '/images/smart/app-qr.png',
   favicon: '/favicon.ico',
   faviconPng: '/favicon.png',

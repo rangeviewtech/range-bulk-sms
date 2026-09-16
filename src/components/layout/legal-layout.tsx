@@ -77,7 +77,7 @@ export function LegalLayout({
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                     }`}
                     style={{
-                      backgroundColor: isActive ? '#29A4FF' : 'transparent',
+                      backgroundColor: isActive ? '#04648C' : 'transparent',
                       color: isActive ? '#ffffff' : undefined,
                     }}
                   >
@@ -102,7 +102,7 @@ export function LegalLayout({
               </Link>
               <Link
                 href="/register"
-                className="btn btn-primary auth-btn-primary px-3 py-1.5 text-xs font-bold rounded-md bg-[#29A4FF] text-white"
+                className="btn btn-primary auth-btn-primary px-3 py-1.5 text-xs font-bold rounded-md bg-[#FBCA07] text-[#141B2D]"
                 style={{ height: '34px' }}
               >
                 {dict.auth?.createAccountButton || 'Register'}
@@ -124,14 +124,14 @@ export function LegalLayout({
               <span>{dict.legal?.backToRegister || 'Back to Registration'}</span>
             </Link>
             <span className="text-muted-foreground/40">•</span>
-            <span className="text-xs font-medium text-[#29A4FF] bg-[#29A4FF]/10 px-2.5 py-0.5 rounded-full border border-[#29A4FF]/20">
+            <span className="text-xs font-medium text-[#04648C] bg-[#04648C]/10 px-2.5 py-0.5 rounded-full border border-[#04648C]/20">
               {lastUpdated}
             </span>
           </div>
 
           <div className="flex items-start gap-4">
             {icon && (
-              <div className="hidden sm:flex p-3 rounded-xl bg-[#29A4FF]/10 text-[#29A4FF] border border-[#29A4FF]/20 mt-1">
+              <div className="hidden sm:flex p-3 rounded-xl bg-[#04648C]/10 text-[#04648C] border border-[#04648C]/20 mt-1">
                 {icon}
               </div>
             )}
@@ -155,7 +155,7 @@ export function LegalLayout({
             <aside className="lg:col-span-4 hidden lg:block">
               <div className="sticky top-24 rounded-xl border border-border bg-card p-5 shadow-sm space-y-4">
                 <div className="flex items-center gap-2 pb-3 border-b border-border text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  <FileText size={14} className="text-[#29A4FF]" />
+                  <FileText size={14} className="text-[#04648C]" />
                   <span>{dict.legal?.tableOfContents || 'Table of Contents'}</span>
                 </div>
                 <nav className="space-y-1">
@@ -165,7 +165,7 @@ export function LegalLayout({
                       href={`#${item.id}`}
                       className="block px-2.5 py-1.5 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
                     >
-                      <span className="font-mono text-[#29A4FF] mr-1.5">{idx + 1}.</span>
+                      <span className="font-mono text-[#04648C] mr-1.5">{idx + 1}.</span>
                       {item.title}
                     </a>
                   ))}
@@ -196,14 +196,14 @@ export function LegalLayout({
             <div className="mt-8 p-5 rounded-xl border border-border bg-card flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
               <div className="text-xs text-muted-foreground text-center sm:text-left">
                 Questions about our policies? Contact our Legal & Data Protection team at{' '}
-                <a href="mailto:support@rangesms.com" className="text-[#29A4FF] hover:underline font-semibold">
+                <a href="mailto:support@rangesms.com" className="text-[#04648C] hover:underline font-semibold">
                   support@rangesms.com
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <Link
                   href="/register"
-                  className="btn btn-primary auth-btn-primary px-4 py-2 text-xs font-bold rounded-md bg-[#29A4FF] text-white"
+                  className="btn btn-primary auth-btn-primary px-4 py-2 text-xs font-bold rounded-md bg-[#FBCA07] text-[#141B2D]"
                   style={{ height: '36px' }}
                 >
                   {dict.legal?.backToRegister || 'Back to Registration'}

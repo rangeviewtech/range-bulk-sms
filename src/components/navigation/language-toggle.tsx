@@ -56,7 +56,7 @@ export function LanguageToggle() {
             placeholder={dict.common.searchPlaceholder || "Search language..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg bg-muted/60 py-1.5 pl-8 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-[#29A4FF] focus:bg-muted transition-all"
+            className="w-full rounded-lg bg-muted/60 py-1.5 pl-8 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-[#04648C] dark:focus:ring-[#FBCA07] focus:bg-muted transition-all"
             onClick={(e) => e.stopPropagation()}
             onKeyDown={(e) => e.stopPropagation()}
           />
@@ -90,7 +90,7 @@ export function LanguageToggle() {
                       <span className="h-3 w-4 rounded-[2px] bg-muted inline-block" />
                     )}
                     <div className="flex flex-col text-left">
-                      <span className={`font-medium ${isSelected ? 'text-[#29A4FF]' : 'text-foreground'}`}>
+                      <span className={`font-medium ${isSelected ? 'text-[#04648C] dark:text-[#FBCA07]' : 'text-foreground'}`}>
                         {l.name}
                       </span>
                       {l.nativeName && l.nativeName !== l.name && (
@@ -100,7 +100,7 @@ export function LanguageToggle() {
                       )}
                     </div>
                   </div>
-                  {isSelected && <Check className="h-4 w-4 text-[#29A4FF]" />}
+                  {isSelected && <Check className="h-4 w-4 text-[#04648C] dark:text-[#FBCA07]" />}
                 </DropdownMenuItem>
               );
             })

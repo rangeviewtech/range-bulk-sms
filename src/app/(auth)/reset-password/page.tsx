@@ -1,4 +1,4 @@
-﻿ 
+ 
  
 /* eslint-disable react-hooks/incompatible-library */
 'use client';
@@ -121,8 +121,8 @@ function ResetPasswordForm() {
                   padding: '6px 28px',
                   fontSize: '13.5px',
                   lineHeight: '19.5px',
-                  backgroundColor: '#29A4FF',
-                  color: '#ffffff',
+                  backgroundColor: '#FBCA07',
+                  color: '#141B2D',
                   fontWeight: 700,
                   borderRadius: '7px',
                   border: '0',
@@ -164,8 +164,8 @@ function ResetPasswordForm() {
                   padding: '6px 28px',
                   fontSize: '13.5px',
                   lineHeight: '19.5px',
-                  backgroundColor: '#29A4FF',
-                  color: '#ffffff',
+                  backgroundColor: '#FBCA07',
+                  color: '#141B2D',
                   fontWeight: 700,
                   borderRadius: '7px',
                   border: '0',
@@ -362,8 +362,8 @@ function ResetPasswordForm() {
               padding: '6px 28px',
               fontSize: '13.5px',
               lineHeight: '19.5px',
-              backgroundColor: '#29A4FF',
-              color: '#ffffff',
+              backgroundColor: '#FBCA07',
+              color: '#141B2D',
               fontWeight: 700,
               borderRadius: '7px',
               border: '0',
@@ -381,7 +381,7 @@ function ResetPasswordForm() {
         <div className="text-center auth-stagger-5" style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', gap: '6px', alignItems: 'center' }}>
           <Link
             href="/login"
-            style={{ color: '#29A4FF', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s' }}
+            style={{ color: '#04648C', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s' }}
             className="hover:opacity-80"
           >
             {dict.auth.signInLink}

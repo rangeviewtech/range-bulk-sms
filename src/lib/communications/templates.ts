@@ -43,7 +43,7 @@ export const EmailTemplates: Record<string, (data: any) => { subject: string, ht
           <h2 style="font-size: 20px; font-weight: 600; color: #0f172a; margin-bottom: 12px;">${t.passwordResetHeading}</h2>
           <p style="font-size: 14px; color: #475569; line-height: 22px; margin-bottom: 20px;">${t.passwordResetBody}</p>
           <div style="margin-bottom: 24px;">
-            <a href="${resetUrl}" style="display: inline-block; padding: 10px 24px; background: #29A4FF; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 13px; border-radius: 6px;">${t.passwordResetButton}</a>
+            <a href="${resetUrl}" style="display: inline-block; padding: 10px 24px; background: #04648C; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 13px; border-radius: 6px;">${t.passwordResetButton}</a>
           </div>
           <p style="margin-top: 24px; font-size: 12px; color: #94a3b8; line-height: 18px; border-top: 1px solid #f1f5f9; padding-top: 16px;">${t.passwordResetDisclaimer}</p>
         </div>

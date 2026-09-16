@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { Moon, Sun, Monitor, Check } from "lucide-react";
@@ -35,9 +35,9 @@ export function ThemeToggle() {
         >
           <div className="flex items-center gap-2">
             <Sun className="h-4 w-4" />
-            <span className={`font-medium ${theme === 'light' ? 'text-[#29A4FF]' : 'text-foreground'}`}>Light</span>
+            <span className={`font-medium ${theme === 'light' ? 'text-[#04648C] dark:text-[#FBCA07]' : 'text-foreground'}`}>Light</span>
           </div>
-          {theme === "light" && <Check className="h-4 w-4 text-[#29A4FF]" />}
+          {theme === "light" && <Check className="h-4 w-4 text-[#04648C] dark:text-[#FBCA07]" />}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setTheme("dark")}
@@ -45,9 +45,9 @@ export function ThemeToggle() {
         >
           <div className="flex items-center gap-2">
             <Moon className="h-4 w-4" />
-            <span className={`font-medium ${theme === 'dark' ? 'text-[#29A4FF]' : 'text-foreground'}`}>Dark</span>
+            <span className={`font-medium ${theme === 'dark' ? 'text-[#04648C] dark:text-[#FBCA07]' : 'text-foreground'}`}>Dark</span>
           </div>
-          {theme === "dark" && <Check className="h-4 w-4 text-[#29A4FF]" />}
+          {theme === "dark" && <Check className="h-4 w-4 text-[#04648C] dark:text-[#FBCA07]" />}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setTheme("system")}
@@ -55,9 +55,9 @@ export function ThemeToggle() {
         >
           <div className="flex items-center gap-2">
             <Monitor className="h-4 w-4" />
-            <span className={`font-medium ${theme === 'system' ? 'text-[#29A4FF]' : 'text-foreground'}`}>System</span>
+            <span className={`font-medium ${theme === 'system' ? 'text-[#04648C] dark:text-[#FBCA07]' : 'text-foreground'}`}>System</span>
           </div>
-          {theme === "system" && <Check className="h-4 w-4 text-[#29A4FF]" />}
+          {theme === "system" && <Check className="h-4 w-4 text-[#04648C] dark:text-[#FBCA07]" />}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,4 +1,4 @@
-﻿ 
+ 
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react-hooks/incompatible-library */
 'use client';
@@ -552,15 +552,15 @@ export default function RegisterPage() {
                   />
                   <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', lineHeight: '18px', fontFamily: FONT_STACK }}>
                     {dict.auth.agreeToTermsPrompt || 'I agree to the'}{' '}
-                    <Link href="/terms" target="_blank" style={{ color: '#29A4FF', textDecoration: 'none', fontWeight: 600 }}>
+                    <Link href="/terms" target="_blank" style={{ color: '#04648C', textDecoration: 'none', fontWeight: 600 }}>
                       {dict.legal?.termsAndConditions || 'Terms & Conditions'}
                     </Link>
                     {', '}
-                    <Link href="/privacy" target="_blank" style={{ color: '#29A4FF', textDecoration: 'none', fontWeight: 600 }}>
+                    <Link href="/privacy" target="_blank" style={{ color: '#04648C', textDecoration: 'none', fontWeight: 600 }}>
                       {dict.legal?.privacyPolicy || 'Privacy Policy'}
                     </Link>
                     {' '}&{' '}
-                    <Link href="/cookies" target="_blank" style={{ color: '#29A4FF', textDecoration: 'none', fontWeight: 600 }}>
+                    <Link href="/cookies" target="_blank" style={{ color: '#04648C', textDecoration: 'none', fontWeight: 600 }}>
                       {dict.legal?.cookiePolicy || 'Cookie Policy'}
                     </Link>
                   </span>
@@ -609,8 +609,8 @@ export default function RegisterPage() {
                     padding: '6px 28px',
                     fontSize: '13.5px',
                     lineHeight: '19.5px',
-                    backgroundColor: '#29A4FF',
-                    color: '#ffffff',
+                    backgroundColor: '#FBCA07',
+                    color: '#141B2D',
                     fontWeight: 700,
                     borderRadius: '7px',
                     border: '0',
@@ -637,7 +637,7 @@ export default function RegisterPage() {
                   href="/login"
                   style={{
                     fontSize: '12px',
-                    color: '#29A4FF',
+                    color: '#04648C',
                     fontWeight: 600,
                     textDecoration: 'none',
                     fontFamily: FONT_STACK,

@@ -87,7 +87,7 @@ export default function ErrorPage({
       <p className="text-muted-foreground mb-8 max-w-md">
         {formatted.message}
       </p>
-      <Button onClick={reset} size="lg" className="bg-[#29A4FF] hover:bg-[#1f8adb] text-white">
+      <Button onClick={reset} size="lg" variant="brand" className="shadow-sm">
         Try Again
       </Button>
     </div>

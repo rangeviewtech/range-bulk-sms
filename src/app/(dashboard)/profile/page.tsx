@@ -15,7 +15,7 @@ export default async function ProfilePage() {
     <div className="p-6 space-y-6 max-w-4xl mx-auto animate-in fade-in duration-300">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2.5">
-          <User className="w-6 h-6 text-[#29a4ff]" />
+          <User className="w-6 h-6 text-[#04648C] dark:text-[#FBCA07]" />
           Account Profile & Credentials
         </h1>
         <p className="text-xs text-muted-foreground mt-0.5">
@@ -25,7 +25,7 @@ export default async function ProfilePage() {
       
       <div className="bg-card rounded-xl border border-border p-6 shadow-sm space-y-6">
         <div className="flex items-center gap-4 border-b border-border pb-5">
-          <div className="w-16 h-16 rounded-full bg-[#07163d] text-white flex items-center justify-center text-xl font-bold border-2 border-[#29a4ff]">
+          <div className="w-16 h-16 rounded-full bg-[#04648C] text-white flex items-center justify-center text-xl font-bold border-2 border-[#FBCA07]">
             {user.name?.[0] || 'A'}
           </div>
           <div>

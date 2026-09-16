@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
  
 /* eslint-disable react-hooks/incompatible-library */
 'use client';
@@ -77,8 +77,8 @@ export default function ForgotPasswordPage() {
                   padding: '6px 28px',
                   fontSize: '13.5px',
                   lineHeight: '19.5px',
-                  backgroundColor: '#29A4FF',
-                  color: '#ffffff',
+                  backgroundColor: '#FBCA07',
+                  color: '#141B2D',
                   fontWeight: 700,
                   borderRadius: '7px',
                   border: '0',
@@ -176,8 +176,8 @@ export default function ForgotPasswordPage() {
               padding: '6px 28px',
               fontSize: '13.5px',
               lineHeight: '19.5px',
-              backgroundColor: '#29A4FF',
-              color: '#ffffff',
+              backgroundColor: '#FBCA07',
+              color: '#141B2D',
               fontWeight: 700,
               borderRadius: '7px',
               border: '0',
@@ -196,7 +196,7 @@ export default function ForgotPasswordPage() {
           <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: FONT_STACK }}>{dict.auth.rememberPasswordPrompt}</span>
           <Link
             href="/login"
-            style={{ color: '#29A4FF', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s' }}
+            style={{ color: '#04648C', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s' }}
             className="hover:opacity-80"
           >
             {dict.auth.signInLink}

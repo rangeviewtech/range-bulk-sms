@@ -1,4 +1,4 @@
-﻿ 
+ 
  
 /* eslint-disable react-hooks/incompatible-library */
 'use client';
@@ -107,8 +107,8 @@ export default function ScreenLockPage() {
                 padding: '6px 28px',
                 fontSize: '13.5px',
                 lineHeight: '19.5px',
-                backgroundColor: '#29A4FF',
-                color: '#ffffff',
+                backgroundColor: '#FBCA07',
+                color: '#141B2D',
                 fontWeight: 700,
                 borderRadius: '7px',
                 border: '0',
