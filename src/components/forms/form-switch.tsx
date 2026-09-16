@@ -24,11 +24,12 @@ export function FormSwitch({ name, label, description, className }: FormSwitchPr
       render={({ field: { value, onChange, ...field } }) => (
         <div className={cn("flex flex-row items-center justify-between rounded-lg border p-4", className)}>
           <div className="space-y-0.5">
-            <Label className={cn("text-base", error && "text-destructive")}>{label}</Label>
+            <Label htmlFor={name} className={cn("text-base", error && "text-destructive")}>{label}</Label>
             {description && !error && <p className="text-[0.8rem] text-muted-foreground">{description}</p>}
             {error && <p className="text-[0.8rem] font-medium text-destructive">{error}</p>}
           </div>
           <Switch
+            id={name}
             checked={value}
             onCheckedChange={onChange}
             {...field}

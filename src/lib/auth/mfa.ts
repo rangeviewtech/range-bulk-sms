@@ -20,7 +20,11 @@ export function generateMfaSecret() {
  * @param secret The MFA secret
  * @param appName The name of the application
  */
-export async function generateMfaQrCode(email: string, secret: string, appName: string = 'MasterTemplate') {
+export async function generateMfaQrCode(
+  email: string,
+  secret: string,
+  appName: string = 'MasterTemplate'
+) {
   const otpauthUrl = authenticator.toURI({
     label: email,
     issuer: appName,
@@ -34,10 +38,12 @@ export async function generateMfaQrCode(email: string, secret: string, appName: 
  * @param token The 6-digit string
  * @param secret The MFA secret
  */
-export async function verifyMfaToken(token: string, secret: string) {
+export async function verifyMfaToken(token: string, secret: string): Promise<boolean> {
+  if (!/^\d{6}$/.test(token)) return false;
   try {
-    return await authenticator.verify(token, { secret });
-  } catch (err) {
+    const result = await authenticator.verify(token, { secret });
+    return result.valid === true;
+  } catch (_err) {
     return false;
   }
 }

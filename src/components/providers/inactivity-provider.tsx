@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { lockScreen } from '@/app/(auth)/actions';
 
 interface InactivityProviderProps {
   children: React.ReactNode;
@@ -11,35 +12,40 @@ interface InactivityProviderProps {
 export function InactivityProvider({ children, timeoutMinutes = 15 }: InactivityProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const timeoutRef = useRef<NodeJS.Timeout>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const throttleRef = useRef<number>(0);
 
-  const resetTimer = () => {
+  const resetTimer = useCallback(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
     
-    // Only set inactivity lock if we are inside the dashboard
-    if (pathname.startsWith('/dashboard') || pathname.startsWith('/settings') || pathname.startsWith('/profile')) {
-      timeoutRef.current = setTimeout(() => {
-        // Set cookie manually in the browser
-        document.cookie = "screen_locked=true; path=/; max-age=86400; SameSite=Lax";
-        // Redirect to screen lock
-        router.push('/screen-lock');
-      }, timeoutMinutes * 60 * 1000);
-    }
-  };
+    timeoutRef.current = setTimeout(async () => {
+      try {
+        const result = await lockScreen();
+        router.replace(result.redirect);
+      } catch {
+        router.replace('/login');
+      }
+    }, timeoutMinutes * 60 * 1000);
+  }, [router, timeoutMinutes]);
 
   useEffect(() => {
     resetTimer();
 
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    const events = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'];
     
     const handleActivity = () => {
-      resetTimer();
+      const now = Date.now();
+      // Throttle to max 1 reset per 5 seconds
+      if (now - throttleRef.current > 5000) {
+        throttleRef.current = now;
+        resetTimer();
+      }
     };
 
     events.forEach((event) => {
-      document.addEventListener(event, handleActivity);
+      document.addEventListener(event, handleActivity, { passive: true });
     });
 
     return () => {
@@ -48,7 +54,7 @@ export function InactivityProvider({ children, timeoutMinutes = 15 }: Inactivity
         document.removeEventListener(event, handleActivity);
       });
     };
-  }, [pathname]);
+  }, [pathname, resetTimer]);
 
   return <>{children}</>;
 }

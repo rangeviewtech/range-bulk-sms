@@ -1,9 +1,15 @@
-import { verifySession } from '@/lib/auth/session';
+import { prisma } from '@/lib/prisma';
+﻿/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
+ 
+import { requireAuth } from '@/lib/auth/session';
 import { User, Mail, Shield, CheckCircle2 } from 'lucide-react';
 
 export default async function ProfilePage() {
-  const session = await verifySession().catch(() => null);
-  const user = session?.user || { name: 'Ali (Fleet Admin)', email: 'ali@technologyhubjuba.com', role: 'admin' };
+  const session = await requireAuth();
+  const user = session.user;
+  const roles = await prisma.userRole.findMany({ where: { userId: session.userId }, select: { role: { select: { name: true } } } });
+  const roleNames = roles.map(item => item.role.name).join(', ') || 'User';
 
   return (
     <div className="p-6 space-y-6 max-w-4xl mx-auto animate-in fade-in duration-300">
@@ -26,7 +32,7 @@ export default async function ProfilePage() {
             <h2 className="text-lg font-bold text-foreground">{user.name}</h2>
             <div className="text-xs text-muted-foreground font-mono">{user.email}</div>
             <span className="inline-flex items-center gap-1 mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
-              <CheckCircle2 className="w-3 h-3" /> System Administrator
+              <CheckCircle2 className="w-3 h-3" /> {roleNames}
             </span>
           </div>
         </div>
@@ -38,7 +44,7 @@ export default async function ProfilePage() {
           </div>
           <div className="p-3.5 bg-muted/40 rounded-lg border border-border">
             <div className="text-muted-foreground text-[11px]">Assigned Role</div>
-            <div className="text-sm font-semibold text-foreground mt-0.5">Super Admin (All Fleets)</div>
+            <div className="text-sm font-semibold text-foreground mt-0.5">{roleNames}</div>
           </div>
           <div className="p-3.5 bg-muted/40 rounded-lg border border-border">
             <div className="text-muted-foreground text-[11px]">Active Session Status</div>
@@ -46,7 +52,7 @@ export default async function ProfilePage() {
           </div>
           <div className="p-3.5 bg-muted/40 rounded-lg border border-border">
             <div className="text-muted-foreground text-[11px]">Default Fleet Tenant</div>
-            <div className="text-sm font-semibold text-foreground mt-0.5">Rangeview Telematics Logistics Ltd</div>
+            <div className="text-sm font-semibold text-foreground mt-0.5">Not configured</div>
           </div>
         </div>
       </div>

@@ -1,30 +1,47 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 
-export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((val: T) => T)) => void] {
-  const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === 'undefined') {
-      return initialValue;
-    }
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.warn(`Error reading localStorage key "${key}":`, error);
-      return initialValue;
-    }
-  });
-
-  const setValue = (value: T | ((val: T) => T)) => {
-    try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
-      }
-    } catch (error) {
-      console.warn(`Error setting localStorage key "${key}":`, error);
-    }
+function subscribe(callback: () => void) {
+  window.addEventListener('storage', callback);
+  window.addEventListener('local-storage-change', callback);
+  return () => {
+    window.removeEventListener('storage', callback);
+    window.removeEventListener('local-storage-change', callback);
   };
-
-  return [storedValue, setValue];
+}
+const getServerSnapshot = () => null;
+function read(key: string) {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+function parse<T>(raw: string | null, fallback: T): T {
+  try {
+    return raw === null ? fallback : (JSON.parse(raw) as T);
+  } catch {
+    return fallback;
+  }
+}
+export function useLocalStorage<T>(
+  key: string,
+  initialValue: T
+): [T, (value: T | ((previous: T) => T)) => void] {
+  const getSnapshot = useCallback(() => read(key), [key]);
+  const raw = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const value = useMemo(() => parse(raw, initialValue), [raw, initialValue]);
+  const setValue = useCallback(
+    (next: T | ((previous: T) => T)) => {
+      try {
+        const previous = parse(read(key), initialValue);
+        const resolved = typeof next === 'function' ? (next as (previous: T) => T)(previous) : next;
+        window.localStorage.setItem(key, JSON.stringify(resolved));
+        window.dispatchEvent(new Event('local-storage-change'));
+      } catch {
+        /* Storage may be disabled by the browser. */
+      }
+    },
+    [key, initialValue]
+  );
+  return [value, setValue];
 }

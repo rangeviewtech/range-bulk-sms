@@ -24,12 +24,13 @@ export function FormCheckbox({ name, label, description, className }: FormCheckb
       render={({ field: { value, onChange, ...field } }) => (
         <div className={cn("flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4", className)}>
           <Checkbox
+            id={name}
             checked={value}
             onCheckedChange={onChange}
             {...field}
           />
           <div className="space-y-1 leading-none">
-            <Label className={cn(error && "text-destructive")}>{label}</Label>
+            <Label htmlFor={name} className={cn(error && "text-destructive")}>{label}</Label>
             {description && !error && <p className="text-[0.8rem] text-muted-foreground">{description}</p>}
             {error && <p className="text-[0.8rem] font-medium text-destructive">{error}</p>}
           </div>

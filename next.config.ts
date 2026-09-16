@@ -1,12 +1,30 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Security headers
   async headers() {
+    const cspHeader = `
+      default-src 'self';
+      script-src 'self' ${process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ''} 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://unpkg.com https://challenges.cloudflare.com;
+      style-src 'self' 'unsafe-inline' https://unpkg.com;
+      img-src 'self' blob: data: https://www.google-analytics.com https://tile.openstreetmap.org https://a.tile.openstreetmap.fr https://server.arcgisonline.com;
+      connect-src 'self' https://www.google-analytics.com https://challenges.cloudflare.com ${process.env.NODE_ENV === 'development' ? 'ws: wss:' : ''};
+      frame-src https://challenges.cloudflare.com;
+      font-src 'self';
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+      frame-ancestors 'none';
+      ${process.env.NODE_ENV === 'production' ? 'upgrade-insecure-requests;' : ''}
+    `;
+
     return [
       {
         source: '/(.*)',
         headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: cspHeader.replace(/\n/g, '').replace(/\s+/g, ' ').trim(),
+          },
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
@@ -36,6 +54,16 @@ const nextConfig: NextConfig = {
     ];
   },
 
+  async redirects() {
+    return [
+      {
+        source: '/docs',
+        destination: '/api/docs',
+        permanent: true,
+      },
+    ];
+  },
+
   // Image optimization
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -44,7 +72,6 @@ const nextConfig: NextConfig = {
       // { protocol: 'https', hostname: 'example.com' },
     ],
   },
-
 
   // Strict mode for catching bugs early
   reactStrictMode: true,

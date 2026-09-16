@@ -1,3 +1,4 @@
+import { requirePermission } from '@/lib/auth/authorization';
 import { prisma as db } from '@/lib/prisma';
 import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -8,6 +9,7 @@ import { PandoraSmsProvider } from '@/lib/communications/sms/pandora-provider';
 export const dynamic = 'force-dynamic';
 
 export default async function ProvidersPage() {
+  await requirePermission('settings.manage');
   const smtp = new SmtpEmailProvider();
   const pandora = new PandoraSmsProvider();
   
@@ -15,7 +17,7 @@ export default async function ProvidersPage() {
   const isSmtpUp = await smtp.healthCheck();
   const isPandoraUp = await pandora.healthCheck();
 
-  const healthRecords = await db.providerHealth.findMany();
+  const _healthRecords = await db.providerHealth.findMany();
 
   return (
     <div className="space-y-6">

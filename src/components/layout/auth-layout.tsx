@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -169,11 +170,11 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
               <Link href="/terms" target="_blank" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', textDecoration: 'none', transition: 'color 0.2s', fontFamily: FONT_STACK }} className="hover:text-foreground">
                 {dict.legal?.termsAndConditions || 'Terms & Conditions'}
               </Link>
-              <span style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>•</span>
+              <span aria-hidden="true" style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>•</span>
               <Link href="/privacy" target="_blank" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', textDecoration: 'none', transition: 'color 0.2s', fontFamily: FONT_STACK }} className="hover:text-foreground">
                 {dict.legal?.privacyPolicy || 'Privacy Policy'}
               </Link>
-              <span style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>•</span>
+              <span aria-hidden="true" style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>•</span>
               <Link href="/cookies" target="_blank" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', textDecoration: 'none', transition: 'color 0.2s', fontFamily: FONT_STACK }} className="hover:text-foreground">
                 {dict.legal?.cookiePolicy || 'Cookie Policy'}
               </Link>

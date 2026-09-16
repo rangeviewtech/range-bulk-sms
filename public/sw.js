@@ -1,73 +1,53 @@
-const CACHE_NAME = 'trakzee-pwa-v1';
+const CACHE_NAME = 'trakzee-public-assets-v2';
+const ASSETS = ['/images/smart/smart_logo.svg', '/images/smart/smart-icon.svg'];
 
-const PRECACHE_ASSETS = [
-  '/',
-  '/login',
-  '/images/smart/smart_logo.svg',
-  '/images/smart/smart-icon.svg',
-  '/images/smart/wl-language.svg',
-  '/images/smart/wl-down.svg',
-  '/images/smart/wlf-eye-close.png',
-  '/images/smart/wlf-eye-open.png',
-  '/images/smart/prod_image1.jpg',
-  '/images/smart/prod_image2.png',
-  '/images/smart/prod_image3.jpg',
-  '/images/smart/prod_image4.jpg',
-];
-
-// Install Event - Precache App Shell Assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(PRECACHE_ASSETS);
-    }).then(() => self.skipWaiting())
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => cache.addAll(ASSETS))
+      .then(() => self.skipWaiting())
   );
 });
-
-// Activate Event - Clean Old Caches & Take Control Immediately
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((name) => name !== CACHE_NAME)
-          .map((name) => caches.delete(name))
-      );
-    }).then(() => self.clients.claim())
+    caches
+      .keys()
+      .then((names) =>
+        Promise.all(
+          names
+            .filter((name) => name.startsWith('trakzee-') && name !== CACHE_NAME)
+            .map((name) => caches.delete(name))
+        )
+      )
+      .then(() => self.clients.claim())
   );
 });
-
-// Fetch Event - Network-First Strategy with Cache Fallback for Offline Access
 self.addEventListener('fetch', (event) => {
-  // Only handle GET requests
-  if (event.request.method !== 'GET') return;
-
-  // Ignore browser-extension and chrome-extension schemes
-  if (!event.request.url.startsWith('http')) return;
-
+  const url = new URL(event.request.url);
+  // Never persist HTML, RSC payloads, API data, or authenticated responses offline.
+  if (
+    event.request.method !== 'GET' ||
+    url.origin !== self.location.origin ||
+    !(url.pathname.startsWith('/images/') || url.pathname.startsWith('/_next/static/')) ||
+    !['image', 'font', 'style', 'script'].includes(event.request.destination)
+  )
+    return;
   event.respondWith(
     fetch(event.request)
-      .then((networkResponse) => {
-        // Clone and store valid responses in cache
-        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
+      .then((response) => {
+        if (
+          response.ok &&
+          response.type === 'basic' &&
+          !/private|no-store/i.test(response.headers.get('cache-control') || '')
+        ) {
+          const cachedResponse = response.clone();
+          event.waitUntil(
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cachedResponse))
+          );
         }
-        return networkResponse;
+        return response;
       })
-      .catch(() => {
-        // Fallback to cache if network fails (offline)
-        return caches.match(event.request).then((cachedResponse) => {
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          // If HTML page requested offline, return cached /login or /
-          if (event.request.headers.get('accept')?.includes('text/html')) {
-            return caches.match('/login');
-          }
-        });
-      })
+      .catch(async () => (await caches.match(event.request)) || Response.error())
   );
 });

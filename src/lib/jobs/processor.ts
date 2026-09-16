@@ -1,147 +1,132 @@
-import { claimJobs, completeJob, failJob, recoverStuckJobs, enqueueJob } from './db';
-import { SmtpEmailProvider } from '@/lib/communications/email/smtp-provider';
-import { PandoraSmsProvider } from '@/lib/communications/sms/pandora-provider';
-import { MetaWhatsAppProvider } from '@/lib/communications/whatsapp/provider';
-import { BotApiTelegramProvider } from '@/lib/communications/telegram/provider';
-import { renderTemplate } from '@/lib/communications/templates';
-import { prisma as db } from '@/lib/prisma';
-import { JobPriority } from '@/generated/prisma';
+import { z } from 'zod';
+import { recoverStuckJobs } from '@/lib/jobs/db';
+import { prisma } from '@/lib/prisma';
+import { JobStatus } from '@/generated/prisma';
+import { SmtpProvider } from '@/lib/providers/smtp';
+import { PandoraSmsProvider } from '@/lib/providers/pandora';
+import { TelegramProvider } from '@/lib/providers/telegram';
+import { WhatsAppProvider } from '@/lib/providers/whatsapp';
+import { InAppProvider } from '@/lib/providers/in-app';
 
-const emailProvider = new SmtpEmailProvider();
-const smsProvider = new PandoraSmsProvider();
-const whatsappProvider = new MetaWhatsAppProvider();
-const telegramProvider = new BotApiTelegramProvider();
-
-export async function processJobsBatch(workerId: string = 'worker-1') {
+export async function processJobsBatch(batchSize: number = 10) {
   await recoverStuckJobs();
+  const workerId = crypto.randomUUID();
+  const limit = Math.min(100, Math.max(1, Math.trunc(batchSize)));
+  // Use PRISMA internal $queryRaw with FOR UPDATE SKIP LOCKED
+  // This is Postgres-specific!
+  const jobs = await prisma.$queryRaw<import('@/generated/prisma').Job[]>`
+    UPDATE "Job"
+    SET status = 'PROCESSING', "lockedAt" = NOW(), "lockedBy" = ${workerId}, "startedAt" = NOW(),
+        "updatedAt" = NOW()
+    WHERE id IN (
+      SELECT id
+      FROM "Job"
+      WHERE status IN ('PENDING', 'RETRYING')
+        AND "lockedAt" IS NULL
+        AND ("availableAt" IS NULL OR "availableAt" <= NOW())
+      ORDER BY
+        CASE priority
+          WHEN 'CRITICAL' THEN 1
+          WHEN 'HIGH' THEN 2
+          WHEN 'NORMAL' THEN 3
+          WHEN 'LOW' THEN 4
+          ELSE 5
+        END ASC,
+        "createdAt" ASC
+      LIMIT ${limit}
+      FOR UPDATE SKIP LOCKED
+    )
+    RETURNING *;
+  `;
 
-  // Claim a batch of jobs
-  const jobs = await claimJobs(workerId, 20, [
-    'email-critical', 'email-default', 'email-bulk', 
-    'sms-critical', 'sms-default', 'sms-bulk', 
-    'whatsapp-critical', 'whatsapp-default',
-    'telegram-critical', 'telegram-default',
-    'system'
-  ]);
-  
-  if (jobs.length === 0) {
-    return { processed: 0, failed: 0 };
-  }
-
-  let processed = 0;
-  let failedCount = 0;
+  if (jobs.length === 0) return 0;
 
   for (const job of jobs) {
+    // Renew the entire remaining batch while processing it serially.
+    await prisma.job.updateMany({
+      where: { lockedBy: workerId, status: 'PROCESSING' },
+      data: { lockedAt: new Date() },
+    });
+    const lease = await prisma.job.updateMany({
+      where: { id: job.id, lockedBy: workerId, status: 'PROCESSING' },
+      data: { lockedAt: new Date() },
+    });
+    if (lease.count === 0) continue;
+
+    let status: JobStatus = 'SUCCEEDED';
+    let lastError = null;
+
     try {
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const payload = job.payload as any;
+      const payload = z
+        .object({
+          recipient: z.string().min(1),
+          template: z.string().min(1),
+          templateData: z.record(z.unknown()).optional(),
+          category: z.string().optional(),
+        })
+        .parse(job.payload);
+      const { recipient, template, templateData } = payload;
 
-      if (job.type === 'send-email') {
-        const rendered = renderTemplate('EMAIL', payload.template, payload.templateData);
-        const result = await emailProvider.send({ to: payload.recipient, ...rendered });
-        await logComm(job.id, 'EMAIL', payload.recipient, payload.template, emailProvider.name, result);
-        if (!result.success) throw new Error(result.error);
+      let channelStr: 'EMAIL' | 'SMS' | 'TELEGRAM' | 'WHATSAPP' | 'IN_APP' = 'EMAIL';
+      if (job.type === 'send-sms') channelStr = 'SMS';
+      if (job.type === 'send-telegram') channelStr = 'TELEGRAM';
+      if (job.type === 'send-whatsapp') channelStr = 'WHATSAPP';
+      if (job.type === 'send-in-app') channelStr = 'IN_APP';
 
-      } else if (job.type === 'send-sms') {
-        const rendered = renderTemplate('SMS', payload.template, payload.templateData);
-        const result = await smsProvider.send({ to: payload.recipient, body: rendered.body });
-        await logComm(job.id, 'SMS', payload.recipient, payload.template, smsProvider.name, result);
-        if (!result.success) throw new Error(result.error);
+      const { NotificationTemplateService } = await import('@/lib/notifications/templates');
+      const resolved = await NotificationTemplateService.resolveTemplate(
+        template,
+        channelStr,
+        templateData || {}
+      );
 
-      } else if (job.type === 'send-whatsapp') {
-        const rendered = renderTemplate('WHATSAPP', payload.template, payload.templateData);
-        const result = await whatsappProvider.send({ 
-          to: payload.recipient, 
-          templateName: rendered.whatsappTemplateName || payload.template,
-          components: rendered.whatsappComponents
-        });
-        await logComm(job.id, 'WHATSAPP', payload.recipient, payload.template, whatsappProvider.name, result);
-        
-        if (!result.success) {
-          if (result.status === 'PERMANENT_FAILURE') {
-            await handleFailover(job, 'sms');
-          }
-          throw new Error(result.error);
-        }
-
-      } else if (job.type === 'send-telegram') {
-        const rendered = renderTemplate('TELEGRAM', payload.template, payload.templateData);
-        const result = await telegramProvider.send({ chatId: payload.recipient, text: rendered.body });
-        await logComm(job.id, 'TELEGRAM', payload.recipient, payload.template, telegramProvider.name, result);
-        
-        if (!result.success) {
-          if (result.status === 'PERMANENT_FAILURE') {
-            await handleFailover(job, 'sms'); // Or whatever the fallback is
-          }
-          throw new Error(result.error);
-        }
-
-      } else {
-        throw new Error(`Unknown job type: ${job.type}`);
+      switch (job.type) {
+        case 'send-email':
+          await SmtpProvider.send(recipient, resolved.subject || 'Notification', resolved.body);
+          break;
+        case 'send-sms':
+          await PandoraSmsProvider.send(recipient, resolved.body);
+          break;
+        case 'send-telegram':
+          await TelegramProvider.send(recipient, resolved.body);
+          break;
+        case 'send-whatsapp':
+          await WhatsAppProvider.send(recipient, template, templateData);
+          break;
+        case 'send-in-app':
+          await InAppProvider.send(
+            recipient, // which is userId
+            payload.category || 'default',
+            resolved.subject || 'Notification',
+            resolved.body
+          );
+          break;
+        default:
+          throw new Error(`Unsupported job type: ${job.type}`);
       }
-
-      await completeJob(job.id);
-      processed++;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      // failJob handles marking as DEAD_LETTER or RETRYING
-      await failJob(job.id, e.message);
-      failedCount++;
+    } catch (e: unknown) {
+      lastError = e instanceof Error ? e.message : 'Unknown error';
+      status = job.attempts >= job.maxAttempts - 1 ? 'DEAD_LETTER' : 'RETRYING';
     }
+
+    await prisma.job.updateMany({
+      where: { id: job.id, lockedBy: workerId, status: 'PROCESSING' },
+      data: {
+        status,
+        lastError,
+        lockedAt: null,
+        lockedBy: null,
+        attempts: { increment: 1 },
+        // Exponential backoff for retries: 5s, 25s, 125s, etc
+        availableAt:
+          status === 'RETRYING'
+            ? new Date(Date.now() + Math.min(3_600_000, Math.pow(5, job.attempts + 1) * 1000))
+            : job.availableAt,
+        completedAt: status === 'SUCCEEDED' ? new Date() : null,
+        failedAt: status === 'DEAD_LETTER' ? new Date() : null,
+      },
+    });
   }
 
-  return { processed, failedCount };
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function handleFailover(failedJob: any, fallbackChannel: 'sms' | 'email') {
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const payload = failedJob.payload as any;
-  // Determine new queue
-  const queue = fallbackChannel === 'sms' 
-    ? (failedJob.priority === 'CRITICAL' ? 'sms-critical' : 'sms-default')
-    : (failedJob.priority === 'CRITICAL' ? 'email-critical' : 'email-default');
-
-  // Enqueue a completely new job for the fallback channel with same template data
-  await enqueueJob({
-    type: `send-${fallbackChannel}`,
-    queue,
-    priority: failedJob.priority,
-    payload: {
-      recipient: payload.fallbackRecipient || payload.recipient, // Must provide fallbackRecipient if channels use different identifiers!
-      template: payload.template,
-      templateData: payload.templateData,
-    },
-    // We append -fallback to avoid idempotency key collisions
-    idempotencyKey: failedJob.idempotencyKey ? `${failedJob.idempotencyKey}-fallback-${fallbackChannel}` : undefined,
-  });
-
-  // Notice we don't throw inside handleFailover, we just spawn the fallback job.
-  // The original job will still be marked as FAILED/DEAD_LETTER because of the thrown error above it.
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function logComm(jobId: string, channel: any, recipient: string, template: string, provider: string, result: any) {
-  let masked = recipient;
-  if (channel === 'EMAIL') {
-    const [u, d] = recipient.split('@');
-    masked = d ? `${u.substring(0,1)}***@${d}` : recipient;
-  } else if (channel === 'SMS' || channel === 'WHATSAPP') {
-    masked = recipient.length > 5 ? `${recipient.substring(0, 3)}***${recipient.substring(recipient.length - 3)}` : recipient;
-  } else if (channel === 'TELEGRAM') {
-    masked = `tg_***${recipient.substring(recipient.length - 3)}`;
-  }
-
-  await db.communicationLog.create({
-    data: {
-      jobId,
-      channel,
-      recipient: masked,
-      template,
-      provider,
-      status: result.success ? (result.status || 'SENT') : 'FAILED',
-      providerMessageId: result.messageId,
-      errorReason: result.error,
-    }
-  });
+  return jobs.length;
 }

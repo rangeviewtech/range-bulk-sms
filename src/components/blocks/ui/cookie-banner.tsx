@@ -135,14 +135,14 @@ export function CookieBanner() {
           marginTop: '2px',
         }}
       >
-        <Link href="/cookies" className="text-[#29A4FF] hover:underline font-semibold">
+        <Link href="/cookies" className="text-foreground hover:underline font-semibold">
           {dict.legal?.cookiePolicy || 'Cookie Policy'}
         </Link>
-        <span style={{ opacity: 0.4 }}>•</span>
+        <span aria-hidden="true" style={{ opacity: 0.4 }}>•</span>
         <Link href="/privacy" className="hover:text-foreground transition-colors">
           {dict.legal?.privacyPolicy || 'Privacy'}
         </Link>
-        <span style={{ opacity: 0.4 }}>•</span>
+        <span aria-hidden="true" style={{ opacity: 0.4 }}>•</span>
         <Link href="/terms" className="hover:text-foreground transition-colors">
           {dict.legal?.termsAndConditions || 'Terms'}
         </Link>

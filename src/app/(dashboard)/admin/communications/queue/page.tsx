@@ -1,3 +1,7 @@
+import { requirePermission } from '@/lib/auth/authorization';
+﻿/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
+ 
 import { prisma as db } from '@/lib/prisma';
 import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +13,7 @@ import { formatDistanceToNow } from 'date-fns';
 export const dynamic = 'force-dynamic';
 
 export default async function QueuePage() {
+  await requirePermission('settings.manage');
   const jobs = await db.job.findMany({
     orderBy: { createdAt: 'desc' },
     take: 50,

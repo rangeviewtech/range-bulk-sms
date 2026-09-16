@@ -41,10 +41,12 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relationships
-  roles                 UserRole[]
-  sessions              Session[]
-  auditLogs             AuditLog[]
-  telegramLinkingTokens TelegramLinkingToken[]
+  roles                   UserRole[]
+  sessions                Session[]
+  auditLogs               AuditLog[]
+  telegramLinkingTokens   TelegramLinkingToken[]
+  notificationPreferences NotificationPreference[]
+  notifications           Notification[]
 }
 
 model Session {
@@ -137,11 +139,39 @@ model RolePermission {
 
 model AuditLog {
   id        String  @id @default(uuid())
+  requestId String? @db.VarChar(255)
+  traceId   String? @db.VarChar(255)
+
+  // Actor info
   userId    String?
-  action    String // e.g., "LOGIN_SUCCESS", "PASSWORD_CHANGED"
-  resource  String? // The entity this action affected
-  metadata  Json? // Extra contextual data
-  ipAddress String?
+  actorType String  @default("USER") // e.g., USER, SYSTEM, ADMIN
+  actorRole String?
+
+  // Action info
+  action    String // e.g., LOGIN_SUCCESS, UPDATE_USER
+  category  String  @default("APPLICATION") // SECURITY, APPLICATION, AUDIT
+  operation String? // CREATE, READ, UPDATE, DELETE
+
+  // Resource info
+  resource     String? // Legacy / optional
+  resourceType String? // e.g., User, CommunicationLog
+  resourceId   String?
+
+  // Execution details
+  status     String  @default("SUCCESS") // SUCCESS, FAILURE
+  durationMs Int?
+  errorCode  String?
+  reason     String? @db.Text
+
+  // Changes tracking
+  changes  Json? // Before/After state
+  metadata Json? // Extra contextual data
+
+  // Request context
+  ipAddress  String?
+  userAgent  String? @db.Text
+  route      String?
+  httpMethod String?
 
   createdAt DateTime @default(now())
 
@@ -150,6 +180,9 @@ model AuditLog {
   @@index([userId])
   @@index([action])
   @@index([createdAt])
+  @@index([requestId])
+  @@index([resourceType, resourceId])
+  @@index([category, status])
 }
 
 // -----------------------------------------------------------------------------
@@ -280,4 +313,88 @@ model TelegramLinkingToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([token])
+}
+
+// -----------------------------------------------------------------------------
+// ENTERPRISE NOTIFICATION & CRON SYSTEM
+// -----------------------------------------------------------------------------
+
+model NotificationPreference {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  category String // e.g., "SECURITY", "MARKETING", "PAYMENTS", "SYSTEM"
+  channels String[] // Array of channels: ["EMAIL", "SMS", "IN_APP", "TELEGRAM", "WHATSAPP"]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, category])
+}
+
+model NotificationTemplate {
+  id      String               @id @default(uuid())
+  name    String               @unique // e.g., "auth.welcome"
+  channel CommunicationChannel // "EMAIL", "SMS", "TELEGRAM", etc.
+  subject String? // Applicable for email
+  body    String               @db.Text // Supports mustache/handlebars {{var}}
+  active  Boolean              @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  // In-App Notification Center
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title      String
+  body       String
+  category   String // "SECURITY", "SYSTEM", "ALERT"
+  actionUrl  String?
+  readAt     DateTime?
+  archivedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, readAt])
+  @@index([userId, createdAt])
+}
+
+model ScheduledJob {
+  id             String    @id @default(uuid())
+  name           String    @unique
+  cronExpression String? // e.g., "*/5 * * * *" for cron
+  runAt          DateTime? // Exact time for reminders
+
+  type    String // e.g., "sync-systems", "send-reminder"
+  payload Json?
+
+  active    Boolean   @default(true)
+  lastRunAt DateTime?
+  nextRunAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  executions CronExecution[]
+
+  @@index([nextRunAt, active])
+}
+
+model CronExecution {
+  id             String       @id @default(uuid())
+  scheduledJobId String
+  scheduledJob   ScheduledJob @relation(fields: [scheduledJobId], references: [id], onDelete: Cascade)
+
+  status     String // "SUCCESS", "FAILED"
+  durationMs Int?
+  errorMsg   String? @db.Text
+
+  executedAt DateTime @default(now())
+
+  @@index([scheduledJobId, executedAt])
 }

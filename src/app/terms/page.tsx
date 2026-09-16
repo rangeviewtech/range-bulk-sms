@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { LegalLayout } from '@/components/layout/legal-layout';
-import { FileText, ShieldCheck, Scale, Cpu, AlertTriangle, RefreshCw } from 'lucide-react';
+import { ShieldCheck, Scale } from 'lucide-react';
 import { appConfig } from '@/config/app';
 import { createMetadata } from '@/lib/metadata';
 

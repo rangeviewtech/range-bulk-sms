@@ -37,7 +37,7 @@ export function FormSelect({ name, label, description, options, placeholder = "S
       render={({ field: { value, onChange, ...field } }) => (
         <div className={cn("space-y-2", className)}>
           {label && <Label className={cn(error && "text-destructive")}>{label}</Label>}
-          <Select onValueChange={onChange} value={value} defaultValue={value}>
+          <Select onValueChange={onChange} value={value}>
             <SelectTrigger {...field}>
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>

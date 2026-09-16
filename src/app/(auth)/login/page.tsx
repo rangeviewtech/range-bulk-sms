@@ -1,3 +1,6 @@
+﻿/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @next/next/no-img-element */
+ 
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -17,7 +20,7 @@ import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { isDev, formatErrorForEnv } from '@/lib/env';
 import { appConfig } from '@/config/app';
 import { appAssets } from '@/config/assets';
-import { socialLogin } from '@/app/(auth)/actions';
+import { socialLogin, login as loginAction } from '@/app/(auth)/actions';
 import { TurnstileWidget } from '@/components/forms/turnstile-widget';
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -127,9 +130,16 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      toast.success('Logged in successfully');
-      router.push('/dashboard');
+      const formData = new FormData();
+      formData.set('email', data.email);
+      formData.set('password', data.password);
+      if (turnstileToken) formData.set('turnstileToken', turnstileToken);
+      const res = await loginAction(formData);
+      if (res?.error) {
+        toast.error(res.error);
+        return;
+      }
+      if (res?.redirect) router.push(res.redirect);
     } catch (err) {
       const formatted = formatErrorForEnv(err, 'Incorrect username / password.');
       
@@ -159,7 +169,7 @@ export default function LoginPage() {
         toast.success(`Welcome! Signed in with ${name}`, { id: toastId });
         router.push('/dashboard');
       } else {
-        toast.error(`Could not sign in with ${name}`, { id: toastId });
+        toast.error(res.error || `Could not sign in with ${name}`, { id: toastId });
       }
     } catch {
       toast.error(`Connection error with ${name}. Please try again.`, { id: toastId });
@@ -174,7 +184,7 @@ export default function LoginPage() {
       toast.error('Please enter your username');
       return;
     }
-    toast.success(`Password reset instructions sent for ${forgotUsername}`);
+    router.push('/forgot-password');
     setView('login');
   };
 
@@ -426,7 +436,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Cloudflare Turnstile — Bot Protection */}
+              {/* Cloudflare Turnstile â€” Bot Protection */}
               <div className="auth-stagger-4">
                 <TurnstileWidget
                   variant="inline"
@@ -712,7 +722,7 @@ export default function LoginPage() {
                 />
               </div>
 
-              {/* Cloudflare Turnstile — Bot Protection */}
+              {/* Cloudflare Turnstile â€” Bot Protection */}
               <TurnstileWidget
                 variant="inline"
                 onVerify={(token) => {
@@ -865,11 +875,11 @@ export default function LoginPage() {
                 <Link href="/terms" target="_blank" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', textDecoration: 'none', transition: 'color 0.2s', fontFamily: FONT_STACK }} className="hover:text-foreground">
                   {dict.legal?.termsAndConditions || 'Terms & Conditions'}
                 </Link>
-                <span style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>•</span>
+                <span aria-hidden="true" style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>&bull;</span>
                 <Link href="/privacy" target="_blank" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', textDecoration: 'none', transition: 'color 0.2s', fontFamily: FONT_STACK }} className="hover:text-foreground">
                   {dict.legal?.privacyPolicy || 'Privacy Policy'}
                 </Link>
-                <span style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>•</span>
+                <span aria-hidden="true" style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>&bull;</span>
                 <Link href="/cookies" target="_blank" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', textDecoration: 'none', transition: 'color 0.2s', fontFamily: FONT_STACK }} className="hover:text-foreground">
                   {dict.legal?.cookiePolicy || 'Cookie Policy'}
                 </Link>
@@ -879,7 +889,7 @@ export default function LoginPage() {
         </div>{/* end centered wrapper */}
 
 
-        {/* Language icon removed from bottom — repositioned to top-right corner below */}
+        {/* Language icon removed from bottom â€” repositioned to top-right corner below */}
       </div>
     </div>
   );

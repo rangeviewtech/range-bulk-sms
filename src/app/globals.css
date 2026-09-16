@@ -1,8 +1,7 @@
 @import "tailwindcss";
 @custom-variant dark (&:is(.dark *));
-@import "normalize.css";
+@import "normalize.css" layer(base);
 @import "leaflet/dist/leaflet.css";
-@import "./kompa.css";
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -55,6 +54,7 @@
 }
 
 :root {
+  --brand-action-foreground: 240 5.9% 10%;
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
   --card: 0 0% 100%;
@@ -481,7 +481,7 @@ input:-webkit-autofill:active {
   font-weight: 700;
   line-height: 19.5px;
   background-color: #29A4FF !important;
-  color: #ffffff !important;
+  color: hsl(var(--brand-action-foreground)) !important;
   border: none !important;
   cursor: pointer;
   text-align: center;

@@ -1,3 +1,6 @@
+﻿/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
+ 
 "use client";
 
 import * as React from "react";
@@ -6,11 +9,11 @@ import { MapPin, Plus, Search, Edit, Trash2, Shield, X, Bell } from "lucide-reac
 import { cn } from "@/lib/utils";
 
 const GEOFENCES = [
-  { id: "GEO-01", name: "Mombasa Port Container Terminal", type: "Polygon", radius: "2.4 km²", speedLimit: "30 km/h", alerts: "In & Out", objectsCount: 42, status: "Active" },
-  { id: "GEO-02", name: "Nairobi Industrial Area Hub", type: "Polygon", radius: "5.1 km²", speedLimit: "40 km/h", alerts: "In & Out", objectsCount: 68, status: "Active" },
+  { id: "GEO-01", name: "Mombasa Port Container Terminal", type: "Polygon", radius: "2.4 kmÂ²", speedLimit: "30 km/h", alerts: "In & Out", objectsCount: 42, status: "Active" },
+  { id: "GEO-02", name: "Nairobi Industrial Area Hub", type: "Polygon", radius: "5.1 kmÂ²", speedLimit: "40 km/h", alerts: "In & Out", objectsCount: 68, status: "Active" },
   { id: "GEO-03", name: "Juba Customs Depot Yard B", type: "Circle", radius: "800 m", speedLimit: "20 km/h", alerts: "Out Only", objectsCount: 18, status: "Active" },
-  { id: "GEO-04", name: "JKIA Cargo Freight Zone", type: "Polygon", radius: "3.2 km²", speedLimit: "25 km/h", alerts: "In & Out", objectsCount: 24, status: "Active" },
-  { id: "GEO-05", name: "Dangerous Route Exclusion Zone", type: "Polygon", radius: "12.0 km²", speedLimit: "0 km/h (Restricted)", alerts: "Entry Alert", objectsCount: 148, status: "Restricted" },
+  { id: "GEO-04", name: "JKIA Cargo Freight Zone", type: "Polygon", radius: "3.2 kmÂ²", speedLimit: "25 km/h", alerts: "In & Out", objectsCount: 24, status: "Active" },
+  { id: "GEO-05", name: "Dangerous Route Exclusion Zone", type: "Polygon", radius: "12.0 kmÂ²", speedLimit: "0 km/h (Restricted)", alerts: "Entry Alert", objectsCount: 148, status: "Restricted" },
 ];
 
 export default function GeofenceManagementPage() {

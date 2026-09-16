@@ -21,7 +21,7 @@ export const appAssets = {
   logo: process.env.NEXT_PUBLIC_ASSET_LOGO || '/images/smart/app-logo.svg',
   logoLight: process.env.NEXT_PUBLIC_ASSET_LOGO_LIGHT || '/images/smart/app-logo-light.svg',
   icon: process.env.NEXT_PUBLIC_ASSET_ICON || '/images/smart/app-icon.svg',
-    iconLight: process.env.NEXT_PUBLIC_ASSET_ICON_LIGHT || '/images/smart/app-icon-light.svg',
+  iconLight: process.env.NEXT_PUBLIC_ASSET_ICON_LIGHT || '/images/smart/app-icon-light.svg',
   qrCode: process.env.NEXT_PUBLIC_ASSET_QR || '/images/smart/app-qr.png',
   favicon: '/favicon.ico',
   faviconPng: '/favicon.png',

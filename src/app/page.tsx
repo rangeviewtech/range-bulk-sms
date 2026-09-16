@@ -17,7 +17,7 @@ export default function HomePage() {
       <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
         {appConfig.description}
       </p>
-      <div className="flex gap-4 items-center justify-center">
+      <div className="flex flex-col gap-4 items-center justify-center sm:flex-row">
         <Button asChild size="lg" className="gap-2">
           <Link href="/dashboard">
             Get Started <ArrowRight className="w-4 h-4" />

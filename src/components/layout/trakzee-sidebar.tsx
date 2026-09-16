@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import * as React from "react";
@@ -21,8 +22,7 @@ import {
   Moon,
   Sun,
   Layers,
-  ArrowRight,
-  Sparkles
+  ArrowRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";

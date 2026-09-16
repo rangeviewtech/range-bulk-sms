@@ -63,7 +63,12 @@ export const ModelName = {
   CommunicationLog: 'CommunicationLog',
   ProviderHealth: 'ProviderHealth',
   OtpRecord: 'OtpRecord',
-  TelegramLinkingToken: 'TelegramLinkingToken'
+  TelegramLinkingToken: 'TelegramLinkingToken',
+  NotificationPreference: 'NotificationPreference',
+  NotificationTemplate: 'NotificationTemplate',
+  Notification: 'Notification',
+  ScheduledJob: 'ScheduledJob',
+  CronExecution: 'CronExecution'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -170,11 +175,27 @@ export type RolePermissionScalarFieldEnum = (typeof RolePermissionScalarFieldEnu
 
 export const AuditLogScalarFieldEnum = {
   id: 'id',
+  requestId: 'requestId',
+  traceId: 'traceId',
   userId: 'userId',
+  actorType: 'actorType',
+  actorRole: 'actorRole',
   action: 'action',
+  category: 'category',
+  operation: 'operation',
   resource: 'resource',
+  resourceType: 'resourceType',
+  resourceId: 'resourceId',
+  status: 'status',
+  durationMs: 'durationMs',
+  errorCode: 'errorCode',
+  reason: 'reason',
+  changes: 'changes',
   metadata: 'metadata',
   ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  route: 'route',
+  httpMethod: 'httpMethod',
   createdAt: 'createdAt'
 } as const
 
@@ -262,6 +283,76 @@ export const TelegramLinkingTokenScalarFieldEnum = {
 } as const
 
 export type TelegramLinkingTokenScalarFieldEnum = (typeof TelegramLinkingTokenScalarFieldEnum)[keyof typeof TelegramLinkingTokenScalarFieldEnum]
+
+
+export const NotificationPreferenceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  category: 'category',
+  channels: 'channels',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum]
+
+
+export const NotificationTemplateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  channel: 'channel',
+  subject: 'subject',
+  body: 'body',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationTemplateScalarFieldEnum = (typeof NotificationTemplateScalarFieldEnum)[keyof typeof NotificationTemplateScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  body: 'body',
+  category: 'category',
+  actionUrl: 'actionUrl',
+  readAt: 'readAt',
+  archivedAt: 'archivedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const ScheduledJobScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  cronExpression: 'cronExpression',
+  runAt: 'runAt',
+  type: 'type',
+  payload: 'payload',
+  active: 'active',
+  lastRunAt: 'lastRunAt',
+  nextRunAt: 'nextRunAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ScheduledJobScalarFieldEnum = (typeof ScheduledJobScalarFieldEnum)[keyof typeof ScheduledJobScalarFieldEnum]
+
+
+export const CronExecutionScalarFieldEnum = {
+  id: 'id',
+  scheduledJobId: 'scheduledJobId',
+  status: 'status',
+  durationMs: 'durationMs',
+  errorMsg: 'errorMsg',
+  executedAt: 'executedAt'
+} as const
+
+export type CronExecutionScalarFieldEnum = (typeof CronExecutionScalarFieldEnum)[keyof typeof CronExecutionScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -1,3 +1,6 @@
+﻿ 
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable react-hooks/incompatible-library */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -205,7 +208,7 @@ export default function RegisterPage() {
         toast.success(`Welcome! Signed in with ${name}`, { id: toastId });
         router.push('/dashboard');
       } else {
-        toast.error(`Could not sign in with ${name}`, { id: toastId });
+        toast.error(res.error || `Could not sign in with ${name}`, { id: toastId });
       }
     } catch {
       toast.error(`Connection error with ${name}. Please try again.`, { id: toastId });
@@ -569,7 +572,7 @@ export default function RegisterPage() {
                 )}
               </div>
 
-              {/* Cloudflare Turnstile — Bot Protection */}
+              {/* Cloudflare Turnstile â€” Bot Protection */}
               <div className="auth-stagger-4">
                 <TurnstileWidget
                   variant="inline"
@@ -857,11 +860,11 @@ export default function RegisterPage() {
               <Link href="/terms" target="_blank" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', textDecoration: 'none', transition: 'color 0.2s', fontFamily: FONT_STACK }} className="hover:text-foreground">
                 {dict.legal?.termsAndConditions || 'Terms & Conditions'}
               </Link>
-              <span style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>•</span>
+              <span aria-hidden="true" style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>&bull;</span>
               <Link href="/privacy" target="_blank" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', textDecoration: 'none', transition: 'color 0.2s', fontFamily: FONT_STACK }} className="hover:text-foreground">
                 {dict.legal?.privacyPolicy || 'Privacy Policy'}
               </Link>
-              <span style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>•</span>
+              <span aria-hidden="true" style={{ fontSize: '10px', color: 'hsl(var(--muted-foreground) / 0.4)' }}>&bull;</span>
               <Link href="/cookies" target="_blank" style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', textDecoration: 'none', transition: 'color 0.2s', fontFamily: FONT_STACK }} className="hover:text-foreground">
                 {dict.legal?.cookiePolicy || 'Cookie Policy'}
               </Link>

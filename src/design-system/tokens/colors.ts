@@ -1,4 +1,5 @@
 export const lightThemeColors = {
+  brandActionForeground: "hsl(240 5.9% 10%)",
   background: "hsl(0 0% 100%)",
   foreground: "hsl(240 10% 3.9%)",
   card: "hsl(0 0% 100%)",
@@ -27,6 +28,7 @@ export const lightThemeColors = {
 };
 
 export const darkThemeColors = {
+  brandActionForeground: "hsl(240 5.9% 10%)",
   background: "hsl(240 10% 3.9%)",
   foreground: "hsl(0 0% 98%)",
   card: "hsl(240 10% 3.9%)",

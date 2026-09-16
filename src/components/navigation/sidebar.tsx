@@ -4,8 +4,20 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import * as Icons from "lucide-react";
-import { ChevronLeft } from "lucide-react";
+import {
+  ChevronLeft,
+  LayoutDashboard,
+  BarChart2,
+  BookOpen,
+  Lock,
+  Layers,
+  Palette,
+  Settings,
+  Shield,
+  Activity,
+  MessageSquare,
+  Server
+} from "lucide-react";
 import type { NavGroup } from "@/types/navigation";
 
 interface SidebarProps {
@@ -15,11 +27,23 @@ interface SidebarProps {
   className?: string;
 }
 
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  LayoutDashboard,
+  BarChart2,
+  BookOpen,
+  Lock,
+  Layers,
+  Palette,
+  Settings,
+  Shield,
+  Activity,
+  MessageSquare,
+  Server
+};
+
 function getIcon(name?: string) {
   if (!name) return null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const Icon = (Icons as any)[name] as React.ComponentType<{ className?: string }> | undefined;
-  return Icon ?? null;
+  return iconMap[name] || null;
 }
 
 export function Sidebar({ groups, collapsed = false, onToggleCollapse, className }: SidebarProps) {

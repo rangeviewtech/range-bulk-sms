@@ -13,7 +13,7 @@ export const phoneSchema = z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone
 
 export const urlSchema = z.string().url('Invalid URL');
 
-export const idSchema = z.string().cuid('Invalid ID format');
+export const idSchema = z.string().uuid('Invalid ID format');
 
 export const paginationSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),

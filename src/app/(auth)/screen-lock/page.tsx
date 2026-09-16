@@ -1,3 +1,6 @@
+﻿ 
+ 
+/* eslint-disable react-hooks/incompatible-library */
 'use client';
 
 import { useState } from 'react';
@@ -69,7 +72,7 @@ export default function ScreenLockPage() {
           </div>
           {errors.pin && <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{errors.pin.message}</p>}
 
-          {/* Cloudflare Turnstile — Bot Protection */}
+          {/* Cloudflare Turnstile â€” Bot Protection */}
           <div className="auth-stagger-3" style={{ width: '100%', marginTop: '8px' }}>
             <TurnstileWidget
               variant="inline"

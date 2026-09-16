@@ -1,3 +1,6 @@
+﻿/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
+/* eslint-disable react-hooks/incompatible-library */
 'use client';
 
 import { useState } from 'react';

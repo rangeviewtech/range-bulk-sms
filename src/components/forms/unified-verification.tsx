@@ -18,9 +18,10 @@ interface UnifiedVerificationProps {
   userId?: string;
   defaultChannel?: string;
   defaultMethod?: VerificationMethod;
+  allowedMethods?: VerificationMethod[];
 }
 
-export function UnifiedVerification({ userId, defaultChannel, defaultMethod }: UnifiedVerificationProps) {
+export function UnifiedVerification({ userId, defaultChannel, defaultMethod, allowedMethods }: UnifiedVerificationProps) {
   const { dict } = useLanguage();
   const initialMethod: VerificationMethod = defaultMethod 
     ? defaultMethod 
@@ -63,7 +64,7 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod }: U
     setCode('');
     setError('');
 
-    if (newMethod !== 'APP' && countdown === 0) {
+    if (newMethod !== 'APP' && newMethod !== method) {
       await handleResend(newMethod);
     }
   };
@@ -161,7 +162,7 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod }: U
             direction: 'ltr',
           }}
         >
-          {METHODS.map((m) => {
+          {METHODS.filter(item => !allowedMethods || allowedMethods.includes(item.id)).map((m) => {
             const Icon = m.icon;
             const isActive = method === m.id;
             return (

@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { LegalLayout } from '@/components/layout/legal-layout';
-import { ShieldCheck, Lock, Eye, Server, UserCheck, Globe, Database } from 'lucide-react';
+import { ShieldCheck, Lock } from 'lucide-react';
 import { appConfig } from '@/config/app';
 import { createMetadata } from '@/lib/metadata';
 

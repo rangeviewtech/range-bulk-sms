@@ -1,3 +1,6 @@
+﻿/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
+ 
 "use client";
 
 import * as React from "react";
@@ -98,10 +101,10 @@ export default function CompanySettingsPage() {
               </div>
             </div>
             <div className="text-[11px] text-muted-foreground space-y-1">
-              <div>• Real-time 5s GPS stream</div>
-              <div>• Fuel CAN bus analytics</div>
-              <div>• Unlimited Geofence zones</div>
-              <div>• 1 Year Telematics storage</div>
+              <div>â€¢ Real-time 5s GPS stream</div>
+              <div>â€¢ Fuel CAN bus analytics</div>
+              <div>â€¢ Unlimited Geofence zones</div>
+              <div>â€¢ 1 Year Telematics storage</div>
             </div>
           </div>
 

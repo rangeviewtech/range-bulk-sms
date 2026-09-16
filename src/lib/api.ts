@@ -1,21 +1,29 @@
-import { ApiResponse, PaginatedResponse, ApiError } from '@/types/api';
+import { AppError } from '@/lib/errors';
+import { ApiResponse, PaginatedResponse } from '@/types/api';
 import { NextResponse } from 'next/server';
 import { HTTP_STATUS } from '@/constants/http-status';
 
-export const successResponse = <T>(data: T, message?: string, status = HTTP_STATUS.OK): NextResponse<ApiResponse<T>> => {
-  return NextResponse.json({
-    success: true,
-    data,
-    message,
-    timestamp: new Date().toISOString()
-  }, { status });
+export const successResponse = <T>(
+  data: T,
+  message?: string,
+  status = HTTP_STATUS.OK
+): NextResponse<ApiResponse<T>> => {
+  return NextResponse.json(
+    {
+      success: true,
+      data,
+      message,
+      timestamp: new Date().toISOString(),
+    },
+    { status }
+  );
 };
 
 export const paginatedResponse = <T>(
-  data: T[], 
-  total: number, 
-  page: number, 
-  limit: number, 
+  data: T[],
+  total: number,
+  page: number,
+  limit: number,
   message?: string
 ): NextResponse<PaginatedResponse<T>> => {
   return NextResponse.json({
@@ -27,18 +35,48 @@ export const paginatedResponse = <T>(
       limit,
       totalPages: Math.ceil(total / limit),
       hasNextPage: page * limit < total,
-      hasPrevPage: page > 1
+      hasPrevPage: page > 1,
     },
     message,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
-export const errorResponse = (error: ApiError | string, status = HTTP_STATUS.INTERNAL_SERVER_ERROR): NextResponse<ApiResponse<null>> => {
-  const err = typeof error === 'string' ? { code: 'INTERNAL_ERROR', message: error } : error;
-  return NextResponse.json({
-    success: false,
-    error: err,
-    timestamp: new Date().toISOString()
-  }, { status });
+export const errorResponse = (
+  error: unknown,
+  status = HTTP_STATUS.INTERNAL_SERVER_ERROR
+): NextResponse<ApiResponse<null>> => {
+  let errCode = 'INTERNAL_ERROR';
+  let errMessage = 'Something went wrong. Please try again later.';
+
+  if (process.env.NODE_ENV !== 'production') {
+    // In dev, show full details
+    if (typeof error === 'string') {
+      errMessage = error;
+    } else if (error instanceof Error) {
+      errMessage = error.message;
+      errCode = error.name;
+    } else if (error !== null && typeof error === 'object' && 'message' in error) {
+      errMessage = String((error as Record<string, unknown>).message);
+      errCode = 'code' in error ? String(error.code) : errCode;
+    }
+  } else {
+    // In production, only expose known safe Application Errors
+    if (error instanceof AppError && error.statusCode < 500) {
+      errMessage = error.message;
+      errCode = error.code;
+    }
+  }
+
+  return NextResponse.json(
+    {
+      success: false,
+      error: {
+        code: errCode,
+        message: errMessage,
+      },
+      timestamp: new Date().toISOString(),
+    },
+    { status }
+  );
 };

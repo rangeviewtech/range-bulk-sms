@@ -1,3 +1,6 @@
+﻿ 
+ 
+/* eslint-disable react-hooks/incompatible-library */
 'use client';
 
 import { useState, Suspense, useEffect } from 'react';

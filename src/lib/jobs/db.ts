@@ -1,48 +1,52 @@
 import { prisma as db } from '@/lib/prisma';
-import { Job, JobStatus, JobPriority, Prisma } from '@/generated/prisma';
+import { Job, JobPriority, Prisma } from '@/generated/prisma';
 
 export interface EnqueueJobParams {
   type: string;
   queue?: string;
   priority?: JobPriority;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-  payload: any;
+  payload: Prisma.InputJsonValue;
   availableAt?: Date;
   idempotencyKey?: string;
   maxAttempts?: number;
 }
 
 export async function enqueueJob(data: EnqueueJobParams) {
-  // If idempotency key is provided, we can use an upsert or check first to avoid throwing errors on unique constraint violation.
-  if (data.idempotencyKey) {
-    const existing = await db.job.findUnique({
-      where: { idempotencyKey: data.idempotencyKey }
-    });
-    if (existing) return existing;
-  }
-
-  return db.job.create({
-    data: {
-      type: data.type,
-      queue: data.queue || 'default',
-      priority: data.priority || 'NORMAL',
-      payload: data.payload || {},
-      availableAt: data.availableAt || new Date(),
-      idempotencyKey: data.idempotencyKey,
-      maxAttempts: data.maxAttempts || 3,
-    },
-  });
+  const create = {
+    type: data.type,
+    queue: data.queue ?? 'default',
+    priority: data.priority ?? 'NORMAL',
+    payload: data.payload,
+    availableAt: data.availableAt ?? new Date(),
+    idempotencyKey: data.idempotencyKey,
+    maxAttempts: data.maxAttempts ?? 3,
+  };
+  if (data.idempotencyKey)
+    return db.job.upsert({ where: { idempotencyKey: data.idempotencyKey }, create, update: {} });
+  return db.job.create({ data: create });
 }
 
 /**
  * Safely claims jobs using a Postgres FOR UPDATE SKIP LOCKED query.
  * Prioritizes CRITICAL jobs first, then by availableAt.
  */
-export async function claimJobs(workerId: string, limit: number = 10, queues: string[] = ['email-critical', 'email-default', 'email-bulk', 'sms-critical', 'sms-default', 'sms-bulk', 'system']): Promise<Job[]> {
+export async function claimJobs(
+  workerId: string,
+  limit: number = 10,
+  queues: string[] = [
+    'email-critical',
+    'email-default',
+    'email-bulk',
+    'sms-critical',
+    'sms-default',
+    'sms-bulk',
+    'system',
+  ]
+): Promise<Job[]> {
   if (queues.length === 0) return [];
-  
+
   const queueList = Prisma.join(queues, ',');
-  
+
   const jobs = await db.$queryRaw<Job[]>`
     UPDATE "Job"
     SET status = 'PROCESSING'::"JobStatus", "lockedAt" = NOW(), "startedAt" = NOW(), "lockedBy" = ${workerId}
@@ -82,12 +86,17 @@ export async function completeJob(id: string) {
   });
 }
 
-export async function failJob(id: string, error: string, retryDelayMs: number = 5000) {
+export async function failJob(
+  id: string,
+  error: string,
+  retryDelayMs: number = 5000,
+  isPermanentFailure: boolean = false
+) {
   const job = await db.job.findUnique({ where: { id } });
   if (!job) return null;
 
   const newAttempts = job.attempts + 1;
-  const isDeadLetter = newAttempts >= job.maxAttempts;
+  const isDeadLetter = isPermanentFailure || newAttempts >= job.maxAttempts;
 
   return db.job.update({
     where: { id },
@@ -108,17 +117,15 @@ export async function failJob(id: string, error: string, retryDelayMs: number = 
  */
 export async function recoverStuckJobs(staleMinutes: number = 10) {
   const staleDate = new Date(Date.now() - staleMinutes * 60 * 1000);
-  
-  return db.job.updateMany({
-    where: {
-      status: 'PROCESSING',
-      lockedAt: { lte: staleDate }
-    },
-    data: {
-      status: 'RETRYING',
-      lockedAt: null,
-      lockedBy: null,
-      lastError: 'Worker crashed or timed out (recovered)',
-    }
-  });
+
+  return db.$executeRaw`
+    UPDATE "Job"
+    SET "attempts" = "attempts" + 1,
+        "status" = CASE WHEN "attempts" + 1 >= "maxAttempts"
+          THEN 'DEAD_LETTER'::"JobStatus" ELSE 'RETRYING'::"JobStatus" END,
+        "failedAt" = NOW(), "updatedAt" = NOW(),
+        "lockedAt" = NULL, "lockedBy" = NULL,
+        "lastError" = 'Worker crashed or timed out (recovered)'
+    WHERE "status" = 'PROCESSING'::"JobStatus" AND "lockedAt" <= ${staleDate};
+  `;
 }

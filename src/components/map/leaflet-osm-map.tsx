@@ -95,21 +95,26 @@ export function LeafletOsmMap({
     tileLayerRef.current = tileLayer;
     setMap(mapInstance);
 
-    // Invalidate size on mount and window resize so map takes full width immediately
-    const handleResize = () => {
+    // Invalidate size on mount and container resize so map takes full width immediately
+    const resizeObserver = new ResizeObserver(() => {
       mapInstance.invalidateSize();
-    };
-    window.addEventListener("resize", handleResize);
+    });
+    
+    if (mapContainerRef.current) {
+      resizeObserver.observe(mapContainerRef.current);
+    }
+    
     const timer = setTimeout(() => {
       mapInstance.invalidateSize();
     }, 150);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      resizeObserver.disconnect();
       clearTimeout(timer);
       mapInstance.remove();
       setMap(null);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update Tile Layer when layer type changes
@@ -201,7 +206,7 @@ export function LeafletOsmMap({
     const destMarker = L.marker([0.3152, 32.5810], { icon: destIcon, zIndexOffset: 500 }).addTo(map);
     destMarkerRef.current = destMarker;
 
-  }, [map, selectedVehicle?.id, selectedVehicle?.lat, selectedVehicle?.lng]);
+  }, [map, selectedVehicle]);
 
   // Render & Update Vehicle Markers with high visibility
   React.useEffect(() => {
@@ -218,18 +223,21 @@ export function LeafletOsmMap({
           ? "#0284c7"
           : "#dc2626";
 
-      const pinBorder = isSelected 
-        ? "border: 3px solid #2558c4; box-shadow: 0 0 16px rgba(37,88,196,0.9);" 
-        : "border: 2px solid #334155; box-shadow: 0 4px 10px rgba(0,0,0,0.3);";
+
 
       const htmlContent = `
         <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer;">
-          <div style="width: 28px; height: 44px; background-color: #ffffff; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 2px; ${pinBorder}">
-            <div style="width: 100%; height: 9px; background-color: #0f172a; border-radius: 2px;"></div>
-            <div style="width: 10px; height: 10px; border-radius: 50%; background-color: ${statusBg}; ${
-        v.status === "Running" ? "box-shadow: 0 0 8px #22c55e;" : ""
-      }"></div>
-            <div style="width: 100%; height: 4px; background-color: #cbd5e1; border-radius: 1px;"></div>
+          ${isSelected ? `
+          <div style="position: absolute; left: 32px; top: 0px; width: auto; white-space: nowrap; background-color: ${statusBg}; color: white; padding: 2px 6px; font-size: 11px; font-weight: bold; border-radius: 2px; box-shadow: 0px 2px 4px rgba(0,0,0,0.4); display: flex; align-items: center; z-index: 10000; font-family: 'Open Sans', sans-serif; pointer-events: none;">
+            ${v.name} - ${v.speed} km/h
+          </div>
+          ` : ''}
+          <div style="width: 26px; height: 26px; background-color: ${statusBg}; border-radius: 4px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.4); border: 2px solid white; position: relative; z-index: 2;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 3h11v11H2V3zm12 3h4.5l3.5 3.5V14h-8V6zm1.5 8a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zm-9 0a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" />
+            </svg>
+            <div style="position: absolute; bottom: -7px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid white; z-index: -1;"></div>
+            <div style="position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid ${statusBg}; z-index: 1;"></div>
           </div>
         </div>
       `;
@@ -237,8 +245,8 @@ export function LeafletOsmMap({
       const customIcon = L.divIcon({
         className: "custom-osm-vehicle-icon",
         html: htmlContent,
-        iconSize: [28, 44],
-        iconAnchor: [14, 44],
+        iconSize: [26, 33],
+        iconAnchor: [13, 33],
       });
 
       if (markersRef.current[v.id]) {

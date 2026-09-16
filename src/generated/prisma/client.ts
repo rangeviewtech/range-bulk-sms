@@ -106,3 +106,28 @@ export type OtpRecord = Prisma.OtpRecordModel
  * 
  */
 export type TelegramLinkingToken = Prisma.TelegramLinkingTokenModel
+/**
+ * Model NotificationPreference
+ * 
+ */
+export type NotificationPreference = Prisma.NotificationPreferenceModel
+/**
+ * Model NotificationTemplate
+ * 
+ */
+export type NotificationTemplate = Prisma.NotificationTemplateModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
+/**
+ * Model ScheduledJob
+ * 
+ */
+export type ScheduledJob = Prisma.ScheduledJobModel
+/**
+ * Model CronExecution
+ * 
+ */
+export type CronExecution = Prisma.CronExecutionModel

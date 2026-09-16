@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Download, WifiOff, X } from 'lucide-react';
+import Image from 'next/image';
 import { appConfig } from '@/config/app';
 import { appAssets } from '@/config/assets';
 import { useLanguage } from '@/hooks/use-language';
@@ -22,7 +23,7 @@ export function PWARegister() {
   useEffect(() => {
     // 1. Register Service Worker
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
+      const registerSW = () => {
         navigator.serviceWorker
           .register('/sw.js')
           .then((registration) => {
@@ -31,16 +32,34 @@ export function PWARegister() {
           .catch((error) => {
             console.error('[PWA] Service Worker registration failed:', error);
           });
-      });
+      };
+      
+      if (document.readyState === 'complete') {
+        registerSW();
+      } else {
+        window.addEventListener('load', registerSW);
+      }
     }
 
     // 2. Capture Deferred Install Prompt
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
-      setInstallPrompt(e as BeforeInstallPromptEvent);
+      // Only show if not previously dismissed and not already in standalone mode
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as unknown as { standalone?: boolean }).standalone;
+      const isDismissed = localStorage.getItem('pwa-prompt-dismissed') === 'true';
+      
+      if (!isStandalone && !isDismissed) {
+        setInstallPrompt(e as BeforeInstallPromptEvent);
+      }
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    // Also listen for successful installation to never show again
+    window.addEventListener('appinstalled', () => {
+      localStorage.setItem('pwa-prompt-dismissed', 'true');
+      setInstallPrompt(null);
+    });
 
     // 3. Monitor Online / Offline Status
     const handleOnline = () => {
@@ -73,6 +92,11 @@ export function PWARegister() {
     };
   }, [dict]);
 
+  const handleDismiss = () => {
+    localStorage.setItem('pwa-prompt-dismissed', 'true');
+    setInstallPrompt(null);
+  };
+
   const triggerInstall = async () => {
     if (!installPrompt) return;
     await installPrompt.prompt();
@@ -80,6 +104,7 @@ export function PWARegister() {
     if (choice.outcome === 'accepted') {
       const successMsg = (dict.pwa?.installedSuccess || '{app} installed successfully!').replace('{app}', appConfig.name);
       toast.success(successMsg);
+      localStorage.setItem('pwa-prompt-dismissed', 'true');
       setInstallPrompt(null);
     }
   };
@@ -117,8 +142,8 @@ export function PWARegister() {
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
-              <img src={appAssets.icon} alt={`${appConfig.name} Icon`} className="w-9 h-9 object-contain theme-logo-light" />
-              <img src={appAssets.iconLight} alt={`${appConfig.name} Icon`} className="w-9 h-9 object-contain theme-logo-dark" />
+              <Image src={appAssets.icon} alt={`${appConfig.name} Icon`} width={36} height={36} className="object-contain theme-logo-light" />
+              <Image src={appAssets.iconLight} alt={`${appConfig.name} Icon`} width={36} height={36} className="object-contain theme-logo-dark" />
               <div>
                 <h4 style={{ fontSize: '14px', fontWeight: 600, color: 'hsl(var(--foreground))', margin: 0, lineHeight: '18px' }}>
                   {installTitle}
@@ -129,7 +154,7 @@ export function PWARegister() {
               </div>
             </div>
             <button
-              onClick={() => setInstallPrompt(null)}
+              onClick={handleDismiss}
               style={{ background: 'none', border: 'none', padding: '2px', cursor: 'pointer', color: 'hsl(var(--muted-foreground))' }}
               title="Close"
               aria-label="Close"
@@ -158,7 +183,7 @@ export function PWARegister() {
               <span>{installBtnText}</span>
             </button>
             <button
-              onClick={() => setInstallPrompt(null)}
+              onClick={handleDismiss}
               className="auth-btn-secondary"
               style={{
                 height: '36px',

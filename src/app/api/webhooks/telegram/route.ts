@@ -1,17 +1,61 @@
 import { NextResponse } from 'next/server';
 import { prisma as db } from '@/lib/prisma';
 
+/**
+ * @swagger
+ * /api/webhooks/telegram:
+ *   post:
+ *     summary: Telegram Webhook Callback
+ *     description: Receives updates from the Telegram Bot API. Handles account linking via `/start <token>`.
+ *     tags:
+ *       - Webhooks
+ *     parameters:
+ *       - in: header
+ *         name: X-Telegram-Bot-Api-Secret-Token
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Secret token for webhook verification
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             description: Telegram Update object
+ *     responses:
+ *       200:
+ *         description: Always returns 200 OK to prevent Telegram from retrying
+ *       401:
+ *         description: Unauthorized (Invalid Secret Token)
+ */
 export async function POST(req: Request) {
   try {
     // 1. Secret verification (optional but recommended in production)
-    // const secretToken = req.headers.get('X-Telegram-Bot-Api-Secret-Token');
-    // if (secretToken !== process.env.TELEGRAM_WEBHOOK_SECRET) return NextResponse.json({}, { status: 401 });
+    const secretToken = req.headers.get('X-Telegram-Bot-Api-Secret-Token');
+    if (!process.env.TELEGRAM_WEBHOOK_SECRET) return NextResponse.json({}, { status: 401 });
+    if (process.env.TELEGRAM_WEBHOOK_SECRET) {
+      if (!secretToken) return NextResponse.json({}, { status: 401 });
+
+      const crypto = await import('crypto');
+      const expected = Buffer.from(process.env.TELEGRAM_WEBHOOK_SECRET);
+      const actual = Buffer.from(secretToken);
+
+      if (expected.length !== actual.length || !crypto.timingSafeEqual(expected, actual)) {
+        return NextResponse.json({}, { status: 401 });
+      }
+    }
 
     const body = await req.json();
 
     // 2. We only care about messages
     const message = body.message;
-    if (!message || !message.text) {
+    if (
+      !message ||
+      typeof message.text !== 'string' ||
+      message.chat?.type !== 'private' ||
+      !Number.isSafeInteger(message.chat?.id)
+    ) {
       return NextResponse.json({ ok: true }); // Always return 200 OK to Telegram so it doesn't retry
     }
 
@@ -25,33 +69,39 @@ export async function POST(req: Request) {
       // Find un-used, un-expired token
       const linkingToken = await db.telegramLinkingToken.findUnique({
         where: { token },
-        include: { user: true }
+        include: { user: true },
       });
 
       if (!linkingToken) {
-         // Token invalid
-         await sendTelegramReply(chatId, "❌ Invalid or expired linking token.");
-         return NextResponse.json({ ok: true });
+        // Token invalid
+        await sendTelegramReply(chatId, '❌ Invalid or expired linking token.');
+        return NextResponse.json({ ok: true });
       }
 
       if (linkingToken.used || linkingToken.expiresAt < new Date()) {
-         await sendTelegramReply(chatId, "❌ This linking token has expired or already been used.");
-         return NextResponse.json({ ok: true });
+        await sendTelegramReply(chatId, '❌ This linking token has expired or already been used.');
+        return NextResponse.json({ ok: true });
       }
 
       // Link the account!
-      await db.$transaction([
-        db.user.update({
+      const linked = await db.$transaction(async (tx) => {
+        const claimed = await tx.telegramLinkingToken.updateMany({
+          where: { id: linkingToken.id, used: false, expiresAt: { gt: new Date() } },
+          data: { used: true },
+        });
+        if (claimed.count !== 1) return false;
+        await tx.user.update({
           where: { id: linkingToken.userId },
-          data: { telegramChatId: chatId }
-        }),
-        db.telegramLinkingToken.update({
-          where: { id: linkingToken.id },
-          data: { used: true }
-        })
-      ]);
+          data: { telegramChatId: chatId },
+        });
+        return true;
+      });
+      if (!linked) return NextResponse.json({ ok: true });
 
-      await sendTelegramReply(chatId, `✅ Successfully linked your Telegram account to ${linkingToken.user.email}! You will now receive security notifications and OTPs here.`);
+      await sendTelegramReply(
+        chatId,
+        `✅ Successfully linked your Telegram account to ${linkingToken.user?.email || 'your account'}! You will now receive security notifications and OTPs here.`
+      );
     }
 
     return NextResponse.json({ ok: true });
@@ -66,6 +116,7 @@ async function sendTelegramReply(chatId: string, text: string) {
   const url = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
   await fetch(url, {
     method: 'POST',
+    signal: AbortSignal.timeout(10_000),
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ chat_id: chatId, text }),
   }).catch(() => {}); // Fire and forget

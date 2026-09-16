@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import * as React from "react";
@@ -98,8 +100,22 @@ import {
   Armchair,
   DoorClosed,
   Edit3,
+  ArrowDownAZ,
+  Map as MapIcon,
+  Ruler,
+  Route,
+  Globe,
+  PlusSquare,
   ChevronsRight,
-  ArrowDownAZ
+  BarChart2,
+  Droplet,
+  Trash,
+  UserCircle,
+  UserSquare,
+  Copy,
+  ArrowDown,
+  ArrowUp,
+  Hash
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { MapVehicle } from "@/components/map/leaflet-osm-map";
@@ -638,11 +654,12 @@ const VEHICLES_DATA: FleetVehicle[] = [
 ];
 
 export default function TrackingPage() {
-  const [leftActiveTab, setLeftActiveTab] = React.useState<"object" | "driver" | "address" | "geofence">("object");
+  const [leftActiveTab, setLeftActiveTab] = React.useState<"object" | "events" | "places">("object");
   const [isObjectPanelCollapsed, setIsObjectPanelCollapsed] = React.useState(false);
   
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = React.useState(true);
   const [isObjectListSettingsOpen, setIsObjectListSettingsOpen] = React.useState(false);
+  const [isTripInfoOpen, setIsTripInfoOpen] = React.useState(false); // Hidden by default
 
   const [selectedVehicle, setSelectedVehicle] = React.useState<FleetVehicle>(VEHICLES_DATA[0]); // UA 347AP
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -676,7 +693,7 @@ export default function TrackingPage() {
 
   // Map Zoom & Layer State (Default to Satellite matching production)
   const [zoomLevel, setZoomLevel] = React.useState<number>(8);
-  const [mapLayerType, setMapLayerType] = React.useState<"osm" | "humanitarian" | "satellite">("satellite");
+  const [mapLayerType, setMapLayerType] = React.useState<"osm" | "humanitarian" | "satellite">("osm");
   const [showLayerMenu, setShowLayerMenu] = React.useState(false);
 
   const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>({
@@ -714,9 +731,11 @@ export default function TrackingPage() {
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-[#e5e3df] text-foreground select-none flex flex-col font-sans">
-      
-      {/* 1. REAL LIVE LEAFLET OPENSTREETMAP / SATELLITE MAP COMPONENT */}
-      <div className="absolute inset-0 z-0">
+            {/* 1. REAL LIVE LEAFLET OPENSTREETMAP / SATELLITE MAP COMPONENT */}
+        <div 
+          id="map" 
+          className="absolute top-0 bottom-0 right-0 left-0 z-0"
+        >
         <LeafletOsmMap
           vehicles={filteredVehicles}
           selectedVehicle={selectedVehicle}
@@ -730,6 +749,138 @@ export default function TrackingPage() {
           mapLayerType={mapLayerType}
         />
       </div>
+
+      {/* TRIP INFORMATION PANEL (SIDEBAR) */}
+      {isTripInfoOpen && (
+        <div 
+          id="trip_information_panel" 
+          className="absolute top-0 bottom-0 z-[500] bg-white border-r border-[#d8d8d8] overflow-hidden flex flex-col transition-transform duration-300"
+          style={{ left: isObjectPanelCollapsed ? "0" : "650px", width: "385px" }}
+        >
+          {/* Header */}
+          <div id="trip_information_header" className="h-[30px] leading-[29px] text-center text-white font-bold bg-[#1a4291] shrink-0 relative">
+            <div 
+              className="absolute right-1 top-1 cursor-pointer p-1" 
+              title="Close"
+              onClick={() => setIsTripInfoOpen(false)}
+            >
+              <X className="w-4 h-4 text-white" />
+            </div>
+            Trip Information
+            <div className="absolute right-8 top-1 cursor-pointer p-1" title="Print Trip Info">
+              <Printer className="w-4 h-4 text-white" />
+            </div>
+          </div>
+          
+          {/* Body */}
+          <div id="trip_information_body" className="flex-1 overflow-auto bg-white text-sm text-foreground">
+            
+            <div className="trip_group_date float-left w-full">
+              
+              {/* Date Header Sticky */}
+              <div className="trip_information_data_date sticky top-0 z-[100] h-[30px] flex items-center justify-between px-[10px] bg-[#234292] text-white shadow-[0px_1px_2px_#d2d2d2] float-left w-full box-border">
+                <div className="inline-box p-1 px-[5px] pl-0 w-[100px] box-border">
+                  <span className="mr-[5px] text-white/90">28 Aug</span>
+                  <span className="font-bold">2024</span>
+                </div>
+                <div className="inline-box p-1 px-[5px] w-[55px] box-border flex flex-col-reverse text-right">
+                  <span className="font-bold">45 km</span>
+                </div>
+              </div>
+
+              {/* Trip Cards Container */}
+              <div className="trip_information_data float-left w-full relative">
+                
+                {/* Single Trip Card */}
+                <div className="trip_information_data_details active float-left border border-[#d8d8d8] m-[5px] mt-[5px] box-border w-[calc(100%-10px)] bg-[#f0f8ff] rounded-[6px] shadow-[0px_0px_5px_#d8d8d8] cursor-pointer hover:bg-[#f0f8ff]">
+                  
+                  {/* Start / End Timeline */}
+                  <div className="trip_start_end_info relative pl-[16px] pr-[16px] pt-[5px] pb-[7px]">
+                    <div className="absolute top-[8px] bottom-[7px] left-[21px] w-0 border-l border-dashed border-[#222] bg-[#d4d4d4]" />
+                    
+                    <div className="trip_start flex items-start leading-[18px] mt-[10px] ml-0 relative pl-[8px]">
+                      <div className="absolute left-0 top-[4px] z-10 w-[6px] h-[6px] rounded-full border-2 border-[#4CAF50] bg-[#4CAF50]" />
+                      <div className="trip_time w-[85px] text-black pl-[10px] shrink-0 font-bold">10:00 AM</div>
+                      <div className="trip_address text-[11px] text-[#373e48] w-[calc(100%-110px)]">123 Start Address, City</div>
+                    </div>
+
+                    <div className="trip_end flex items-start leading-[18px] mt-[10px] ml-0 relative pl-[8px]">
+                      <div className="absolute left-0 top-[8px] bottom-0 w-[10px] bg-[#f0f8ff] z-[3] -ml-[2px]" />
+                      <div className="absolute left-0 top-[4px] z-10 w-[6px] h-[6px] rounded-full border-2 border-[#FF5722] bg-[#FF5722]" />
+                      <div className="trip_time w-[85px] text-black pl-[10px] shrink-0 font-bold">11:30 AM</div>
+                      <div className="trip_address text-[11px] text-[#373e48] w-[calc(100%-110px)]">456 End Address, City</div>
+                    </div>
+                  </div>
+
+                  <div className="trip_info_sperate w-full border-t border-[#c5c5c5] mb-[10px]"></div>
+
+                  {/* Trip Stats */}
+                  <div className="trip_information_data_information pb-[10px] float-left w-full px-[10px]">
+                    <div className="trip_box w-[75px] inline-block">
+                      <label className="block text-black text-[11px]">Distance</label>
+                      <span className="trip-running-distance font-bold text-[11px]">45 km</span>
+                    </div>
+                    <div className="trip_box w-[75px] inline-block">
+                      <label className="block text-black text-[11px]">Duration</label>
+                      <span className="trip-running-dur text-[#007905] font-bold text-[11px]">1h 30m</span>
+                    </div>
+                    <div className="trip_box w-[75px] inline-block">
+                      <label className="block text-black text-[11px]">Avg Speed</label>
+                      <span className="trip-svg-speed text-[#116fe4] font-bold text-[11px]">30 km/h</span>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Additional Trip Card (Inactive) */}
+                <div className="trip_information_data_details float-left border border-[#d8d8d8] m-[5px] mt-[0px] box-border w-[calc(100%-10px)] bg-[#f3f3f3] rounded-[6px] cursor-pointer hover:bg-[#f0f8ff]">
+                  
+                  {/* Start / End Timeline */}
+                  <div className="trip_start_end_info relative pl-[16px] pr-[16px] pt-[5px] pb-[7px]">
+                    <div className="absolute top-[8px] bottom-[7px] left-[21px] w-0 border-l border-dashed border-[#222] bg-[#d4d4d4]" />
+                    
+                    <div className="trip_start flex items-start leading-[18px] mt-[10px] ml-0 relative pl-[8px]">
+                      <div className="absolute left-0 top-[4px] z-10 w-[6px] h-[6px] rounded-full border-2 border-[#4CAF50] bg-[#4CAF50]" />
+                      <div className="trip_time w-[85px] text-black pl-[10px] shrink-0 font-bold">12:00 PM</div>
+                      <div className="trip_address text-[11px] text-[#373e48] w-[calc(100%-110px)]">456 End Address, City</div>
+                    </div>
+
+                    <div className="trip_end flex items-start leading-[18px] mt-[10px] ml-0 relative pl-[8px]">
+                      <div className="absolute left-0 top-[8px] bottom-0 w-[10px] bg-[#f3f3f3] group-hover:bg-[#f0f8ff] z-[3] -ml-[2px]" />
+                      <div className="absolute left-0 top-[4px] z-10 w-[6px] h-[6px] rounded-full border-2 border-[#FF5722] bg-[#FF5722]" />
+                      <div className="trip_time w-[85px] text-black pl-[10px] shrink-0 font-bold">01:15 PM</div>
+                      <div className="trip_address text-[11px] text-[#373e48] w-[calc(100%-110px)]">789 Final Destination, City</div>
+                    </div>
+                  </div>
+
+                  <div className="trip_info_sperate w-full border-t border-[#c5c5c5] mb-[10px]"></div>
+
+                  {/* Trip Stats */}
+                  <div className="trip_information_data_information pb-[10px] float-left w-full px-[10px]">
+                    <div className="trip_box w-[75px] inline-block">
+                      <label className="block text-black text-[11px]">Distance</label>
+                      <span className="trip-running-distance font-bold text-[11px]">25 km</span>
+                    </div>
+                    <div className="trip_box w-[75px] inline-block">
+                      <label className="block text-black text-[11px]">Duration</label>
+                      <span className="trip-running-dur text-[#007905] font-bold text-[11px]">1h 15m</span>
+                    </div>
+                    <div className="trip_box w-[75px] inline-block">
+                      <label className="block text-black text-[11px]">Avg Speed</label>
+                      <span className="trip-svg-speed text-[#116fe4] font-bold text-[11px]">20 km/h</span>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+          
+          <div id="trip_information_graph_panel"></div>
+        </div>
+      )}
 
       {/* 2. TOP PLAYBACK RIBBON (MATCHING MEDIA_1788374352320.PNG) */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
@@ -752,11 +903,11 @@ export default function TrackingPage() {
       {/* 3. RIGHT MAP ACTIONS TOOLBAR */}
       <div 
         className={cn(
-          "absolute top-2 bottom-3 z-30 flex flex-col justify-between items-end pointer-events-none transition-all duration-200",
-          (isDetailDrawerOpen || isObjectListSettingsOpen) ? "right-[328px]" : "right-2"
+          "absolute top-[44px] bottom-3 z-30 flex flex-col justify-between items-end pointer-events-none transition-all duration-200",
+          (isDetailDrawerOpen && selectedVehicle) ? "right-[242px]" : isObjectListSettingsOpen ? "right-[320px]" : "right-2"
         )}
       >
-        <div className="flex flex-col items-center gap-1.5 pointer-events-auto">
+        <div className="flex flex-col items-center gap-2 pointer-events-auto">
           {/* Top Blue Double Chevrons Expand Button */}
           <button
             type="button"
@@ -785,35 +936,53 @@ export default function TrackingPage() {
             </button>
 
             {showLayerMenu && (
-              <div className="absolute right-9 top-6 bg-white dark:bg-card border border-border shadow-2xl rounded p-2 text-xs font-semibold w-48 space-y-1 z-50">
-                <div 
-                  onClick={() => { setMapLayerType("satellite"); setShowLayerMenu(false); }}
-                  className={cn("p-1.5 rounded cursor-pointer hover:bg-muted flex items-center justify-between", mapLayerType === "satellite" && "bg-sky-50 text-[#2558c4]")}
-                >
-                  <span>Satellite / Hybrid</span>
-                  {mapLayerType === "satellite" && <Check className="w-3 h-3 text-[#2558c4]" />}
+              <div className="absolute right-9 top-6 bg-white dark:bg-card border border-border shadow-lg rounded overflow-hidden text-xs font-semibold w-56 z-50">
+                <div className="bg-[#2558c4] text-white px-2 py-2 flex items-center gap-2">
+                  <div className="cursor-pointer hover:bg-white/20 p-0.5 rounded" onClick={() => setShowLayerMenu(false)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                  </div>
+                  <span className="font-bold">Select Map</span>
                 </div>
-                <div 
-                  onClick={() => { setMapLayerType("osm"); setShowLayerMenu(false); }}
-                  className={cn("p-1.5 rounded cursor-pointer hover:bg-muted flex items-center justify-between", mapLayerType === "osm" && "bg-sky-50 text-[#2558c4]")}
-                >
-                  <span>OpenStreetMap</span>
-                  {mapLayerType === "osm" && <Check className="w-3 h-3 text-[#2558c4]" />}
-                </div>
-                <div 
-                  onClick={() => { setMapLayerType("humanitarian"); setShowLayerMenu(false); }}
-                  className={cn("p-1.5 rounded cursor-pointer hover:bg-muted flex items-center justify-between", mapLayerType === "humanitarian" && "bg-sky-50 text-[#2558c4]")}
-                >
-                  <span>OSM Humanitarian</span>
-                  {mapLayerType === "humanitarian" && <Check className="w-3 h-3 text-[#2558c4]" />}
+                <div className="p-1.5 space-y-0.5 text-slate-700 dark:text-slate-300">
+                  <div 
+                    onClick={() => { setMapLayerType("osm"); setShowLayerMenu(false); }}
+                    className={cn("px-2 py-1.5 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-muted flex items-center gap-2", mapLayerType === "osm" && "bg-sky-50 text-[#2558c4]")}
+                  >
+                    <input type="radio" checked={mapLayerType === "osm"} readOnly className="w-3.5 h-3.5" />
+                    <span>Google Roadmap</span>
+                  </div>
+                  <div 
+                    onClick={() => { setMapLayerType("satellite"); setShowLayerMenu(false); }}
+                    className={cn("px-2 py-1.5 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-muted flex items-center gap-2", mapLayerType === "satellite" && "bg-sky-50 text-[#2558c4]")}
+                  >
+                    <input type="radio" checked={mapLayerType === "satellite"} readOnly className="w-3.5 h-3.5" />
+                    <span>Google Satellite</span>
+                  </div>
+                  <div 
+                    onClick={() => { setMapLayerType("humanitarian"); setShowLayerMenu(false); }}
+                    className={cn("px-2 py-1.5 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-muted flex items-center gap-2", mapLayerType === "humanitarian" && "bg-sky-50 text-[#2558c4]")}
+                  >
+                    <input type="radio" checked={mapLayerType === "humanitarian"} readOnly className="w-3.5 h-3.5" />
+                    <span>Google Hybrid</span>
+                  </div>
+                  <div 
+                    onClick={() => { setShowLayerMenu(false); }}
+                    className="px-2 py-1.5 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-muted flex items-center gap-2"
+                  >
+                    <input type="radio" checked={false} readOnly className="w-3.5 h-3.5" />
+                    <span>Google Terrain</span>
+                  </div>
                 </div>
               </div>
             )}
-            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Follow Object"><Crosshair className="w-3.5 h-3.5" /></button>
-            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Routing"><Navigation className="w-3.5 h-3.5" /></button>
-            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="POIs"><Flag className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Object With Path"><Route className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Call"><Phone className="w-3.5 h-3.5" /></button>
             <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Share Location"><Share2 className="w-3.5 h-3.5" /></button>
-            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Street View"><Users className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Nearest Object"><User className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="POIs"><Globe className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Measure Distance"><Ruler className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Center Target"><Crosshair className="w-3.5 h-3.5" /></button>
+            <button type="button" className="p-1.5 hover:bg-muted hover:text-foreground" title="Add POI"><PlusSquare className="w-3.5 h-3.5" /></button>
             <button 
               type="button" 
               onClick={() => {
@@ -858,82 +1027,51 @@ export default function TrackingPage() {
       </div>
 
       {/* 4. LEFT FLEET OBJECT PANEL WITH COLLAPSE HANDLE (MATCHING MEDIA_1788374330745.PNG) */}
-      <div
+      <div 
         className={cn(
-          "absolute top-2 left-2 bottom-2 z-30 w-[800px] max-w-[calc(100vw-20px)] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col transition-all duration-300 overflow-visible",
-          isObjectPanelCollapsed && "-translate-x-[820px]"
+          "absolute top-0 bottom-0 left-0 z-40 w-[650px] bg-[#fdfdfd] border-r-[2px] border-[#a5a5a5] flex flex-col transition-transform duration-300",
+          isObjectPanelCollapsed && "-translate-x-[650px]"
         )}
       >
         {/* Trapezoid Collapse/Expand Handle on Right Border */}
         <button
           type="button"
           onClick={() => setIsObjectPanelCollapsed(!isObjectPanelCollapsed)}
-          className="absolute -right-4 top-1/2 -translate-y-1/2 w-4 h-12 bg-slate-300 dark:bg-muted hover:bg-slate-400 dark:hover:bg-muted/80 text-foreground flex items-center justify-center cursor-pointer rounded-r-md shadow-md z-40 transition-colors border border-l-0 border-border"
+          className="absolute right-[-10px] top-[87px] w-[10px] h-[70px] bg-[#a5a5a5] flex items-center justify-center cursor-pointer z-[500] hover:bg-[#dddddd]"
+          style={{ clipPath: "polygon(0 0, 100% 13%, 100% 85%, 0% 100%)" }}
           title={isObjectPanelCollapsed ? "Expand Panel" : "Collapse Panel"}
         >
           {isObjectPanelCollapsed ? (
-            <ChevronRight className="w-3.5 h-3.5" />
+            <ChevronRight className="w-3 h-3 text-white -ml-1" />
           ) : (
-            <ChevronLeft className="w-3.5 h-3.5" />
+            <ChevronLeft className="w-3 h-3 text-white -ml-1" />
           )}
         </button>
 
-        {/* Top Navigation Strip */}
-        <div className="h-[34px] bg-[#1e40af] text-white px-3 flex items-center justify-between shrink-0 rounded-t">
-          <div className="flex items-center gap-2 text-xs font-semibold">
-            <button
-              type="button"
-              onClick={() => setLeftActiveTab("object")}
-              className={cn(
-                "flex items-center gap-1.5 px-2.5 py-0.5 rounded transition-colors",
-                leftActiveTab === "object" ? "bg-white/20 text-white font-bold" : "text-white/80 hover:text-white"
-              )}
-            >
-              <Navigation className="w-3 h-3 rotate-45" />
-              <span>Object</span>
+        {/* LEFT PANEL HEADER (Production Parity) */}
+        <div className="h-[40px] bg-[#234292] text-white flex items-center justify-between shrink-0 rounded-t relative">
+          <div className="flex items-center h-full px-2">
+            <button className="p-1.5 hover:bg-[#2c4da5] rounded">
+              <Filter className="w-3.5 h-3.5 text-white" />
             </button>
-
-            <button
-              type="button"
-              onClick={() => setLeftActiveTab("driver")}
-              className={cn(
-                "flex items-center gap-1.5 px-2.5 py-0.5 rounded transition-colors",
-                leftActiveTab === "driver" ? "bg-white/20 text-white font-bold" : "text-white/80 hover:text-white"
-              )}
-              title="Drivers"
-            >
-              <Users className="w-3 h-3" />
-              {leftActiveTab === "driver" && <span>Driver</span>}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setLeftActiveTab("address")}
-              className={cn(
-                "flex items-center gap-1.5 px-2.5 py-0.5 rounded transition-colors",
-                leftActiveTab === "address" ? "bg-white/20 text-white font-bold" : "text-white/80 hover:text-white"
-              )}
-              title="Address POIs"
-            >
-              <MapPin className="w-3 h-3" />
-              {leftActiveTab === "address" && <span>Address</span>}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setLeftActiveTab("geofence")}
-              className={cn(
-                "flex items-center gap-1.5 px-2.5 py-0.5 rounded transition-colors",
-                leftActiveTab === "geofence" ? "bg-white/20 text-white font-bold" : "text-white/80 hover:text-white"
-              )}
-              title="Geofences"
-            >
-              <Grid className="w-3 h-3" />
-              {leftActiveTab === "geofence" && <span>Geofence</span>}
-            </button>
+            <div className="flex items-center gap-1.5 px-2 font-semibold text-[13px] border-r border-[#2c4da5] h-full relative">
+              <span className="left_panel_tab_title tracking-wide">Object</span>
+              {/* Active Tab Indicator Triangle */}
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-b-[6px] border-transparent border-b-white"></div>
+            </div>
+            <div className="flex items-center ml-1">
+              <button className="p-1.5 hover:bg-[#2c4da5] rounded" title="User">
+                <User className="w-3.5 h-3.5 text-white" />
+              </button>
+              <button className="p-1.5 hover:bg-[#2c4da5] rounded" title="Users">
+                <Users className="w-3.5 h-3.5 text-white" />
+              </button>
+              <button className="p-1.5 hover:bg-[#2c4da5] rounded" title="Tags">
+                <Hash className="w-3.5 h-3.5 text-white" />
+              </button>
+            </div>
           </div>
-
-          <div className="flex items-center gap-2">
+          <div className="h-full flex items-center pr-2">
             <button 
               type="button" 
               onClick={() => {
@@ -941,10 +1079,10 @@ export default function TrackingPage() {
                 setIsObjectListSettingsOpen(true);
                 setIsDetailDrawerOpen(false);
               }}
-              className="text-white/80 hover:text-white cursor-pointer"
-              title="Object List Column Settings"
+              className="p-1.5 hover:bg-[#2c4da5] rounded transition-colors"
+              title="Settings"
             >
-              <Settings className="w-3.5 h-3.5" />
+              <Settings className="w-4 h-4 text-white" />
             </button>
           </div>
         </div>
@@ -953,51 +1091,61 @@ export default function TrackingPage() {
         {leftActiveTab === "object" && (
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Status Summary Ribbon */}
-            <div className="flex border-b border-border text-center text-[10px] font-semibold bg-white dark:bg-card shrink-0">
-              <div onClick={() => setStatusFilter("Running")} className="flex-1 py-1.5 border-t-4 border-t-emerald-500 cursor-pointer hover:bg-slate-50">
-                <div className="text-sm font-bold text-emerald-500">{counts.running}</div>
-                <div className="text-[9px] text-muted-foreground font-normal">Running</div>
+            <div className="flex text-center text-[10px] bg-white shrink-0 shadow-sm border-b border-border">
+              <div onClick={() => setStatusFilter("Running")} className="flex-1 py-[3px] bg-[#e6f9e6] cursor-pointer hover:bg-[#d8f0d8] border-r border-white">
+                <div className="font-bold text-[#4caf50]">{counts.running}</div>
+                <div className="text-[#4caf50] mt-[-3px] scale-90">Running</div>
               </div>
-              <div onClick={() => setStatusFilter("Idle")} className="flex-1 py-1.5 border-t-4 border-t-amber-400 cursor-pointer hover:bg-slate-50 border-l border-border/40">
-                <div className="text-sm font-bold text-amber-500">{counts.idle}</div>
-                <div className="text-[9px] text-muted-foreground font-normal">Idle</div>
+              <div onClick={() => setStatusFilter("Idle")} className="flex-1 py-[3px] bg-[#fff3e0] cursor-pointer hover:bg-[#ffefc2] border-r border-white">
+                <div className="font-bold text-[#ff9800]">{counts.idle}</div>
+                <div className="text-[#ff9800] mt-[-3px] scale-90">Idle</div>
               </div>
-              <div onClick={() => setStatusFilter("Stopped")} className="flex-1 py-1.5 border-t-4 border-t-rose-500 cursor-pointer hover:bg-slate-50 border-l border-border/40">
-                <div className="text-sm font-bold text-rose-500">{counts.stopped}</div>
-                <div className="text-[9px] text-muted-foreground font-normal">Stopped</div>
+              <div onClick={() => setStatusFilter("Stopped")} className="flex-1 py-[3px] bg-[#ffebee] cursor-pointer hover:bg-[#ffdfdf] border-r border-white">
+                <div className="font-bold text-[#f44336]">{counts.stopped}</div>
+                <div className="text-[#f44336] mt-[-3px] scale-90">Stopped</div>
               </div>
-              <div onClick={() => setStatusFilter("Inactive")} className="flex-1 py-1.5 border-t-4 border-t-sky-500 cursor-pointer hover:bg-slate-50 border-l border-border/40">
-                <div className="text-sm font-bold text-sky-500">{counts.inactive}</div>
-                <div className="text-[9px] text-muted-foreground font-normal">Inactive</div>
+              <div onClick={() => setStatusFilter("Inactive")} className="flex-1 py-[3px] bg-[#e3f2fd] cursor-pointer hover:bg-[#d5ebff] border-r border-white">
+                <div className="font-bold text-[#2196f3]">{counts.inactive}</div>
+                <div className="text-[#2196f3] mt-[-3px] scale-90">Inactive</div>
               </div>
-              <div className="flex-1 py-1.5 border-t-4 border-t-slate-300 border-l border-border/40">
-                <div className="text-sm font-bold text-slate-400">{counts.nodata}</div>
-                <div className="text-[9px] text-muted-foreground font-normal">NoData</div>
+              <div className="flex-1 py-[3px] bg-[#f5f5f5] border-r border-white">
+                <div className="font-bold text-[#9e9e9e]">{counts.nodata}</div>
+                <div className="text-[#9e9e9e] mt-[-3px] scale-90">NoData</div>
               </div>
-              <div onClick={() => setStatusFilter("all")} className="flex-1 py-1.5 border-t-4 border-t-slate-400 cursor-pointer hover:bg-slate-50 border-l border-border/40 bg-slate-100/50">
-                <div className="text-sm font-bold text-slate-600">{counts.total}</div>
-                <div className="text-[9px] text-muted-foreground font-normal">Total</div>
+              <div onClick={() => setStatusFilter("all")} className="flex-1 py-[3px] bg-[#eceff1] cursor-pointer hover:bg-[#e0e0e0]">
+                <div className="font-bold text-[#607d8b]">{counts.total}</div>
+                <div className="text-[#607d8b] mt-[-3px] scale-90">Total</div>
               </div>
             </div>
 
             {/* Search and Action Strip */}
-            <div className="p-2 border-b border-border flex items-center gap-2 bg-slate-50/50 dark:bg-muted/20">
-              <input type="checkbox" defaultChecked className="rounded border-border w-3.5 h-3.5 text-[#2558c4]" />
+            <div className="px-2 py-1.5 border-b border-border flex items-center gap-2 bg-white">
+              <input type="checkbox" className="w-3.5 h-3.5 cursor-pointer accent-[#234292] m-0" defaultChecked />
               <div className="flex-1 relative">
                 <input
                   type="text"
                   placeholder="Search by IMEI, VIN, Registration, Object Model, SIM Number, etc."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-2 pr-6 py-1 text-xs border border-border rounded bg-white dark:bg-card text-foreground outline-none focus:border-[#2558c4]"
+                  className="w-full px-2 py-1 text-xs border border-transparent bg-white text-foreground outline-none focus:border-[#2558c4] transition-colors"
                 />
-                <Search className="w-3.5 h-3.5 absolute right-2 top-2 text-muted-foreground" />
               </div>
-              <div className="flex items-center gap-1 text-muted-foreground">
-                <button type="button" className="p-1 hover:text-foreground" title="Refresh"><RotateCw className="w-3.5 h-3.5" /></button>
-                <button type="button" className="p-1 hover:text-foreground" title="Target"><Crosshair className="w-3.5 h-3.5" /></button>
-                <button type="button" className="p-1 hover:text-foreground" title="Filter"><Filter className="w-3.5 h-3.5" /></button>
-                <button type="button" className="p-1 hover:text-foreground" title="Sort"><ArrowDownAZ className="w-3.5 h-3.5" /></button>
+              <div className="flex items-center text-slate-700">
+                <button type="button" className="p-1 hover:text-[#2558c4] cursor-pointer" title="Search">
+                  <Search className="w-4 h-4" />
+                </button>
+                <button type="button" className="p-1 hover:text-[#2558c4] cursor-pointer" title="Reload">
+                  <RotateCw className="w-4 h-4" />
+                </button>
+                <button type="button" className="p-1 hover:text-[#2558c4] cursor-pointer" title="Target">
+                  <Crosshair className="w-4 h-4" />
+                </button>
+                <button type="button" className="p-1 hover:text-[#2558c4] cursor-pointer" title="Filter">
+                  <Filter className="w-4 h-4" />
+                </button>
+                <button type="button" className="p-1 hover:text-[#2558c4] cursor-pointer" title="Sort">
+                  <ArrowDownAZ className="w-4 h-4" />
+                </button>
               </div>
             </div>
 
@@ -1007,7 +1155,7 @@ export default function TrackingPage() {
             </div>
 
             {/* 2-Tier Grouped Fleet List */}
-            <div className="flex-1 overflow-y-auto divide-y divide-border/60 text-xs">
+            <div className="flex-1 overflow-auto divide-y divide-border/60 text-xs">
               {["Mega Milk", "Weldone Logistics", "walen"].map((grpName) => {
                 const grpVehicles = filteredVehicles.filter((v) => v.group === grpName);
                 const isExpanded = !!expandedGroups[grpName];
@@ -1019,13 +1167,14 @@ export default function TrackingPage() {
                     {/* Top Tier Group Header */}
                     <div 
                       onClick={() => toggleGroup(grpName)}
-                      className="px-2 py-1.5 bg-slate-200/70 dark:bg-muted/70 flex items-center justify-between cursor-pointer font-bold text-foreground text-[11px]"
+                      className="px-2 py-1.5 bg-[#f1f5f9] dark:bg-muted/70 flex items-center justify-between cursor-pointer font-bold text-foreground text-[11px]"
                     >
                       <div className="flex items-center gap-1.5">
                         <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", !isExpanded && "-rotate-90")} />
-                        <span>{grpName}</span>
+                        <input type="checkbox" defaultChecked onClick={(e) => e.stopPropagation()} className="w-3.5 h-3.5 rounded cursor-pointer" />
+                        <span className="text-[#334155]">{grpName}</span>
                       </div>
-                      <span className="text-muted-foreground font-semibold text-[10px]">[{grpVehicles.length}]</span>
+                      <span className="text-[#475569] font-semibold text-[10px]">[{grpVehicles.length}]</span>
                     </div>
 
                     {isExpanded && (
@@ -1145,7 +1294,7 @@ export default function TrackingPage() {
         )}
 
         {/* TAB 2: DRIVER DIRECTORY */}
-        {leftActiveTab === "driver" && (
+        {leftActiveTab === "events" && (
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="border-b border-border text-center text-[10px] font-semibold">
               <div className="grid grid-cols-4 border-b border-border">
@@ -1173,7 +1322,7 @@ export default function TrackingPage() {
               <button type="button" className="p-1 text-muted-foreground hover:text-foreground"><Filter className="w-3.5 h-3.5" /></button>
             </div>
 
-            <div className="flex-1 overflow-y-auto text-xs divide-y divide-border/50">
+            <div className="flex-1 overflow-auto text-xs divide-y divide-border/50">
               <div className="px-3 py-1 bg-slate-200/60 dark:bg-muted/70 flex justify-between font-bold text-[11px]">
                 <span>Mega Milk</span>
                 <span>[ 2 ] -</span>
@@ -1213,42 +1362,10 @@ export default function TrackingPage() {
           </div>
         )}
 
-        {/* TAB 3: ADDRESS POIS */}
-        {leftActiveTab === "address" && (
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="p-2 border-b border-border flex items-center gap-2 bg-slate-50/50 dark:bg-muted/20">
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="w-full pl-2 pr-6 py-1 text-xs border border-border rounded bg-white dark:bg-card text-foreground outline-none focus:border-[#2558c4]"
-                />
-                <Search className="w-3.5 h-3.5 absolute right-2 top-2 text-muted-foreground" />
-              </div>
-              <button type="button" className="p-1 text-muted-foreground hover:text-foreground"><RotateCw className="w-3.5 h-3.5" /></button>
-              <button type="button" className="p-1 text-muted-foreground hover:text-foreground"><MapPin className="w-3.5 h-3.5" /></button>
-              <button type="button" className="p-1 text-muted-foreground hover:text-foreground"><UploadCloud className="w-3.5 h-3.5" /></button>
-              <button type="button" className="p-1 text-muted-foreground hover:text-foreground"><Filter className="w-3.5 h-3.5" /></button>
-            </div>
 
-            <div className="px-3 py-1.5 bg-slate-100 dark:bg-muted/50 border-b border-border flex items-center gap-2 text-[11px] font-bold text-muted-foreground">
-              <input type="checkbox" className="w-3 h-3 rounded" />
-              <span>Address Name</span>
-            </div>
-
-            <div className="flex-1 flex items-center justify-center p-6 text-xs text-muted-foreground">
-              Address not found
-            </div>
-
-            <div className="p-2 border-t border-border bg-slate-50 dark:bg-muted/20 flex gap-2">
-              <button type="button" className="flex-1 py-1.5 bg-[#2563eb] text-white rounded font-bold text-xs shadow">XLS</button>
-              <button type="button" className="flex-1 py-1.5 bg-[#2563eb] text-white rounded font-bold text-xs shadow">PDF</button>
-            </div>
-          </div>
-        )}
 
         {/* TAB 4: GEOFENCE */}
-        {leftActiveTab === "geofence" && (
+        {leftActiveTab === "places" && (
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="p-2 border-b border-border flex items-center gap-2 bg-slate-50/50 dark:bg-muted/20">
               <div className="flex-1 relative">
@@ -1304,15 +1421,19 @@ export default function TrackingPage() {
       )}
 
       {/* 5. OBJECT LIST SETTINGS DRAWER (EXACT 100% PARITY WITH PRODUCTION MEDIA_1788366432773.PNG) */}
-      {isObjectListSettingsOpen && (
-        <div className="absolute top-2 right-12 bottom-2 z-30 w-[300px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs select-none">
-          {/* Header */}
-          <div className="p-3 border-b border-border flex items-center justify-between font-bold text-foreground">
-            <span className="text-sm">Object List</span>
+      <div 
+        className={cn(
+          "absolute top-[44px] bottom-0 z-40 w-[300px] bg-white dark:bg-card border-l border-border shadow-2xl flex flex-col transition-transform duration-300 text-xs select-none",
+          isObjectListSettingsOpen ? "translate-x-0 right-0" : "translate-x-[120%] right-0"
+        )}
+      >
+          {/* Header (styled like .ui-dialog-titlebar) */}
+          <div className="h-[36px] px-4 flex items-center justify-between font-bold text-white bg-[#234292]">
+            <span className="text-[14px]">Object List</span>
             <button 
               type="button" 
               onClick={() => setIsObjectListSettingsOpen(false)}
-              className="text-muted-foreground hover:text-foreground cursor-pointer p-1"
+              className="text-white hover:text-gray-200 cursor-pointer p-1"
             >
               <X className="w-4 h-4" />
             </button>
@@ -1573,20 +1694,58 @@ export default function TrackingPage() {
             </button>
           </div>
         </div>
-      )}
 
-      {/* 6. RIGHT FLOATING VEHICLE DETAIL DRAWER (ALL 16 CARDS MATCHING PRODUCTION EXACTLY) */}
+{/* 6. TOP RIGHT FLOATING TOOLBAR (Map Pin, Engine, Gear - Restored based on new snippet) */}
+      <div className="absolute top-2 right-2 z-40 flex shadow-md rounded overflow-hidden h-[32px]">
+        {/* Map Pin (Active/White) */}
+        <button type="button" className="bg-white w-[40px] h-full flex items-center justify-center cursor-pointer hover:bg-slate-50">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#234292" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+            <path d="M8 22h8" />
+          </svg>
+        </button>
+        {/* Engine (Dark Blue - WIDE) */}
+        <button type="button" className="bg-[#234292] w-[120px] h-full flex items-center pl-3 cursor-pointer hover:bg-blue-900">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M10 4.5l-2 3H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2v2a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-2h5c1.1 0 2-.9 2-2v-6c0-1.1-.9-2-2-2h-3v-3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v1.5z"/>
+            <circle cx="16" cy="12" r="2" />
+          </svg>
+        </button>
+        {/* Settings (Light Blue) */}
+        <button type="button" className="bg-[#5b85d9] w-[40px] h-full flex items-center justify-center cursor-pointer hover:bg-blue-500">
+          <Settings className="w-[16px] h-[16px] text-white" strokeWidth={2.5} />
+        </button>
+      </div>
+
+{/* 7. RIGHT FLOATING VEHICLE DETAIL DRAWER (ALL 16 CARDS MATCHING PRODUCTION EXACTLY) */}
       {isDetailDrawerOpen && selectedVehicle && !isObjectListSettingsOpen && (
-        <div className="absolute top-2 right-2 bottom-2 z-30 w-[320px] bg-white dark:bg-card border border-border shadow-2xl rounded flex flex-col overflow-hidden animate-in slide-in-from-right duration-200 text-xs select-none">
+        <div 
+          className={cn(
+            "absolute top-[44px] bottom-0 right-0 z-30 w-[242px] bg-white dark:bg-card border-l border-border flex flex-col transition-transform duration-300",
+            isDetailDrawerOpen ? "translate-x-0" : "translate-x-[120%]"
+          )}
+        >
           
+          <div className="h-[36px] px-3 flex items-center justify-between font-bold text-foreground bg-white border-b border-border shrink-0">
+            <div className="flex items-center gap-1.5 text-[13px]">
+              <Search className="w-3.5 h-3.5 text-muted-foreground" />
+              <span>{selectedVehicle.plate}</span>
+            </div>
+            <div className="flex gap-2">
+              <Info className="w-4 h-4 text-[#234292] cursor-pointer" />
+              <button 
+                type="button" 
+                onClick={() => setIsDetailDrawerOpen(false)}
+                className="text-muted-foreground hover:text-foreground cursor-pointer p-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
           <div className="flex-1 overflow-y-auto p-3 space-y-3">
             
-            {/* 1. Vehicle Title & Info */}
-            <div className="flex items-center justify-between border-b border-border pb-2">
-              <div className="font-bold text-sm text-foreground">{selectedVehicle.plate}</div>
-              <Info className="w-4 h-4 text-[#2558c4] dark:text-[#29a4ff] cursor-pointer" />
-            </div>
-
             {/* 2. Vehicle 3D Render Image (Fuel Tanker White Truck) */}
             <div className="w-full h-[85px] bg-slate-100 dark:bg-muted/40 rounded flex items-center justify-center p-2 border border-border overflow-hidden">
               <img
@@ -1611,32 +1770,35 @@ export default function TrackingPage() {
             <div className="space-y-1 text-[11px]">
               <div className="flex justify-between items-center text-[11px] mt-1">
                 <span className="text-muted-foreground">Current Trip</span>
-                <span className="font-bold">72.89 km</span>
+                <span className="font-bold">45.66 km</span>
               </div>
               <div className="flex justify-between items-center text-[11px]">
                 <span className="text-muted-foreground">Odometer</span>
-                <div className="flex gap-0.5">
-                  {["0","0","9","2","7","2","2"].map((d, i) => (
-                    <div key={i} className="w-4 h-5 flex items-center justify-center bg-white border border-border text-[10px] font-bold rounded-xs shadow-sm">
+                <div className="flex gap-[1px]">
+                  {["0","0","9","2","7","8"].map((d, i) => (
+                    <div key={i} className="w-[14px] h-[18px] flex items-center justify-center bg-[#f0f0f0] border border-[#a5a5a5] text-[10px] font-bold text-[#444]">
                       {d}
                     </div>
                   ))}
+                  <div className="w-[14px] h-[18px] flex items-center justify-center bg-white border border-[#a5a5a5] text-[10px] font-bold text-[#444] ml-[2px]">
+                    7
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* 5. Driver & Mobile */}
-            <div className="text-[11px] space-y-1">
+            <div className="text-[11px] space-y-1 pt-1">
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Driver</span>
                 <div className="flex items-center gap-1">
-                  <span className="font-semibold text-foreground">{selectedVehicle.driver}</span>
+                  <span className="font-semibold text-foreground">--</span>
                   <Edit3 className="w-2.5 h-2.5 text-muted-foreground/60 hover:text-foreground cursor-pointer" />
                 </div>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Mobile</span>
-                <span className="text-foreground">{selectedVehicle.mobile}</span>
+                <span className="text-foreground">--</span>
               </div>
               <div className="flex justify-between items-center pt-0.5 text-[#2558c4] dark:text-[#29a4ff] font-semibold cursor-pointer">
                 <span>More Details</span>
@@ -1646,204 +1808,487 @@ export default function TrackingPage() {
 
             {/* 6. Quick Action Icons (Outlined icons matching production) */}
             <div className="flex items-center justify-between px-2 pt-1 border-b border-border pb-3">
-              <button className="text-blue-600 hover:text-blue-800"><Eye className="w-4 h-4" /></button>
-              <button className="text-blue-600 hover:text-blue-800"><Share2 className="w-4 h-4" /></button>
-              <button className="text-blue-600 hover:text-blue-800"><Navigation className="w-4 h-4" /></button>
-              <button className="text-blue-600 hover:text-blue-800"><ShieldAlert className="w-4 h-4" /></button>
-              <button className="text-blue-600 hover:text-blue-800"><Users className="w-4 h-4" /></button>
-              <button className="text-blue-600 hover:text-blue-800"><Compass className="w-4 h-4" /></button>
+              <button className="text-[#3970ca] hover:text-blue-800"><Eye className="w-[15px] h-[15px]" strokeWidth={2.5} /></button>
+              <button className="text-[#3970ca] hover:text-blue-800"><Share2 className="w-[15px] h-[15px]" strokeWidth={2.5} /></button>
+              <button className="text-[#3970ca] hover:text-blue-800"><Navigation className="w-[15px] h-[15px]" strokeWidth={2.5} /></button>
+              <button className="text-[#3970ca] hover:text-blue-800"><ShieldAlert className="w-[15px] h-[15px]" strokeWidth={2.5} /></button>
+              <button className="text-[#3970ca] hover:text-blue-800"><Users className="w-[15px] h-[15px]" strokeWidth={2.5} /></button>
+              <button className="text-[#3970ca] hover:text-blue-800"><Compass className="w-[15px] h-[15px]" strokeWidth={2.5} /></button>
             </div>
 
-            {/* 7. FUEL CARD - matching production layout */}
-            <div className="border border-border rounded flex flex-col mt-3">
-              <div className="flex items-center justify-between p-2 border-b border-border text-foreground font-bold text-[11px]">
+            {/* 7. FUEL CARD - matching production layout exactly */}
+            <div className="border border-border rounded shadow-sm mt-3 bg-white">
+              <div className="bg-slate-100 px-3 py-1.5 flex items-center justify-between font-bold text-xs border-b border-border">
                 <div className="flex items-center gap-1.5">
-                  <Fuel className="w-3.5 h-3.5 text-muted-foreground" />
+                  <Fuel className="w-3.5 h-3.5 text-[#3970ca]" />
                   <span>Fuel</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <button className="p-1 border border-blue-200 rounded text-blue-600 hover:bg-blue-50"><Car className="w-3 h-3" /></button>
-                  <button className="p-1 border border-border rounded text-muted-foreground hover:bg-muted"><LineChart className="w-3 h-3" /></button>
-                </div>
               </div>
-              <div className="p-3 flex flex-col items-center border-b border-border/50 bg-white">
-                <div className="relative w-32 h-[72px] flex items-end justify-center">
-                  {/* SVG Semi-circle gauge */}
-                  <svg className="absolute top-0 w-full h-[64px]" viewBox="0 0 100 50">
-                    <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#e2e8f0" strokeWidth="8" strokeLinecap="round" />
-                    <path d="M 10 50 A 40 40 0 0 1 30 20" fill="none" stroke="#ef4444" strokeWidth="8" strokeLinecap="round" />
-                    <path d="M 30 20 A 40 40 0 0 1 70 20" fill="none" stroke="#f59e0b" strokeWidth="8" />
-                    <path d="M 70 20 A 40 40 0 0 1 90 50" fill="none" stroke="#10b981" strokeWidth="8" strokeLinecap="round" />
-                    {/* Needle */}
-                    <line x1="50" y1="50" x2="70" y2="25" stroke="#0ea5e9" strokeWidth="2.5" strokeLinecap="round" />
-                    <circle cx="50" cy="50" r="4" fill="#0ea5e9" />
+              <div className="p-2 pb-3 border-b border-border text-center relative">
+                {/* Truck and Thermometer Icons */}
+                <div className="absolute top-2 left-2 flex items-center gap-1.5 text-[#3970ca]">
+                  <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 7h-3V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h1a3 3 0 0 0 6 0h2a3 3 0 0 0 6 0h2v-4l-2-7zM7 18a1 1 0 1 1 1-1 1 1 0 0 1-1 1zm11 0a1 1 0 1 1 1-1 1 1 0 0 1-1 1zm-1-8h3l1.5 5H17z" />
                   </svg>
-                  <div className="w-full flex justify-between px-2 pb-1 relative z-10">
-                    <span className="font-bold text-[10px] text-red-500">E</span>
-                    <span className="font-bold text-[10px] text-emerald-500">F</span>
+                  <div className="w-[1px] h-[14px] bg-slate-300"></div>
+                  <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z" />
+                  </svg>
+                </div>
+
+                {/* Gauge Background */}
+                <div className="relative w-40 h-[70px] mx-auto mt-6">
+                  <svg viewBox="0 0 100 50" className="w-full h-full overflow-visible">
+                    {/* Blue Arc (E to 1/2) */}
+                    <path d="M 10 50 A 40 40 0 0 1 50 10" fill="none" stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="3 3" />
+                    {/* Green Arc (1/2 to F) */}
+                    <path d="M 50 10 A 40 40 0 0 1 90 50" fill="none" stroke="#22c55e" strokeWidth="1.5" strokeDasharray="3 3" />
+                    
+                    {/* Tick marks */}
+                    <line x1="10" y1="50" x2="15" y2="50" stroke="#ef4444" strokeWidth="2" />
+                    <line x1="50" y1="10" x2="50" y2="15" stroke="#eab308" strokeWidth="2" />
+                    <line x1="90" y1="50" x2="85" y2="50" stroke="#22c55e" strokeWidth="2" />
+
+                    {/* Labels */}
+                    <text x="5" y="58" fontSize="7" fill="#ef4444" fontWeight="bold">E</text>
+                    <text x="46" y="5" fontSize="7" fill="#eab308" fontWeight="bold">1/2</text>
+                    <text x="92" y="58" fontSize="7" fill="#22c55e" fontWeight="bold">F</text>
+
+                    {/* Needle pointing at ~40% (93/230) */}
+                    <line x1="50" y1="50" x2="35" y2="25" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" />
+                    <circle cx="50" cy="50" r="3" fill="#94a3b8" />
+                  </svg>
+
+                  {/* Gas Pump Icon inside Gauge */}
+                  <div className="absolute left-[50%] bottom-1 -translate-x-[50%]">
+                    <Fuel className="w-4 h-4 text-[#eab308]" />
                   </div>
                 </div>
-                <div className="font-bold text-xs mt-2">134 liter</div>
+                <div className="text-[11px] font-bold mt-1">93 liter</div>
               </div>
               
-              <div className="p-2 space-y-1.5 text-[10px] border-b border-border/50">
-                <div className="flex justify-between"><span className="text-muted-foreground">Tanks</span><span className="font-semibold">1</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Refill</span><span className="font-semibold text-emerald-600 dark:text-emerald-400">1 (64 L)</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Drain</span><span className="font-semibold">NA (0)</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Tank Capacity</span><span className="font-semibold">230.0 Liter</span></div>
+              <div className="p-2 space-y-1 text-[10px] border-b border-border">
+                <div className="flex justify-between border-b border-border/50 pb-1"><span className="text-muted-foreground">Tanks</span><span className="font-bold text-[#2558c4]">1</span></div>
+                <div className="flex justify-between border-b border-border/50 pb-1">
+                  <span className="text-muted-foreground">Refill</span>
+                  <div className="text-right">
+                    <span className="font-bold text-emerald-600 block">1</span>
+                    <span className="font-bold text-emerald-600">64 L</span>
+                  </div>
+                </div>
+                <div className="flex justify-between border-b border-border/50 pb-1">
+                  <span className="text-muted-foreground">Drain</span>
+                  <div className="text-right">
+                    <span className="font-bold text-muted-foreground block">NA</span>
+                    <span className="font-bold text-rose-500">0</span>
+                  </div>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Tank Capacity</span>
+                  <span className="font-bold text-foreground">230.0 liter</span>
+                </div>
               </div>
 
-              <div className="p-2 space-y-1.5 text-[9px] text-muted-foreground">
-                <div className="flex justify-between"><span>Consumption</span><span className="font-semibold text-foreground">Sensor: 56.91 liter | CAN: 0.00 liter</span></div>
-                <div className="flex justify-between"><span>Carbon Emission</span><span className="font-semibold text-foreground">Sensor: 0.00 | CAN: NA</span></div>
-                <div className="flex justify-between"><span>Waste</span><span className="font-semibold text-foreground">Pre-defined: 0 Liter</span></div>
+              <div className="p-2 space-y-3 text-[10px]">
+                <div>
+                  <div className="flex items-center gap-1.5 mb-1 font-bold"><Droplet className="w-3.5 h-3.5 text-[#2558c4]" /> Consumption</div>
+                  <div className="flex justify-between text-muted-foreground"><span className="w-1/2">Sensor</span><span className="w-1/2 text-right">CAN</span></div>
+                  <div className="flex justify-between font-bold text-foreground"><span className="w-1/2">56.91 liter</span><span className="w-1/2 text-right">0.00 liter</span></div>
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5 mb-1 font-bold"><Cloud className="w-3.5 h-3.5 text-[#2558c4]" /> Carbon Emission</div>
+                  <div className="flex justify-between text-muted-foreground"><span className="w-1/2">Sensor</span><span className="w-1/2 text-right">CAN</span></div>
+                  <div className="flex justify-between font-bold text-foreground"><span className="w-1/2">0.00</span><span className="w-1/2 text-right">NA</span></div>
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5 mb-1 font-bold"><Trash className="w-3.5 h-3.5 text-[#2558c4]" /> Waste <Info className="w-3 h-3 text-muted-foreground inline" /></div>
+                  <div className="text-muted-foreground">Pre-defined</div>
+                  <div className="font-bold text-foreground">6 liter</div>
+                  <div className="text-right text-muted-foreground mt-1">Due to 3 hrs idling</div>
+                  <div className="flex justify-between mt-3 text-muted-foreground"><span>Remaining</span><span className="font-bold text-foreground">0 km</span></div>
+                  <div className="flex justify-between"><span>Updated</span><span className="font-bold text-foreground">02-09-2026 07:36 PM</span></div>
+                </div>
               </div>
             </div>
 
             {/* 8. LOCATION CARD */}
-            <div className="border border-border rounded overflow-hidden shadow-xs">
-              <div className="bg-slate-100 dark:bg-muted/70 px-3 py-1.5 flex items-center justify-between font-bold text-xs text-foreground">
+            <div className="border border-border rounded overflow-hidden shadow-sm mt-3 bg-white">
+              <div className="bg-slate-100 px-3 py-1.5 flex items-center justify-between font-bold text-xs border-b border-border">
                 <div className="flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-[#2558c4]" />
+                  <MapPin className="w-3.5 h-3.5" />
                   <span>Location</span>
                 </div>
-                <Compass className="w-3.5 h-3.5 cursor-pointer text-muted-foreground hover:text-foreground" />
+                <div className="flex items-center gap-1.5">
+                  <Copy className="w-3.5 h-3.5 cursor-pointer text-muted-foreground hover:text-foreground" />
+                  <Smartphone className="w-3.5 h-3.5 cursor-pointer text-muted-foreground hover:text-foreground" />
+                </div>
               </div>
-              <div className="p-2.5 space-y-1.5 text-[11px]">
-                <div className="text-muted-foreground leading-snug">{selectedVehicle.fullAddress}</div>
-                <div className="font-mono text-[10px] font-bold text-[#2558c4] dark:text-[#29a4ff]">{selectedVehicle.lat}, {selectedVehicle.lng}</div>
+              <div className="p-3 text-[10px] space-y-2">
+                <div className="text-muted-foreground leading-relaxed">{selectedVehicle.fullAddress || "Mbarara Masaka Road,Pida,Lwengo, Uganda (SE)"}</div>
+                <div className="font-bold text-muted-foreground">{selectedVehicle.lat || "-0.38633"}, {selectedVehicle.lng || "31.3166933"}</div>
+                <div className="flex items-center gap-2 pt-1 border-t border-border/50 text-muted-foreground">
+                  <UserCircle className="w-4 h-4" />
+                  <span>0°</span>
+                </div>
               </div>
             </div>
 
-            {/* 9. TODAY ACTIVITY CARD */}
-            <div className="border border-border rounded overflow-hidden shadow-xs">
-              <div className="bg-[#2558c4] text-white px-3 py-1.5 flex items-center justify-between font-bold text-xs">
+            {/* 9. TODAY ACTIVITY */}
+            <div className="border border-border rounded overflow-hidden shadow-sm mt-3 bg-white">
+              <div className="bg-slate-100 px-3 py-1.5 flex items-center justify-between font-bold text-xs border-b border-border">
                 <div className="flex items-center gap-1.5">
                   <Activity className="w-3.5 h-3.5" />
                   <span>Today Activity</span>
                 </div>
-                <Car className="w-3 h-3" />
+                <div className="flex items-center gap-1.5">
+                  <Cloud className="w-3.5 h-3.5 cursor-pointer text-muted-foreground hover:text-foreground" />
+                  <Car className="w-3 h-3 text-[#2558c4]" />
+                </div>
               </div>
-              <div className="p-2.5 space-y-2 text-[11px]">
-                <div className="bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 p-2 rounded flex justify-between">
-                  <span className="text-muted-foreground text-xs font-semibold">Distance</span>
-                  <span className="font-extrabold text-sm text-[#2558c4] dark:text-[#29a4ff]">{selectedVehicle.currentTrip}</span>
+              <div className="p-2 space-y-2 text-[10px]">
+                <div className="flex justify-between items-center border-b border-border pb-1">
+                  <span className="font-bold text-sm">313 km</span>
+                  <Car className="w-6 h-6 text-[#2558c4]" />
                 </div>
                 <div className="space-y-1">
-                  <div className="flex justify-between"><span className="text-muted-foreground">Running</span><span className="font-bold text-emerald-600">{selectedVehicle.runningHrs}</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">Idle</span><span className="font-bold text-amber-500">{selectedVehicle.idleHrs}</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">Stop</span><span className="font-bold text-rose-500">{selectedVehicle.stopHrs}</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">Inactive</span><span className="font-bold text-sky-500">{selectedVehicle.inactiveHrs}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Running</span><span className="font-bold text-emerald-600">08:19 hrs</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Idle</span><span className="font-bold text-amber-500">03:16 hrs</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Stop</span><span className="font-bold text-rose-500">08:02 hrs</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Inactive</span><span className="font-bold text-[#2558c4]">00:00 hrs</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Work Hour</span><span className="font-bold text-foreground">NA</span></div>
                 </div>
-                <div className="border-t border-border pt-1 text-[10px]">
-                  <div><span className="font-bold text-foreground">Working Start: </span><span className="text-muted-foreground">{selectedVehicle.workingStart}</span></div>
-                  <div className="pt-0.5"><span className="font-bold text-rose-600">Last Stop: </span><span className="text-muted-foreground">--</span></div>
-                </div>
-              </div>
-            </div>
-
-            {/* 10. FUEL CONSUMPTION CIRCLE */}
-            <div className="border border-border rounded overflow-hidden shadow-xs p-2.5 space-y-2">
-              <div className="flex items-center justify-between font-bold text-xs text-foreground">
-                <div className="flex items-center gap-1.5">
-                  <Fuel className="w-3.5 h-3.5 text-amber-500" />
-                  <span>Fuel Cons...</span>
-                </div>
-                <Info className="w-3.5 h-3.5 text-muted-foreground cursor-pointer" />
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-full border-2 border-amber-500 flex flex-col items-center justify-center text-[9px] font-bold text-amber-700 bg-amber-50 dark:bg-amber-950/40">
-                  <RotateCw className="w-4 h-4 text-amber-600 mb-0.5" />
-                  <span>Fuel</span>
-                </div>
-                <div className="text-[10px] space-y-0.5 text-right">
-                  <div><span className="text-muted-foreground">Distance: </span><strong className="text-foreground">0 ltr</strong></div>
-                  <div><span className="text-muted-foreground">Duration: </span><strong className="text-foreground">0 ltr</strong></div>
-                  <div><span className="text-muted-foreground">CO2 E...: </span><strong className="text-foreground">0 kg</strong></div>
-                  <div><span className="text-muted-foreground">Waste: </span><strong className="text-foreground">0 ltr</strong></div>
-                </div>
-              </div>
-              <div className="text-[9px] text-muted-foreground text-center">Due to 0 hrs idling</div>
-            </div>
-
-            {/* 11. PASSENGER SEAT DIAGRAM */}
-            <div className="border border-border rounded overflow-hidden shadow-xs p-2.5 space-y-2">
-              <div className="font-bold text-xs text-foreground flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  <Armchair className="w-3.5 h-3.5 text-[#2558c4]" />
-                  <span>Passenger Seat</span>
-                </div>
-                <div className="flex gap-2 text-[10px]">
-                  <span>Occupied <strong className="text-blue-600">0</strong></span>
-                  <span>Vacant <strong className="text-rose-600">0</strong></span>
-                </div>
-              </div>
-              <div className="w-full h-14 bg-slate-100 dark:bg-muted/40 rounded border border-border flex items-center justify-center">
-                <div className="grid grid-cols-6 gap-1 p-1">
-                  {[...Array(12)].map((_, i) => (
-                    <div key={i} className="w-3 h-3 rounded-xs bg-slate-300 dark:bg-slate-700 border border-slate-400" />
-                  ))}
+                <div className="pt-2 border-t border-border space-y-2">
+                  <div>
+                    <div className="flex justify-between"><span className="font-bold text-emerald-600">Working Start</span><span className="font-bold">12:00 AM</span></div>
+                    <div className="text-muted-foreground leading-tight mt-0.5">Albert Cook Road,Lungujja,Mengo,Ruba... Uganda (SE)</div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between"><span className="font-bold text-rose-500">Last Stop</span><span className="font-bold text-rose-500">07:18 PM</span></div>
+                    <div className="text-muted-foreground leading-tight mt-0.5">Bigusha, Kiruhura, Uganda (SE)</div>
+                  </div>
+                  <div className="text-center pt-1"><button className="text-[#2558c4] font-bold flex items-center justify-center gap-1 w-full"><LineChart className="w-3 h-3" /> Show Log</button></div>
                 </div>
               </div>
             </div>
 
-            {/* 12. RPM DIAL GAUGE */}
-            <div className="border border-border rounded overflow-hidden shadow-xs p-2.5 space-y-2">
-              <div className="font-bold text-xs text-foreground flex items-center gap-1.5">
-                <RotateCw className="w-3.5 h-3.5 text-[#2558c4]" />
+            {/* 10. SPEED */}
+            <div className="border border-border rounded overflow-hidden shadow-sm mt-3 bg-white">
+              <div className="bg-slate-100 px-3 py-1.5 flex items-center gap-1.5 font-bold text-xs border-b border-border">
+                <Gauge className="w-3.5 h-3.5" />
+                <span>Speed</span>
+              </div>
+              <div className="p-3">
+                <div className="flex justify-between text-[10px] mb-2">
+                  <span className="text-muted-foreground">Average Speed</span><span className="font-bold text-[#2558c4]">38 km/h</span>
+                </div>
+                <div className="flex justify-between text-[10px] mb-2">
+                  <span className="text-muted-foreground">Max Speed</span><span className="font-bold text-rose-500">108 km/h</span>
+                </div>
+                <div className="relative w-full h-[60px] flex justify-center items-end mt-4">
+                  {/* Gauge half circle */}
+                  <div className="w-32 h-16 bg-sky-100 rounded-t-full relative overflow-hidden flex items-end justify-center">
+                    <div className="w-24 h-12 bg-white rounded-t-full"></div>
+                    {/* Needle */}
+                    <div className="absolute bottom-0 w-1 h-14 bg-[#2558c4] origin-bottom transform rotate-[25deg]"></div>
+                    <div className="absolute bottom-[-4px] w-3 h-3 bg-[#2558c4] rounded-full"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 11. ALERT */}
+            <div className="border border-border rounded overflow-hidden shadow-sm mt-3 bg-white">
+              <div className="bg-slate-100 px-3 py-1.5 flex items-center gap-1.5 font-bold text-xs border-b border-border">
+                <AlertTriangle className="w-3.5 h-3.5" />
+                <span>Alert</span>
+              </div>
+              <div className="p-2 text-[10px] flex justify-between">
+                <span className="text-muted-foreground">Total</span><span className="font-bold">0</span>
+              </div>
+              <div className="border-t border-border p-2 text-center">
+                <button className="text-[#2558c4] font-bold flex items-center justify-center gap-1 w-full"><Plus className="w-3 h-3" /> Alert</button>
+              </div>
+            </div>
+
+            {/* 12. NO TEMPERATURE SENSOR */}
+            <div className="bg-[#1e293b] text-white rounded overflow-hidden shadow-sm mt-3 p-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Thermometer className="w-5 h-5" />
+                <span className="text-xs font-semibold">No Temperature<br/>Sensor Found</span>
+              </div>
+              {/* Sun/cloud decoration */}
+              <div className="relative w-8 h-8 opacity-50">
+                <div className="absolute inset-0 bg-yellow-500 rounded-full blur-sm"></div>
+              </div>
+            </div>
+
+            {/* 13. NEAR BY */}
+            <div className="border border-border rounded overflow-hidden shadow-sm mt-3 bg-white">
+              <div className="bg-slate-100 px-3 py-1.5 flex items-center gap-1.5 font-bold text-xs border-b border-border">
+                <UserCircle className="w-3.5 h-3.5" />
+                <span>Near By</span>
+              </div>
+            </div>
+
+            {/* 14. GPS DEVICE PARAMETER */}
+            <div className="border border-border rounded overflow-hidden shadow-sm mt-3 bg-white">
+              <div className="bg-slate-100 px-3 py-1.5 flex items-center gap-1.5 font-bold text-xs border-b border-border">
+                <MapPin className="w-3.5 h-3.5" />
+                <span>GPS Device Parameter</span>
+              </div>
+              <div className="p-2 space-y-1.5 text-[10px] bg-white">
+                <div className="flex justify-between"><span className="text-muted-foreground">Axis X</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Axis Y</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Axis Z</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">SD status</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">BT Status</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">GNSS Status</span><span className="font-semibold">1</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Int Battery</span><span className="font-semibold">4.04</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Satellite</span><span className="font-semibold">13</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Ext Power</span><span className="font-semibold">28.3 Voltage</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Int Battery %</span><span className="font-semibold">0</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Movement</span><span className="font-semibold">ON</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Angle</span><span className="font-semibold">123</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Sleep Mode</span><span className="font-semibold">OFF</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Altitude</span><span className="font-semibold">1257</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">HDOP</span><span className="font-semibold">6</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">PDOP</span><span className="font-semibold">11</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">IMSI</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">ICCID</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">ICCID-2</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">MAC</span><span className="font-semibold">--</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Extd Battery</span><span className="font-semibold">NA</span></div>
+              </div>
+            </div>
+
+            {/* 15. NETWORK PARAMETER */}
+            <div className="border border-border rounded overflow-hidden shadow-sm mt-3 bg-white">
+              <div className="bg-slate-100 px-3 py-1.5 flex items-center gap-1.5 font-bold text-xs border-b border-border">
+                <Globe className="w-3.5 h-3.5" />
+                <span>Network Parameter</span>
+              </div>
+              <div className="p-2 space-y-1.5 text-[10px] bg-white">
+                <div className="flex justify-between"><span className="text-muted-foreground">GSM</span><span className="font-semibold">4</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Cell Id</span><span className="font-semibold">0</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Network Mode</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Network Type</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Operator</span><span className="font-semibold">Airtel</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">PMN Code</span><span className="font-semibold">UGACE</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">OPCO Code</span><span className="font-semibold">AIRUG</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Country</span><span className="font-semibold">Uganda</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Zone</span><span className="font-semibold">Zone 41</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Network Rank</span><span className="font-semibold">Secondary</span></div>
+              </div>
+            </div>
+
+            {/* 16. IMMOBILIZE BLOCK */}
+            <div className="bg-[#6366f1] text-white rounded shadow-sm flex mt-3">
+              <div className="bg-[#4f46e5]/40 w-10 flex items-center justify-center border-r border-indigo-400/30 shrink-0">
+                <ShieldAlert className="w-5 h-5 text-indigo-100" />
+              </div>
+              <div className="flex-1 py-1 px-3 text-xs font-semibold leading-relaxed">
+                <div className="flex justify-between items-center cursor-pointer hover:text-indigo-100 py-0.5 border-b border-indigo-400/20"><span>Immobilize</span><ChevronRight className="w-3 h-3" /></div>
+                <div className="flex justify-between items-center cursor-pointer hover:text-indigo-100 py-0.5 border-b border-indigo-400/20"><span>Door</span><ChevronRight className="w-3 h-3" /></div>
+                <div className="flex justify-between items-center cursor-pointer hover:text-indigo-100 py-0.5 border-b border-indigo-400/20"><span>Boot</span><ChevronRight className="w-3 h-3" /></div>
+                <div className="flex justify-between items-center cursor-pointer hover:text-indigo-100 py-0.5"><span>Buzzer</span><ChevronRight className="w-3 h-3" /></div>
+              </div>
+            </div>
+
+            {/* 17. OBJECT INFORMATION */}
+            <div className="border border-border rounded overflow-hidden shadow-sm mt-3">
+              <div className="bg-[#2558c4] text-white px-3 py-1.5 flex items-center gap-1.5 font-bold text-xs">
+                <Crosshair className="w-3.5 h-3.5" />
+                <span>Object Information</span>
+              </div>
+              <div className="p-2 space-y-1.5 text-[10px] bg-white">
+                <div className="flex justify-between"><span className="text-muted-foreground">Purchase Date</span><span className="font-semibold text-foreground">--</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Purchase Amount</span><span className="font-semibold text-foreground">0</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Seat Capacity</span><span className="font-semibold text-foreground">0</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Capacity</span><span className="font-semibold text-foreground">0</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Company Average</span><span className="font-semibold text-foreground">0</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Object Brand</span><span className="font-semibold text-foreground">Ashok Leyland</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Permit Name</span><span className="font-semibold text-foreground">--</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Object Model</span><span className="font-semibold text-foreground">111/E4</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Age</span><span className="font-semibold text-foreground">0</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">VIN(Chassis) Number</span><span className="font-semibold text-foreground">--</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Engine No.</span><span className="font-semibold text-foreground">--</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Object Category</span><span className="font-semibold text-foreground">movable</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Fuel Type</span><span className="font-semibold text-foreground">--Select--</span></div>
+              </div>
+            </div>
+
+            {/* 18. DOCUMENTS */}
+            <div className="border border-border rounded overflow-hidden shadow-sm mt-3 bg-white">
+              <div className="bg-slate-100 px-3 py-1.5 flex items-center gap-1.5 font-bold text-xs border-b border-border">
+                <FileText className="w-3.5 h-3.5" />
+                <span>Documents</span>
+              </div>
+              <div className="p-4 text-center text-xs text-muted-foreground">
+                No Record Found
+              </div>
+              <div className="border-t border-border p-2">
+                <button className="text-[#2558c4] w-full flex items-center justify-center gap-1 text-xs font-semibold hover:bg-slate-50 py-1 rounded">
+                  <Plus className="w-3 h-3" /> Document
+                </button>
+              </div>
+            </div>
+
+            {/* 19. EXPENSE */}
+            <div className="bg-[#06b6d4] text-white rounded overflow-hidden shadow-sm mt-3">
+              <div className="p-3 flex items-center justify-between border-b border-cyan-400">
+                <div className="flex items-center gap-2">
+                  <BarChart2 className="w-8 h-8 text-yellow-300" />
+                  <div className="text-xs font-bold leading-tight">Expense (last 7<br/>days)</div>
+                </div>
+                <div className="font-bold text-lg">USh0</div>
+              </div>
+              <div className="flex text-xs font-bold bg-[#0891b2]">
+                <button className="flex-1 py-2 flex items-center justify-center gap-1 border-r border-cyan-600 hover:bg-cyan-700">
+                  <Plus className="w-3.5 h-3.5" /> Expense
+                </button>
+                <button className="flex-1 py-2 flex items-center justify-center gap-1 hover:bg-cyan-700">
+                  <History className="w-3.5 h-3.5" /> History
+                </button>
+              </div>
+            </div>
+
+            {/* 20. GPS DEVICE INFO */}
+            <div className="border border-border rounded overflow-hidden shadow-sm mt-3 bg-white">
+              <div className="bg-slate-100 px-3 py-1.5 flex items-center gap-1.5 font-bold text-xs border-b border-border">
+                <Wrench className="w-3.5 h-3.5" />
+                <span>GPS Device Information</span>
+              </div>
+              <div className="p-3 border-b border-border">
+                <div className="border border-[#2558c4] text-[#2558c4] font-bold p-1 text-xs rounded w-10 text-center">1</div>
+              </div>
+              <div className="p-2 space-y-1.5 text-[10px] bg-white">
+                <div className="flex justify-between"><span className="text-muted-foreground">Device</span><span className="font-semibold text-foreground">FMB125</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Device Status</span><span className="font-semibold text-emerald-600">Connected</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Last Date</span><div className="text-right font-semibold text-foreground"><div>6 Seconds ago</div><div className="text-muted-foreground font-normal">03-09-2026 12:13 AM</div></div></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">IMEI</span><span className="font-semibold text-foreground">357073295191353</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Installation Date</span><span className="font-semibold text-foreground">--</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Warranty</span><span className="font-semibold text-foreground">0.0</span></div>
+              </div>
+            </div>
+
+            {/* 21. DRIVER INFORMATION */}
+            <div className="border border-border rounded overflow-hidden shadow-sm mt-3 bg-[#3b82f6] text-white">
+              <div className="px-3 py-1.5 flex items-center gap-1.5 font-bold text-xs border-b border-blue-400">
+                <UserSquare className="w-3.5 h-3.5" />
+                <span>Driver Information</span>
+              </div>
+              <div className="p-2 space-y-1.5 text-[10px] bg-white text-slate-800">
+                <div className="flex justify-between"><span className="text-muted-foreground">Driver Number</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Age</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Driving Experience</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">License Available</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">License To Drive</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">License Expiry</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Life Ins. Expiry</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Mediclaim Expiry</span><span className="font-semibold">NA</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Tanga ...</span><span className="font-semibold">NA</span></div>
+              </div>
+            </div>
+
+            {/* 22. PASSENGER SEAT */}
+            <div className="border border-border rounded overflow-hidden shadow-sm mt-3 bg-white">
+              <div className="bg-[#3b82f6] text-white px-3 py-1.5 flex items-center gap-1.5 font-bold text-xs border-b border-blue-400">
+                <Armchair className="w-3.5 h-3.5" />
+                <span>Passenger Seat</span>
+              </div>
+              <div className="p-3 text-[10px] flex items-center justify-between">
+                <div className="space-y-2">
+                  <div className="flex gap-4 font-semibold text-muted-foreground">
+                    <span>Occupied</span>
+                    <span>Vacant</span>
+                  </div>
+                  <div className="flex gap-10 font-bold text-lg">
+                    <span className="text-emerald-500">0</span>
+                    <span className="text-red-500">0</span>
+                  </div>
+                </div>
+                {/* Visual for seat */}
+                <div className="w-16 h-20 bg-slate-100 rounded-md border border-slate-200 flex flex-col items-center justify-around py-1">
+                   <div className="w-4 h-3 bg-slate-300 rounded-sm"></div>
+                   <div className="flex gap-2">
+                     <div className="w-4 h-4 bg-slate-300 rounded-sm"></div>
+                     <div className="w-4 h-4 bg-slate-300 rounded-sm"></div>
+                   </div>
+                   <div className="flex gap-2">
+                     <div className="w-4 h-4 bg-slate-300 rounded-sm"></div>
+                     <div className="w-4 h-4 bg-slate-300 rounded-sm"></div>
+                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 23. RPM */}
+            <div className="border border-border rounded overflow-hidden shadow-sm mt-3 bg-white">
+              <div className="bg-slate-100 px-3 py-1.5 flex items-center gap-1.5 font-bold text-xs border-b border-border">
+                <Gauge className="w-3.5 h-3.5 text-[#2558c4]" />
                 <span>RPM</span>
               </div>
-              <div className="flex justify-between text-xs">
-                <div><span className="text-muted-foreground">Lowest</span> <strong className="text-emerald-600">0 RPM</strong></div>
-                <div><span className="text-muted-foreground">Highest</span> <strong className="text-rose-600">0 RPM</strong></div>
-              </div>
-              <div className="relative w-full h-[50px] flex items-center justify-center">
-                <svg className="w-[120px] h-[50px]" viewBox="0 0 200 100">
-                  <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#e2e8f0" strokeWidth="8" strokeLinecap="round" />
-                  <line x1="100" y1="90" x2="100" y2="40" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" />
-                  <circle cx="100" cy="90" r="5" fill="#ef4444" />
-                </svg>
-                <div className="absolute bottom-0 text-[10px] font-bold text-muted-foreground">RPM 0</div>
-              </div>
-            </div>
-
-            {/* 13. REMINDER BELL CARD */}
-            <div className="rounded overflow-hidden shadow-xs bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 p-3 space-y-2.5">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-bold text-xs text-rose-950 dark:text-rose-200 flex items-center gap-1.5">
-                    <Bell className="w-3.5 h-3.5 text-rose-600" />
-                    <span>Reminder</span>
+              <div className="p-3 flex items-center justify-between">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <ArrowDown className="w-4 h-4 text-emerald-500" />
+                    <div>
+                      <div className="text-[10px] text-muted-foreground font-semibold">0</div>
+                      <div className="text-xs font-bold text-emerald-600">RPM</div>
+                    </div>
                   </div>
-                  <div className="text-[11px] text-rose-900 dark:text-rose-300 mt-1">Due: <strong className="text-sm font-extrabold text-rose-600">0</strong></div>
+                  <div className="flex items-center gap-2">
+                    <ArrowUp className="w-4 h-4 text-red-500" />
+                    <div>
+                      <div className="text-[10px] text-muted-foreground font-semibold">Highest 0</div>
+                      <div className="text-xs font-bold text-red-600">RPM</div>
+                    </div>
+                  </div>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-lg ring-4 ring-rose-200 dark:ring-rose-900">
-                  <Bell className="w-5 h-5 animate-bounce" />
+                
+                <div className="relative w-24 h-[48px] flex items-end justify-center">
+                  <svg className="absolute top-0 w-full h-full" viewBox="0 0 100 50">
+                    <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#e2e8f0" strokeWidth="8" strokeLinecap="round" />
+                    <line x1="50" y1="50" x2="15" y2="40" stroke="#0ea5e9" strokeWidth="2.5" strokeLinecap="round" />
+                    <circle cx="50" cy="50" r="4" fill="#0ea5e9" />
+                  </svg>
+                  <div className="absolute bottom-0 font-bold text-xs">0</div>
                 </div>
               </div>
-
-              <div className="grid grid-cols-2 text-[10px] border-t border-rose-200 dark:border-rose-900 pt-1.5 text-rose-900 dark:text-rose-200">
-                <div>Overdue: <strong>0</strong></div>
-                <div className="text-right">Upcoming: <strong>0</strong></div>
-              </div>
-
-              <button
-                type="button"
-                className="w-full py-1.5 bg-[#881337] hover:bg-[#70102b] text-white rounded font-bold text-xs shadow cursor-pointer transition-colors"
-              >
-                + Add Reminder
-              </button>
             </div>
 
-            {/* 14. DOOR CARD */}
-            <div className="border border-border rounded overflow-hidden shadow-xs">
-              <div className="bg-slate-100 dark:bg-muted/70 px-3 py-1.5 flex items-center justify-between font-bold text-xs text-foreground">
-                <div className="flex items-center gap-1.5">
-                  <DoorClosed className="w-3.5 h-3.5 text-[#2558c4]" />
-                  <span>Door</span>
+            {/* 24. REMINDER */}
+            <div className="border border-border rounded overflow-hidden shadow-sm mt-3 bg-white">
+              <div className="bg-rose-50 px-3 py-1.5 flex items-center gap-1.5 font-bold text-xs border-b border-rose-200 text-rose-600">
+                <Bell className="w-3.5 h-3.5" />
+                <span>Reminder</span>
+              </div>
+              <div className="p-3">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1.5 text-[10px] font-semibold">
+                    <div className="flex justify-between w-24"><span className="text-rose-500">Due</span><span className="text-rose-500">0</span></div>
+                    <div className="flex justify-between w-24"><span className="text-rose-500">Overdue</span><span className="text-rose-500">0</span></div>
+                    <div className="flex justify-between w-24"><span className="text-emerald-500">Upcoming</span><span className="text-foreground">0</span></div>
+                  </div>
+                  <div className="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center text-rose-500">
+                    <Bell className="w-6 h-6" />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <button className="w-full bg-rose-500 hover:bg-rose-600 text-white py-1.5 rounded text-xs font-semibold">
+                    + Add Reminder
+                  </button>
                 </div>
               </div>
-              <div className="p-3 text-center text-xs text-muted-foreground">
+            </div>
+
+            {/* 25. DOOR */}
+            <div className="border border-border rounded overflow-hidden shadow-sm mt-3 bg-white">
+              <div className="bg-slate-100 px-3 py-1.5 flex items-center gap-1.5 font-bold text-xs border-b border-border">
+                <DoorClosed className="w-3.5 h-3.5 text-[#2558c4]" />
+                <span>Door</span>
+              </div>
+              <div className="p-4 text-center text-xs text-muted-foreground font-semibold">
                 No Record Found
               </div>
             </div>

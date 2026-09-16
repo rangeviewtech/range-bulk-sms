@@ -13,8 +13,8 @@ test.describe('Accessibility', () => {
     expect(accessibilityScanResults.violations).toEqual([])
   })
 
-  test('dashboard page should not have any automatically detectable accessibility issues', async ({ page }) => {
-    await page.goto('/dashboard')
+  test('login page should not have any automatically detectable accessibility issues', async ({ page }) => {
+    await page.goto('/login')
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
