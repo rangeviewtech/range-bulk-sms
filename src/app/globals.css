@@ -1,7 +1,6 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 @custom-variant dark (&:is(.dark *));
 @import "normalize.css" layer(base);
-@import "leaflet/dist/leaflet.css";
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -202,61 +201,6 @@
     scrollbar-width: none; /* Firefox */
   }
 }
-@font-face {
-  font-family: "tree";
-  src: url('/fonts/tree.eot?t=1619245098773'); /* IE9*/
-  src: url('/fonts/tree.eot?t=1619245098773#iefix') format('embedded-opentype'), /* IE6-IE8 */
-  url('/fonts/tree.woff2?t=1619245098773') format('woff2'),
-  url('/fonts/tree.woff?t=1619245098773') format('woff'),
-  url('/fonts/tree.ttf?t=1619245098773') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
-  url('/fonts/tree.svg?t=1619245098773#tree') format('svg'); /* iOS 4.1- */
-}
-
-[class^="tree-"]:before, [class*=" tree-"]:before {
-  font-family: 'tree' !important;
-  font-style:normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.tree-administration:before { content: "\ea01"; }
-.tree-avatar:before { content: "\ea02"; }
-.tree-bell:before { content: "\ea03"; }
-.tree-chart-1:before { content: "\ea04"; }
-.tree-chart-4:before { content: "\ea05"; }
-.tree-chart-fill:before { content: "\ea06"; }
-.tree-chart:before { content: "\ea07"; }
-.tree-charts:before { content: "\ea08"; }
-.tree-configuration:before { content: "\ea09"; }
-.tree-dashboard-1:before { content: "\ea0a"; }
-.tree-dashboard:before { content: "\ea0b"; }
-.tree-favourites:before { content: "\ea0c"; }
-.tree-help:before { content: "\ea0d"; }
-.tree-home:before { content: "\ea0e"; }
-.tree-launcher:before { content: "\ea0f"; }
-.tree-location:before { content: "\ea10"; }
-.tree-logout:before { content: "\ea11"; }
-.tree-notification-1:before { content: "\ea12"; }
-.tree-notification:before { content: "\ea13"; }
-.tree-report-2:before { content: "\ea14"; }
-.tree-report-3:before { content: "\ea15"; }
-.tree-report-4:before { content: "\ea16"; }
-.tree-report-fill:before { content: "\ea17"; }
-.tree-reports:before { content: "\ea18"; }
-.tree-setting-3:before { content: "\ea19"; }
-.tree-setting-fill:before { content: "\ea1a"; }
-.tree-settings:before { content: "\ea1b"; }
-.tree-tracking-1:before { content: "\ea1c"; }
-.tree-tracking-fill:before { content: "\ea1d"; }
-.tree-tracking:before { content: "\ea1e"; }
-.tree-user-1:before { content: "\ea1f"; }
-.tree-user-2:before { content: "\ea20"; }
-.tree-user:before { content: "\ea21"; }
-
 /* Prevent Chrome browser autofill from darkening inputs */
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
@@ -632,7 +576,7 @@ input:-webkit-autofill:active {
 
 
 /* ==========================================================================
-   Trakzee Premium Navigation Transitions & Animations
+   Range SMS Premium Navigation Transitions & Animations
    ========================================================================== */
 
 @keyframes flyoutSubMenuReveal {
@@ -689,35 +633,3 @@ input:-webkit-autofill:active {
   animation: navIndicatorSlide 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.trakzee-logo-badge {
-  animation: logoPulseGlow 4s ease-in-out infinite;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
-}
-
-.trakzee-logo-badge:hover {
-  transform: scale(1.04) rotate(0.5deg);
-  box-shadow: 0 0 24px rgba(41, 164, 255, 0.6) !important;
-}
-
-.trakzee-module-btn {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.trakzee-module-btn:hover {
-  background: linear-gradient(135deg, rgba(21, 66, 183, 0.95) 0%, rgba(13, 39, 107, 0.98) 100%);
-}
-
-.trakzee-module-btn:active {
-  transform: scale(0.97);
-}
-
-.trakzee-menu-item {
-  transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-}
-
-.trakzee-menu-item:hover {
-  transform: translateX(2px);
-}

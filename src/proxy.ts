@@ -10,11 +10,16 @@ const protectedPrefixes = [
   '/settings',
   '/profile',
   '/admin',
-  '/tracking',
-  '/reports',
-  '/charts',
   '/notifications',
   '/examples',
+  '/sms',
+  '/contacts',
+  '/campaigns',
+  '/wallet',
+  '/agent',
+  '/developer',
+  '/sender-ids',
+  '/support'
 ];
 
 export async function proxy(request: NextRequest) {

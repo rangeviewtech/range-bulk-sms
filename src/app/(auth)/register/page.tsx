@@ -824,7 +824,7 @@ export default function RegisterPage() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', width: '100%' }}>
               <a
-                href="https://play.google.com/store/apps/details?id=com.uffizio.trakzee&hl=en_IN"
+                href="https://play.google.com/store/apps/details?id=com.uffizio.rangesms&hl=en_IN"
                 target="_blank"
                 rel="noreferrer"
                 title="Google Play Store"
@@ -834,7 +834,7 @@ export default function RegisterPage() {
                 <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
               </a>
               <a
-                href="https://apps.apple.com/in/app/trakzee/id1396516275"
+                href="https://apps.apple.com/in/app/rangesms/id1396516275"
                 target="_blank"
                 rel="noreferrer"
                 title="Apple App Store"

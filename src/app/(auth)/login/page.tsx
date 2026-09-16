@@ -436,7 +436,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Cloudflare Turnstile â€” Bot Protection */}
+              {/* Cloudflare Turnstile Ã¢â‚¬â€ Bot Protection */}
               <div className="auth-stagger-4">
                 <TurnstileWidget
                   variant="inline"
@@ -722,7 +722,7 @@ export default function LoginPage() {
                 />
               </div>
 
-              {/* Cloudflare Turnstile â€” Bot Protection */}
+              {/* Cloudflare Turnstile Ã¢â‚¬â€ Bot Protection */}
               <TurnstileWidget
                 variant="inline"
                 onVerify={(token) => {
@@ -800,13 +800,13 @@ export default function LoginPage() {
               </div>
 
               <div className="main-container" style={{ textAlign: 'center' }}>
-                <div className="trakzee-app" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '18px' }}>
-                  <img className="trakzee-img" src={appAssets.icon} alt="logo" style={{ width: '110px' }} />
+                <div className="rangesms-app" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '18px' }}>
+                  <img className="rangesms-img" src={appAssets.icon} alt="logo" style={{ width: '110px' }} />
                   <h3 style={{ fontSize: '24px', fontWeight: 500, color: 'hsl(var(--foreground))', margin: '0 0 16px 0', fontFamily: FONT_STACK }}>{appConfig.name}</h3>
                 </div>
 
                 <p style={{ fontSize: '13px', color: 'hsl(var(--foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK, textAlign: 'center' }}>
-                  Manage your connected assets on our GPS tracking platform from your smartphone. Scan the QR code to get the application:
+                  Manage your SMS campaigns, contacts, and API integrations from anywhere. Scan the QR code to get the application:
                 </p>
 
                 <div className="qr-code-container" style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
@@ -815,10 +815,10 @@ export default function LoginPage() {
 
                 <div className="appstore-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
                   <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                    <a href="https://play.google.com/store/apps/details?id=com.uffizio.trakzee&hl=en_IN" data-value="android" target="_blank" rel="noreferrer" style={{ flex: 1 }}>
+                    <a href="https://play.google.com/store/apps/details?id=com.uffizio.rangesms&hl=en_IN" data-value="android" target="_blank" rel="noreferrer" style={{ flex: 1 }}>
                       <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ width: '100%', height: '36px', objectFit: 'contain' }} />
                     </a>
-                    <a href="https://apps.apple.com/in/app/trakzee/id1396516275" data-value="ios" target="_blank" rel="noreferrer" style={{ flex: 1 }}>
+                    <a href="https://apps.apple.com/in/app/rangesms/id1396516275" data-value="ios" target="_blank" rel="noreferrer" style={{ flex: 1 }}>
                       <img src={appAssets.storeBadges.appStore} alt="Apple App Store" style={{ width: '100%', height: '36px', objectFit: 'contain' }} />
                     </a>
                   </div>
@@ -839,7 +839,7 @@ export default function LoginPage() {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', width: '100%' }}>
                 <a
-                  href="https://play.google.com/store/apps/details?id=com.uffizio.trakzee&hl=en_IN"
+                  href="https://play.google.com/store/apps/details?id=com.uffizio.rangesms&hl=en_IN"
                   target="_blank"
                   rel="noreferrer"
                   title="Google Play Store"
@@ -849,7 +849,7 @@ export default function LoginPage() {
                   <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ width: '100%', height: '30px', objectFit: 'contain' }} />
                 </a>
                 <a
-                  href="https://apps.apple.com/in/app/trakzee/id1396516275"
+                  href="https://apps.apple.com/in/app/rangesms/id1396516275"
                   target="_blank"
                   rel="noreferrer"
                   title="Apple App Store"
@@ -889,7 +889,7 @@ export default function LoginPage() {
         </div>{/* end centered wrapper */}
 
 
-        {/* Language icon removed from bottom â€” repositioned to top-right corner below */}
+        {/* Language icon removed from bottom Ã¢â‚¬â€ repositioned to top-right corner below */}
       </div>
     </div>
   );

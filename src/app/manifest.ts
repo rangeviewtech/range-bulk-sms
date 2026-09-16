@@ -4,7 +4,7 @@ import { appAssets } from '@/config/assets';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: `${appConfig.name} - GPS Tracking Platform`,
+    name: `${appConfig.name} - Enterprise Bulk SMS Platform`,
     short_name: appConfig.shortName || appConfig.name,
     description: appConfig.description,
     start_url: '/login',

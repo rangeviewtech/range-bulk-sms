@@ -1,0 +1,111 @@
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Edit, MessageSquare, Phone, Mail, MapPin } from 'lucide-react';
+import Link from 'next/link';
+
+export default function ContactDetailPage({ params }: { params: { id: string } }) {
+  return (
+    <div className="flex flex-col gap-6 p-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Link href="/contacts">
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+          </Link>
+          <h1 className="text-3xl font-bold tracking-tight">John Doe</h1>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline">
+            <MessageSquare className="w-4 h-4 mr-2" />
+            Send SMS
+          </Button>
+          <Button variant="outline">
+            <Edit className="w-4 h-4 mr-2" />
+            Edit
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="col-span-1 flex flex-col gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Contact Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Phone className="w-4 h-4 text-muted-foreground" />
+                <span>+256 700 123456</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Mail className="w-4 h-4 text-muted-foreground" />
+                <span>john@example.com</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <MapPin className="w-4 h-4 text-muted-foreground" />
+                <span>Kampala, Uganda</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Groups & Tags</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-sm font-medium mb-2 text-muted-foreground">Groups</h4>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="secondary">VIP</Badge>
+                    <Badge variant="secondary">Customers</Badge>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium mb-2 text-muted-foreground">Tags</h4>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="outline">High Value</Badge>
+                    <Badge variant="outline">Active</Badge>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="col-span-1 md:col-span-2">
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle>Message History</CardTitle>
+              <CardDescription>Recent SMS messages sent to this contact.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="flex gap-4 p-4 border rounded-lg bg-muted/20">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Badge className="bg-green-500/10 text-green-600 hover:bg-green-500/20">Delivered</Badge>
+                      <span className="text-sm text-muted-foreground">Oct 24, 2026 - 14:30</span>
+                    </div>
+                    <p className="text-sm">Hello John, your reservation for tomorrow at 8 PM is confirmed.</p>
+                  </div>
+                </div>
+                <div className="flex gap-4 p-4 border rounded-lg bg-muted/20">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Badge className="bg-green-500/10 text-green-600 hover:bg-green-500/20">Delivered</Badge>
+                      <span className="text-sm text-muted-foreground">Oct 20, 2026 - 09:15</span>
+                    </div>
+                    <p className="text-sm">Enjoy a 20% discount on your next visit using code VIP20.</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}

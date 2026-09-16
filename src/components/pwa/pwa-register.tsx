@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -110,7 +110,7 @@ export function PWARegister() {
   };
 
   const installTitle = (dict.pwa?.installTitle || `Install ${appConfig.name} App`).replace('{app}', appConfig.name);
-  const installSubtitle = dict.pwa?.installSubtitle || 'Fast offline access & telematics tracking';
+  const installSubtitle = dict.pwa?.installSubtitle || 'Fast offline access & bulk SMS management';
   const installBtnText = dict.pwa?.installButton || 'Install';
   const dismissBtnText = dict.pwa?.dismissButton || 'Dismiss';
   const offlineBannerText = dict.pwa?.offlineBanner || 'You are currently offline. Running in PWA offline mode.';

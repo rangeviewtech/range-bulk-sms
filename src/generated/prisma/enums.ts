@@ -52,3 +52,148 @@ export const CommunicationChannel = {
 } as const
 
 export type CommunicationChannel = (typeof CommunicationChannel)[keyof typeof CommunicationChannel]
+
+
+export const OrganizationType = {
+  BUSINESS: 'BUSINESS',
+  SCHOOL: 'SCHOOL',
+  HOSPITAL: 'HOSPITAL',
+  NGO: 'NGO',
+  GOVERNMENT: 'GOVERNMENT',
+  FINANCIAL: 'FINANCIAL',
+  RETAIL: 'RETAIL',
+  AGENCY: 'AGENCY',
+  INDIVIDUAL: 'INDIVIDUAL'
+} as const
+
+export type OrganizationType = (typeof OrganizationType)[keyof typeof OrganizationType]
+
+
+export const ClientStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  SUSPENDED: 'SUSPENDED',
+  PENDING_APPROVAL: 'PENDING_APPROVAL'
+} as const
+
+export type ClientStatus = (typeof ClientStatus)[keyof typeof ClientStatus]
+
+
+export const AgentStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  SUSPENDED: 'SUSPENDED'
+} as const
+
+export type AgentStatus = (typeof AgentStatus)[keyof typeof AgentStatus]
+
+
+export const SenderIdStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  SUSPENDED: 'SUSPENDED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type SenderIdStatus = (typeof SenderIdStatus)[keyof typeof SenderIdStatus]
+
+
+export const CampaignStatus = {
+  DRAFT: 'DRAFT',
+  SCHEDULED: 'SCHEDULED',
+  PROCESSING: 'PROCESSING',
+  SENT: 'SENT',
+  PARTIALLY_SENT: 'PARTIALLY_SENT',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type CampaignStatus = (typeof CampaignStatus)[keyof typeof CampaignStatus]
+
+
+export const MessageStatus = {
+  PENDING: 'PENDING',
+  QUEUED: 'QUEUED',
+  SUBMITTED: 'SUBMITTED',
+  SENT: 'SENT',
+  DELIVERED: 'DELIVERED',
+  FAILED: 'FAILED',
+  EXPIRED: 'EXPIRED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type MessageStatus = (typeof MessageStatus)[keyof typeof MessageStatus]
+
+
+export const TransactionType = {
+  DEPOSIT: 'DEPOSIT',
+  DEDUCTION: 'DEDUCTION',
+  REFUND: 'REFUND',
+  ADJUSTMENT: 'ADJUSTMENT',
+  COMMISSION_PAYOUT: 'COMMISSION_PAYOUT'
+} as const
+
+export type TransactionType = (typeof TransactionType)[keyof typeof TransactionType]
+
+
+export const CommissionStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  PAID: 'PAID',
+  REVERSED: 'REVERSED'
+} as const
+
+export type CommissionStatus = (typeof CommissionStatus)[keyof typeof CommissionStatus]
+
+
+export const CommissionType = {
+  PERCENTAGE: 'PERCENTAGE',
+  FIXED: 'FIXED',
+  TIERED: 'TIERED'
+} as const
+
+export type CommissionType = (typeof CommissionType)[keyof typeof CommissionType]
+
+
+export const ApiKeyStatus = {
+  ACTIVE: 'ACTIVE',
+  REVOKED: 'REVOKED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type ApiKeyStatus = (typeof ApiKeyStatus)[keyof typeof ApiKeyStatus]
+
+
+export const WebhookEvent = {
+  SMS_SENT: 'SMS_SENT',
+  SMS_DELIVERED: 'SMS_DELIVERED',
+  SMS_FAILED: 'SMS_FAILED',
+  CAMPAIGN_COMPLETED: 'CAMPAIGN_COMPLETED',
+  CAMPAIGN_FAILED: 'CAMPAIGN_FAILED',
+  BALANCE_CHANGED: 'BALANCE_CHANGED',
+  API_EVENT: 'API_EVENT'
+} as const
+
+export type WebhookEvent = (typeof WebhookEvent)[keyof typeof WebhookEvent]
+
+
+export const TicketStatus = {
+  OPEN: 'OPEN',
+  IN_PROGRESS: 'IN_PROGRESS',
+  RESOLVED: 'RESOLVED',
+  CLOSED: 'CLOSED'
+} as const
+
+export type TicketStatus = (typeof TicketStatus)[keyof typeof TicketStatus]
+
+
+export const TicketPriority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
+} as const
+
+export type TicketPriority = (typeof TicketPriority)[keyof typeof TicketPriority]

@@ -98,6 +98,11 @@ export async function verifySession() {
           status: true,
           createdAt: true,
           mfaEnabled: true,
+          roles: {
+            include: {
+              role: true
+            }
+          }
         },
       },
     },

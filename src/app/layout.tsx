@@ -4,7 +4,7 @@ import { PWARegister } from '@/components/pwa/pwa-register';
 import { CookieBanner } from '@/components/blocks/ui/cookie-banner';
 
 import './globals.css';
-import './trakzee-legacy.css';
+import './range-legacy.css';
 import './chatbot-legacy.css';
 
 export const metadata = createMetadata();

@@ -196,8 +196,8 @@ export function LegalLayout({
             <div className="mt-8 p-5 rounded-xl border border-border bg-card flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
               <div className="text-xs text-muted-foreground text-center sm:text-left">
                 Questions about our policies? Contact our Legal & Data Protection team at{' '}
-                <a href="mailto:support@trakzee.com" className="text-[#29A4FF] hover:underline font-semibold">
-                  support@trakzee.com
+                <a href="mailto:support@rangesms.com" className="text-[#29A4FF] hover:underline font-semibold">
+                  support@rangesms.com
                 </a>
               </div>
               <div className="flex items-center gap-2">
@@ -218,7 +218,7 @@ export function LegalLayout({
       <footer className="border-t border-border bg-card mt-auto py-8 text-xs text-muted-foreground">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            © {new Date().getFullYear()} {appConfig.name} GPS Tracking & Telematics. All rights reserved.
+            © {new Date().getFullYear()} {appConfig.name}. All rights reserved.
           </div>
           <div className="flex items-center gap-4">
             <Link href="/terms" className="hover:text-foreground transition-colors">

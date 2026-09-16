@@ -107,3 +107,148 @@ export type ScheduledJob = Prisma.ScheduledJobModel
  * 
  */
 export type CronExecution = Prisma.CronExecutionModel
+/**
+ * Model Organization
+ * 
+ */
+export type Organization = Prisma.OrganizationModel
+/**
+ * Model Client
+ * 
+ */
+export type Client = Prisma.ClientModel
+/**
+ * Model Agent
+ * 
+ */
+export type Agent = Prisma.AgentModel
+/**
+ * Model Contact
+ * 
+ */
+export type Contact = Prisma.ContactModel
+/**
+ * Model ContactGroup
+ * 
+ */
+export type ContactGroup = Prisma.ContactGroupModel
+/**
+ * Model ContactGroupMember
+ * 
+ */
+export type ContactGroupMember = Prisma.ContactGroupMemberModel
+/**
+ * Model ContactTag
+ * 
+ */
+export type ContactTag = Prisma.ContactTagModel
+/**
+ * Model ContactTagAssignment
+ * 
+ */
+export type ContactTagAssignment = Prisma.ContactTagAssignmentModel
+/**
+ * Model ContactImport
+ * 
+ */
+export type ContactImport = Prisma.ContactImportModel
+/**
+ * Model SenderId
+ * 
+ */
+export type SenderId = Prisma.SenderIdModel
+/**
+ * Model SmsTemplate
+ * 
+ */
+export type SmsTemplate = Prisma.SmsTemplateModel
+/**
+ * Model Campaign
+ * 
+ */
+export type Campaign = Prisma.CampaignModel
+/**
+ * Model CampaignGroup
+ * 
+ */
+export type CampaignGroup = Prisma.CampaignGroupModel
+/**
+ * Model Message
+ * 
+ */
+export type Message = Prisma.MessageModel
+/**
+ * Model MessageRecipient
+ * 
+ */
+export type MessageRecipient = Prisma.MessageRecipientModel
+/**
+ * Model SmsProvider
+ * 
+ */
+export type SmsProvider = Prisma.SmsProviderModel
+/**
+ * Model ProviderRoute
+ * 
+ */
+export type ProviderRoute = Prisma.ProviderRouteModel
+/**
+ * Model Wallet
+ * 
+ */
+export type Wallet = Prisma.WalletModel
+/**
+ * Model Transaction
+ * 
+ */
+export type Transaction = Prisma.TransactionModel
+/**
+ * Model SmsPricing
+ * 
+ */
+export type SmsPricing = Prisma.SmsPricingModel
+/**
+ * Model Commission
+ * 
+ */
+export type Commission = Prisma.CommissionModel
+/**
+ * Model CommissionRule
+ * 
+ */
+export type CommissionRule = Prisma.CommissionRuleModel
+/**
+ * Model ApiKey
+ * 
+ */
+export type ApiKey = Prisma.ApiKeyModel
+/**
+ * Model ApiRequest
+ * 
+ */
+export type ApiRequest = Prisma.ApiRequestModel
+/**
+ * Model Webhook
+ * 
+ */
+export type Webhook = Prisma.WebhookModel
+/**
+ * Model WebhookDelivery
+ * 
+ */
+export type WebhookDelivery = Prisma.WebhookDeliveryModel
+/**
+ * Model SupportTicket
+ * 
+ */
+export type SupportTicket = Prisma.SupportTicketModel
+/**
+ * Model TicketMessage
+ * 
+ */
+export type TicketMessage = Prisma.TicketMessageModel
+/**
+ * Model ScheduledMessage
+ * 
+ */
+export type ScheduledMessage = Prisma.ScheduledMessageModel
