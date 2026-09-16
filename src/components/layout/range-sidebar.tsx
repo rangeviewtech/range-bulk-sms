@@ -357,11 +357,11 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
           <div id="tree-logo" className="flex items-center justify-center p-2 pt-2.5">
             <Link
               href="/dashboard"
-              className="w-[78px] h-[78px] rounded-2xl bg-[#031d33]/90 hover:bg-[#052846] border border-white/15 flex flex-col items-center justify-center trakzee-logo-badge group overflow-hidden transition-all duration-300 shadow-md"
+              className="w-[78px] h-[78px] rounded-2xl bg-transparent hover:bg-white/5 border border-transparent flex flex-col items-center justify-center trakzee-logo-badge group overflow-hidden transition-all duration-300"
               title="Range SMS - Enterprise Bulk SMS"
             >
               <img
-                src="/images/brand/range-icon.svg"
+                src="/images/brand/range-icon-transparent.svg"
                 alt="Range Bulk SMS Platform"
                 className="w-11 h-11 object-contain transition-transform duration-300 group-hover:scale-110"
               />
