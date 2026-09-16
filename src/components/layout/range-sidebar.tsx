@@ -410,7 +410,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
           </div>
 
           {/* PRIMARY MODULES LIST */}
-          <div id="tree-module" className="flex-1 flex flex-col py-3 overflow-y-auto overflow-x-hidden gap-0.5">
+          <div id="tree-module" className="flex-1 flex flex-col py-4 overflow-y-auto overflow-x-hidden gap-1">
             {allowedNavigation.map((mod) => {
               const isHovered = hoveredModule?.title === mod.title;
               const isActive = mod.href ? pathname === mod.href : pathname.startsWith(`/${mod.title.toLowerCase()}`);
