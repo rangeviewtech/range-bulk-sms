@@ -264,7 +264,6 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
   const [activeNotiTab, setActiveNotiTab] = React.useState<"notifications" | "announcements">("notifications");
   const [isSearchOpen, setIsSearchOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [isCloudDownloadOpen, setIsCloudDownloadOpen] = React.useState(false);
 
   const userRole = user?.role || "CLIENT";
   
@@ -469,22 +468,6 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
             })}
           </div>
 
-          {/* BOTTOM CLOUD DOWNLOAD */}
-          <div id="tree-download" className="h-[50px] border-t border-white/10 flex items-center justify-center">
-            <button
-              type="button"
-              onClick={() => setIsCloudDownloadOpen(true)}
-              className="w-full h-full flex items-center justify-center hover:bg-[#1542b7] transition-all duration-200 cursor-pointer group"
-              title="Cloud Download"
-              aria-label="Cloud Download"
-            >
-              <img 
-                src="/images/smart/cloude_download_new.svg" 
-                alt="Cloud Download" 
-                className="h-[27px] w-auto object-contain transition-transform duration-200 group-hover:scale-110 group-hover:-translate-y-0.5"
-              />
-            </button>
-          </div>
         </aside>
 
         {/* 2. MULTI-LEVEL FLYOUT MENU (Layer 2 #subMenu + Layer 3 #deepMenu) */}
@@ -834,56 +817,6 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
             <div className="px-4 py-2 bg-muted/40 border-t border-border text-[11px] text-muted-foreground flex items-center justify-between">
               <span>{allSearchableScreens.length} total screens indexed</span>
               <span>Press ESC to close</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 6. CLOUD DOWNLOAD MANAGER DIALOG */}
-      {isCloudDownloadOpen && (
-        <div 
-          className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 pointer-events-auto animate-in fade-in duration-200"
-          onClick={() => setIsCloudDownloadOpen(false)}
-        >
-          <div 
-            className="w-full max-w-md bg-card border border-border rounded-xl shadow-[0_24px_64px_rgba(0,0,0,0.4)] p-5 space-y-4 animate-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <div className="flex items-center gap-2">
-                <img 
-                  src="/images/smart/cloude_download_new.svg" 
-                  alt="Cloud Download" 
-                  className="h-5 w-auto"
-                />
-                <h3 className="text-sm font-semibold">Cloud Download Manager</h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsCloudDownloadOpen(false)}
-                className="p-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="space-y-2 text-xs text-muted-foreground">
-              <p>Manage scheduled downloads, GPS telematics exports, and background data dumps.</p>
-              <div className="p-3 bg-muted/50 rounded-lg border border-border text-[11px] space-y-1">
-                <div className="font-semibold text-foreground">Active Tasks</div>
-                <div>No pending background export jobs.</div>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setIsCloudDownloadOpen(false)}
-                className="auth-btn-secondary"
-                style={{ height: "32px", fontSize: "12px", padding: "0 14px" }}
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>
