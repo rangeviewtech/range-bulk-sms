@@ -1,8 +1,8 @@
 {
-  "name": "master-project-root",
+  "name": "range-bulk-sms",
   "version": "1.0.0",
   "private": true,
-  "description": "Professional Next.js Master Starter Template by Range View Technology Services Uganda Limited",
+  "description": "Enterprise Bulk SMS Platform by Range View Technology Services Uganda Limited",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
