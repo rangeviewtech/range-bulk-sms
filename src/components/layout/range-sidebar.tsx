@@ -426,7 +426,9 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                     const maxTop = typeof window !== 'undefined' ? Math.max(10, window.innerHeight - subMenuHeight - 20) : rect.top;
                     setFlyoutTop(Math.min(rect.top, maxTop));
                     setHoveredModule(mod);
-                    setHoveredCategory(mod.categories ? mod.categories[0] : null);
+                    // Don't auto-select first category — cascading reveal:
+                    // Layer 1 (categories) shows first, Layer 2 (deep menu) only on category hover
+                    setHoveredCategory(null);
                     setCategoryIndex(0);
                   }}
                 >
@@ -499,6 +501,10 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               id="subMenu"
               className="w-[170px] bg-[#04648C] text-white flex flex-col border-r border-white/10 max-h-[85vh] overflow-y-auto animate-flyout-sub shadow-[4px_6px_16px_rgba(0,0,0,0.3)] z-10 shrink-0"
             >
+              {/* Module title header */}
+              <div className="px-3 py-2 text-[10px] uppercase font-bold tracking-wider text-white/50 border-b border-white/10 bg-[#04648C]/80">
+                {hoveredModule.title}
+              </div>
               <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5">
                 {hoveredModule.categories.map((cat, idx) => {
                   const isCatHovered = hoveredCategory?.title === cat.title;
