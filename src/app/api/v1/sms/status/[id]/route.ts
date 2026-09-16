@@ -1,17 +1,18 @@
 import { NextRequest } from 'next/server';
 import { withApiKey } from '@/lib/api-keys/service';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  return withApiKey(req, 'sms.status', async (request, context) => {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return withApiKey(req, 'sms.status', async () => {
     try {
       return Response.json({
         success: true,
-        messageId: params.id,
+        messageId: id,
         status: 'DELIVERED',
         deliveredAt: new Date().toISOString()
       });
-    } catch (error: any) {
-      return Response.json({ error: error.message }, { status: 400 });
+    } catch (error: unknown) {
+      return Response.json({ error: (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) }, { status: 400 } as any);
     }
   });
 }

@@ -1,8 +1,8 @@
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { normalizePhoneNumber } from '@/lib/sms/normalizer';
 
 export const ContactService = {
-  async create(userId: string, data: { firstName?: string; lastName?: string; phone: string; email?: string; countryCode?: string; customFields?: Record<string, unknown>; groupIds?: string[] }) {
+  async create(userId: string, data: { firstName?: string; lastName?: string; phone: string; email?: string; countryCode?: string; customFields?: import("@/generated/prisma/client").Prisma.InputJsonValue; groupIds?: string[] }) {
     const normalized = normalizePhoneNumber(data.phone, data.countryCode);
     if (!normalized.isValid) throw new Error('Invalid phone number: ' + normalized.error);
 
@@ -14,9 +14,9 @@ export const ContactService = {
         phone: data.phone,
         normalizedPhone: normalized.normalized,
         email: data.email,
-        customFields: data.customFields || {},
+        customFields: data.customFields as any || {},
         groups: data.groupIds ? {
-          connect: data.groupIds.map(id => ({ id }))
+          create: data.groupIds.map(id => ({ contactGroupId: id }))
         } : undefined
       }
     });
@@ -27,7 +27,7 @@ export const ContactService = {
     const limit = params.limit || 20;
     const skip = (page - 1) * limit;
 
-    const where: any = { userId, deletedAt: null };
+    const where: import("@/generated/prisma/client").Prisma.ContactWhereInput = { userId, deletedAt: null };
     if (params.optedOut !== undefined) where.optedOut = params.optedOut;
     if (params.blacklisted !== undefined) where.blacklisted = params.blacklisted;
     
@@ -42,7 +42,7 @@ export const ContactService = {
     }
 
     if (params.groupId) {
-      where.groups = { some: { id: params.groupId } };
+      where.groups = { some: { contactGroupId: params.groupId } };
     }
 
     const [contacts, total] = await Promise.all([
@@ -58,9 +58,12 @@ export const ContactService = {
       where: { id: contactId, userId, deletedAt: null }
     });
   },
-  
   async update(userId: string, contactId: string, data: Partial<{ firstName: string; lastName: string; phone: string; email: string; customFields: Record<string, unknown>; optedOut: boolean; blacklisted: boolean }>) {
-    const updateData: any = { ...data };
+    const { customFields, ...rest } = data;
+    const updateData: import("@/generated/prisma/client").Prisma.ContactUpdateInput = {
+      ...rest,
+      customFields: customFields as import("@/generated/prisma/client").Prisma.InputJsonValue | undefined,
+    };
     if (data.phone) {
       const normalized = normalizePhoneNumber(data.phone);
       if (!normalized.isValid) throw new Error('Invalid phone number');
@@ -89,11 +92,11 @@ export const ContactService = {
   },
   
   async addToGroup(contactIds: string[], groupId: string) {
-    const result = await prisma.group.update({
+    const result = await prisma.contactGroup.update({
       where: { id: groupId },
       data: {
-        contacts: {
-          connect: contactIds.map(id => ({ id }))
+        members: {
+          create: contactIds.map(id => ({ contactId: id }))
         }
       }
     });
@@ -101,11 +104,13 @@ export const ContactService = {
   },
   
   async removeFromGroup(contactIds: string[], groupId: string) {
-    const result = await prisma.group.update({
+    const result = await prisma.contactGroup.update({
       where: { id: groupId },
       data: {
-        contacts: {
-          disconnect: contactIds.map(id => ({ id }))
+        members: {
+          delete: contactIds.map(id => ({ 
+            contactId_contactGroupId: { contactId: id, contactGroupId: groupId }
+          }))
         }
       }
     });
@@ -131,8 +136,8 @@ export const ContactService = {
   },
   
   async count(userId: string, params?: { groupId?: string; optedOut?: boolean }) {
-    const where: any = { userId, deletedAt: null };
-    if (params?.groupId) where.groups = { some: { id: params.groupId } };
+    const where: import("@/generated/prisma/client").Prisma.ContactWhereInput = { userId, deletedAt: null };
+    if (params?.groupId) where.groups = { some: { contactGroupId: params.groupId } };
     if (params?.optedOut !== undefined) where.optedOut = params.optedOut;
     
     return await prisma.contact.count({ where });

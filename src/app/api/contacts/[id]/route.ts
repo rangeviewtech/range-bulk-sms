@@ -48,11 +48,12 @@ export async function PUT(req: NextRequest, props: Params) {
     }
 
     const { groupIds, ...rest } = data;
+    const restData: any = { ...rest };
 
     const updated = await prisma.contact.update({
       where: { id },
       data: {
-        ...rest,
+        ...restData,
         normalizedPhone,
         groups: groupIds ? {
           deleteMany: {},

@@ -2,7 +2,7 @@ import { LegalLayout } from '@/components/layout/legal-layout';
 
 export default function TermsPage() {
   return (
-    <LegalLayout>
+    <LegalLayout title="Terms of Service" subtitle="Terms and conditions for using our platform" lastUpdated="January 1, 2024">
       <h1 id="terms">Terms & Conditions</h1>
       <p>Last updated: {new Date().toLocaleDateString()}</p>
       

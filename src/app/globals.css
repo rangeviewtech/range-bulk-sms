@@ -1,6 +1,5 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
 @custom-variant dark (&:is(.dark *));
-@import "normalize.css" layer(base);
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));

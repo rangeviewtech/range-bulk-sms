@@ -443,7 +443,12 @@ export const ModelName = {
   WebhookDelivery: 'WebhookDelivery',
   SupportTicket: 'SupportTicket',
   TicketMessage: 'TicketMessage',
-  ScheduledMessage: 'ScheduledMessage'
+  ScheduledMessage: 'ScheduledMessage',
+  Gateway: 'Gateway',
+  GatewayDevice: 'GatewayDevice',
+  GatewayToken: 'GatewayToken',
+  GatewayLog: 'GatewayLog',
+  MessageAttempt: 'MessageAttempt'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -459,7 +464,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "verificationToken" | "role" | "permission" | "userRole" | "rolePermission" | "auditLog" | "job" | "communicationLog" | "providerHealth" | "otpRecord" | "telegramLinkingToken" | "notificationPreference" | "notificationTemplate" | "notification" | "scheduledJob" | "cronExecution" | "organization" | "client" | "agent" | "contact" | "contactGroup" | "contactGroupMember" | "contactTag" | "contactTagAssignment" | "contactImport" | "senderId" | "smsTemplate" | "campaign" | "campaignGroup" | "message" | "messageRecipient" | "smsProvider" | "providerRoute" | "wallet" | "transaction" | "smsPricing" | "commission" | "commissionRule" | "apiKey" | "apiRequest" | "webhook" | "webhookDelivery" | "supportTicket" | "ticketMessage" | "scheduledMessage"
+    modelProps: "user" | "session" | "verificationToken" | "role" | "permission" | "userRole" | "rolePermission" | "auditLog" | "job" | "communicationLog" | "providerHealth" | "otpRecord" | "telegramLinkingToken" | "notificationPreference" | "notificationTemplate" | "notification" | "scheduledJob" | "cronExecution" | "organization" | "client" | "agent" | "contact" | "contactGroup" | "contactGroupMember" | "contactTag" | "contactTagAssignment" | "contactImport" | "senderId" | "smsTemplate" | "campaign" | "campaignGroup" | "message" | "messageRecipient" | "smsProvider" | "providerRoute" | "wallet" | "transaction" | "smsPricing" | "commission" | "commissionRule" | "apiKey" | "apiRequest" | "webhook" | "webhookDelivery" | "supportTicket" | "ticketMessage" | "scheduledMessage" | "gateway" | "gatewayDevice" | "gatewayToken" | "gatewayLog" | "messageAttempt"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3941,6 +3946,376 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Gateway: {
+      payload: Prisma.$GatewayPayload<ExtArgs>
+      fields: Prisma.GatewayFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.GatewayFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.GatewayFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayPayload>
+        }
+        findFirst: {
+          args: Prisma.GatewayFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.GatewayFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayPayload>
+        }
+        findMany: {
+          args: Prisma.GatewayFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayPayload>[]
+        }
+        create: {
+          args: Prisma.GatewayCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayPayload>
+        }
+        createMany: {
+          args: Prisma.GatewayCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.GatewayCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayPayload>[]
+        }
+        delete: {
+          args: Prisma.GatewayDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayPayload>
+        }
+        update: {
+          args: Prisma.GatewayUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayPayload>
+        }
+        deleteMany: {
+          args: Prisma.GatewayDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.GatewayUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.GatewayUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayPayload>[]
+        }
+        upsert: {
+          args: Prisma.GatewayUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayPayload>
+        }
+        aggregate: {
+          args: Prisma.GatewayAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateGateway>
+        }
+        groupBy: {
+          args: Prisma.GatewayGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GatewayGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.GatewayCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GatewayCountAggregateOutputType> | number
+        }
+      }
+    }
+    GatewayDevice: {
+      payload: Prisma.$GatewayDevicePayload<ExtArgs>
+      fields: Prisma.GatewayDeviceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.GatewayDeviceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayDevicePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.GatewayDeviceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayDevicePayload>
+        }
+        findFirst: {
+          args: Prisma.GatewayDeviceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayDevicePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.GatewayDeviceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayDevicePayload>
+        }
+        findMany: {
+          args: Prisma.GatewayDeviceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayDevicePayload>[]
+        }
+        create: {
+          args: Prisma.GatewayDeviceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayDevicePayload>
+        }
+        createMany: {
+          args: Prisma.GatewayDeviceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.GatewayDeviceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayDevicePayload>[]
+        }
+        delete: {
+          args: Prisma.GatewayDeviceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayDevicePayload>
+        }
+        update: {
+          args: Prisma.GatewayDeviceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayDevicePayload>
+        }
+        deleteMany: {
+          args: Prisma.GatewayDeviceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.GatewayDeviceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.GatewayDeviceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayDevicePayload>[]
+        }
+        upsert: {
+          args: Prisma.GatewayDeviceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayDevicePayload>
+        }
+        aggregate: {
+          args: Prisma.GatewayDeviceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateGatewayDevice>
+        }
+        groupBy: {
+          args: Prisma.GatewayDeviceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GatewayDeviceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.GatewayDeviceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GatewayDeviceCountAggregateOutputType> | number
+        }
+      }
+    }
+    GatewayToken: {
+      payload: Prisma.$GatewayTokenPayload<ExtArgs>
+      fields: Prisma.GatewayTokenFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.GatewayTokenFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayTokenPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.GatewayTokenFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayTokenPayload>
+        }
+        findFirst: {
+          args: Prisma.GatewayTokenFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayTokenPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.GatewayTokenFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayTokenPayload>
+        }
+        findMany: {
+          args: Prisma.GatewayTokenFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayTokenPayload>[]
+        }
+        create: {
+          args: Prisma.GatewayTokenCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayTokenPayload>
+        }
+        createMany: {
+          args: Prisma.GatewayTokenCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.GatewayTokenCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayTokenPayload>[]
+        }
+        delete: {
+          args: Prisma.GatewayTokenDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayTokenPayload>
+        }
+        update: {
+          args: Prisma.GatewayTokenUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayTokenPayload>
+        }
+        deleteMany: {
+          args: Prisma.GatewayTokenDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.GatewayTokenUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.GatewayTokenUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayTokenPayload>[]
+        }
+        upsert: {
+          args: Prisma.GatewayTokenUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayTokenPayload>
+        }
+        aggregate: {
+          args: Prisma.GatewayTokenAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateGatewayToken>
+        }
+        groupBy: {
+          args: Prisma.GatewayTokenGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GatewayTokenGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.GatewayTokenCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GatewayTokenCountAggregateOutputType> | number
+        }
+      }
+    }
+    GatewayLog: {
+      payload: Prisma.$GatewayLogPayload<ExtArgs>
+      fields: Prisma.GatewayLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.GatewayLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.GatewayLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayLogPayload>
+        }
+        findFirst: {
+          args: Prisma.GatewayLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.GatewayLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayLogPayload>
+        }
+        findMany: {
+          args: Prisma.GatewayLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayLogPayload>[]
+        }
+        create: {
+          args: Prisma.GatewayLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayLogPayload>
+        }
+        createMany: {
+          args: Prisma.GatewayLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.GatewayLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayLogPayload>[]
+        }
+        delete: {
+          args: Prisma.GatewayLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayLogPayload>
+        }
+        update: {
+          args: Prisma.GatewayLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.GatewayLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.GatewayLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.GatewayLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.GatewayLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GatewayLogPayload>
+        }
+        aggregate: {
+          args: Prisma.GatewayLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateGatewayLog>
+        }
+        groupBy: {
+          args: Prisma.GatewayLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GatewayLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.GatewayLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GatewayLogCountAggregateOutputType> | number
+        }
+      }
+    }
+    MessageAttempt: {
+      payload: Prisma.$MessageAttemptPayload<ExtArgs>
+      fields: Prisma.MessageAttemptFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MessageAttemptFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageAttemptPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MessageAttemptFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageAttemptPayload>
+        }
+        findFirst: {
+          args: Prisma.MessageAttemptFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageAttemptPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MessageAttemptFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageAttemptPayload>
+        }
+        findMany: {
+          args: Prisma.MessageAttemptFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageAttemptPayload>[]
+        }
+        create: {
+          args: Prisma.MessageAttemptCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageAttemptPayload>
+        }
+        createMany: {
+          args: Prisma.MessageAttemptCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MessageAttemptCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageAttemptPayload>[]
+        }
+        delete: {
+          args: Prisma.MessageAttemptDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageAttemptPayload>
+        }
+        update: {
+          args: Prisma.MessageAttemptUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageAttemptPayload>
+        }
+        deleteMany: {
+          args: Prisma.MessageAttemptDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MessageAttemptUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MessageAttemptUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageAttemptPayload>[]
+        }
+        upsert: {
+          args: Prisma.MessageAttemptUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageAttemptPayload>
+        }
+        aggregate: {
+          args: Prisma.MessageAttemptAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMessageAttempt>
+        }
+        groupBy: {
+          args: Prisma.MessageAttemptGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MessageAttemptGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MessageAttemptCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MessageAttemptCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -4493,7 +4868,8 @@ export const MessageScalarFieldEnum = {
   maxRetries: 'maxRetries',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  gatewayId: 'gatewayId'
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
@@ -4795,6 +5171,93 @@ export const ScheduledMessageScalarFieldEnum = {
 } as const
 
 export type ScheduledMessageScalarFieldEnum = (typeof ScheduledMessageScalarFieldEnum)[keyof typeof ScheduledMessageScalarFieldEnum]
+
+
+export const GatewayScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  status: 'status',
+  userId: 'userId',
+  organizationId: 'organizationId',
+  smsProviderId: 'smsProviderId',
+  maxThroughput: 'maxThroughput',
+  batchSize: 'batchSize',
+  queuePriority: 'queuePriority',
+  isShared: 'isShared',
+  config: 'config',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GatewayScalarFieldEnum = (typeof GatewayScalarFieldEnum)[keyof typeof GatewayScalarFieldEnum]
+
+
+export const GatewayDeviceScalarFieldEnum = {
+  id: 'id',
+  gatewayId: 'gatewayId',
+  batteryLevel: 'batteryLevel',
+  isCharging: 'isCharging',
+  signalStrength: 'signalStrength',
+  networkOperator: 'networkOperator',
+  simSlotCount: 'simSlotCount',
+  appVersion: 'appVersion',
+  osVersion: 'osVersion',
+  hardwareModel: 'hardwareModel',
+  lastHeartbeatAt: 'lastHeartbeatAt',
+  ipAddress: 'ipAddress',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GatewayDeviceScalarFieldEnum = (typeof GatewayDeviceScalarFieldEnum)[keyof typeof GatewayDeviceScalarFieldEnum]
+
+
+export const GatewayTokenScalarFieldEnum = {
+  id: 'id',
+  gatewayId: 'gatewayId',
+  tokenHash: 'tokenHash',
+  name: 'name',
+  expiresAt: 'expiresAt',
+  lastUsedAt: 'lastUsedAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GatewayTokenScalarFieldEnum = (typeof GatewayTokenScalarFieldEnum)[keyof typeof GatewayTokenScalarFieldEnum]
+
+
+export const GatewayLogScalarFieldEnum = {
+  id: 'id',
+  gatewayId: 'gatewayId',
+  level: 'level',
+  event: 'event',
+  message: 'message',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type GatewayLogScalarFieldEnum = (typeof GatewayLogScalarFieldEnum)[keyof typeof GatewayLogScalarFieldEnum]
+
+
+export const MessageAttemptScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  gatewayId: 'gatewayId',
+  status: 'status',
+  providerMsgId: 'providerMsgId',
+  errorCode: 'errorCode',
+  errorMessage: 'errorMessage',
+  assignedAt: 'assignedAt',
+  sentToGatewayAt: 'sentToGatewayAt',
+  submittedAt: 'submittedAt',
+  finalizedAt: 'finalizedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MessageAttemptScalarFieldEnum = (typeof MessageAttemptScalarFieldEnum)[keyof typeof MessageAttemptScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -5167,6 +5630,48 @@ export type ListEnumTicketStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
 
 
 /**
+ * Reference to a field of type 'GatewayType'
+ */
+export type EnumGatewayTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GatewayType'>
+    
+
+
+/**
+ * Reference to a field of type 'GatewayType[]'
+ */
+export type ListEnumGatewayTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GatewayType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'GatewayStatus'
+ */
+export type EnumGatewayStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GatewayStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'GatewayStatus[]'
+ */
+export type ListEnumGatewayStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GatewayStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'MessageAttemptStatus'
+ */
+export type EnumMessageAttemptStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageAttemptStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'MessageAttemptStatus[]'
+ */
+export type ListEnumMessageAttemptStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageAttemptStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -5377,6 +5882,11 @@ export type GlobalOmitConfig = {
   supportTicket?: Prisma.SupportTicketOmit
   ticketMessage?: Prisma.TicketMessageOmit
   scheduledMessage?: Prisma.ScheduledMessageOmit
+  gateway?: Prisma.GatewayOmit
+  gatewayDevice?: Prisma.GatewayDeviceOmit
+  gatewayToken?: Prisma.GatewayTokenOmit
+  gatewayLog?: Prisma.GatewayLogOmit
+  messageAttempt?: Prisma.MessageAttemptOmit
 }
 
 /* Types for Logging */

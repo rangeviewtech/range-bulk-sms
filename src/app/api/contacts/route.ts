@@ -65,10 +65,11 @@ export async function POST(req: NextRequest) {
     }
 
     const { groupIds, ...rest } = data;
+    const restData: any = { ...rest };
 
     const contact = await prisma.contact.create({
       data: {
-        ...rest,
+        ...restData,
         normalizedPhone,
         userId: session.userId,
         groups: groupIds ? {

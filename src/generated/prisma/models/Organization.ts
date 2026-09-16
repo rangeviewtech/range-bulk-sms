@@ -262,6 +262,7 @@ export type OrganizationWhereInput = {
   wallets?: Prisma.WalletListRelationFilter
   apiKeys?: Prisma.ApiKeyListRelationFilter
   senderIds?: Prisma.SenderIdListRelationFilter
+  gateways?: Prisma.GatewayListRelationFilter
 }
 
 export type OrganizationOrderByWithRelationInput = {
@@ -284,6 +285,7 @@ export type OrganizationOrderByWithRelationInput = {
   wallets?: Prisma.WalletOrderByRelationAggregateInput
   apiKeys?: Prisma.ApiKeyOrderByRelationAggregateInput
   senderIds?: Prisma.SenderIdOrderByRelationAggregateInput
+  gateways?: Prisma.GatewayOrderByRelationAggregateInput
 }
 
 export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -309,6 +311,7 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   wallets?: Prisma.WalletListRelationFilter
   apiKeys?: Prisma.ApiKeyListRelationFilter
   senderIds?: Prisma.SenderIdListRelationFilter
+  gateways?: Prisma.GatewayListRelationFilter
 }, "id" | "email">
 
 export type OrganizationOrderByWithAggregationInput = {
@@ -373,6 +376,7 @@ export type OrganizationCreateInput = {
   wallets?: Prisma.WalletCreateNestedManyWithoutOrganizationInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutOrganizationInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutOrganizationInput
+  gateways?: Prisma.GatewayCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateInput = {
@@ -395,6 +399,7 @@ export type OrganizationUncheckedCreateInput = {
   wallets?: Prisma.WalletUncheckedCreateNestedManyWithoutOrganizationInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutOrganizationInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutOrganizationInput
+  gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUpdateInput = {
@@ -417,6 +422,7 @@ export type OrganizationUpdateInput = {
   wallets?: Prisma.WalletUpdateManyWithoutOrganizationNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutOrganizationNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutOrganizationNestedInput
+  gateways?: Prisma.GatewayUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateInput = {
@@ -439,6 +445,7 @@ export type OrganizationUncheckedUpdateInput = {
   wallets?: Prisma.WalletUncheckedUpdateManyWithoutOrganizationNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutOrganizationNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutOrganizationNestedInput
+  gateways?: Prisma.GatewayUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateManyInput = {
@@ -620,6 +627,22 @@ export type OrganizationUpdateOneWithoutApiKeysNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutApiKeysInput, Prisma.OrganizationUpdateWithoutApiKeysInput>, Prisma.OrganizationUncheckedUpdateWithoutApiKeysInput>
 }
 
+export type OrganizationCreateNestedOneWithoutGatewaysInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutGatewaysInput, Prisma.OrganizationUncheckedCreateWithoutGatewaysInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutGatewaysInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneWithoutGatewaysNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutGatewaysInput, Prisma.OrganizationUncheckedCreateWithoutGatewaysInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutGatewaysInput
+  upsert?: Prisma.OrganizationUpsertWithoutGatewaysInput
+  disconnect?: Prisma.OrganizationWhereInput | boolean
+  delete?: Prisma.OrganizationWhereInput | boolean
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutGatewaysInput, Prisma.OrganizationUpdateWithoutGatewaysInput>, Prisma.OrganizationUncheckedUpdateWithoutGatewaysInput>
+}
+
 export type OrganizationCreateWithoutClientsInput = {
   id?: string
   name: string
@@ -639,6 +662,7 @@ export type OrganizationCreateWithoutClientsInput = {
   wallets?: Prisma.WalletCreateNestedManyWithoutOrganizationInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutOrganizationInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutOrganizationInput
+  gateways?: Prisma.GatewayCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutClientsInput = {
@@ -660,6 +684,7 @@ export type OrganizationUncheckedCreateWithoutClientsInput = {
   wallets?: Prisma.WalletUncheckedCreateNestedManyWithoutOrganizationInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutOrganizationInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutOrganizationInput
+  gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutClientsInput = {
@@ -697,6 +722,7 @@ export type OrganizationUpdateWithoutClientsInput = {
   wallets?: Prisma.WalletUpdateManyWithoutOrganizationNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutOrganizationNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutOrganizationNestedInput
+  gateways?: Prisma.GatewayUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutClientsInput = {
@@ -718,6 +744,7 @@ export type OrganizationUncheckedUpdateWithoutClientsInput = {
   wallets?: Prisma.WalletUncheckedUpdateManyWithoutOrganizationNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutOrganizationNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutOrganizationNestedInput
+  gateways?: Prisma.GatewayUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutSenderIdsInput = {
@@ -739,6 +766,7 @@ export type OrganizationCreateWithoutSenderIdsInput = {
   clients?: Prisma.ClientCreateNestedManyWithoutOrganizationInput
   wallets?: Prisma.WalletCreateNestedManyWithoutOrganizationInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutOrganizationInput
+  gateways?: Prisma.GatewayCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutSenderIdsInput = {
@@ -760,6 +788,7 @@ export type OrganizationUncheckedCreateWithoutSenderIdsInput = {
   clients?: Prisma.ClientUncheckedCreateNestedManyWithoutOrganizationInput
   wallets?: Prisma.WalletUncheckedCreateNestedManyWithoutOrganizationInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutOrganizationInput
+  gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutSenderIdsInput = {
@@ -797,6 +826,7 @@ export type OrganizationUpdateWithoutSenderIdsInput = {
   clients?: Prisma.ClientUpdateManyWithoutOrganizationNestedInput
   wallets?: Prisma.WalletUpdateManyWithoutOrganizationNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutOrganizationNestedInput
+  gateways?: Prisma.GatewayUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutSenderIdsInput = {
@@ -818,6 +848,7 @@ export type OrganizationUncheckedUpdateWithoutSenderIdsInput = {
   clients?: Prisma.ClientUncheckedUpdateManyWithoutOrganizationNestedInput
   wallets?: Prisma.WalletUncheckedUpdateManyWithoutOrganizationNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutOrganizationNestedInput
+  gateways?: Prisma.GatewayUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutWalletsInput = {
@@ -839,6 +870,7 @@ export type OrganizationCreateWithoutWalletsInput = {
   clients?: Prisma.ClientCreateNestedManyWithoutOrganizationInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutOrganizationInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutOrganizationInput
+  gateways?: Prisma.GatewayCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutWalletsInput = {
@@ -860,6 +892,7 @@ export type OrganizationUncheckedCreateWithoutWalletsInput = {
   clients?: Prisma.ClientUncheckedCreateNestedManyWithoutOrganizationInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutOrganizationInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutOrganizationInput
+  gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutWalletsInput = {
@@ -897,6 +930,7 @@ export type OrganizationUpdateWithoutWalletsInput = {
   clients?: Prisma.ClientUpdateManyWithoutOrganizationNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutOrganizationNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutOrganizationNestedInput
+  gateways?: Prisma.GatewayUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutWalletsInput = {
@@ -918,6 +952,7 @@ export type OrganizationUncheckedUpdateWithoutWalletsInput = {
   clients?: Prisma.ClientUncheckedUpdateManyWithoutOrganizationNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutOrganizationNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutOrganizationNestedInput
+  gateways?: Prisma.GatewayUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutApiKeysInput = {
@@ -939,6 +974,7 @@ export type OrganizationCreateWithoutApiKeysInput = {
   clients?: Prisma.ClientCreateNestedManyWithoutOrganizationInput
   wallets?: Prisma.WalletCreateNestedManyWithoutOrganizationInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutOrganizationInput
+  gateways?: Prisma.GatewayCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutApiKeysInput = {
@@ -960,6 +996,7 @@ export type OrganizationUncheckedCreateWithoutApiKeysInput = {
   clients?: Prisma.ClientUncheckedCreateNestedManyWithoutOrganizationInput
   wallets?: Prisma.WalletUncheckedCreateNestedManyWithoutOrganizationInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutOrganizationInput
+  gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutApiKeysInput = {
@@ -997,6 +1034,7 @@ export type OrganizationUpdateWithoutApiKeysInput = {
   clients?: Prisma.ClientUpdateManyWithoutOrganizationNestedInput
   wallets?: Prisma.WalletUpdateManyWithoutOrganizationNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutOrganizationNestedInput
+  gateways?: Prisma.GatewayUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutApiKeysInput = {
@@ -1018,6 +1056,111 @@ export type OrganizationUncheckedUpdateWithoutApiKeysInput = {
   clients?: Prisma.ClientUncheckedUpdateManyWithoutOrganizationNestedInput
   wallets?: Prisma.WalletUncheckedUpdateManyWithoutOrganizationNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutOrganizationNestedInput
+  gateways?: Prisma.GatewayUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutGatewaysInput = {
+  id?: string
+  name: string
+  type?: $Enums.OrganizationType
+  email?: string | null
+  phone?: string | null
+  address?: string | null
+  city?: string | null
+  country?: string
+  logo?: string | null
+  primaryColor?: string | null
+  brandName?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  active?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  clients?: Prisma.ClientCreateNestedManyWithoutOrganizationInput
+  wallets?: Prisma.WalletCreateNestedManyWithoutOrganizationInput
+  apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutOrganizationInput
+  senderIds?: Prisma.SenderIdCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutGatewaysInput = {
+  id?: string
+  name: string
+  type?: $Enums.OrganizationType
+  email?: string | null
+  phone?: string | null
+  address?: string | null
+  city?: string | null
+  country?: string
+  logo?: string | null
+  primaryColor?: string | null
+  brandName?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  active?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  clients?: Prisma.ClientUncheckedCreateNestedManyWithoutOrganizationInput
+  wallets?: Prisma.WalletUncheckedCreateNestedManyWithoutOrganizationInput
+  apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutOrganizationInput
+  senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutGatewaysInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutGatewaysInput, Prisma.OrganizationUncheckedCreateWithoutGatewaysInput>
+}
+
+export type OrganizationUpsertWithoutGatewaysInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutGatewaysInput, Prisma.OrganizationUncheckedUpdateWithoutGatewaysInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutGatewaysInput, Prisma.OrganizationUncheckedCreateWithoutGatewaysInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutGatewaysInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutGatewaysInput, Prisma.OrganizationUncheckedUpdateWithoutGatewaysInput>
+}
+
+export type OrganizationUpdateWithoutGatewaysInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clients?: Prisma.ClientUpdateManyWithoutOrganizationNestedInput
+  wallets?: Prisma.WalletUpdateManyWithoutOrganizationNestedInput
+  apiKeys?: Prisma.ApiKeyUpdateManyWithoutOrganizationNestedInput
+  senderIds?: Prisma.SenderIdUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutGatewaysInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumOrganizationTypeFieldUpdateOperationsInput | $Enums.OrganizationType
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clients?: Prisma.ClientUncheckedUpdateManyWithoutOrganizationNestedInput
+  wallets?: Prisma.WalletUncheckedUpdateManyWithoutOrganizationNestedInput
+  apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 
@@ -1030,6 +1173,7 @@ export type OrganizationCountOutputType = {
   wallets: number
   apiKeys: number
   senderIds: number
+  gateways: number
 }
 
 export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1037,6 +1181,7 @@ export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Exte
   wallets?: boolean | OrganizationCountOutputTypeCountWalletsArgs
   apiKeys?: boolean | OrganizationCountOutputTypeCountApiKeysArgs
   senderIds?: boolean | OrganizationCountOutputTypeCountSenderIdsArgs
+  gateways?: boolean | OrganizationCountOutputTypeCountGatewaysArgs
 }
 
 /**
@@ -1077,6 +1222,13 @@ export type OrganizationCountOutputTypeCountSenderIdsArgs<ExtArgs extends runtim
   where?: Prisma.SenderIdWhereInput
 }
 
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountGatewaysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GatewayWhereInput
+}
+
 
 export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1098,6 +1250,7 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   wallets?: boolean | Prisma.Organization$walletsArgs<ExtArgs>
   apiKeys?: boolean | Prisma.Organization$apiKeysArgs<ExtArgs>
   senderIds?: boolean | Prisma.Organization$senderIdsArgs<ExtArgs>
+  gateways?: boolean | Prisma.Organization$gatewaysArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["organization"]>
 
@@ -1161,6 +1314,7 @@ export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   wallets?: boolean | Prisma.Organization$walletsArgs<ExtArgs>
   apiKeys?: boolean | Prisma.Organization$apiKeysArgs<ExtArgs>
   senderIds?: boolean | Prisma.Organization$senderIdsArgs<ExtArgs>
+  gateways?: boolean | Prisma.Organization$gatewaysArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1173,6 +1327,7 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     wallets: Prisma.$WalletPayload<ExtArgs>[]
     apiKeys: Prisma.$ApiKeyPayload<ExtArgs>[]
     senderIds: Prisma.$SenderIdPayload<ExtArgs>[]
+    gateways: Prisma.$GatewayPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1588,6 +1743,7 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   wallets<T extends Prisma.Organization$walletsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$walletsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WalletPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   apiKeys<T extends Prisma.Organization$apiKeysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$apiKeysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   senderIds<T extends Prisma.Organization$senderIdsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$senderIdsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SenderIdPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  gateways<T extends Prisma.Organization$gatewaysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$gatewaysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GatewayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2118,6 +2274,30 @@ export type Organization$senderIdsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.SenderIdScalarFieldEnum | Prisma.SenderIdScalarFieldEnum[]
+}
+
+/**
+ * Organization.gateways
+ */
+export type Organization$gatewaysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Gateway
+   */
+  select?: Prisma.GatewaySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Gateway
+   */
+  omit?: Prisma.GatewayOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GatewayInclude<ExtArgs> | null
+  where?: Prisma.GatewayWhereInput
+  orderBy?: Prisma.GatewayOrderByWithRelationInput | Prisma.GatewayOrderByWithRelationInput[]
+  cursor?: Prisma.GatewayWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.GatewayScalarFieldEnum | Prisma.GatewayScalarFieldEnum[]
 }
 
 /**

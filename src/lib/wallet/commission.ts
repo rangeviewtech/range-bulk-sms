@@ -1,5 +1,7 @@
-import { Decimal } from '@/generated/prisma/runtime/library';
-import prisma from '@/lib/prisma';
+import { Prisma } from '@/generated/prisma/client';
+type Decimal = Prisma.Decimal;
+const Decimal = Prisma.Decimal;
+import { prisma } from '@/lib/prisma';
 
 type CommissionType = 'PERCENTAGE' | 'FIXED' | 'TIERED';
 
@@ -27,9 +29,9 @@ export const CommissionEngine = {
     } else if (rule.type === 'FIXED') {
       amount = rate.mul(params.messageCount);
     } else if (rule.type === 'TIERED') {
-      const tier = await prisma.commissionTier.findFirst({
+      const tier = await prisma.commissionRule.findFirst({
         where: {
-          ruleId: rule.id,
+          agentId: params.agentId,
           minVolume: { lte: params.messageCount },
           maxVolume: { gte: params.messageCount }
         }
@@ -66,7 +68,7 @@ export const CommissionEngine = {
           amount: calc.amount,
           status: 'PENDING',
           campaignId: params.campaignId,
-          ruleId: calc.ruleId,
+          commissionRate: calc.rate, commissionType: calc.type, totalSmsValue: params.smsValue, messageCount: params.messageCount,
           idempotencyKey: params.idempotencyKey,
         }
       });

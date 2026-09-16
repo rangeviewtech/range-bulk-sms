@@ -17,9 +17,9 @@ describe('Permissions', () => {
       const adminUser = { id: 1, role: 'admin' }
       const normalUser = { id: 2, role: 'user' }
       
-      expect(can(adminUser.role as 'admin').create('posts' as const)).toBe(true)
-      expect(can(normalUser.role as 'user').create('posts' as const)).toBe(true) // Assuming user can create posts
-      expect(can(normalUser.role as 'user').delete('posts' as const)).toBe(false)
+      expect(can(adminUser.role as 'admin').create('campaigns')).toBe(true)
+      expect(can(normalUser.role as 'user').create('campaigns')).toBe(true)
+      expect(can(normalUser.role as 'user').delete('campaigns')).toBe(false)
     })
   })
 })

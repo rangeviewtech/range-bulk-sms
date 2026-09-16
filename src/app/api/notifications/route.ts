@@ -15,7 +15,7 @@ function failure(error: unknown) {
     {
       success: false,
       error:
-        status < 500 && error instanceof Error ? error.message : 'Unable to process notifications.',
+        status < 500 && error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Unable to process notifications.',
     },
     { status }
   );
@@ -50,7 +50,7 @@ export async function PATCH(req: Request) {
     if (!parsed.success)
       return NextResponse.json(
         { success: false, error: 'Invalid notification action.' },
-        { status: 400 }
+        { status: 400 } as any
       );
     await prisma.notification.updateMany({
       where: {

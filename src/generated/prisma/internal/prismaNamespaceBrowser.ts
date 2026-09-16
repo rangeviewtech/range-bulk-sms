@@ -97,7 +97,12 @@ export const ModelName = {
   WebhookDelivery: 'WebhookDelivery',
   SupportTicket: 'SupportTicket',
   TicketMessage: 'TicketMessage',
-  ScheduledMessage: 'ScheduledMessage'
+  ScheduledMessage: 'ScheduledMessage',
+  Gateway: 'Gateway',
+  GatewayDevice: 'GatewayDevice',
+  GatewayToken: 'GatewayToken',
+  GatewayLog: 'GatewayLog',
+  MessageAttempt: 'MessageAttempt'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -629,7 +634,8 @@ export const MessageScalarFieldEnum = {
   maxRetries: 'maxRetries',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  gatewayId: 'gatewayId'
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
@@ -931,6 +937,93 @@ export const ScheduledMessageScalarFieldEnum = {
 } as const
 
 export type ScheduledMessageScalarFieldEnum = (typeof ScheduledMessageScalarFieldEnum)[keyof typeof ScheduledMessageScalarFieldEnum]
+
+
+export const GatewayScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  status: 'status',
+  userId: 'userId',
+  organizationId: 'organizationId',
+  smsProviderId: 'smsProviderId',
+  maxThroughput: 'maxThroughput',
+  batchSize: 'batchSize',
+  queuePriority: 'queuePriority',
+  isShared: 'isShared',
+  config: 'config',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GatewayScalarFieldEnum = (typeof GatewayScalarFieldEnum)[keyof typeof GatewayScalarFieldEnum]
+
+
+export const GatewayDeviceScalarFieldEnum = {
+  id: 'id',
+  gatewayId: 'gatewayId',
+  batteryLevel: 'batteryLevel',
+  isCharging: 'isCharging',
+  signalStrength: 'signalStrength',
+  networkOperator: 'networkOperator',
+  simSlotCount: 'simSlotCount',
+  appVersion: 'appVersion',
+  osVersion: 'osVersion',
+  hardwareModel: 'hardwareModel',
+  lastHeartbeatAt: 'lastHeartbeatAt',
+  ipAddress: 'ipAddress',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GatewayDeviceScalarFieldEnum = (typeof GatewayDeviceScalarFieldEnum)[keyof typeof GatewayDeviceScalarFieldEnum]
+
+
+export const GatewayTokenScalarFieldEnum = {
+  id: 'id',
+  gatewayId: 'gatewayId',
+  tokenHash: 'tokenHash',
+  name: 'name',
+  expiresAt: 'expiresAt',
+  lastUsedAt: 'lastUsedAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GatewayTokenScalarFieldEnum = (typeof GatewayTokenScalarFieldEnum)[keyof typeof GatewayTokenScalarFieldEnum]
+
+
+export const GatewayLogScalarFieldEnum = {
+  id: 'id',
+  gatewayId: 'gatewayId',
+  level: 'level',
+  event: 'event',
+  message: 'message',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type GatewayLogScalarFieldEnum = (typeof GatewayLogScalarFieldEnum)[keyof typeof GatewayLogScalarFieldEnum]
+
+
+export const MessageAttemptScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  gatewayId: 'gatewayId',
+  status: 'status',
+  providerMsgId: 'providerMsgId',
+  errorCode: 'errorCode',
+  errorMessage: 'errorMessage',
+  assignedAt: 'assignedAt',
+  sentToGatewayAt: 'sentToGatewayAt',
+  submittedAt: 'submittedAt',
+  finalizedAt: 'finalizedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MessageAttemptScalarFieldEnum = (typeof MessageAttemptScalarFieldEnum)[keyof typeof MessageAttemptScalarFieldEnum]
 
 
 export const SortOrder = {

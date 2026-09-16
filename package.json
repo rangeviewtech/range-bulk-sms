@@ -92,6 +92,7 @@
     "recharts": "^3.10.1",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.6.0",
+    "uuid": "^14.0.2",
     "zod": "^3.25.76"
   },
   "devDependencies": {
@@ -106,6 +107,7 @@
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^6.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.2",

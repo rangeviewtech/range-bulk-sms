@@ -27,7 +27,7 @@ export const TelegramProvider = {
       return { success: true, messageId: String(data.result.message_id) };
     } catch (err: unknown) {
       logger.error('Telegram API Error', {
-        error: err instanceof Error ? err.message : 'Provider error',
+        error: err instanceof Error ? (err instanceof Error ? (err instanceof Error ? err.message : String(err)) : String(err)) : 'Provider error',
       });
       throw err;
     }

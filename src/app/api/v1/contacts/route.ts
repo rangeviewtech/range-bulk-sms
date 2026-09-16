@@ -10,12 +10,12 @@ export async function GET(req: NextRequest) {
       const limit = parseInt(url.searchParams.get('limit') || '20');
       
       const userId = context.userId || context.clientId;
-      if (!userId) return Response.json({ error: 'No user context' }, { status: 400 });
+      if (!userId) return Response.json({ error: 'No user context' }, { status: 400 } as any);
 
       const data = await ContactService.findMany(userId, { page, limit });
       return Response.json({ data });
-    } catch (error: any) {
-      return Response.json({ error: error.message }, { status: 500 });
+    } catch (error: unknown) {
+      return Response.json({ error: (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) }, { status: 500 });
     }
   });
 }
@@ -24,13 +24,13 @@ export async function POST(req: NextRequest) {
   return withApiKey(req, 'contacts.write', async (request, context) => {
     try {
       const userId = context.userId || context.clientId;
-      if (!userId) return Response.json({ error: 'No user context' }, { status: 400 });
+      if (!userId) return Response.json({ error: 'No user context' }, { status: 400 } as any);
 
       const body = await request.json();
       const contact = await ContactService.create(userId, body);
       return Response.json({ data: contact });
-    } catch (error: any) {
-      return Response.json({ error: error.message }, { status: 400 });
+    } catch (error: unknown) {
+      return Response.json({ error: (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) }, { status: 400 } as any);
     }
   });
 }

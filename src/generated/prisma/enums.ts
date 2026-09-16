@@ -197,3 +197,37 @@ export const TicketPriority = {
 } as const
 
 export type TicketPriority = (typeof TicketPriority)[keyof typeof TicketPriority]
+
+
+export const GatewayType = {
+  CLOUD: 'CLOUD',
+  ANDROID: 'ANDROID',
+  ESP32_GSM: 'ESP32_GSM',
+  SMPP: 'SMPP'
+} as const
+
+export type GatewayType = (typeof GatewayType)[keyof typeof GatewayType]
+
+
+export const GatewayStatus = {
+  ONLINE: 'ONLINE',
+  OFFLINE: 'OFFLINE',
+  DEGRADED: 'DEGRADED',
+  PENDING_PAIRING: 'PENDING_PAIRING',
+  SUSPENDED: 'SUSPENDED'
+} as const
+
+export type GatewayStatus = (typeof GatewayStatus)[keyof typeof GatewayStatus]
+
+
+export const MessageAttemptStatus = {
+  PENDING: 'PENDING',
+  ASSIGNED: 'ASSIGNED',
+  SENT_TO_GATEWAY: 'SENT_TO_GATEWAY',
+  SUBMITTED_TO_MODEM: 'SUBMITTED_TO_MODEM',
+  SENT: 'SENT',
+  DELIVERED: 'DELIVERED',
+  FAILED: 'FAILED'
+} as const
+
+export type MessageAttemptStatus = (typeof MessageAttemptStatus)[keyof typeof MessageAttemptStatus]

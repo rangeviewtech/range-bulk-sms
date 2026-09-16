@@ -2,7 +2,7 @@ import { LegalLayout } from '@/components/layout/legal-layout';
 
 export default function CookiesPage() {
   return (
-    <LegalLayout>
+    <LegalLayout title="Cookie Policy" subtitle="Information about how we use cookies" lastUpdated="January 1, 2024">
       <h1 id="cookies">Cookie Policy</h1>
       <p>Last updated: {new Date().toLocaleDateString()}</p>
 

@@ -1,5 +1,6 @@
-import { Decimal } from '@/generated/prisma/runtime/library';
-import prisma from '@/lib/prisma';
+import { Prisma } from '@/generated/prisma/client'
+const { Decimal } = Prisma;
+import { prisma } from '@/lib/prisma';
 
 export const PricingEngine = {
   async getPrice(params: { countryCode: string; networkCode?: string; clientId?: string; agentId?: string }) {
@@ -36,7 +37,7 @@ export const PricingEngine = {
     }
 
     return {
-      costPerSms: priceRecord.costPrice,
+      costPerSms: priceRecord.costPerSms,
       sellingPrice: priceRecord.sellingPrice,
       currency: priceRecord.currency || 'USD'
     };
@@ -58,7 +59,7 @@ export const PricingEngine = {
   },
   
   async getPricingTable(params?: { countryCode?: string; clientId?: string }) {
-    const where: any = {};
+    const where: import("@/generated/prisma/client").Prisma.SmsPricingWhereInput = {};
     if (params?.countryCode) where.countryCode = params.countryCode;
     if (params?.clientId) where.clientId = params.clientId;
 

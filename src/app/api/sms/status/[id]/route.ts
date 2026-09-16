@@ -27,14 +27,14 @@ export async function GET(
     });
 
     if (!message || message.userId !== session.userId) {
-      return NextResponse.json({ success: false, error: 'Message not found' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Message not found' }, { status: 404 } as any);
     }
 
     return NextResponse.json({ success: true, message });
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : 'Internal Server Error' },
+      { success: false, error: error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Internal Server Error' },
       { status }
     );
   }

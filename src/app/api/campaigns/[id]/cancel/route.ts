@@ -16,11 +16,11 @@ export async function POST(
     });
 
     if (!campaign || campaign.userId !== session.userId) {
-      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 } as any);
     }
 
     if (!['SCHEDULED', 'PROCESSING'].includes(campaign.status)) {
-      return NextResponse.json({ success: false, error: 'Campaign cannot be cancelled in its current state' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Campaign cannot be cancelled in its current state' }, { status: 400 } as any);
     }
 
     await prisma.campaign.update({
@@ -35,7 +35,7 @@ export async function POST(
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : 'Internal Server Error' },
+      { success: false, error: error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Internal Server Error' },
       { status }
     );
   }

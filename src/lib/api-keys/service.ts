@@ -1,15 +1,15 @@
 import crypto from 'crypto';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { NextRequest } from 'next/server';
 
-export function generateApiKey(): { key: string; prefix: string; secret: string; hash: string } {
+export function generateApiKey(): { key: string; keyPrefix: string; secret: string; keyHash: string } {
   const prefix = crypto.randomBytes(6).toString('hex'); // 12 chars
   const secret = crypto.randomBytes(16).toString('hex'); // 32 chars
   const key = `rsms_${prefix}_${secret}`;
   
   const hash = crypto.createHash('sha256').update(secret).digest('hex');
   
-  return { key, prefix, secret, hash };
+  return { key, keyPrefix: prefix, secret, keyHash: hash };
 }
 
 export function hashApiKey(secret: string): string {
@@ -27,14 +27,14 @@ export async function verifyApiKey(key: string): Promise<{ isValid: boolean; cli
   
   // Try to find the API key in the database using the plaintext prefix
   const apiKeyRecord = await prisma.apiKey.findFirst({
-    where: { prefix, isActive: true }
+    where: { keyPrefix: prefix, status: 'ACTIVE' }
   });
   
   if (!apiKeyRecord) return { isValid: false };
   
   // Verify secret hash matches
   const hash = hashApiKey(secret);
-  if (hash !== apiKeyRecord.hash) return { isValid: false };
+  if (hash !== apiKeyRecord.keyHash) return { isValid: false };
   
   return {
     isValid: true,

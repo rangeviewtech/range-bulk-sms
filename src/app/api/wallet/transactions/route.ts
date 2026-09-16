@@ -1,14 +1,11 @@
 import { NextRequest } from 'next/server';
 import { WalletService } from '@/lib/wallet/service';
-import { getSession } from '@/lib/auth/session';
+import { verifySession } from '@/lib/auth/session';
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getSession();
+    const session = await verifySession();
     if (!session || !session.userId) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    if (!session.permissions?.includes('wallet.view')) {
-      return Response.json({ error: 'Forbidden' }, { status: 403 });
-    }
 
     const url = new URL(req.url);
     const page = parseInt(url.searchParams.get('page') || '1');
@@ -18,7 +15,7 @@ export async function GET(req: NextRequest) {
     const transactions = await WalletService.getTransactions(wallet.id, { page, limit });
 
     return Response.json({ data: transactions });
-  } catch (error: any) {
-    return Response.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    return Response.json({ error: (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) }, { status: 500 });
   }
 }

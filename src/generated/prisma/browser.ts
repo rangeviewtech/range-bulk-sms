@@ -252,3 +252,28 @@ export type TicketMessage = Prisma.TicketMessageModel
  * 
  */
 export type ScheduledMessage = Prisma.ScheduledMessageModel
+/**
+ * Model Gateway
+ * 
+ */
+export type Gateway = Prisma.GatewayModel
+/**
+ * Model GatewayDevice
+ * 
+ */
+export type GatewayDevice = Prisma.GatewayDeviceModel
+/**
+ * Model GatewayToken
+ * 
+ */
+export type GatewayToken = Prisma.GatewayTokenModel
+/**
+ * Model GatewayLog
+ * 
+ */
+export type GatewayLog = Prisma.GatewayLogModel
+/**
+ * Model MessageAttempt
+ * 
+ */
+export type MessageAttempt = Prisma.MessageAttemptModel

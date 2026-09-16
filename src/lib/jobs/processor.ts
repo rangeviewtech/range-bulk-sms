@@ -105,7 +105,7 @@ export async function processJobsBatch(batchSize: number = 10) {
           throw new Error(`Unsupported job type: ${job.type}`);
       }
     } catch (e: unknown) {
-      lastError = e instanceof Error ? e.message : 'Unknown error';
+      lastError = e instanceof Error ? (e instanceof Error ? (e instanceof Error ? e.message : String(e)) : String(e)) : 'Unknown error';
       status = job.attempts >= job.maxAttempts - 1 ? 'DEAD_LETTER' : 'RETRYING';
     }
 

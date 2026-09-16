@@ -1,4 +1,4 @@
-import type { NextConfig } from 'next';
+﻿import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   async headers() {
@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
       default-src 'self';
       script-src 'self' ${process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ''} 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://unpkg.com https://challenges.cloudflare.com;
       style-src 'self' 'unsafe-inline' https://unpkg.com;
-      img-src 'self' blob: data: https://www.google-analytics.com https://tile.openstreetmap.org https://a.tile.openstreetmap.fr https://server.arcgisonline.com;
+      img-src 'self' blob: data: https://www.google-analytics.com https://flagcdn.com https://images.unsplash.com;
       connect-src 'self' https://www.google-analytics.com https://challenges.cloudflare.com ${process.env.NODE_ENV === 'development' ? 'ws: wss:' : ''};
       frame-src https://challenges.cloudflare.com;
       font-src 'self';
@@ -81,3 +81,5 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+

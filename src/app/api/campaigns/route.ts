@@ -37,7 +37,7 @@ export async function GET(req: Request) {
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : 'Internal Server Error' },
+      { success: false, error: error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Internal Server Error' },
       { status }
     );
   }
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       return NextResponse.json(
         { success: false, error: 'Invalid request data', details: parsed.error.format() },
-        { status: 400 }
+        { status: 400 } as any
       );
     }
     
@@ -65,7 +65,7 @@ export async function POST(req: Request) {
           name,
           message,
           variables,
-          status: scheduledAt ? 'SCHEDULED' : 'PENDING',
+          status: scheduledAt ? 'SCHEDULED' : 'DRAFT',
           scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
         }
       });
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : 'Internal Server Error' },
+      { success: false, error: error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Internal Server Error' },
       { status }
     );
   }

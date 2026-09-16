@@ -41,7 +41,7 @@ export const WhatsAppProvider = {
       return { success: true, messageId: data.messages?.[0]?.id };
     } catch (err: unknown) {
       logger.error('WhatsApp API Error', {
-        error: err instanceof Error ? err.message : 'Provider error',
+        error: err instanceof Error ? (err instanceof Error ? (err instanceof Error ? err.message : String(err)) : String(err)) : 'Provider error',
       });
       throw err;
     }

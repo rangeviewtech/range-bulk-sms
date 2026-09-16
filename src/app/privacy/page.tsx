@@ -2,7 +2,7 @@ import { LegalLayout } from '@/components/layout/legal-layout';
 
 export default function PrivacyPage() {
   return (
-    <LegalLayout>
+    <LegalLayout title="Privacy Policy" subtitle="How we handle your data" lastUpdated="January 1, 2024">
       <h1 id="privacy">Privacy Policy</h1>
       <p>Last updated: {new Date().toLocaleDateString()}</p>
 

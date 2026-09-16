@@ -31,7 +31,7 @@ export const SmtpProvider = {
 
       return { success: true, messageId: info.messageId };
     } catch (err: unknown) {
-      logger.error('SMTP Error', { error: err instanceof Error ? err.message : 'Provider error' });
+      logger.error('SMTP Error', { error: err instanceof Error ? (err instanceof Error ? (err instanceof Error ? err.message : String(err)) : String(err)) : 'Provider error' });
       throw err;
     }
   },

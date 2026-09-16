@@ -7,6 +7,6 @@ export async function POST(req: Request) {
     // Update Transaction status and add funds to Wallet
     return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 } as any);
   }
 }

@@ -6,7 +6,7 @@ import { HTTP_STATUS } from '@/constants/http-status';
 export const successResponse = <T>(
   data: T,
   message?: string,
-  status = HTTP_STATUS.OK
+  status: number = HTTP_STATUS.OK
 ): NextResponse<ApiResponse<T>> => {
   return NextResponse.json(
     {
@@ -44,7 +44,7 @@ export const paginatedResponse = <T>(
 
 export const errorResponse = (
   error: unknown,
-  status = HTTP_STATUS.INTERNAL_SERVER_ERROR
+  status: number = HTTP_STATUS.INTERNAL_SERVER_ERROR
 ): NextResponse<ApiResponse<null>> => {
   let errCode = 'INTERNAL_ERROR';
   let errMessage = 'Something went wrong. Please try again later.';
@@ -54,7 +54,7 @@ export const errorResponse = (
     if (typeof error === 'string') {
       errMessage = error;
     } else if (error instanceof Error) {
-      errMessage = error.message;
+      errMessage = (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error));
       errCode = error.name;
     } else if (error !== null && typeof error === 'object' && 'message' in error) {
       errMessage = String((error as Record<string, unknown>).message);
@@ -63,7 +63,7 @@ export const errorResponse = (
   } else {
     // In production, only expose known safe Application Errors
     if (error instanceof AppError && error.statusCode < 500) {
-      errMessage = error.message;
+      errMessage = (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error));
       errCode = error.code;
     }
   }

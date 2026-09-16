@@ -10,8 +10,8 @@ export async function POST(req: NextRequest) {
         messageId: 'msg_mock_123',
         status: 'QUEUED'
       });
-    } catch (error: any) {
-      return Response.json({ error: error.message }, { status: 400 });
+    } catch (error: unknown) {
+      return Response.json({ error: (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) }, { status: 400 } as any);
     }
   });
 }

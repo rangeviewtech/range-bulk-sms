@@ -1,4 +1,4 @@
-const CACHE_NAME = 'trakzee-public-assets-v2';
+const CACHE_NAME = 'Range SMS-public-assets-v2';
 const ASSETS = ['/images/smart/smart_logo.svg', '/images/smart/smart-icon.svg'];
 
 self.addEventListener('install', (event) => {
@@ -16,7 +16,7 @@ self.addEventListener('activate', (event) => {
       .then((names) =>
         Promise.all(
           names
-            .filter((name) => name.startsWith('trakzee-') && name !== CACHE_NAME)
+            .filter((name) => name.startsWith('Range SMS-') && name !== CACHE_NAME)
             .map((name) => caches.delete(name))
         )
       )

@@ -62,6 +62,11 @@ describe('Server session enforcement', () => {
         status: true,
         createdAt: true,
         mfaEnabled: true,
+        roles: {
+          include: {
+            role: true
+          }
+        },
       },
     });
   });

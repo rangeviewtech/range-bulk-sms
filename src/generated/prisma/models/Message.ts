@@ -70,6 +70,7 @@ export type MessageMinAggregateOutputType = {
   maxRetries: number | null
   createdAt: Date | null
   updatedAt: Date | null
+  gatewayId: string | null
 }
 
 export type MessageMaxAggregateOutputType = {
@@ -96,6 +97,7 @@ export type MessageMaxAggregateOutputType = {
   maxRetries: number | null
   createdAt: Date | null
   updatedAt: Date | null
+  gatewayId: string | null
 }
 
 export type MessageCountAggregateOutputType = {
@@ -123,6 +125,7 @@ export type MessageCountAggregateOutputType = {
   metadata: number
   createdAt: number
   updatedAt: number
+  gatewayId: number
   _all: number
 }
 
@@ -171,6 +174,7 @@ export type MessageMinAggregateInputType = {
   maxRetries?: true
   createdAt?: true
   updatedAt?: true
+  gatewayId?: true
 }
 
 export type MessageMaxAggregateInputType = {
@@ -197,6 +201,7 @@ export type MessageMaxAggregateInputType = {
   maxRetries?: true
   createdAt?: true
   updatedAt?: true
+  gatewayId?: true
 }
 
 export type MessageCountAggregateInputType = {
@@ -224,6 +229,7 @@ export type MessageCountAggregateInputType = {
   metadata?: true
   createdAt?: true
   updatedAt?: true
+  gatewayId?: true
   _all?: true
 }
 
@@ -338,6 +344,7 @@ export type MessageGroupByOutputType = {
   metadata: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
+  gatewayId: string | null
   _count: MessageCountAggregateOutputType | null
   _avg: MessageAvgAggregateOutputType | null
   _sum: MessageSumAggregateOutputType | null
@@ -388,11 +395,14 @@ export type MessageWhereInput = {
   metadata?: Prisma.JsonNullableFilter<"Message">
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Message"> | Date | string
+  gatewayId?: Prisma.StringNullableFilter<"Message"> | string | null
   campaign?: Prisma.XOR<Prisma.CampaignNullableScalarRelationFilter, Prisma.CampaignWhereInput> | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   senderId?: Prisma.XOR<Prisma.SenderIdNullableScalarRelationFilter, Prisma.SenderIdWhereInput> | null
   smsProvider?: Prisma.XOR<Prisma.SmsProviderNullableScalarRelationFilter, Prisma.SmsProviderWhereInput> | null
   recipients?: Prisma.MessageRecipientListRelationFilter
+  gateway?: Prisma.XOR<Prisma.GatewayNullableScalarRelationFilter, Prisma.GatewayWhereInput> | null
+  attempts?: Prisma.MessageAttemptListRelationFilter
 }
 
 export type MessageOrderByWithRelationInput = {
@@ -420,11 +430,14 @@ export type MessageOrderByWithRelationInput = {
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  gatewayId?: Prisma.SortOrderInput | Prisma.SortOrder
   campaign?: Prisma.CampaignOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
   senderId?: Prisma.SenderIdOrderByWithRelationInput
   smsProvider?: Prisma.SmsProviderOrderByWithRelationInput
   recipients?: Prisma.MessageRecipientOrderByRelationAggregateInput
+  gateway?: Prisma.GatewayOrderByWithRelationInput
+  attempts?: Prisma.MessageAttemptOrderByRelationAggregateInput
 }
 
 export type MessageWhereUniqueInput = Prisma.AtLeast<{
@@ -455,11 +468,14 @@ export type MessageWhereUniqueInput = Prisma.AtLeast<{
   metadata?: Prisma.JsonNullableFilter<"Message">
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Message"> | Date | string
+  gatewayId?: Prisma.StringNullableFilter<"Message"> | string | null
   campaign?: Prisma.XOR<Prisma.CampaignNullableScalarRelationFilter, Prisma.CampaignWhereInput> | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   senderId?: Prisma.XOR<Prisma.SenderIdNullableScalarRelationFilter, Prisma.SenderIdWhereInput> | null
   smsProvider?: Prisma.XOR<Prisma.SmsProviderNullableScalarRelationFilter, Prisma.SmsProviderWhereInput> | null
   recipients?: Prisma.MessageRecipientListRelationFilter
+  gateway?: Prisma.XOR<Prisma.GatewayNullableScalarRelationFilter, Prisma.GatewayWhereInput> | null
+  attempts?: Prisma.MessageAttemptListRelationFilter
 }, "id" | "idempotencyKey">
 
 export type MessageOrderByWithAggregationInput = {
@@ -487,6 +503,7 @@ export type MessageOrderByWithAggregationInput = {
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  gatewayId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.MessageCountOrderByAggregateInput
   _avg?: Prisma.MessageAvgOrderByAggregateInput
   _max?: Prisma.MessageMaxOrderByAggregateInput
@@ -522,6 +539,7 @@ export type MessageScalarWhereWithAggregatesInput = {
   metadata?: Prisma.JsonNullableWithAggregatesFilter<"Message">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Message"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Message"> | Date | string
+  gatewayId?: Prisma.StringNullableWithAggregatesFilter<"Message"> | string | null
 }
 
 export type MessageCreateInput = {
@@ -550,6 +568,8 @@ export type MessageCreateInput = {
   senderId?: Prisma.SenderIdCreateNestedOneWithoutMessagesInput
   smsProvider?: Prisma.SmsProviderCreateNestedOneWithoutMessagesInput
   recipients?: Prisma.MessageRecipientCreateNestedManyWithoutMessageInput
+  gateway?: Prisma.GatewayCreateNestedOneWithoutMessagesInput
+  attempts?: Prisma.MessageAttemptCreateNestedManyWithoutMessageInput
 }
 
 export type MessageUncheckedCreateInput = {
@@ -577,7 +597,9 @@ export type MessageUncheckedCreateInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  gatewayId?: string | null
   recipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutMessageInput
+  attempts?: Prisma.MessageAttemptUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MessageUpdateInput = {
@@ -606,6 +628,8 @@ export type MessageUpdateInput = {
   senderId?: Prisma.SenderIdUpdateOneWithoutMessagesNestedInput
   smsProvider?: Prisma.SmsProviderUpdateOneWithoutMessagesNestedInput
   recipients?: Prisma.MessageRecipientUpdateManyWithoutMessageNestedInput
+  gateway?: Prisma.GatewayUpdateOneWithoutMessagesNestedInput
+  attempts?: Prisma.MessageAttemptUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateInput = {
@@ -633,7 +657,9 @@ export type MessageUncheckedUpdateInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutMessageNestedInput
+  attempts?: Prisma.MessageAttemptUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageCreateManyInput = {
@@ -661,6 +687,7 @@ export type MessageCreateManyInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  gatewayId?: string | null
 }
 
 export type MessageUpdateManyMutationInput = {
@@ -711,6 +738,7 @@ export type MessageUncheckedUpdateManyInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type MessageListRelationFilter = {
@@ -748,6 +776,7 @@ export type MessageCountOrderByAggregateInput = {
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  gatewayId?: Prisma.SortOrder
 }
 
 export type MessageAvgOrderByAggregateInput = {
@@ -784,6 +813,7 @@ export type MessageMaxOrderByAggregateInput = {
   maxRetries?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  gatewayId?: Prisma.SortOrder
 }
 
 export type MessageMinOrderByAggregateInput = {
@@ -810,6 +840,7 @@ export type MessageMinOrderByAggregateInput = {
   maxRetries?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  gatewayId?: Prisma.SortOrder
 }
 
 export type MessageSumOrderByAggregateInput = {
@@ -1013,6 +1044,62 @@ export type MessageUncheckedUpdateManyWithoutSmsProviderNestedInput = {
   deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
 }
 
+export type MessageCreateNestedManyWithoutGatewayInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutGatewayInput, Prisma.MessageUncheckedCreateWithoutGatewayInput> | Prisma.MessageCreateWithoutGatewayInput[] | Prisma.MessageUncheckedCreateWithoutGatewayInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutGatewayInput | Prisma.MessageCreateOrConnectWithoutGatewayInput[]
+  createMany?: Prisma.MessageCreateManyGatewayInputEnvelope
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+}
+
+export type MessageUncheckedCreateNestedManyWithoutGatewayInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutGatewayInput, Prisma.MessageUncheckedCreateWithoutGatewayInput> | Prisma.MessageCreateWithoutGatewayInput[] | Prisma.MessageUncheckedCreateWithoutGatewayInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutGatewayInput | Prisma.MessageCreateOrConnectWithoutGatewayInput[]
+  createMany?: Prisma.MessageCreateManyGatewayInputEnvelope
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+}
+
+export type MessageUpdateManyWithoutGatewayNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutGatewayInput, Prisma.MessageUncheckedCreateWithoutGatewayInput> | Prisma.MessageCreateWithoutGatewayInput[] | Prisma.MessageUncheckedCreateWithoutGatewayInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutGatewayInput | Prisma.MessageCreateOrConnectWithoutGatewayInput[]
+  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutGatewayInput | Prisma.MessageUpsertWithWhereUniqueWithoutGatewayInput[]
+  createMany?: Prisma.MessageCreateManyGatewayInputEnvelope
+  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  update?: Prisma.MessageUpdateWithWhereUniqueWithoutGatewayInput | Prisma.MessageUpdateWithWhereUniqueWithoutGatewayInput[]
+  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutGatewayInput | Prisma.MessageUpdateManyWithWhereWithoutGatewayInput[]
+  deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
+}
+
+export type MessageUncheckedUpdateManyWithoutGatewayNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutGatewayInput, Prisma.MessageUncheckedCreateWithoutGatewayInput> | Prisma.MessageCreateWithoutGatewayInput[] | Prisma.MessageUncheckedCreateWithoutGatewayInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutGatewayInput | Prisma.MessageCreateOrConnectWithoutGatewayInput[]
+  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutGatewayInput | Prisma.MessageUpsertWithWhereUniqueWithoutGatewayInput[]
+  createMany?: Prisma.MessageCreateManyGatewayInputEnvelope
+  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  update?: Prisma.MessageUpdateWithWhereUniqueWithoutGatewayInput | Prisma.MessageUpdateWithWhereUniqueWithoutGatewayInput[]
+  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutGatewayInput | Prisma.MessageUpdateManyWithWhereWithoutGatewayInput[]
+  deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
+}
+
+export type MessageCreateNestedOneWithoutAttemptsInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutAttemptsInput, Prisma.MessageUncheckedCreateWithoutAttemptsInput>
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutAttemptsInput
+  connect?: Prisma.MessageWhereUniqueInput
+}
+
+export type MessageUpdateOneRequiredWithoutAttemptsNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutAttemptsInput, Prisma.MessageUncheckedCreateWithoutAttemptsInput>
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutAttemptsInput
+  upsert?: Prisma.MessageUpsertWithoutAttemptsInput
+  connect?: Prisma.MessageWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MessageUpdateToOneWithWhereWithoutAttemptsInput, Prisma.MessageUpdateWithoutAttemptsInput>, Prisma.MessageUncheckedUpdateWithoutAttemptsInput>
+}
+
 export type MessageCreateWithoutUserInput = {
   id?: string
   message: string
@@ -1038,6 +1125,8 @@ export type MessageCreateWithoutUserInput = {
   senderId?: Prisma.SenderIdCreateNestedOneWithoutMessagesInput
   smsProvider?: Prisma.SmsProviderCreateNestedOneWithoutMessagesInput
   recipients?: Prisma.MessageRecipientCreateNestedManyWithoutMessageInput
+  gateway?: Prisma.GatewayCreateNestedOneWithoutMessagesInput
+  attempts?: Prisma.MessageAttemptCreateNestedManyWithoutMessageInput
 }
 
 export type MessageUncheckedCreateWithoutUserInput = {
@@ -1064,7 +1153,9 @@ export type MessageUncheckedCreateWithoutUserInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  gatewayId?: string | null
   recipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutMessageInput
+  attempts?: Prisma.MessageAttemptUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MessageCreateOrConnectWithoutUserInput = {
@@ -1121,6 +1212,7 @@ export type MessageScalarWhereInput = {
   metadata?: Prisma.JsonNullableFilter<"Message">
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Message"> | Date | string
+  gatewayId?: Prisma.StringNullableFilter<"Message"> | string | null
 }
 
 export type MessageCreateWithoutSenderIdInput = {
@@ -1148,6 +1240,8 @@ export type MessageCreateWithoutSenderIdInput = {
   user: Prisma.UserCreateNestedOneWithoutMessagesInput
   smsProvider?: Prisma.SmsProviderCreateNestedOneWithoutMessagesInput
   recipients?: Prisma.MessageRecipientCreateNestedManyWithoutMessageInput
+  gateway?: Prisma.GatewayCreateNestedOneWithoutMessagesInput
+  attempts?: Prisma.MessageAttemptCreateNestedManyWithoutMessageInput
 }
 
 export type MessageUncheckedCreateWithoutSenderIdInput = {
@@ -1174,7 +1268,9 @@ export type MessageUncheckedCreateWithoutSenderIdInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  gatewayId?: string | null
   recipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutMessageInput
+  attempts?: Prisma.MessageAttemptUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MessageCreateOrConnectWithoutSenderIdInput = {
@@ -1228,6 +1324,8 @@ export type MessageCreateWithoutCampaignInput = {
   senderId?: Prisma.SenderIdCreateNestedOneWithoutMessagesInput
   smsProvider?: Prisma.SmsProviderCreateNestedOneWithoutMessagesInput
   recipients?: Prisma.MessageRecipientCreateNestedManyWithoutMessageInput
+  gateway?: Prisma.GatewayCreateNestedOneWithoutMessagesInput
+  attempts?: Prisma.MessageAttemptCreateNestedManyWithoutMessageInput
 }
 
 export type MessageUncheckedCreateWithoutCampaignInput = {
@@ -1254,7 +1352,9 @@ export type MessageUncheckedCreateWithoutCampaignInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  gatewayId?: string | null
   recipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutMessageInput
+  attempts?: Prisma.MessageAttemptUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MessageCreateOrConnectWithoutCampaignInput = {
@@ -1308,6 +1408,8 @@ export type MessageCreateWithoutRecipientsInput = {
   user: Prisma.UserCreateNestedOneWithoutMessagesInput
   senderId?: Prisma.SenderIdCreateNestedOneWithoutMessagesInput
   smsProvider?: Prisma.SmsProviderCreateNestedOneWithoutMessagesInput
+  gateway?: Prisma.GatewayCreateNestedOneWithoutMessagesInput
+  attempts?: Prisma.MessageAttemptCreateNestedManyWithoutMessageInput
 }
 
 export type MessageUncheckedCreateWithoutRecipientsInput = {
@@ -1335,6 +1437,8 @@ export type MessageUncheckedCreateWithoutRecipientsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  gatewayId?: string | null
+  attempts?: Prisma.MessageAttemptUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MessageCreateOrConnectWithoutRecipientsInput = {
@@ -1378,6 +1482,8 @@ export type MessageUpdateWithoutRecipientsInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
   senderId?: Prisma.SenderIdUpdateOneWithoutMessagesNestedInput
   smsProvider?: Prisma.SmsProviderUpdateOneWithoutMessagesNestedInput
+  gateway?: Prisma.GatewayUpdateOneWithoutMessagesNestedInput
+  attempts?: Prisma.MessageAttemptUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateWithoutRecipientsInput = {
@@ -1405,6 +1511,8 @@ export type MessageUncheckedUpdateWithoutRecipientsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.MessageAttemptUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageCreateWithoutSmsProviderInput = {
@@ -1432,6 +1540,8 @@ export type MessageCreateWithoutSmsProviderInput = {
   user: Prisma.UserCreateNestedOneWithoutMessagesInput
   senderId?: Prisma.SenderIdCreateNestedOneWithoutMessagesInput
   recipients?: Prisma.MessageRecipientCreateNestedManyWithoutMessageInput
+  gateway?: Prisma.GatewayCreateNestedOneWithoutMessagesInput
+  attempts?: Prisma.MessageAttemptCreateNestedManyWithoutMessageInput
 }
 
 export type MessageUncheckedCreateWithoutSmsProviderInput = {
@@ -1458,7 +1568,9 @@ export type MessageUncheckedCreateWithoutSmsProviderInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  gatewayId?: string | null
   recipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutMessageInput
+  attempts?: Prisma.MessageAttemptUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MessageCreateOrConnectWithoutSmsProviderInput = {
@@ -1487,6 +1599,222 @@ export type MessageUpdateManyWithWhereWithoutSmsProviderInput = {
   data: Prisma.XOR<Prisma.MessageUpdateManyMutationInput, Prisma.MessageUncheckedUpdateManyWithoutSmsProviderInput>
 }
 
+export type MessageCreateWithoutGatewayInput = {
+  id?: string
+  message: string
+  encoding?: string
+  segmentCount?: number
+  recipientCount?: number
+  totalUnits?: number
+  costPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.MessageStatus
+  providerMessageId?: string | null
+  idempotencyKey?: string | null
+  sentAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  failedAt?: Date | string | null
+  failureReason?: string | null
+  retryCount?: number
+  maxRetries?: number
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  campaign?: Prisma.CampaignCreateNestedOneWithoutMessagesInput
+  user: Prisma.UserCreateNestedOneWithoutMessagesInput
+  senderId?: Prisma.SenderIdCreateNestedOneWithoutMessagesInput
+  smsProvider?: Prisma.SmsProviderCreateNestedOneWithoutMessagesInput
+  recipients?: Prisma.MessageRecipientCreateNestedManyWithoutMessageInput
+  attempts?: Prisma.MessageAttemptCreateNestedManyWithoutMessageInput
+}
+
+export type MessageUncheckedCreateWithoutGatewayInput = {
+  id?: string
+  campaignId?: string | null
+  userId: string
+  senderIdId?: string | null
+  smsProviderId?: string | null
+  message: string
+  encoding?: string
+  segmentCount?: number
+  recipientCount?: number
+  totalUnits?: number
+  costPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.MessageStatus
+  providerMessageId?: string | null
+  idempotencyKey?: string | null
+  sentAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  failedAt?: Date | string | null
+  failureReason?: string | null
+  retryCount?: number
+  maxRetries?: number
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  recipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutMessageInput
+  attempts?: Prisma.MessageAttemptUncheckedCreateNestedManyWithoutMessageInput
+}
+
+export type MessageCreateOrConnectWithoutGatewayInput = {
+  where: Prisma.MessageWhereUniqueInput
+  create: Prisma.XOR<Prisma.MessageCreateWithoutGatewayInput, Prisma.MessageUncheckedCreateWithoutGatewayInput>
+}
+
+export type MessageCreateManyGatewayInputEnvelope = {
+  data: Prisma.MessageCreateManyGatewayInput | Prisma.MessageCreateManyGatewayInput[]
+  skipDuplicates?: boolean
+}
+
+export type MessageUpsertWithWhereUniqueWithoutGatewayInput = {
+  where: Prisma.MessageWhereUniqueInput
+  update: Prisma.XOR<Prisma.MessageUpdateWithoutGatewayInput, Prisma.MessageUncheckedUpdateWithoutGatewayInput>
+  create: Prisma.XOR<Prisma.MessageCreateWithoutGatewayInput, Prisma.MessageUncheckedCreateWithoutGatewayInput>
+}
+
+export type MessageUpdateWithWhereUniqueWithoutGatewayInput = {
+  where: Prisma.MessageWhereUniqueInput
+  data: Prisma.XOR<Prisma.MessageUpdateWithoutGatewayInput, Prisma.MessageUncheckedUpdateWithoutGatewayInput>
+}
+
+export type MessageUpdateManyWithWhereWithoutGatewayInput = {
+  where: Prisma.MessageScalarWhereInput
+  data: Prisma.XOR<Prisma.MessageUpdateManyMutationInput, Prisma.MessageUncheckedUpdateManyWithoutGatewayInput>
+}
+
+export type MessageCreateWithoutAttemptsInput = {
+  id?: string
+  message: string
+  encoding?: string
+  segmentCount?: number
+  recipientCount?: number
+  totalUnits?: number
+  costPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.MessageStatus
+  providerMessageId?: string | null
+  idempotencyKey?: string | null
+  sentAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  failedAt?: Date | string | null
+  failureReason?: string | null
+  retryCount?: number
+  maxRetries?: number
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  campaign?: Prisma.CampaignCreateNestedOneWithoutMessagesInput
+  user: Prisma.UserCreateNestedOneWithoutMessagesInput
+  senderId?: Prisma.SenderIdCreateNestedOneWithoutMessagesInput
+  smsProvider?: Prisma.SmsProviderCreateNestedOneWithoutMessagesInput
+  recipients?: Prisma.MessageRecipientCreateNestedManyWithoutMessageInput
+  gateway?: Prisma.GatewayCreateNestedOneWithoutMessagesInput
+}
+
+export type MessageUncheckedCreateWithoutAttemptsInput = {
+  id?: string
+  campaignId?: string | null
+  userId: string
+  senderIdId?: string | null
+  smsProviderId?: string | null
+  message: string
+  encoding?: string
+  segmentCount?: number
+  recipientCount?: number
+  totalUnits?: number
+  costPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.MessageStatus
+  providerMessageId?: string | null
+  idempotencyKey?: string | null
+  sentAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  failedAt?: Date | string | null
+  failureReason?: string | null
+  retryCount?: number
+  maxRetries?: number
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  gatewayId?: string | null
+  recipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutMessageInput
+}
+
+export type MessageCreateOrConnectWithoutAttemptsInput = {
+  where: Prisma.MessageWhereUniqueInput
+  create: Prisma.XOR<Prisma.MessageCreateWithoutAttemptsInput, Prisma.MessageUncheckedCreateWithoutAttemptsInput>
+}
+
+export type MessageUpsertWithoutAttemptsInput = {
+  update: Prisma.XOR<Prisma.MessageUpdateWithoutAttemptsInput, Prisma.MessageUncheckedUpdateWithoutAttemptsInput>
+  create: Prisma.XOR<Prisma.MessageCreateWithoutAttemptsInput, Prisma.MessageUncheckedCreateWithoutAttemptsInput>
+  where?: Prisma.MessageWhereInput
+}
+
+export type MessageUpdateToOneWithWhereWithoutAttemptsInput = {
+  where?: Prisma.MessageWhereInput
+  data: Prisma.XOR<Prisma.MessageUpdateWithoutAttemptsInput, Prisma.MessageUncheckedUpdateWithoutAttemptsInput>
+}
+
+export type MessageUpdateWithoutAttemptsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  encoding?: Prisma.StringFieldUpdateOperationsInput | string
+  segmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  recipientCount?: Prisma.IntFieldUpdateOperationsInput | number
+  totalUnits?: Prisma.IntFieldUpdateOperationsInput | number
+  costPerUnit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  maxRetries?: Prisma.IntFieldUpdateOperationsInput | number
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  campaign?: Prisma.CampaignUpdateOneWithoutMessagesNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
+  senderId?: Prisma.SenderIdUpdateOneWithoutMessagesNestedInput
+  smsProvider?: Prisma.SmsProviderUpdateOneWithoutMessagesNestedInput
+  recipients?: Prisma.MessageRecipientUpdateManyWithoutMessageNestedInput
+  gateway?: Prisma.GatewayUpdateOneWithoutMessagesNestedInput
+}
+
+export type MessageUncheckedUpdateWithoutAttemptsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  campaignId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  smsProviderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  encoding?: Prisma.StringFieldUpdateOperationsInput | string
+  segmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  recipientCount?: Prisma.IntFieldUpdateOperationsInput | number
+  totalUnits?: Prisma.IntFieldUpdateOperationsInput | number
+  costPerUnit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  maxRetries?: Prisma.IntFieldUpdateOperationsInput | number
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutMessageNestedInput
+}
+
 export type MessageCreateManyUserInput = {
   id?: string
   campaignId?: string | null
@@ -1511,6 +1839,7 @@ export type MessageCreateManyUserInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  gatewayId?: string | null
 }
 
 export type MessageUpdateWithoutUserInput = {
@@ -1538,6 +1867,8 @@ export type MessageUpdateWithoutUserInput = {
   senderId?: Prisma.SenderIdUpdateOneWithoutMessagesNestedInput
   smsProvider?: Prisma.SmsProviderUpdateOneWithoutMessagesNestedInput
   recipients?: Prisma.MessageRecipientUpdateManyWithoutMessageNestedInput
+  gateway?: Prisma.GatewayUpdateOneWithoutMessagesNestedInput
+  attempts?: Prisma.MessageAttemptUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateWithoutUserInput = {
@@ -1564,7 +1895,9 @@ export type MessageUncheckedUpdateWithoutUserInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutMessageNestedInput
+  attempts?: Prisma.MessageAttemptUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateManyWithoutUserInput = {
@@ -1591,6 +1924,7 @@ export type MessageUncheckedUpdateManyWithoutUserInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type MessageCreateManySenderIdInput = {
@@ -1617,6 +1951,7 @@ export type MessageCreateManySenderIdInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  gatewayId?: string | null
 }
 
 export type MessageUpdateWithoutSenderIdInput = {
@@ -1644,6 +1979,8 @@ export type MessageUpdateWithoutSenderIdInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
   smsProvider?: Prisma.SmsProviderUpdateOneWithoutMessagesNestedInput
   recipients?: Prisma.MessageRecipientUpdateManyWithoutMessageNestedInput
+  gateway?: Prisma.GatewayUpdateOneWithoutMessagesNestedInput
+  attempts?: Prisma.MessageAttemptUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateWithoutSenderIdInput = {
@@ -1670,7 +2007,9 @@ export type MessageUncheckedUpdateWithoutSenderIdInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutMessageNestedInput
+  attempts?: Prisma.MessageAttemptUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateManyWithoutSenderIdInput = {
@@ -1697,6 +2036,7 @@ export type MessageUncheckedUpdateManyWithoutSenderIdInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type MessageCreateManyCampaignInput = {
@@ -1723,6 +2063,7 @@ export type MessageCreateManyCampaignInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  gatewayId?: string | null
 }
 
 export type MessageUpdateWithoutCampaignInput = {
@@ -1750,6 +2091,8 @@ export type MessageUpdateWithoutCampaignInput = {
   senderId?: Prisma.SenderIdUpdateOneWithoutMessagesNestedInput
   smsProvider?: Prisma.SmsProviderUpdateOneWithoutMessagesNestedInput
   recipients?: Prisma.MessageRecipientUpdateManyWithoutMessageNestedInput
+  gateway?: Prisma.GatewayUpdateOneWithoutMessagesNestedInput
+  attempts?: Prisma.MessageAttemptUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateWithoutCampaignInput = {
@@ -1776,7 +2119,9 @@ export type MessageUncheckedUpdateWithoutCampaignInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutMessageNestedInput
+  attempts?: Prisma.MessageAttemptUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateManyWithoutCampaignInput = {
@@ -1803,6 +2148,7 @@ export type MessageUncheckedUpdateManyWithoutCampaignInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type MessageCreateManySmsProviderInput = {
@@ -1829,6 +2175,7 @@ export type MessageCreateManySmsProviderInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  gatewayId?: string | null
 }
 
 export type MessageUpdateWithoutSmsProviderInput = {
@@ -1856,6 +2203,8 @@ export type MessageUpdateWithoutSmsProviderInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
   senderId?: Prisma.SenderIdUpdateOneWithoutMessagesNestedInput
   recipients?: Prisma.MessageRecipientUpdateManyWithoutMessageNestedInput
+  gateway?: Prisma.GatewayUpdateOneWithoutMessagesNestedInput
+  attempts?: Prisma.MessageAttemptUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateWithoutSmsProviderInput = {
@@ -1882,7 +2231,9 @@ export type MessageUncheckedUpdateWithoutSmsProviderInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutMessageNestedInput
+  attempts?: Prisma.MessageAttemptUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MessageUncheckedUpdateManyWithoutSmsProviderInput = {
@@ -1890,6 +2241,119 @@ export type MessageUncheckedUpdateManyWithoutSmsProviderInput = {
   campaignId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  encoding?: Prisma.StringFieldUpdateOperationsInput | string
+  segmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  recipientCount?: Prisma.IntFieldUpdateOperationsInput | number
+  totalUnits?: Prisma.IntFieldUpdateOperationsInput | number
+  costPerUnit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  maxRetries?: Prisma.IntFieldUpdateOperationsInput | number
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type MessageCreateManyGatewayInput = {
+  id?: string
+  campaignId?: string | null
+  userId: string
+  senderIdId?: string | null
+  smsProviderId?: string | null
+  message: string
+  encoding?: string
+  segmentCount?: number
+  recipientCount?: number
+  totalUnits?: number
+  costPerUnit?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.MessageStatus
+  providerMessageId?: string | null
+  idempotencyKey?: string | null
+  sentAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  failedAt?: Date | string | null
+  failureReason?: string | null
+  retryCount?: number
+  maxRetries?: number
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type MessageUpdateWithoutGatewayInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  encoding?: Prisma.StringFieldUpdateOperationsInput | string
+  segmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  recipientCount?: Prisma.IntFieldUpdateOperationsInput | number
+  totalUnits?: Prisma.IntFieldUpdateOperationsInput | number
+  costPerUnit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  maxRetries?: Prisma.IntFieldUpdateOperationsInput | number
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  campaign?: Prisma.CampaignUpdateOneWithoutMessagesNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
+  senderId?: Prisma.SenderIdUpdateOneWithoutMessagesNestedInput
+  smsProvider?: Prisma.SmsProviderUpdateOneWithoutMessagesNestedInput
+  recipients?: Prisma.MessageRecipientUpdateManyWithoutMessageNestedInput
+  attempts?: Prisma.MessageAttemptUpdateManyWithoutMessageNestedInput
+}
+
+export type MessageUncheckedUpdateWithoutGatewayInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  campaignId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  smsProviderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  encoding?: Prisma.StringFieldUpdateOperationsInput | string
+  segmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  recipientCount?: Prisma.IntFieldUpdateOperationsInput | number
+  totalUnits?: Prisma.IntFieldUpdateOperationsInput | number
+  costPerUnit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  maxRetries?: Prisma.IntFieldUpdateOperationsInput | number
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutMessageNestedInput
+  attempts?: Prisma.MessageAttemptUncheckedUpdateManyWithoutMessageNestedInput
+}
+
+export type MessageUncheckedUpdateManyWithoutGatewayInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  campaignId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  smsProviderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   message?: Prisma.StringFieldUpdateOperationsInput | string
   encoding?: Prisma.StringFieldUpdateOperationsInput | string
   segmentCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1918,10 +2382,12 @@ export type MessageUncheckedUpdateManyWithoutSmsProviderInput = {
 
 export type MessageCountOutputType = {
   recipients: number
+  attempts: number
 }
 
 export type MessageCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   recipients?: boolean | MessageCountOutputTypeCountRecipientsArgs
+  attempts?: boolean | MessageCountOutputTypeCountAttemptsArgs
 }
 
 /**
@@ -1939,6 +2405,13 @@ export type MessageCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exte
  */
 export type MessageCountOutputTypeCountRecipientsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.MessageRecipientWhereInput
+}
+
+/**
+ * MessageCountOutputType without action
+ */
+export type MessageCountOutputTypeCountAttemptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MessageAttemptWhereInput
 }
 
 
@@ -1967,11 +2440,14 @@ export type MessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  gatewayId?: boolean
   campaign?: boolean | Prisma.Message$campaignArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   senderId?: boolean | Prisma.Message$senderIdArgs<ExtArgs>
   smsProvider?: boolean | Prisma.Message$smsProviderArgs<ExtArgs>
   recipients?: boolean | Prisma.Message$recipientsArgs<ExtArgs>
+  gateway?: boolean | Prisma.Message$gatewayArgs<ExtArgs>
+  attempts?: boolean | Prisma.Message$attemptsArgs<ExtArgs>
   _count?: boolean | Prisma.MessageCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["message"]>
 
@@ -2000,10 +2476,12 @@ export type MessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  gatewayId?: boolean
   campaign?: boolean | Prisma.Message$campaignArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   senderId?: boolean | Prisma.Message$senderIdArgs<ExtArgs>
   smsProvider?: boolean | Prisma.Message$smsProviderArgs<ExtArgs>
+  gateway?: boolean | Prisma.Message$gatewayArgs<ExtArgs>
 }, ExtArgs["result"]["message"]>
 
 export type MessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2031,10 +2509,12 @@ export type MessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  gatewayId?: boolean
   campaign?: boolean | Prisma.Message$campaignArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   senderId?: boolean | Prisma.Message$senderIdArgs<ExtArgs>
   smsProvider?: boolean | Prisma.Message$smsProviderArgs<ExtArgs>
+  gateway?: boolean | Prisma.Message$gatewayArgs<ExtArgs>
 }, ExtArgs["result"]["message"]>
 
 export type MessageSelectScalar = {
@@ -2062,15 +2542,18 @@ export type MessageSelectScalar = {
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  gatewayId?: boolean
 }
 
-export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "campaignId" | "userId" | "senderIdId" | "smsProviderId" | "message" | "encoding" | "segmentCount" | "recipientCount" | "totalUnits" | "costPerUnit" | "totalCost" | "status" | "providerMessageId" | "idempotencyKey" | "sentAt" | "deliveredAt" | "failedAt" | "failureReason" | "retryCount" | "maxRetries" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["message"]>
+export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "campaignId" | "userId" | "senderIdId" | "smsProviderId" | "message" | "encoding" | "segmentCount" | "recipientCount" | "totalUnits" | "costPerUnit" | "totalCost" | "status" | "providerMessageId" | "idempotencyKey" | "sentAt" | "deliveredAt" | "failedAt" | "failureReason" | "retryCount" | "maxRetries" | "metadata" | "createdAt" | "updatedAt" | "gatewayId", ExtArgs["result"]["message"]>
 export type MessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   campaign?: boolean | Prisma.Message$campaignArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   senderId?: boolean | Prisma.Message$senderIdArgs<ExtArgs>
   smsProvider?: boolean | Prisma.Message$smsProviderArgs<ExtArgs>
   recipients?: boolean | Prisma.Message$recipientsArgs<ExtArgs>
+  gateway?: boolean | Prisma.Message$gatewayArgs<ExtArgs>
+  attempts?: boolean | Prisma.Message$attemptsArgs<ExtArgs>
   _count?: boolean | Prisma.MessageCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MessageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2078,12 +2561,14 @@ export type MessageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   senderId?: boolean | Prisma.Message$senderIdArgs<ExtArgs>
   smsProvider?: boolean | Prisma.Message$smsProviderArgs<ExtArgs>
+  gateway?: boolean | Prisma.Message$gatewayArgs<ExtArgs>
 }
 export type MessageIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   campaign?: boolean | Prisma.Message$campaignArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   senderId?: boolean | Prisma.Message$senderIdArgs<ExtArgs>
   smsProvider?: boolean | Prisma.Message$smsProviderArgs<ExtArgs>
+  gateway?: boolean | Prisma.Message$gatewayArgs<ExtArgs>
 }
 
 export type $MessagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2094,6 +2579,8 @@ export type $MessagePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     senderId: Prisma.$SenderIdPayload<ExtArgs> | null
     smsProvider: Prisma.$SmsProviderPayload<ExtArgs> | null
     recipients: Prisma.$MessageRecipientPayload<ExtArgs>[]
+    gateway: Prisma.$GatewayPayload<ExtArgs> | null
+    attempts: Prisma.$MessageAttemptPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2120,6 +2607,7 @@ export type $MessagePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     metadata: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
+    gatewayId: string | null
   }, ExtArgs["result"]["message"]>
   composites: {}
 }
@@ -2519,6 +3007,8 @@ export interface Prisma__MessageClient<T, Null = never, ExtArgs extends runtime.
   senderId<T extends Prisma.Message$senderIdArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Message$senderIdArgs<ExtArgs>>): Prisma.Prisma__SenderIdClient<runtime.Types.Result.GetResult<Prisma.$SenderIdPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   smsProvider<T extends Prisma.Message$smsProviderArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Message$smsProviderArgs<ExtArgs>>): Prisma.Prisma__SmsProviderClient<runtime.Types.Result.GetResult<Prisma.$SmsProviderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   recipients<T extends Prisma.Message$recipientsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Message$recipientsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageRecipientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  gateway<T extends Prisma.Message$gatewayArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Message$gatewayArgs<ExtArgs>>): Prisma.Prisma__GatewayClient<runtime.Types.Result.GetResult<Prisma.$GatewayPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  attempts<T extends Prisma.Message$attemptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Message$attemptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageAttemptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2572,6 +3062,7 @@ export interface MessageFieldRefs {
   readonly metadata: Prisma.FieldRef<"Message", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Message", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Message", 'DateTime'>
+  readonly gatewayId: Prisma.FieldRef<"Message", 'String'>
 }
     
 
@@ -3051,6 +3542,49 @@ export type Message$recipientsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.MessageRecipientScalarFieldEnum | Prisma.MessageRecipientScalarFieldEnum[]
+}
+
+/**
+ * Message.gateway
+ */
+export type Message$gatewayArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Gateway
+   */
+  select?: Prisma.GatewaySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Gateway
+   */
+  omit?: Prisma.GatewayOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GatewayInclude<ExtArgs> | null
+  where?: Prisma.GatewayWhereInput
+}
+
+/**
+ * Message.attempts
+ */
+export type Message$attemptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MessageAttempt
+   */
+  select?: Prisma.MessageAttemptSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MessageAttempt
+   */
+  omit?: Prisma.MessageAttemptOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageAttemptInclude<ExtArgs> | null
+  where?: Prisma.MessageAttemptWhereInput
+  orderBy?: Prisma.MessageAttemptOrderByWithRelationInput | Prisma.MessageAttemptOrderByWithRelationInput[]
+  cursor?: Prisma.MessageAttemptWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MessageAttemptScalarFieldEnum | Prisma.MessageAttemptScalarFieldEnum[]
 }
 
 /**

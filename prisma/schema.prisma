@@ -48,22 +48,24 @@ model User {
   notificationPreferences NotificationPreference[]
   notifications           Notification[]
 
-  client              Client?
-  agent               Agent?
-  contacts            Contact[]
-  contactGroups       ContactGroup[]
-  contactTags         ContactTag[]
-  contactImports      ContactImport[]
-  senderIds           SenderId[]
-  smsTemplates        SmsTemplate[]
-  campaigns           Campaign[]
-  messages            Message[]
-  wallets             Wallet?
-  transactions        Transaction[]
-  apiKeys             ApiKey[]
-  webhooks            Webhook[]
-  supportTickets      SupportTicket[]
-  scheduledMessages   ScheduledMessage[]
+  client            Client?
+  agent             Agent?
+  contacts          Contact[]
+  contactGroups     ContactGroup[]
+  contactTags       ContactTag[]
+  contactImports    ContactImport[]
+  senderIds         SenderId[]
+  smsTemplates      SmsTemplate[]
+  campaigns         Campaign[]
+  messages          Message[]
+  wallets           Wallet?
+  transactions      Transaction[]
+  apiKeys           ApiKey[]
+  webhooks          Webhook[]
+  supportTickets    SupportTicket[]
+  scheduledMessages ScheduledMessage[]
+
+  gateways Gateway[]
 }
 
 model Session {
@@ -528,54 +530,56 @@ enum TicketPriority {
 
 // ── ORGANIZATION ──────────────────────────────────────────
 model Organization {
-  id          String           @id @default(uuid())
-  name        String
-  type        OrganizationType @default(BUSINESS)
-  email       String?          @unique
-  phone       String?
-  address     String?
-  city        String?
-  country     String           @default("UG")
-  logo        String?
-  primaryColor String?         @db.VarChar(7)
-  brandName   String?
-  metadata    Json?
-  active      Boolean          @default(true)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  id           String           @id @default(uuid())
+  name         String
+  type         OrganizationType @default(BUSINESS)
+  email        String?          @unique
+  phone        String?
+  address      String?
+  city         String?
+  country      String           @default("UG")
+  logo         String?
+  primaryColor String?          @db.VarChar(7)
+  brandName    String?
+  metadata     Json?
+  active       Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
 
-  clients     Client[]
-  wallets     Wallet[]
-  apiKeys     ApiKey[]
-  senderIds   SenderId[]
+  clients   Client[]
+  wallets   Wallet[]
+  apiKeys   ApiKey[]
+  senderIds SenderId[]
+
+  gateways Gateway[]
 
   @@index([name])
 }
 
 // ── CLIENT ────────────────────────────────────────────────
 model Client {
-  id              String       @id @default(uuid())
-  userId          String       @unique
-  organizationId  String?
-  agentId         String?
-  status          ClientStatus @default(ACTIVE)
-  companyName     String?
-  industry        String?
-  referralSource  String?
-  notes           String?      @db.Text
-  metadata        Json?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  id             String       @id @default(uuid())
+  userId         String       @unique
+  organizationId String?
+  agentId        String?
+  status         ClientStatus @default(ACTIVE)
+  companyName    String?
+  industry       String?
+  referralSource String?
+  notes          String?      @db.Text
+  metadata       Json?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
-  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
-  agent           Agent?       @relation(fields: [agentId], references: [id], onDelete: SetNull)
-  wallet          Wallet?
-  campaigns       Campaign[]
-  senderIds       SenderId[]
-  apiKeys         ApiKey[]
-  webhooks        Webhook[]
-  commissions     Commission[]
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  agent        Agent?        @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  wallet       Wallet?
+  campaigns    Campaign[]
+  senderIds    SenderId[]
+  apiKeys      ApiKey[]
+  webhooks     Webhook[]
+  commissions  Commission[]
 
   @@index([userId])
   @@index([agentId])
@@ -585,27 +589,27 @@ model Client {
 
 // ── AGENT / RESELLER ──────────────────────────────────────
 model Agent {
-  id                String      @id @default(uuid())
-  userId            String      @unique
-  status            AgentStatus @default(ACTIVE)
-  companyName       String?
-  commissionType    CommissionType @default(PERCENTAGE)
-  commissionRate    Decimal     @default(5.0) @db.Decimal(10, 4)
-  totalEarnings     Decimal     @default(0) @db.Decimal(15, 4)
-  pendingPayout     Decimal     @default(0) @db.Decimal(15, 4)
-  bankName          String?
-  bankAccount       String?
-  mobileMoney       String?
-  notes             String?     @db.Text
-  metadata          Json?
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  id             String         @id @default(uuid())
+  userId         String         @unique
+  status         AgentStatus    @default(ACTIVE)
+  companyName    String?
+  commissionType CommissionType @default(PERCENTAGE)
+  commissionRate Decimal        @default(5.0) @db.Decimal(10, 4)
+  totalEarnings  Decimal        @default(0) @db.Decimal(15, 4)
+  pendingPayout  Decimal        @default(0) @db.Decimal(15, 4)
+  bankName       String?
+  bankAccount    String?
+  mobileMoney    String?
+  notes          String?        @db.Text
+  metadata       Json?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
-  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  clients           Client[]
-  commissions       Commission[]
-  commissionRules   CommissionRule[]
-  wallet            Wallet?
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clients         Client[]
+  commissions     Commission[]
+  commissionRules CommissionRule[]
+  wallet          Wallet?
 
   @@index([userId])
   @@index([status])
@@ -631,9 +635,9 @@ model Contact {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  groups          ContactGroupMember[]
-  tags            ContactTagAssignment[]
+  user              User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  groups            ContactGroupMember[]
+  tags              ContactTagAssignment[]
   messageRecipients MessageRecipient[]
 
   @@unique([userId, normalizedPhone])
@@ -645,18 +649,18 @@ model Contact {
 
 // ── CONTACT GROUP ─────────────────────────────────────────
 model ContactGroup {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   userId      String
   name        String
   description String?
-  color       String?   @db.VarChar(7)
-  memberCount Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  color       String?  @db.VarChar(7)
+  memberCount Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  members     ContactGroupMember[]
-  campaigns   CampaignGroup[]
+  user      User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  members   ContactGroupMember[]
+  campaigns CampaignGroup[]
 
   @@unique([userId, name])
   @@index([userId])
@@ -667,8 +671,8 @@ model ContactGroupMember {
   contactGroupId String
   addedAt        DateTime @default(now())
 
-  contact        Contact      @relation(fields: [contactId], references: [id], onDelete: Cascade)
-  contactGroup   ContactGroup @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
+  contact      Contact      @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  contactGroup ContactGroup @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
 
   @@id([contactId, contactGroupId])
   @@index([contactGroupId])
@@ -676,13 +680,13 @@ model ContactGroupMember {
 
 // ── CONTACT TAG ───────────────────────────────────────────
 model ContactTag {
-  id        String    @id @default(uuid())
+  id        String   @id @default(uuid())
   userId    String
   name      String
-  color     String?   @db.VarChar(7)
-  createdAt DateTime  @default(now())
+  color     String?  @db.VarChar(7)
+  createdAt DateTime @default(now())
 
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   assignments ContactTagAssignment[]
 
   @@unique([userId, name])
@@ -703,23 +707,23 @@ model ContactTagAssignment {
 
 // ── CONTACT IMPORT ────────────────────────────────────────
 model ContactImport {
-  id              String   @id @default(uuid())
-  userId          String
-  fileName        String
-  fileSize        Int
-  totalRecords    Int      @default(0)
-  validRecords    Int      @default(0)
-  invalidRecords  Int      @default(0)
-  duplicateRecords Int     @default(0)
-  importedRecords Int      @default(0)
-  skippedRecords  Int      @default(0)
-  columnMapping   Json?
-  errors          Json?
-  status          String   @default("PENDING")
-  completedAt     DateTime?
-  createdAt       DateTime @default(now())
+  id               String    @id @default(uuid())
+  userId           String
+  fileName         String
+  fileSize         Int
+  totalRecords     Int       @default(0)
+  validRecords     Int       @default(0)
+  invalidRecords   Int       @default(0)
+  duplicateRecords Int       @default(0)
+  importedRecords  Int       @default(0)
+  skippedRecords   Int       @default(0)
+  columnMapping    Json?
+  errors           Json?
+  status           String    @default("PENDING")
+  completedAt      DateTime?
+  createdAt        DateTime  @default(now())
 
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([createdAt])
@@ -742,11 +746,11 @@ model SenderId {
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
-  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  client          Client?        @relation(fields: [clientId], references: [id], onDelete: SetNull)
-  organization    Organization?  @relation(fields: [organizationId], references: [id], onDelete: SetNull)
-  campaigns       Campaign[]
-  messages        Message[]
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client            Client?            @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  organization      Organization?      @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  campaigns         Campaign[]
+  messages          Message[]
   scheduledMessages ScheduledMessage[]
 
   @@unique([senderId, userId])
@@ -757,19 +761,19 @@ model SenderId {
 
 // ── SMS TEMPLATE ──────────────────────────────────────────
 model SmsTemplate {
-  id          String   @id @default(uuid())
-  userId      String
-  name        String
-  category    String?
-  message     String   @db.Text
-  variables   String[] @default([])
-  isFavorite  Boolean  @default(false)
-  isShared    Boolean  @default(false)
-  isAdmin     Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  userId     String
+  name       String
+  category   String?
+  message    String   @db.Text
+  variables  String[] @default([])
+  isFavorite Boolean  @default(false)
+  isShared   Boolean  @default(false)
+  isAdmin    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, name])
   @@index([userId])
@@ -802,11 +806,11 @@ model Campaign {
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
-  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  client          Client?        @relation(fields: [clientId], references: [id], onDelete: SetNull)
-  senderId        SenderId?      @relation(fields: [senderIdId], references: [id], onDelete: SetNull)
-  messages        Message[]
-  groups          CampaignGroup[]
+  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client   Client?         @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  senderId SenderId?       @relation(fields: [senderIdId], references: [id], onDelete: SetNull)
+  messages Message[]
+  groups   CampaignGroup[]
 
   @@index([userId])
   @@index([clientId])
@@ -819,8 +823,8 @@ model CampaignGroup {
   campaignId     String
   contactGroupId String
 
-  campaign       Campaign     @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  contactGroup   ContactGroup @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
+  campaign     Campaign     @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contactGroup ContactGroup @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
 
   @@id([campaignId, contactGroupId])
 }
@@ -852,12 +856,17 @@ model Message {
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
 
-  campaign          Campaign?     @relation(fields: [campaignId], references: [id], onDelete: SetNull)
-  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  senderId          SenderId?     @relation(fields: [senderIdId], references: [id], onDelete: SetNull)
-  smsProvider       SmsProvider?  @relation(fields: [smsProviderId], references: [id], onDelete: SetNull)
-  recipients        MessageRecipient[]
+  campaign    Campaign?          @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  senderId    SenderId?          @relation(fields: [senderIdId], references: [id], onDelete: SetNull)
+  smsProvider SmsProvider?       @relation(fields: [smsProviderId], references: [id], onDelete: SetNull)
+  recipients  MessageRecipient[]
 
+  gatewayId String?
+  gateway   Gateway?         @relation(fields: [gatewayId], references: [id], onDelete: SetNull)
+  attempts  MessageAttempt[]
+
+  @@index([gatewayId])
   @@index([campaignId])
   @@index([userId])
   @@index([status])
@@ -868,23 +877,23 @@ model Message {
 
 // ── MESSAGE RECIPIENT ─────────────────────────────────────
 model MessageRecipient {
-  id              String        @id @default(uuid())
-  messageId       String
-  contactId       String?
-  phone           String
-  status          MessageStatus @default(PENDING)
-  providerMsgId   String?
-  sentAt          DateTime?
-  deliveredAt     DateTime?
-  failedAt        DateTime?
-  failureReason   String?
-  retryCount      Int           @default(0)
-  cost            Decimal       @default(0) @db.Decimal(10, 4)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id            String        @id @default(uuid())
+  messageId     String
+  contactId     String?
+  phone         String
+  status        MessageStatus @default(PENDING)
+  providerMsgId String?
+  sentAt        DateTime?
+  deliveredAt   DateTime?
+  failedAt      DateTime?
+  failureReason String?
+  retryCount    Int           @default(0)
+  cost          Decimal       @default(0) @db.Decimal(10, 4)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
-  message         Message       @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  contact         Contact?      @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  message Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  contact Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
 
   @@index([messageId])
   @@index([contactId])
@@ -895,46 +904,48 @@ model MessageRecipient {
 
 // ── SMS PROVIDER ──────────────────────────────────────────
 model SmsProvider {
-  id              String   @id @default(uuid())
-  name            String   @unique
-  displayName     String
-  type            String   @default("HTTP")
-  baseUrl         String?
-  apiKey          String?
-  apiSecret       String?
-  username        String?
-  password        String?
-  senderId        String?
-  costPerSms      Decimal  @default(0) @db.Decimal(10, 4)
-  priority        Int      @default(0)
-  isActive        Boolean  @default(true)
-  isFallback      Boolean  @default(false)
-  maxThroughput   Int?
-  supportsDlr     Boolean  @default(false)
-  dlrCallbackUrl  String?
-  config          Json?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String   @id @default(uuid())
+  name           String   @unique
+  displayName    String
+  type           String   @default("HTTP")
+  baseUrl        String?
+  apiKey         String?
+  apiSecret      String?
+  username       String?
+  password       String?
+  senderId       String?
+  costPerSms     Decimal  @default(0) @db.Decimal(10, 4)
+  priority       Int      @default(0)
+  isActive       Boolean  @default(true)
+  isFallback     Boolean  @default(false)
+  maxThroughput  Int?
+  supportsDlr    Boolean  @default(false)
+  dlrCallbackUrl String?
+  config         Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  messages        Message[]
-  routes          ProviderRoute[]
+  messages Message[]
+  routes   ProviderRoute[]
+
+  gateways Gateway[]
 
   @@index([isActive, priority])
 }
 
 // ── PROVIDER ROUTE ────────────────────────────────────────
 model ProviderRoute {
-  id            String      @id @default(uuid())
+  id            String   @id @default(uuid())
   smsProviderId String
   countryCode   String
   networkCode   String?
-  costPerSms    Decimal     @default(0) @db.Decimal(10, 4)
-  isActive      Boolean     @default(true)
-  priority      Int         @default(0)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  costPerSms    Decimal  @default(0) @db.Decimal(10, 4)
+  isActive      Boolean  @default(true)
+  priority      Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  smsProvider   SmsProvider @relation(fields: [smsProviderId], references: [id], onDelete: Cascade)
+  smsProvider SmsProvider @relation(fields: [smsProviderId], references: [id], onDelete: Cascade)
 
   @@unique([smsProviderId, countryCode, networkCode])
   @@index([countryCode])
@@ -942,24 +953,24 @@ model ProviderRoute {
 
 // ── WALLET ────────────────────────────────────────────────
 model Wallet {
-  id              String    @id @default(uuid())
-  userId          String?   @unique
-  clientId        String?   @unique
-  agentId         String?   @unique
-  organizationId  String?
-  balance         Decimal   @default(0) @db.Decimal(15, 4)
-  currency        String    @default("UGX")
-  smsCredits      Int       @default(0)
-  isActive        Boolean   @default(true)
-  lastTopUpAt     DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id             String    @id @default(uuid())
+  userId         String?   @unique
+  clientId       String?   @unique
+  agentId        String?   @unique
+  organizationId String?
+  balance        Decimal   @default(0) @db.Decimal(15, 4)
+  currency       String    @default("UGX")
+  smsCredits     Int       @default(0)
+  isActive       Boolean   @default(true)
+  lastTopUpAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
-  user            User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  client          Client?   @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  agent           Agent?    @relation(fields: [agentId], references: [id], onDelete: Cascade)
-  organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
-  transactions    Transaction[]
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client       Client?       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  agent        Agent?        @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  transactions Transaction[]
 
   @@index([userId])
   @@index([clientId])
@@ -968,26 +979,26 @@ model Wallet {
 
 // ── TRANSACTION (IMMUTABLE) ───────────────────────────────
 model Transaction {
-  id              String          @id @default(uuid())
-  walletId        String
-  userId          String?
-  type            TransactionType
-  amount          Decimal         @db.Decimal(15, 4)
-  balanceBefore   Decimal         @db.Decimal(15, 4)
-  balanceAfter    Decimal         @db.Decimal(15, 4)
-  currency        String          @default("UGX")
-  reference       String          @unique
-  description     String?
-  campaignId      String?
-  messageId       String?
-  paymentMethod   String?
-  paymentRef      String?
-  idempotencyKey  String?         @unique
-  metadata        Json?
-  createdAt       DateTime        @default(now())
+  id             String          @id @default(uuid())
+  walletId       String
+  userId         String?
+  type           TransactionType
+  amount         Decimal         @db.Decimal(15, 4)
+  balanceBefore  Decimal         @db.Decimal(15, 4)
+  balanceAfter   Decimal         @db.Decimal(15, 4)
+  currency       String          @default("UGX")
+  reference      String          @unique
+  description    String?
+  campaignId     String?
+  messageId      String?
+  paymentMethod  String?
+  paymentRef     String?
+  idempotencyKey String?         @unique
+  metadata       Json?
+  createdAt      DateTime        @default(now())
 
-  wallet          Wallet          @relation(fields: [walletId], references: [id], onDelete: Cascade)
-  user            User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([walletId])
   @@index([userId])
@@ -998,22 +1009,22 @@ model Transaction {
 
 // ── SMS PRICING ───────────────────────────────────────────
 model SmsPricing {
-  id              String   @id @default(uuid())
-  countryCode     String
-  countryName     String
-  networkCode     String?
-  networkName     String?
-  costPerSms      Decimal  @db.Decimal(10, 4)
-  sellingPrice    Decimal  @db.Decimal(10, 4)
-  currency        String   @default("UGX")
-  clientId        String?
-  agentId         String?
-  isDefault       Boolean  @default(true)
-  isActive        Boolean  @default(true)
-  effectiveFrom   DateTime @default(now())
-  effectiveTo     DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id            String    @id @default(uuid())
+  countryCode   String
+  countryName   String
+  networkCode   String?
+  networkName   String?
+  costPerSms    Decimal   @db.Decimal(10, 4)
+  sellingPrice  Decimal   @db.Decimal(10, 4)
+  currency      String    @default("UGX")
+  clientId      String?
+  agentId       String?
+  isDefault     Boolean   @default(true)
+  isActive      Boolean   @default(true)
+  effectiveFrom DateTime  @default(now())
+  effectiveTo   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@unique([countryCode, networkCode, clientId, agentId, isDefault])
   @@index([countryCode])
@@ -1023,29 +1034,29 @@ model SmsPricing {
 
 // ── COMMISSION ────────────────────────────────────────────
 model Commission {
-  id              String           @id @default(uuid())
-  agentId         String
-  clientId        String
-  transactionRef  String?
-  campaignId      String?
-  messageCount    Int              @default(0)
-  totalSmsValue   Decimal          @default(0) @db.Decimal(15, 4)
-  commissionRate  Decimal          @db.Decimal(10, 4)
-  commissionType  CommissionType   @default(PERCENTAGE)
-  amount          Decimal          @db.Decimal(15, 4)
-  status          CommissionStatus @default(PENDING)
-  approvedAt      DateTime?
-  approvedBy      String?
-  paidAt          DateTime?
-  reversedAt      DateTime?
-  reversalReason  String?
-  idempotencyKey  String?          @unique
-  metadata        Json?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id             String           @id @default(uuid())
+  agentId        String
+  clientId       String
+  transactionRef String?
+  campaignId     String?
+  messageCount   Int              @default(0)
+  totalSmsValue  Decimal          @default(0) @db.Decimal(15, 4)
+  commissionRate Decimal          @db.Decimal(10, 4)
+  commissionType CommissionType   @default(PERCENTAGE)
+  amount         Decimal          @db.Decimal(15, 4)
+  status         CommissionStatus @default(PENDING)
+  approvedAt     DateTime?
+  approvedBy     String?
+  paidAt         DateTime?
+  reversedAt     DateTime?
+  reversalReason String?
+  idempotencyKey String?          @unique
+  metadata       Json?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 
-  agent           Agent            @relation(fields: [agentId], references: [id], onDelete: Cascade)
-  client          Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  agent  Agent  @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   @@index([agentId])
   @@index([clientId])
@@ -1055,19 +1066,19 @@ model Commission {
 
 // ── COMMISSION RULE ───────────────────────────────────────
 model CommissionRule {
-  id              String         @id @default(uuid())
-  agentId         String?
-  name            String
-  type            CommissionType @default(PERCENTAGE)
-  rate            Decimal        @db.Decimal(10, 4)
-  minVolume       Int?
-  maxVolume       Int?
-  isDefault       Boolean        @default(false)
-  isActive        Boolean        @default(true)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id        String         @id @default(uuid())
+  agentId   String?
+  name      String
+  type      CommissionType @default(PERCENTAGE)
+  rate      Decimal        @db.Decimal(10, 4)
+  minVolume Int?
+  maxVolume Int?
+  isDefault Boolean        @default(false)
+  isActive  Boolean        @default(true)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 
-  agent           Agent?         @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  agent Agent? @relation(fields: [agentId], references: [id], onDelete: Cascade)
 
   @@index([agentId])
   @@index([isActive])
@@ -1093,10 +1104,10 @@ model ApiKey {
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
 
-  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  client          Client?      @relation(fields: [clientId], references: [id], onDelete: SetNull)
-  organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
-  apiRequests     ApiRequest[]
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client       Client?       @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  apiRequests  ApiRequest[]
 
   @@index([userId])
   @@index([keyHash])
@@ -1106,20 +1117,20 @@ model ApiKey {
 
 // ── API REQUEST LOG ───────────────────────────────────────
 model ApiRequest {
-  id          String   @id @default(uuid())
-  apiKeyId    String
-  endpoint    String
-  method      String
-  statusCode  Int
-  requestBody Json?
+  id           String   @id @default(uuid())
+  apiKeyId     String
+  endpoint     String
+  method       String
+  statusCode   Int
+  requestBody  Json?
   responseBody Json?
-  ipAddress   String?
-  userAgent   String?  @db.Text
-  durationMs  Int?
-  errorCode   String?
-  createdAt   DateTime @default(now())
+  ipAddress    String?
+  userAgent    String?  @db.Text
+  durationMs   Int?
+  errorCode    String?
+  createdAt    DateTime @default(now())
 
-  apiKey      ApiKey   @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+  apiKey ApiKey @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
 
   @@index([apiKeyId])
   @@index([endpoint])
@@ -1140,9 +1151,9 @@ model Webhook {
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  client      Client?        @relation(fields: [clientId], references: [id], onDelete: SetNull)
-  deliveries  WebhookDelivery[]
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client     Client?           @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  deliveries WebhookDelivery[]
 
   @@index([userId])
   @@index([isActive])
@@ -1150,21 +1161,21 @@ model Webhook {
 
 // ── WEBHOOK DELIVERY LOG ──────────────────────────────────
 model WebhookDelivery {
-  id            String       @id @default(uuid())
-  webhookId     String
-  event         WebhookEvent
-  payload       Json
-  statusCode    Int?
-  response      String?      @db.Text
-  attempts      Int          @default(1)
-  maxAttempts   Int          @default(3)
-  nextRetryAt   DateTime?
-  deliveredAt   DateTime?
-  failedAt      DateTime?
-  errorMessage  String?
-  createdAt     DateTime     @default(now())
+  id           String       @id @default(uuid())
+  webhookId    String
+  event        WebhookEvent
+  payload      Json
+  statusCode   Int?
+  response     String?      @db.Text
+  attempts     Int          @default(1)
+  maxAttempts  Int          @default(3)
+  nextRetryAt  DateTime?
+  deliveredAt  DateTime?
+  failedAt     DateTime?
+  errorMessage String?
+  createdAt    DateTime     @default(now())
 
-  webhook       Webhook      @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+  webhook Webhook @relation(fields: [webhookId], references: [id], onDelete: Cascade)
 
   @@index([webhookId])
   @@index([event])
@@ -1173,19 +1184,19 @@ model WebhookDelivery {
 
 // ── SUPPORT TICKET ────────────────────────────────────────
 model SupportTicket {
-  id          String         @id @default(uuid())
-  userId      String
-  subject     String
-  category    String
-  priority    TicketPriority @default(MEDIUM)
-  status      TicketStatus   @default(OPEN)
-  resolvedAt  DateTime?
-  closedAt    DateTime?
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id         String         @id @default(uuid())
+  userId     String
+  subject    String
+  category   String
+  priority   TicketPriority @default(MEDIUM)
+  status     TicketStatus   @default(OPEN)
+  resolvedAt DateTime?
+  closedAt   DateTime?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
 
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  messages    TicketMessage[]
+  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages TicketMessage[]
 
   @@index([userId])
   @@index([status])
@@ -1195,15 +1206,15 @@ model SupportTicket {
 
 // ── TICKET MESSAGE ────────────────────────────────────────
 model TicketMessage {
-  id              String        @id @default(uuid())
+  id              String   @id @default(uuid())
   ticketId        String
   userId          String?
-  message         String        @db.Text
-  isAdminResponse Boolean       @default(false)
-  attachments     String[]      @default([])
-  createdAt       DateTime      @default(now())
+  message         String   @db.Text
+  isAdminResponse Boolean  @default(false)
+  attachments     String[] @default([])
+  createdAt       DateTime @default(now())
 
-  ticket          SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 
   @@index([ticketId])
   @@index([createdAt])
@@ -1211,31 +1222,186 @@ model TicketMessage {
 
 // ── SCHEDULED MESSAGE ─────────────────────────────────────
 model ScheduledMessage {
-  id              String        @id @default(uuid())
+  id              String    @id @default(uuid())
   userId          String
   senderIdId      String?
-  message         String        @db.Text
+  message         String    @db.Text
   recipients      String[]
-  recipientCount  Int           @default(0)
-  encoding        String        @default("GSM-7")
-  segmentCount    Int           @default(1)
-  totalUnits      Int           @default(0)
-  estimatedCost   Decimal       @default(0) @db.Decimal(15, 4)
+  recipientCount  Int       @default(0)
+  encoding        String    @default("GSM-7")
+  segmentCount    Int       @default(1)
+  totalUnits      Int       @default(0)
+  estimatedCost   Decimal   @default(0) @db.Decimal(15, 4)
   scheduledAt     DateTime
-  timezone        String        @default("Africa/Kampala")
-  isRecurring     Boolean       @default(false)
+  timezone        String    @default("Africa/Kampala")
+  isRecurring     Boolean   @default(false)
   cronExpression  String?
-  status          String        @default("SCHEDULED")
+  status          String    @default("SCHEDULED")
   executedAt      DateTime?
   cancelledAt     DateTime?
   resultMessageId String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  senderId        SenderId?     @relation(fields: [senderIdId], references: [id], onDelete: SetNull)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  senderId SenderId? @relation(fields: [senderIdId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([status])
   @@index([scheduledAt])
+}
+
+// -----------------------------------------------------------------------------
+// MULTI-GATEWAY SMS SYSTEM (ANDROID & ESP32)
+// -----------------------------------------------------------------------------
+
+enum GatewayType {
+  CLOUD
+  ANDROID
+  ESP32_GSM
+  SMPP
+}
+
+enum GatewayStatus {
+  ONLINE
+  OFFLINE
+  DEGRADED
+  PENDING_PAIRING
+  SUSPENDED
+}
+
+enum MessageAttemptStatus {
+  PENDING
+  ASSIGNED
+  SENT_TO_GATEWAY
+  SUBMITTED_TO_MODEM
+  SENT
+  DELIVERED
+  FAILED
+}
+
+// ── GATEWAY ───────────────────────────────────────────────
+model Gateway {
+  id             String        @id @default(uuid())
+  name           String
+  type           GatewayType   @default(ANDROID)
+  status         GatewayStatus @default(PENDING_PAIRING)
+  userId         String
+  organizationId String?
+  smsProviderId  String? // If Cloud/SMPP type
+
+  maxThroughput Int? // SMS per minute
+  batchSize     Int     @default(10)
+  queuePriority Int     @default(0)
+  isShared      Boolean @default(false)
+
+  config Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  smsProvider  SmsProvider?  @relation(fields: [smsProviderId], references: [id], onDelete: SetNull)
+
+  devices  GatewayDevice[]
+  tokens   GatewayToken[]
+  logs     GatewayLog[]
+  attempts MessageAttempt[]
+  messages Message[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([type])
+}
+
+// ── GATEWAY DEVICE ────────────────────────────────────────
+model GatewayDevice {
+  id        String @id @default(uuid())
+  gatewayId String
+
+  batteryLevel    Int? // 0 - 100
+  isCharging      Boolean @default(false)
+  signalStrength  Int? // -113 dBm to -51 dBm
+  networkOperator String? // MTN, Airtel, etc.
+  simSlotCount    Int     @default(1)
+
+  appVersion    String?
+  osVersion     String?
+  hardwareModel String?
+
+  lastHeartbeatAt DateTime?
+  ipAddress       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  gateway Gateway @relation(fields: [gatewayId], references: [id], onDelete: Cascade)
+
+  @@index([gatewayId])
+  @@index([lastHeartbeatAt])
+}
+
+// ── GATEWAY TOKEN ─────────────────────────────────────────
+model GatewayToken {
+  id         String    @id @default(uuid())
+  gatewayId  String
+  tokenHash  String    @unique
+  name       String?
+  expiresAt  DateTime?
+  lastUsedAt DateTime?
+  revokedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  gateway Gateway @relation(fields: [gatewayId], references: [id], onDelete: Cascade)
+
+  @@index([gatewayId])
+  @@index([tokenHash])
+}
+
+// ── GATEWAY LOG ───────────────────────────────────────────
+model GatewayLog {
+  id        String @id @default(uuid())
+  gatewayId String
+  level     String @default("INFO")
+  event     String
+  message   String @db.Text
+  metadata  Json?
+
+  createdAt DateTime @default(now())
+
+  gateway Gateway @relation(fields: [gatewayId], references: [id], onDelete: Cascade)
+
+  @@index([gatewayId])
+  @@index([level])
+  @@index([createdAt])
+}
+
+// ── MESSAGE ATTEMPT (ROUTING / FAILOVER) ──────────────────
+model MessageAttempt {
+  id        String               @id @default(uuid())
+  messageId String
+  gatewayId String
+  status    MessageAttemptStatus @default(PENDING)
+
+  providerMsgId String?
+  errorCode     String?
+  errorMessage  String?
+
+  assignedAt      DateTime?
+  sentToGatewayAt DateTime?
+  submittedAt     DateTime?
+  finalizedAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  gateway Gateway @relation(fields: [gatewayId], references: [id], onDelete: Cascade)
+
+  @@index([messageId])
+  @@index([gatewayId])
+  @@index([status])
 }

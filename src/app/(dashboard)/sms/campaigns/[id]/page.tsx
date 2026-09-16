@@ -146,7 +146,7 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
             <div>
               <span className="text-muted-foreground block mb-2">Message Preview</span>
               <div className="p-3 bg-muted rounded-md text-sm font-sans whitespace-pre-wrap border border-border/50">
-                Hi {{name}}, our biggest sale of the year starts tomorrow! Get up to 50% off on all items. Visit rangesms.com/sale
+                Hi {'{{name}}'}, our biggest sale of the year starts tomorrow! Get up to 50% off on all items. Visit rangesms.com/sale
               </div>
             </div>
           </CardContent>

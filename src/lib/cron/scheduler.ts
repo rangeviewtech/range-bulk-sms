@@ -51,7 +51,7 @@ export const CronScheduler = {
         });
         if (queued) queuedCount++;
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Scheduling failed';
+        const message = error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Scheduling failed';
         await logger.error('Failed to evaluate scheduled job', { jobId: job.id });
         await prisma.cronExecution.create({
           data: { scheduledJobId: job.id, status: 'FAILED', errorMsg: message },

@@ -1,12 +1,13 @@
-import { Decimal } from '@/generated/prisma/runtime/library';
-import prisma from '@/lib/prisma';
+import { Prisma } from '@/generated/prisma/client'
+const { Decimal } = Prisma;
+import { prisma } from '@/lib/prisma';
 import { generateTransactionReference } from '@/lib/sms/idempotency';
 
 export interface WalletOperationResult {
   success: boolean;
   walletId: string;
-  balanceBefore: Decimal;
-  balanceAfter: Decimal;
+  balanceBefore: Prisma.Decimal;
+  balanceAfter: Prisma.Decimal;
   transactionRef: string;
   error?: string;
 }
@@ -54,7 +55,7 @@ export const WalletService = {
     };
   },
 
-  async deposit(walletId: string, amount: Decimal, params: { userId?: string; description?: string; paymentMethod?: string; paymentRef?: string; idempotencyKey?: string }): Promise<WalletOperationResult> {
+  async deposit(walletId: string, amount: Prisma.Decimal, params: { userId?: string; description?: string; paymentMethod?: string; paymentRef?: string; idempotencyKey?: string }): Promise<WalletOperationResult> {
     return await prisma.$transaction(async (tx) => {
       if (params.idempotencyKey) {
         const existingTx = await tx.transaction.findFirst({
@@ -71,7 +72,7 @@ export const WalletService = {
         }
       }
 
-      const wallets = await tx.$queryRaw<{ id: string; balance: Decimal }[]>`
+      const wallets = await tx.$queryRaw<{ id: string; balance: Prisma.Decimal }[]>`
         SELECT id, balance FROM "Wallet" WHERE id = ${walletId} FOR UPDATE
       `;
       if (!wallets || wallets.length === 0) throw new Error('Wallet not found');
@@ -96,7 +97,7 @@ export const WalletService = {
           description: params.description,
           userId: params.userId,
           idempotencyKey: params.idempotencyKey,
-          status: 'COMPLETED'
+          
         }
       });
 
@@ -110,7 +111,7 @@ export const WalletService = {
     });
   },
 
-  async deduct(walletId: string, amount: Decimal, params: { userId?: string; description?: string; campaignId?: string; messageId?: string; idempotencyKey?: string }): Promise<WalletOperationResult> {
+  async deduct(walletId: string, amount: Prisma.Decimal, params: { userId?: string; description?: string; campaignId?: string; messageId?: string; idempotencyKey?: string }): Promise<WalletOperationResult> {
     return await prisma.$transaction(async (tx) => {
       if (params.idempotencyKey) {
         const existingTx = await tx.transaction.findFirst({
@@ -127,7 +128,7 @@ export const WalletService = {
         }
       }
 
-      const wallets = await tx.$queryRaw<{ id: string; balance: Decimal }[]>`
+      const wallets = await tx.$queryRaw<{ id: string; balance: Prisma.Decimal }[]>`
         SELECT id, balance FROM "Wallet" WHERE id = ${walletId} FOR UPDATE
       `;
       if (!wallets || wallets.length === 0) throw new Error('Wallet not found');
@@ -158,7 +159,7 @@ export const WalletService = {
           userId: params.userId,
           campaignId: params.campaignId,
           idempotencyKey: params.idempotencyKey,
-          status: 'COMPLETED'
+          
         }
       });
 
@@ -172,7 +173,7 @@ export const WalletService = {
     });
   },
 
-  async refund(walletId: string, amount: Decimal, params: { userId?: string; description?: string; originalTransactionRef?: string; idempotencyKey?: string }): Promise<WalletOperationResult> {
+  async refund(walletId: string, amount: Prisma.Decimal, params: { userId?: string; description?: string; originalTransactionRef?: string; idempotencyKey?: string }): Promise<WalletOperationResult> {
     return await prisma.$transaction(async (tx) => {
       if (params.idempotencyKey) {
         const existingTx = await tx.transaction.findFirst({
@@ -189,7 +190,7 @@ export const WalletService = {
         }
       }
 
-      const wallets = await tx.$queryRaw<{ id: string; balance: Decimal }[]>`
+      const wallets = await tx.$queryRaw<{ id: string; balance: Prisma.Decimal }[]>`
         SELECT id, balance FROM "Wallet" WHERE id = ${walletId} FOR UPDATE
       `;
       if (!wallets || wallets.length === 0) throw new Error('Wallet not found');
@@ -214,7 +215,7 @@ export const WalletService = {
           description: params.description,
           userId: params.userId,
           idempotencyKey: params.idempotencyKey,
-          status: 'COMPLETED'
+          
         }
       });
 
@@ -228,12 +229,12 @@ export const WalletService = {
     });
   },
 
-  async getTransactions(walletId: string, params: { page?: number; limit?: number; type?: any; startDate?: Date; endDate?: Date }) {
+  async getTransactions(walletId: string, params: { page?: number; limit?: number; type?: import("@/generated/prisma/client").TransactionType; startDate?: Date; endDate?: Date }) {
     const page = params.page || 1;
     const limit = params.limit || 10;
     const skip = (page - 1) * limit;
 
-    const where: any = { walletId };
+    const where: import("@/generated/prisma/client").Prisma.TransactionWhereInput = { walletId };
     if (params.type) where.type = params.type;
     if (params.startDate || params.endDate) {
       where.createdAt = {};

@@ -17,14 +17,14 @@ export async function GET(
     });
 
     if (!campaign || campaign.userId !== session.userId) {
-      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 } as any);
     }
 
     return NextResponse.json({ success: true, campaign });
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : 'Internal Server Error' },
+      { success: false, error: error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Internal Server Error' },
       { status }
     );
   }
@@ -43,7 +43,7 @@ export async function PUT(
     if (!parsed.success) {
       return NextResponse.json(
         { success: false, error: 'Invalid request data', details: parsed.error.format() },
-        { status: 400 }
+        { status: 400 } as any
       );
     }
 
@@ -52,11 +52,11 @@ export async function PUT(
     });
 
     if (!campaign || campaign.userId !== session.userId) {
-      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 } as any);
     }
 
     if (campaign.status !== 'DRAFT') {
-      return NextResponse.json({ success: false, error: 'Only DRAFT campaigns can be updated' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Only DRAFT campaigns can be updated' }, { status: 400 } as any);
     }
 
     const { name, senderId, message, variables, scheduledAt } = parsed.data;
@@ -75,7 +75,7 @@ export async function PUT(
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : 'Internal Server Error' },
+      { success: false, error: error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Internal Server Error' },
       { status }
     );
   }
@@ -94,12 +94,12 @@ export async function DELETE(
     });
 
     if (!campaign || campaign.userId !== session.userId) {
-      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 } as any);
     }
 
     const allowedStatuses = ['DRAFT', 'COMPLETED', 'FAILED', 'CANCELLED'];
     if (!allowedStatuses.includes(campaign.status)) {
-      return NextResponse.json({ success: false, error: 'Cannot delete campaign in current status' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Cannot delete campaign in current status' }, { status: 400 } as any);
     }
 
     await prisma.campaign.update({
@@ -111,7 +111,7 @@ export async function DELETE(
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : 'Internal Server Error' },
+      { success: false, error: error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Internal Server Error' },
       { status }
     );
   }

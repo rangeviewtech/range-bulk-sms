@@ -8,6 +8,6 @@ export async function POST(req: Request) {
     // Trigger client webhooks if configured
     return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 } as any);
   }
 }

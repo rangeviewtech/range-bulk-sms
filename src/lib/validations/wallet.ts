@@ -11,7 +11,7 @@ export const depositSchema = z.object({
 // Admin adjustment schema
 export const adjustmentSchema = z.object({
   walletId: z.string().uuid(),
-  amount: z.number().nonzero('Amount cannot be zero'),
+  amount: z.number().refine((n) => n !== 0, 'Amount cannot be zero'),
   type: z.enum(['DEPOSIT', 'DEDUCTION', 'REFUND', 'ADJUSTMENT']),
   description: z.string().min(1, 'Description required for adjustments').max(500),
 });

@@ -342,6 +342,7 @@ export type SmsProviderWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"SmsProvider"> | Date | string
   messages?: Prisma.MessageListRelationFilter
   routes?: Prisma.ProviderRouteListRelationFilter
+  gateways?: Prisma.GatewayListRelationFilter
 }
 
 export type SmsProviderOrderByWithRelationInput = {
@@ -367,6 +368,7 @@ export type SmsProviderOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   messages?: Prisma.MessageOrderByRelationAggregateInput
   routes?: Prisma.ProviderRouteOrderByRelationAggregateInput
+  gateways?: Prisma.GatewayOrderByRelationAggregateInput
 }
 
 export type SmsProviderWhereUniqueInput = Prisma.AtLeast<{
@@ -395,6 +397,7 @@ export type SmsProviderWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"SmsProvider"> | Date | string
   messages?: Prisma.MessageListRelationFilter
   routes?: Prisma.ProviderRouteListRelationFilter
+  gateways?: Prisma.GatewayListRelationFilter
 }, "id" | "name">
 
 export type SmsProviderOrderByWithAggregationInput = {
@@ -474,6 +477,7 @@ export type SmsProviderCreateInput = {
   updatedAt?: Date | string
   messages?: Prisma.MessageCreateNestedManyWithoutSmsProviderInput
   routes?: Prisma.ProviderRouteCreateNestedManyWithoutSmsProviderInput
+  gateways?: Prisma.GatewayCreateNestedManyWithoutSmsProviderInput
 }
 
 export type SmsProviderUncheckedCreateInput = {
@@ -499,6 +503,7 @@ export type SmsProviderUncheckedCreateInput = {
   updatedAt?: Date | string
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSmsProviderInput
   routes?: Prisma.ProviderRouteUncheckedCreateNestedManyWithoutSmsProviderInput
+  gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutSmsProviderInput
 }
 
 export type SmsProviderUpdateInput = {
@@ -524,6 +529,7 @@ export type SmsProviderUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.MessageUpdateManyWithoutSmsProviderNestedInput
   routes?: Prisma.ProviderRouteUpdateManyWithoutSmsProviderNestedInput
+  gateways?: Prisma.GatewayUpdateManyWithoutSmsProviderNestedInput
 }
 
 export type SmsProviderUncheckedUpdateInput = {
@@ -549,6 +555,7 @@ export type SmsProviderUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSmsProviderNestedInput
   routes?: Prisma.ProviderRouteUncheckedUpdateManyWithoutSmsProviderNestedInput
+  gateways?: Prisma.GatewayUncheckedUpdateManyWithoutSmsProviderNestedInput
 }
 
 export type SmsProviderCreateManyInput = {
@@ -739,6 +746,22 @@ export type SmsProviderUpdateOneRequiredWithoutRoutesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SmsProviderUpdateToOneWithWhereWithoutRoutesInput, Prisma.SmsProviderUpdateWithoutRoutesInput>, Prisma.SmsProviderUncheckedUpdateWithoutRoutesInput>
 }
 
+export type SmsProviderCreateNestedOneWithoutGatewaysInput = {
+  create?: Prisma.XOR<Prisma.SmsProviderCreateWithoutGatewaysInput, Prisma.SmsProviderUncheckedCreateWithoutGatewaysInput>
+  connectOrCreate?: Prisma.SmsProviderCreateOrConnectWithoutGatewaysInput
+  connect?: Prisma.SmsProviderWhereUniqueInput
+}
+
+export type SmsProviderUpdateOneWithoutGatewaysNestedInput = {
+  create?: Prisma.XOR<Prisma.SmsProviderCreateWithoutGatewaysInput, Prisma.SmsProviderUncheckedCreateWithoutGatewaysInput>
+  connectOrCreate?: Prisma.SmsProviderCreateOrConnectWithoutGatewaysInput
+  upsert?: Prisma.SmsProviderUpsertWithoutGatewaysInput
+  disconnect?: Prisma.SmsProviderWhereInput | boolean
+  delete?: Prisma.SmsProviderWhereInput | boolean
+  connect?: Prisma.SmsProviderWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SmsProviderUpdateToOneWithWhereWithoutGatewaysInput, Prisma.SmsProviderUpdateWithoutGatewaysInput>, Prisma.SmsProviderUncheckedUpdateWithoutGatewaysInput>
+}
+
 export type SmsProviderCreateWithoutMessagesInput = {
   id?: string
   name: string
@@ -761,6 +784,7 @@ export type SmsProviderCreateWithoutMessagesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   routes?: Prisma.ProviderRouteCreateNestedManyWithoutSmsProviderInput
+  gateways?: Prisma.GatewayCreateNestedManyWithoutSmsProviderInput
 }
 
 export type SmsProviderUncheckedCreateWithoutMessagesInput = {
@@ -785,6 +809,7 @@ export type SmsProviderUncheckedCreateWithoutMessagesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   routes?: Prisma.ProviderRouteUncheckedCreateNestedManyWithoutSmsProviderInput
+  gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutSmsProviderInput
 }
 
 export type SmsProviderCreateOrConnectWithoutMessagesInput = {
@@ -825,6 +850,7 @@ export type SmsProviderUpdateWithoutMessagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   routes?: Prisma.ProviderRouteUpdateManyWithoutSmsProviderNestedInput
+  gateways?: Prisma.GatewayUpdateManyWithoutSmsProviderNestedInput
 }
 
 export type SmsProviderUncheckedUpdateWithoutMessagesInput = {
@@ -849,6 +875,7 @@ export type SmsProviderUncheckedUpdateWithoutMessagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   routes?: Prisma.ProviderRouteUncheckedUpdateManyWithoutSmsProviderNestedInput
+  gateways?: Prisma.GatewayUncheckedUpdateManyWithoutSmsProviderNestedInput
 }
 
 export type SmsProviderCreateWithoutRoutesInput = {
@@ -873,6 +900,7 @@ export type SmsProviderCreateWithoutRoutesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   messages?: Prisma.MessageCreateNestedManyWithoutSmsProviderInput
+  gateways?: Prisma.GatewayCreateNestedManyWithoutSmsProviderInput
 }
 
 export type SmsProviderUncheckedCreateWithoutRoutesInput = {
@@ -897,6 +925,7 @@ export type SmsProviderUncheckedCreateWithoutRoutesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSmsProviderInput
+  gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutSmsProviderInput
 }
 
 export type SmsProviderCreateOrConnectWithoutRoutesInput = {
@@ -937,6 +966,7 @@ export type SmsProviderUpdateWithoutRoutesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.MessageUpdateManyWithoutSmsProviderNestedInput
+  gateways?: Prisma.GatewayUpdateManyWithoutSmsProviderNestedInput
 }
 
 export type SmsProviderUncheckedUpdateWithoutRoutesInput = {
@@ -961,6 +991,123 @@ export type SmsProviderUncheckedUpdateWithoutRoutesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSmsProviderNestedInput
+  gateways?: Prisma.GatewayUncheckedUpdateManyWithoutSmsProviderNestedInput
+}
+
+export type SmsProviderCreateWithoutGatewaysInput = {
+  id?: string
+  name: string
+  displayName: string
+  type?: string
+  baseUrl?: string | null
+  apiKey?: string | null
+  apiSecret?: string | null
+  username?: string | null
+  password?: string | null
+  senderId?: string | null
+  costPerSms?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  priority?: number
+  isActive?: boolean
+  isFallback?: boolean
+  maxThroughput?: number | null
+  supportsDlr?: boolean
+  dlrCallbackUrl?: string | null
+  config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  messages?: Prisma.MessageCreateNestedManyWithoutSmsProviderInput
+  routes?: Prisma.ProviderRouteCreateNestedManyWithoutSmsProviderInput
+}
+
+export type SmsProviderUncheckedCreateWithoutGatewaysInput = {
+  id?: string
+  name: string
+  displayName: string
+  type?: string
+  baseUrl?: string | null
+  apiKey?: string | null
+  apiSecret?: string | null
+  username?: string | null
+  password?: string | null
+  senderId?: string | null
+  costPerSms?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  priority?: number
+  isActive?: boolean
+  isFallback?: boolean
+  maxThroughput?: number | null
+  supportsDlr?: boolean
+  dlrCallbackUrl?: string | null
+  config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSmsProviderInput
+  routes?: Prisma.ProviderRouteUncheckedCreateNestedManyWithoutSmsProviderInput
+}
+
+export type SmsProviderCreateOrConnectWithoutGatewaysInput = {
+  where: Prisma.SmsProviderWhereUniqueInput
+  create: Prisma.XOR<Prisma.SmsProviderCreateWithoutGatewaysInput, Prisma.SmsProviderUncheckedCreateWithoutGatewaysInput>
+}
+
+export type SmsProviderUpsertWithoutGatewaysInput = {
+  update: Prisma.XOR<Prisma.SmsProviderUpdateWithoutGatewaysInput, Prisma.SmsProviderUncheckedUpdateWithoutGatewaysInput>
+  create: Prisma.XOR<Prisma.SmsProviderCreateWithoutGatewaysInput, Prisma.SmsProviderUncheckedCreateWithoutGatewaysInput>
+  where?: Prisma.SmsProviderWhereInput
+}
+
+export type SmsProviderUpdateToOneWithWhereWithoutGatewaysInput = {
+  where?: Prisma.SmsProviderWhereInput
+  data: Prisma.XOR<Prisma.SmsProviderUpdateWithoutGatewaysInput, Prisma.SmsProviderUncheckedUpdateWithoutGatewaysInput>
+}
+
+export type SmsProviderUpdateWithoutGatewaysInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  baseUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  apiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  apiSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  senderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  costPerSms?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  priority?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFallback?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  maxThroughput?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supportsDlr?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  dlrCallbackUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.MessageUpdateManyWithoutSmsProviderNestedInput
+  routes?: Prisma.ProviderRouteUpdateManyWithoutSmsProviderNestedInput
+}
+
+export type SmsProviderUncheckedUpdateWithoutGatewaysInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  baseUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  apiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  apiSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  senderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  costPerSms?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  priority?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFallback?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  maxThroughput?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supportsDlr?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  dlrCallbackUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSmsProviderNestedInput
+  routes?: Prisma.ProviderRouteUncheckedUpdateManyWithoutSmsProviderNestedInput
 }
 
 
@@ -971,11 +1118,13 @@ export type SmsProviderUncheckedUpdateWithoutRoutesInput = {
 export type SmsProviderCountOutputType = {
   messages: number
   routes: number
+  gateways: number
 }
 
 export type SmsProviderCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   messages?: boolean | SmsProviderCountOutputTypeCountMessagesArgs
   routes?: boolean | SmsProviderCountOutputTypeCountRoutesArgs
+  gateways?: boolean | SmsProviderCountOutputTypeCountGatewaysArgs
 }
 
 /**
@@ -1002,6 +1151,13 @@ export type SmsProviderCountOutputTypeCountRoutesArgs<ExtArgs extends runtime.Ty
   where?: Prisma.ProviderRouteWhereInput
 }
 
+/**
+ * SmsProviderCountOutputType without action
+ */
+export type SmsProviderCountOutputTypeCountGatewaysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GatewayWhereInput
+}
+
 
 export type SmsProviderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1026,6 +1182,7 @@ export type SmsProviderSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   updatedAt?: boolean
   messages?: boolean | Prisma.SmsProvider$messagesArgs<ExtArgs>
   routes?: boolean | Prisma.SmsProvider$routesArgs<ExtArgs>
+  gateways?: boolean | Prisma.SmsProvider$gatewaysArgs<ExtArgs>
   _count?: boolean | Prisma.SmsProviderCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["smsProvider"]>
 
@@ -1102,6 +1259,7 @@ export type SmsProviderOmit<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type SmsProviderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   messages?: boolean | Prisma.SmsProvider$messagesArgs<ExtArgs>
   routes?: boolean | Prisma.SmsProvider$routesArgs<ExtArgs>
+  gateways?: boolean | Prisma.SmsProvider$gatewaysArgs<ExtArgs>
   _count?: boolean | Prisma.SmsProviderCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SmsProviderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1112,6 +1270,7 @@ export type $SmsProviderPayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {
     messages: Prisma.$MessagePayload<ExtArgs>[]
     routes: Prisma.$ProviderRoutePayload<ExtArgs>[]
+    gateways: Prisma.$GatewayPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1530,6 +1689,7 @@ export interface Prisma__SmsProviderClient<T, Null = never, ExtArgs extends runt
   readonly [Symbol.toStringTag]: "PrismaPromise"
   messages<T extends Prisma.SmsProvider$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SmsProvider$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   routes<T extends Prisma.SmsProvider$routesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SmsProvider$routesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProviderRoutePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  gateways<T extends Prisma.SmsProvider$gatewaysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SmsProvider$gatewaysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GatewayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2017,6 +2177,30 @@ export type SmsProvider$routesArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.ProviderRouteScalarFieldEnum | Prisma.ProviderRouteScalarFieldEnum[]
+}
+
+/**
+ * SmsProvider.gateways
+ */
+export type SmsProvider$gatewaysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Gateway
+   */
+  select?: Prisma.GatewaySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Gateway
+   */
+  omit?: Prisma.GatewayOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GatewayInclude<ExtArgs> | null
+  where?: Prisma.GatewayWhereInput
+  orderBy?: Prisma.GatewayOrderByWithRelationInput | Prisma.GatewayOrderByWithRelationInput[]
+  cursor?: Prisma.GatewayWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.GatewayScalarFieldEnum | Prisma.GatewayScalarFieldEnum[]
 }
 
 /**
