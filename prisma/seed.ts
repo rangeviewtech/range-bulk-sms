@@ -195,25 +195,66 @@ async function main() {
       baseUrl: 'https://www.sms.thepandoranetworks.com/API/send_sms/',
       isActive: true,
       priority: 1,
-      supportsDlr: false,
+      supportsDlr: true,
       costPerSms: 35.0,
+      maxThroughput: 500,
     },
   })
 
-  const defaultPricingExists = await prisma.smsPricing.findFirst({ where: { countryCode: '+256', isDefault: true } })
-  if (!defaultPricingExists) {
-    await prisma.smsPricing.create({
-      data: {
-        countryCode: '+256',
-        countryName: 'Uganda',
-        costPerSms: 35.0,
-        sellingPrice: 50.0,
-        currency: 'UGX',
-        isDefault: true,
-      },
+  await prisma.smsProvider.upsert({
+    where: { name: 'africas-talking' },
+    update: {},
+    create: {
+      name: 'africas-talking',
+      displayName: "Africa's Talking",
+      type: 'HTTP',
+      baseUrl: 'https://api.africastalking.com/version1/messaging',
+      isActive: true,
+      priority: 2,
+      supportsDlr: true,
+      costPerSms: 38.0,
+      maxThroughput: 300,
+    },
+  })
+
+  await prisma.smsProvider.upsert({
+    where: { name: 'twilio' },
+    update: {},
+    create: {
+      name: 'twilio',
+      displayName: 'Twilio Enterprise Gateway',
+      type: 'HTTP',
+      baseUrl: 'https://api.twilio.com/2010-04-01/Accounts',
+      isActive: true,
+      priority: 3,
+      supportsDlr: true,
+      costPerSms: 55.0,
+      maxThroughput: 1000,
+    },
+  })
+
+  // Country Pricing Rules
+  const pricingData = [
+    { countryCode: '+256', countryName: 'Uganda', networkCode: 'MTN', networkName: 'MTN Uganda', costPerSms: 32.0, sellingPrice: 48.0, currency: 'UGX', isDefault: false },
+    { countryCode: '+256', countryName: 'Uganda', networkCode: 'AIRTEL', networkName: 'Airtel Uganda', costPerSms: 33.0, sellingPrice: 50.0, currency: 'UGX', isDefault: false },
+    { countryCode: '+256', countryName: 'Uganda', costPerSms: 35.0, sellingPrice: 50.0, currency: 'UGX', isDefault: true },
+    { countryCode: '+254', countryName: 'Kenya', costPerSms: 40.0, sellingPrice: 65.0, currency: 'KES', isDefault: true },
+    { countryCode: '+255', countryName: 'Tanzania', costPerSms: 45.0, sellingPrice: 70.0, currency: 'TZS', isDefault: true },
+    { countryCode: '+250', countryName: 'Rwanda', costPerSms: 50.0, sellingPrice: 80.0, currency: 'RWF', isDefault: true },
+    { countryCode: '+1', countryName: 'United States & Canada', costPerSms: 0.0075, sellingPrice: 0.0150, currency: 'USD', isDefault: true },
+    { countryCode: '+44', countryName: 'United Kingdom', costPerSms: 0.0120, sellingPrice: 0.0250, currency: 'GBP', isDefault: true },
+  ]
+
+  for (const price of pricingData) {
+    const existing = await prisma.smsPricing.findFirst({
+      where: { countryCode: price.countryCode, networkCode: price.networkCode || null }
     })
+    if (!existing) {
+      await prisma.smsPricing.create({ data: price })
+    }
   }
 
+  // Default Commission Rule
   const defaultRuleExists = await prisma.commissionRule.findFirst({ where: { name: 'Default Agent Commission' } })
   if (!defaultRuleExists) {
     await prisma.commissionRule.create({
@@ -225,6 +266,233 @@ async function main() {
       },
     })
   }
+
+  // 6. Seed Demo Agent & Clients
+  const demoAgentPassword = await bcrypt.hash('Password123!', 12)
+  const agentUser = await prisma.user.upsert({
+    where: { email: 'agent@example.com' },
+    update: {},
+    create: {
+      email: 'agent@example.com',
+      name: 'Apex Resellers Team',
+      passwordHash: demoAgentPassword,
+      status: 'ACTIVE',
+      emailVerifiedAt: new Date(),
+    },
+  })
+
+  await prisma.userRole.upsert({
+    where: { userId_roleId: { userId: agentUser.id, roleId: agentRole.id } },
+    update: {},
+    create: { userId: agentUser.id, roleId: agentRole.id },
+  })
+
+  const agent = await prisma.agent.upsert({
+    where: { userId: agentUser.id },
+    update: {},
+    create: {
+      userId: agentUser.id,
+      companyName: 'Apex Telecommunications Ltd',
+      commissionType: 'PERCENTAGE',
+      commissionRate: 7.5,
+      totalEarnings: 2070000,
+      pendingPayout: 350000,
+      bankName: 'Stanbic Bank Uganda',
+      bankAccount: '9030012345678',
+      mobileMoney: '+256701234567',
+    },
+  })
+
+  await prisma.wallet.upsert({
+    where: { userId: agentUser.id },
+    update: {},
+    create: {
+      userId: agentUser.id,
+      agentId: agent.id,
+      balance: 1720000,
+      currency: 'UGX',
+    }
+  })
+
+  // Seed Demo Clients
+  const clientUser1 = await prisma.user.upsert({
+    where: { email: 'client@example.com' },
+    update: {},
+    create: {
+      email: 'client@example.com',
+      name: 'John Mukasa',
+      passwordHash: demoAgentPassword,
+      status: 'ACTIVE',
+      emailVerifiedAt: new Date(),
+    },
+  })
+
+  await prisma.userRole.upsert({
+    where: { userId_roleId: { userId: clientUser1.id, roleId: clientRole.id } },
+    update: {},
+    create: { userId: clientUser1.id, roleId: clientRole.id },
+  })
+
+  const client1 = await prisma.client.upsert({
+    where: { userId: clientUser1.id },
+    update: {},
+    create: {
+      userId: clientUser1.id,
+      agentId: agent.id,
+      companyName: 'Acme Global Corp',
+      industry: 'Retail & E-commerce',
+      referralSource: 'Apex Telecommunications',
+    },
+  })
+
+  await prisma.wallet.upsert({
+    where: { userId: clientUser1.id },
+    update: {},
+    create: {
+      userId: clientUser1.id,
+      clientId: client1.id,
+      balance: 1540000,
+      smsCredits: 30800,
+      currency: 'UGX',
+    }
+  })
+
+  const clientUser2 = await prisma.user.upsert({
+    where: { email: 'finserve@example.com' },
+    update: {},
+    create: {
+      email: 'finserve@example.com',
+      name: 'Sarah Nsubuga',
+      passwordHash: demoAgentPassword,
+      status: 'ACTIVE',
+      emailVerifiedAt: new Date(),
+    },
+  })
+
+  await prisma.userRole.upsert({
+    where: { userId_roleId: { userId: clientUser2.id, roleId: clientRole.id } },
+    update: {},
+    create: { userId: clientUser2.id, roleId: clientRole.id },
+  })
+
+  const client2 = await prisma.client.upsert({
+    where: { userId: clientUser2.id },
+    update: {},
+    create: {
+      userId: clientUser2.id,
+      agentId: agent.id,
+      companyName: 'FinServe Africa Ltd',
+      industry: 'Fintech & Microfinance',
+    },
+  })
+
+  await prisma.wallet.upsert({
+    where: { userId: clientUser2.id },
+    update: {},
+    create: {
+      userId: clientUser2.id,
+      clientId: client2.id,
+      balance: 4850000,
+      smsCredits: 97000,
+      currency: 'UGX',
+    }
+  })
+
+  // 7. Seed Demo Sender IDs
+  const adminUser = await prisma.user.findFirstOrThrow({ where: { email: 'admin@example.com' } });
+  const senderIdsToSeed = [
+    { senderId: 'RANGESMS', userId: adminUser.id, status: 'APPROVED' as const, purpose: 'System notifications and alerts' },
+    { senderId: 'ACMEALERT', userId: clientUser1.id, clientId: client1.id, status: 'APPROVED' as const, purpose: 'Order tracking and customer verification OTPs' },
+    { senderId: 'FINSERVE', userId: clientUser2.id, clientId: client2.id, status: 'PENDING' as const, purpose: 'Loan repayment reminders and transaction receipts' },
+    { senderId: 'QUICKCASH', userId: clientUser1.id, clientId: client1.id, status: 'REJECTED' as const, purpose: 'Marketing promotions', rejectionReason: 'Regulatory compliance: Financial Sender ID requires NDA and UCC verification license.' },
+  ]
+
+  for (const s of senderIdsToSeed) {
+    await prisma.senderId.upsert({
+      where: { senderId_userId: { senderId: s.senderId, userId: s.userId } },
+      update: {},
+      create: s,
+    })
+  }
+
+  // 8. Seed Demo Commissions
+  const existingCommissions = await prisma.commission.findFirst({ where: { agentId: agent.id } })
+  if (!existingCommissions) {
+    await prisma.commission.createMany({
+      data: [
+        {
+          agentId: agent.id,
+          clientId: client1.id,
+          messageCount: 50000,
+          totalSmsValue: 2500000,
+          commissionRate: 7.5,
+          commissionType: 'PERCENTAGE',
+          amount: 187500,
+          status: 'PENDING',
+        },
+        {
+          agentId: agent.id,
+          clientId: client2.id,
+          messageCount: 80000,
+          totalSmsValue: 4000000,
+          commissionRate: 7.5,
+          commissionType: 'PERCENTAGE',
+          amount: 300000,
+          status: 'APPROVED',
+          approvedBy: 'System Admin',
+          approvedAt: new Date(),
+        },
+        {
+          agentId: agent.id,
+          clientId: client1.id,
+          messageCount: 120000,
+          totalSmsValue: 6000000,
+          commissionRate: 7.5,
+          commissionType: 'PERCENTAGE',
+          amount: 450000,
+          status: 'PAID',
+          approvedBy: 'System Admin',
+          approvedAt: new Date(Date.now() - 30 * 86400000),
+          paidAt: new Date(Date.now() - 28 * 86400000),
+        },
+      ]
+    })
+  }
+
+  // 9. Seed Demo Audit Logs
+  await prisma.auditLog.createMany({
+    data: [
+      {
+        userId: adminUser.id,
+        action: 'AUTH_LOGIN',
+        resourceType: 'User',
+        resourceId: adminUser.id,
+        category: 'SECURITY',
+        status: 'SUCCESS',
+      },
+      {
+        userId: adminUser.id,
+        action: 'UPDATE_PRICING',
+        resourceType: 'SmsPricing',
+        category: 'APPLICATION',
+        status: 'SUCCESS',
+      },
+      {
+        userId: adminUser.id,
+        action: 'APPROVE_SENDER_ID',
+        resourceType: 'SenderId',
+        category: 'APPLICATION',
+        status: 'SUCCESS',
+      },
+      {
+        userId: adminUser.id,
+        action: 'CREATE_PROVIDER',
+        resourceType: 'SmsProvider',
+        category: 'APPLICATION',
+        status: 'SUCCESS',
+      },
+    ]
+  })
 
   console.log('✅ Seeding completed.')
 }

@@ -9,7 +9,10 @@ export async function GET(req: Request) {
   if (!session || !(await hasPermission(session.userId, 'providers.manage'))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
   }
-  return NextResponse.json({ providers: [] });
+  const providers = await prisma.smsProvider.findMany({
+    orderBy: { priority: 'asc' }
+  });
+  return NextResponse.json({ providers });
 }
 
 export async function POST(req: Request) {
@@ -19,9 +22,31 @@ export async function POST(req: Request) {
   }
   try {
     const body = await req.json();
-    const parsed = smsProviderSchema.parse(body);
-    return NextResponse.json({ success: true, data: parsed });
-  } catch (error) {
-    return NextResponse.json({ error: 'Invalid data' }, { status: 400 } as any);
+    const { name, displayName, type = 'HTTP', baseUrl, apiKey, apiSecret, priority = 1, costPerSms = 35.0, supportsDlr = true, maxThroughput = 500 } = body;
+
+    if (!name || !displayName) {
+      return NextResponse.json({ error: 'Provider name and display name are required' }, { status: 400 });
+    }
+
+    const provider = await prisma.smsProvider.create({
+      data: {
+        name: name.toLowerCase().replace(/\s+/g, '-'),
+        displayName,
+        type,
+        baseUrl: baseUrl || '',
+        apiKey,
+        apiSecret,
+        priority: Number(priority),
+        costPerSms: Number(costPerSms),
+        supportsDlr: Boolean(supportsDlr),
+        maxThroughput: Number(maxThroughput),
+        isActive: true,
+      }
+    });
+
+    return NextResponse.json({ success: true, provider });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Failed to create provider';
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }
