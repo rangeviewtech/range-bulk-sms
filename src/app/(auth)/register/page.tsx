@@ -219,8 +219,8 @@ export default function RegisterPage() {
 
   return (
     <div
-      className="relative min-h-screen w-full bg-white overflow-hidden select-none"
-      style={{ fontFamily: FONT_STACK, fontSize: '13px', color: '#444' }}
+      className="relative min-h-screen w-full bg-background overflow-hidden select-none"
+      style={{ fontFamily: FONT_STACK, fontSize: '13px', color: 'hsl(var(--foreground))' }}
     >
       {/* ================= #img-holder (Background Carousel) ================= */}
       <div 

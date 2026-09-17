@@ -24,22 +24,26 @@ export function StatCard({
   ...props
 }: StatCardProps) {
   return (
-    <Card className={className} {...props}>
+    <Card className={cn("transition-all duration-200 hover:border-secondary/40 hover:shadow-xs", className)} {...props}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {icon && <div className="text-muted-foreground">{icon}</div>}
+        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+        {icon && (
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary/10 text-secondary dark:bg-secondary/25 dark:text-secondary-foreground">
+            {icon}
+          </div>
+        )}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="text-2xl font-bold tracking-tight">{value}</div>
         {(description || change) && (
           <p className="text-xs text-muted-foreground flex items-center mt-1">
             {change && (
               <span
                 className={cn(
-                  "flex items-center mr-2 font-medium",
-                  change.trend === "up" && "text-success",
-                  change.trend === "down" && "text-destructive",
-                  change.trend === "neutral" && "text-muted-foreground"
+                  "inline-flex items-center px-1.5 py-0.5 rounded text-xs font-semibold mr-2",
+                  change.trend === "up" && "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+                  change.trend === "down" && "bg-rose-500/10 text-rose-600 dark:text-rose-400",
+                  change.trend === "neutral" && "bg-muted text-muted-foreground"
                 )}
               >
                 {change.trend === "up" && <TrendingUp className="mr-1 h-3 w-3" />}

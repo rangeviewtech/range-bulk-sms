@@ -15,15 +15,15 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+          "border border-input text-[#04648C] dark:text-[#FBCA07] bg-background shadow-xs hover:border-[#04648C]/60 hover:bg-[#04648C]/10 dark:hover:border-[#FBCA07]/60 dark:hover:bg-[#FBCA07]/10",
         secondary:
           "bg-secondary text-secondary-foreground font-semibold shadow-sm hover:bg-secondary/90",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-secondary underline-offset-4 hover:underline font-semibold",
+        ghost: "hover:bg-[#04648C]/10 hover:text-[#04648C] dark:hover:bg-[#FBCA07]/10 dark:hover:text-[#FBCA07]",
+        link: "text-[#04648C] dark:text-[#FBCA07] underline-offset-4 hover:underline font-semibold",
         brand:
-          "bg-[#FBCA07] text-[#141B2D] font-bold shadow-sm hover:bg-[#e5b706]",
+          "bg-[#FBCA07] text-[#141B2D] font-bold shadow-sm hover:bg-[#FBCA07]/90",
         "brand-blue":
-          "bg-[#04648C] text-white font-semibold shadow-sm hover:bg-[#035172]",
+          "bg-[#04648C] text-white font-semibold shadow-sm hover:bg-[#04648C]/90",
       },
       size: {
         default: "h-9 px-4 py-2",

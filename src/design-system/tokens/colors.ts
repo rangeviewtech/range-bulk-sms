@@ -10,6 +10,14 @@ export const brandColors = {
   darkNavySurface: "#03102E",
 } as const;
 
+export const brandChartColors = [
+  "#FBCA07", // Primary Yellow
+  "#04648C", // Primary Deep Blue
+  "#67A0AF", // Medium Blue
+  "#A6CBD8", // Light Blue
+  "#FBE392", // Light Yellow
+] as const;
+
 export const lightThemeColors = {
   brandActionForeground: "hsl(218 30% 12%)",
   background: "hsl(0 0% 100%)",
@@ -36,7 +44,7 @@ export const lightThemeColors = {
   infoForeground: "hsl(0 0% 100%)",
   border: "hsl(214 32% 91%)",
   input: "hsl(214 32% 91%)",
-  ring: "hsl(48 98% 51%)",
+  ring: "hsl(198 94% 28%)", // Brand Blue #04648C for crisp focus states
 };
 
 export const darkThemeColors = {
@@ -65,5 +73,5 @@ export const darkThemeColors = {
   infoForeground: "hsl(0 0% 100%)",
   border: "hsl(223 30% 20%)",
   input: "hsl(223 30% 20%)",
-  ring: "hsl(48 98% 51%)",
+  ring: "hsl(48 98% 51%)", // Brand Yellow #FBCA07 in dark mode
 };

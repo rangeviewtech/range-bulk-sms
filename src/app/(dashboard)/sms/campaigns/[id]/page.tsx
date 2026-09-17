@@ -10,9 +10,9 @@ import Link from 'next/link';
 import { use } from 'react';
 
 const deliveryData = [
-  { name: 'Delivered', value: 14500, color: '#22c55e' },
-  { name: 'Failed', value: 350, color: '#ef4444' },
-  { name: 'Pending', value: 550, color: '#f59e0b' },
+  { name: 'Delivered', value: 14500, color: '#04648C' },
+  { name: 'Pending', value: 550, color: '#FBCA07' },
+  { name: 'Failed', value: 350, color: '#e11d48' },
 ];
 
 export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id: string }> }) {
@@ -41,54 +41,54 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <Card>
+        <Card className="transition-all hover:border-secondary/40 hover:shadow-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between space-x-2">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Total Recipients</p>
                 <h2 className="text-3xl font-bold mt-1">15,400</h2>
               </div>
-              <div className="p-3 bg-primary/10 text-primary rounded-full">
-                <CheckCircle2 className="w-6 h-6" />
+              <div className="p-2.5 bg-primary/20 text-slate-900 rounded-lg">
+                <CheckCircle2 className="w-5 h-5" />
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="transition-all hover:border-secondary/40 hover:shadow-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between space-x-2">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Delivery Rate</p>
-                <h2 className="text-3xl font-bold mt-1 text-green-600">94.1%</h2>
+                <h2 className="text-3xl font-bold mt-1 text-emerald-600 dark:text-emerald-400">94.1%</h2>
               </div>
-              <div className="p-3 bg-green-500/10 text-green-600 rounded-full">
-                <CheckCircle2 className="w-6 h-6" />
+              <div className="p-2.5 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 rounded-lg">
+                <CheckCircle2 className="w-5 h-5" />
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="transition-all hover:border-secondary/40 hover:shadow-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between space-x-2">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Total Cost</p>
                 <h2 className="text-3xl font-bold mt-1">154,000 <span className="text-lg font-medium text-muted-foreground">UGX</span></h2>
               </div>
-              <div className="p-3 bg-blue-500/10 text-blue-600 rounded-full">
-                <CheckCircle2 className="w-6 h-6" />
+              <div className="p-2.5 bg-secondary/15 text-secondary dark:text-secondary-foreground rounded-lg">
+                <CheckCircle2 className="w-5 h-5" />
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="transition-all hover:border-secondary/40 hover:shadow-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between space-x-2">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Failed</p>
-                <h2 className="text-3xl font-bold mt-1 text-red-600">350</h2>
+                <h2 className="text-3xl font-bold mt-1 text-rose-600 dark:text-rose-400">350</h2>
               </div>
-              <div className="p-3 bg-red-500/10 text-red-600 rounded-full">
-                <XCircle className="w-6 h-6" />
+              <div className="p-2.5 bg-rose-500/15 text-rose-600 dark:text-rose-400 rounded-lg">
+                <XCircle className="w-5 h-5" />
               </div>
             </div>
           </CardContent>
@@ -105,10 +105,10 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={deliveryData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.6} />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} />
                   <YAxis axisLine={false} tickLine={false} />
-                  <RechartsTooltip cursor={{fill: 'transparent'}} contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb' }} />
+                  <RechartsTooltip cursor={{fill: 'transparent'}} contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))', backgroundColor: 'hsl(var(--card))' }} />
                   <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={60}>
                     {
                       deliveryData.map((entry, index) => (
@@ -129,7 +129,7 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
           <CardContent className="space-y-4">
             <div className="flex justify-between pb-3 border-b border-border">
               <span className="text-muted-foreground">Status</span>
-              <Badge variant="outline" className="bg-green-500/10 text-green-700 border-green-500/20">COMPLETED</Badge>
+              <Badge variant="success">COMPLETED</Badge>
             </div>
             <div className="flex justify-between pb-3 border-b border-border">
               <span className="text-muted-foreground">Sender ID</span>

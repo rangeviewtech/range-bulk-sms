@@ -120,12 +120,12 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
       case "COMPLETED":
       case "SENT":
       case "APPROVED":
-        return <Badge className="bg-emerald-600/10 text-emerald-600 hover:bg-emerald-600/20 border-emerald-600/20">Completed</Badge>;
+        return <Badge variant="success">Completed</Badge>;
       case "PROCESSING":
       case "QUEUED":
-        return <Badge className="bg-blue-600/10 text-blue-600 hover:bg-blue-600/20 border-blue-600/20">Running</Badge>;
+        return <Badge variant="brand-blue">Running</Badge>;
       case "SCHEDULED":
-        return <Badge variant="secondary">Scheduled</Badge>;
+        return <Badge variant="light-blue">Scheduled</Badge>;
       case "FAILED":
       case "CANCELLED":
         return <Badge variant="destructive">Failed</Badge>;
@@ -162,10 +162,12 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {kpis.map((kpi, i) => (
           <Link key={i} href={kpi.href} className="transition-transform hover:-translate-y-0.5">
-            <Card className="h-full border hover:border-primary/50 transition-colors">
+            <Card className="h-full border hover:border-secondary/40 hover:shadow-xs transition-all">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{kpi.title}</CardTitle>
-                <kpi.icon className="h-4 w-4 text-muted-foreground" />
+                <div className="flex h-7 w-7 items-center justify-center rounded-md bg-secondary/10 text-secondary dark:bg-secondary/25 dark:text-secondary-foreground">
+                  <kpi.icon className="h-3.5 w-3.5" />
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold tracking-tight">{kpi.value}</div>
@@ -194,12 +196,12 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
                   <AreaChart data={volumeTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorSent" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
-                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.0} />
+                        <stop offset="5%" stopColor="#04648C" stopOpacity={0.7} />
+                        <stop offset="95%" stopColor="#04648C" stopOpacity={0.0} />
                       </linearGradient>
                       <linearGradient id="colorDelivered" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
-                        <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
+                        <stop offset="5%" stopColor="#FBCA07" stopOpacity={0.7} />
+                        <stop offset="95%" stopColor="#FBCA07" stopOpacity={0.0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.6} />
@@ -213,8 +215,8 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
                         fontSize: "12px",
                       }}
                     />
-                    <Area type="monotone" dataKey="sent" name="Sent SMS" stroke="#3b82f6" fillOpacity={1} fill="url(#colorSent)" />
-                    <Area type="monotone" dataKey="delivered" name="Delivered SMS" stroke="#10b981" fillOpacity={1} fill="url(#colorDelivered)" />
+                    <Area type="monotone" dataKey="sent" name="Sent SMS" stroke="#04648C" strokeWidth={2} fillOpacity={1} fill="url(#colorSent)" />
+                    <Area type="monotone" dataKey="delivered" name="Delivered SMS" stroke="#FBCA07" strokeWidth={2} fillOpacity={1} fill="url(#colorDelivered)" />
                   </AreaChart>
                 </ResponsiveContainer>
               ) : (
@@ -252,7 +254,7 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
                         fontSize: "12px",
                       }}
                     />
-                    <Bar dataKey="revenue" name="Revenue" fill="#6366f1" radius={[4, 4, 0, 0]} maxBarSize={45} />
+                    <Bar dataKey="revenue" name="Revenue" fill="#04648C" radius={[4, 4, 0, 0]} maxBarSize={45} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
