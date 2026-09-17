@@ -365,8 +365,8 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
             </Link>
           </div>
 
-          {/* USER & NOTIFICATIONS BAR (65px height) */}
-          <div id="tree-user" className="flex items-center justify-center h-[65px] border-b border-white/10 relative">
+          {/* USER & NOTIFICATIONS BAR (compact 44px height for sleek spacing) */}
+          <div id="tree-user" className="flex items-center justify-center h-[44px] border-b border-white/10 relative">
             {/* User Icon */}
             <button
               type="button"
@@ -381,11 +381,11 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               title="User Profile & Settings"
               aria-label="User Profile"
             >
-              <User className="w-[22px] h-[22px] transition-transform duration-200 group-hover:scale-110" strokeWidth={1.3} />
+              <User className="w-[20px] h-[20px] transition-transform duration-200 group-hover:scale-110" strokeWidth={1.3} />
             </button>
 
             {/* Divider */}
-            <div className="w-[1px] h-[26px] bg-white/10" />
+            <div className="w-[1px] h-[18px] bg-white/10" />
 
             {/* Notifications Icon */}
             <button
@@ -401,9 +401,9 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               title="Notifications & Announcements"
               aria-label="Notifications"
             >
-              <Bell className="w-[22px] h-[22px] transition-transform duration-200 group-hover:scale-110" strokeWidth={1.3} />
-              <span className="absolute top-4 right-4 w-2 h-2 bg-[#FBCA07] rounded-full animate-ping opacity-75 ring-2 ring-[#07163d]" />
-              <span className="absolute top-4 right-4 w-2 h-2 bg-[#FBCA07] rounded-full ring-2 ring-[#07163d]" />
+              <Bell className="w-[20px] h-[20px] transition-transform duration-200 group-hover:scale-110" strokeWidth={1.3} />
+              <span className="absolute top-2.5 right-3 w-2 h-2 bg-[#FBCA07] rounded-full animate-ping opacity-75 ring-2 ring-[#07163d]" />
+              <span className="absolute top-2.5 right-3 w-2 h-2 bg-[#FBCA07] rounded-full ring-2 ring-[#07163d]" />
             </button>
           </div>
 
