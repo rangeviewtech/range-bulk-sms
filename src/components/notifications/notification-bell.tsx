@@ -65,7 +65,7 @@ export function NotificationBell() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
-          <Bell className="w-5 h-5 text-gray-500 hover:text-gray-700 transition-colors" strokeWidth={1.5} />
+          <Bell className="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors" strokeWidth={1.5} />
           {unreadCount > 0 && (
             <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
               {unreadCount > 99 ? '99+' : unreadCount}
@@ -84,7 +84,7 @@ export function NotificationBell() {
         </div>
         <div className="max-h-[300px] overflow-y-auto">
           {notifications.length === 0 ? (
-            <div className="p-4 text-center text-sm text-gray-500">No notifications</div>
+            <div className="p-4 text-center text-sm text-muted-foreground">No notifications</div>
           ) : (
             notifications.map(n => (
               <DropdownMenuItem 
@@ -94,9 +94,9 @@ export function NotificationBell() {
               >
                 <div className="flex items-center justify-between w-full mb-1">
                   <span className="font-medium text-sm">{n.title}</span>
-                  <span className="text-[10px] text-gray-400">{new Date(n.createdAt).toLocaleDateString()}</span>
+                  <span className="text-[10px] text-muted-foreground">{new Date(n.createdAt).toLocaleDateString()}</span>
                 </div>
-                <p className="text-xs text-gray-600 line-clamp-2">{n.body}</p>
+                <p className="text-xs text-muted-foreground line-clamp-2">{n.body}</p>
               </DropdownMenuItem>
             ))
           )}

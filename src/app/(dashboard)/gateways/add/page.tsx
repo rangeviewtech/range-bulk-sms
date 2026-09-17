@@ -93,7 +93,7 @@ export default function AddGatewayPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {error && (
-                <div className="p-3 bg-red-500/10 border border-red-500/50 text-red-600 rounded-md text-sm">
+                <div className="p-3 bg-red-500/10 border border-red-500/50 text-red-600 dark:text-red-400 rounded-md text-sm">
                   {error}
                 </div>
               )}
@@ -144,7 +144,7 @@ export default function AddGatewayPage() {
         <Card className="border-green-500/30 overflow-hidden">
           <div className="h-1 bg-green-500 w-full" />
           <CardHeader className="text-center pb-2">
-            <div className="mx-auto w-12 h-12 bg-green-100 dark:bg-green-900/30 text-green-600 flex items-center justify-center rounded-full mb-4">
+            <div className="mx-auto w-12 h-12 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center rounded-full mb-4">
               <CheckCircle2 className="w-6 h-6" />
             </div>
             <CardTitle className="text-xl">Gateway Created</CardTitle>

@@ -42,7 +42,7 @@ export default function ApiKeysPage() {
                 <TableCell>Sep 01, 2026</TableCell>
                 <TableCell><Badge variant="default">Active</Badge></TableCell>
                 <TableCell>
-                  <Button variant="ghost" size="sm" className="text-red-600">Revoke</Button>
+                  <Button variant="ghost" size="sm" className="text-red-600 dark:text-red-400">Revoke</Button>
                 </TableCell>
               </TableRow>
             </TableBody>

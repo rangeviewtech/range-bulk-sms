@@ -52,3 +52,12 @@
 .input__box{ flex-grow: 1; border: 0px solid #ccc !important; background: white; padding-left: 8px; font-family: sans-serif; font-size: 12px; outline: 0; resize: none; overflow-y: hidden; min-height: 20px; max-height: 70px; }
 .send__button{ background-color: #ffffff; color: white; font-family: sans-serif; text-align: center; border: none; cursor: pointer; }
 .focus{ box-shadow: 0px 0px 7px 0px #04648C !important; border-color: #04648C!important; }
+
+.dark {
+    --blue: #38bdf8;
+    --sketch: #38bdf8;
+    --green: #4ade80;
+    --red: #f87171;
+}
+.dark .helpMsg > span { color: #38bdf8 !important; }
+.dark .focus { box-shadow: 0px 0px 7px 0px #38bdf8 !important; border-color: #38bdf8 !important; }

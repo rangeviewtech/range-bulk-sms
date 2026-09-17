@@ -532,3 +532,25 @@ body[project_id='40'] #container{ background: rgba(17, 17, 17, 0.83); }
 {
   .tree-container { padding-bottom: 80px; }
 }
+
+/* Dark mode visible tones */
+.dark .window a,
+.dark #notification-container .notification-item-label,
+.dark #clearAllContainer,
+.dark .noti_btn,
+.dark .ai-pf-clear-all,
+.dark .ai-pf-card-title,
+.dark .ai-pf-view-more-link,
+.dark .ai-pf-popup-view-link {
+  color: #38bdf8 !important;
+}
+
+.dark .noti_btn {
+  border-color: #38bdf8 !important;
+}
+
+.dark .noti_btn:hover {
+  background: #38bdf8 !important;
+  color: #07163D !important;
+}
+

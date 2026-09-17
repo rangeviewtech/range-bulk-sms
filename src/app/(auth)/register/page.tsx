@@ -144,7 +144,7 @@ export default function RegisterPage() {
       strengthWidth = '66%';
     } else if (requirementsMet === 4) {
       strengthText = dict.auth.strengthStrong;
-      strengthColor = 'hsl(var(--success, 142 71% 45%))';
+      strengthColor = 'hsl(var(--success))';
       strengthWidth = '100%';
     }
   }
@@ -358,6 +358,7 @@ export default function RegisterPage() {
                   placeholder={dict.auth.fullNamePlaceholder}
                   autoComplete="name"
                   disabled={loading || !!socialLoading}
+                  aria-invalid={errors.name ? "true" : undefined}
                   style={{
                     width: '100%',
                     height: '38px',
@@ -365,9 +366,9 @@ export default function RegisterPage() {
                     fontSize: '13px',
                     backgroundColor: 'hsl(var(--muted))',
                     border: errors.name
-                      ? '1px solid #dc3545'
+                      ? '1px solid hsl(var(--destructive))'
                       : (dirtyFields.name || touchedFields.name) && !errors.name
-                      ? '1px solid #28a745'
+                      ? '1px solid hsl(var(--success))'
                       : '1px solid hsl(var(--border))',
                     borderRadius: '6px',
                     color: 'hsl(var(--foreground))',
@@ -377,7 +378,7 @@ export default function RegisterPage() {
                     fontFamily: FONT_STACK,
                   }}
                 />
-                {errors.name && <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{errors.name.message}</p>}
+                {errors.name && <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>{errors.name.message}</p>}
               </div>
 
               {/* Email Field */}
@@ -390,6 +391,7 @@ export default function RegisterPage() {
                   placeholder={dict.auth.emailPlaceholder}
                   autoComplete="email"
                   disabled={loading || !!socialLoading}
+                  aria-invalid={errors.email ? "true" : undefined}
                   style={{
                     width: '100%',
                     height: '38px',
@@ -397,9 +399,9 @@ export default function RegisterPage() {
                     fontSize: '13px',
                     backgroundColor: 'hsl(var(--muted))',
                     border: errors.email
-                      ? '1px solid #dc3545'
+                      ? '1px solid hsl(var(--destructive))'
                       : (dirtyFields.email || touchedFields.email) && !errors.email
-                      ? '1px solid #28a745'
+                      ? '1px solid hsl(var(--success))'
                       : '1px solid hsl(var(--border))',
                     borderRadius: '6px',
                     color: 'hsl(var(--foreground))',
@@ -409,7 +411,7 @@ export default function RegisterPage() {
                     fontFamily: FONT_STACK,
                   }}
                 />
-                {errors.email && <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{errors.email.message}</p>}
+                {errors.email && <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>{errors.email.message}</p>}
               </div>
 
               {/* Password Field */}
@@ -422,6 +424,7 @@ export default function RegisterPage() {
                   placeholder={dict.auth.registerPasswordPlaceholder}
                   autoComplete="new-password"
                   disabled={loading || !!socialLoading}
+                  aria-invalid={errors.password ? "true" : undefined}
                   style={{
                     width: '100%',
                     height: '38px',
@@ -429,9 +432,9 @@ export default function RegisterPage() {
                     fontSize: '13px',
                     backgroundColor: 'hsl(var(--muted))',
                     border: errors.password
-                      ? '1px solid #dc3545'
+                      ? '1px solid hsl(var(--destructive))'
                       : (dirtyFields.password || touchedFields.password) && !errors.password
-                      ? '1px solid #28a745'
+                      ? '1px solid hsl(var(--success))'
                       : '1px solid hsl(var(--border))',
                     borderRadius: '6px',
                     color: 'hsl(var(--foreground))',
@@ -466,7 +469,7 @@ export default function RegisterPage() {
                 >
                   {showPassword ? <EyeOff size={16} color='hsl(var(--muted-foreground))' /> : <Eye size={16} color='hsl(var(--muted-foreground))' />}
                 </button>
-                {errors.password && <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{errors.password.message}</p>}
+                {errors.password && <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>{errors.password.message}</p>}
                 
                 {passwordValue.length > 0 && (
                   <div style={{ marginTop: '8px' }}>
@@ -490,6 +493,7 @@ export default function RegisterPage() {
                   placeholder={dict.auth.confirmPasswordPlaceholder}
                   autoComplete="new-password"
                   disabled={loading || !!socialLoading}
+                  aria-invalid={errors.confirmPassword || (touchedFields.confirmPassword && passwordValue !== confirmPasswordValue) ? "true" : undefined}
                   style={{
                     width: '100%',
                     height: '38px',
@@ -497,9 +501,9 @@ export default function RegisterPage() {
                     fontSize: '13px',
                     backgroundColor: 'hsl(var(--muted))',
                     border: errors.confirmPassword || (touchedFields.confirmPassword && passwordValue !== confirmPasswordValue)
-                      ? '1px solid #dc3545'
+                      ? '1px solid hsl(var(--destructive))'
                       : (dirtyFields.confirmPassword || touchedFields.confirmPassword) && !errors.confirmPassword && passwordValue === confirmPasswordValue && confirmPasswordValue.length > 0
-                      ? '1px solid #28a745'
+                      ? '1px solid hsl(var(--success))'
                       : '1px solid hsl(var(--border))',
                     borderRadius: '6px',
                     color: 'hsl(var(--foreground))',
@@ -535,9 +539,9 @@ export default function RegisterPage() {
                   {showConfirmPassword ? <EyeOff size={16} color='hsl(var(--muted-foreground))' /> : <Eye size={16} color='hsl(var(--muted-foreground))' />}
                 </button>
                 {errors.confirmPassword ? (
-                  <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{errors.confirmPassword.message}</p>
+                  <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>{errors.confirmPassword.message}</p>
                 ) : (touchedFields.confirmPassword && passwordValue !== confirmPasswordValue) ? (
-                  <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{dict.validation.passwordsMismatch}</p>
+                  <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>{dict.validation.passwordsMismatch}</p>
                 ) : null}
               </div>
 
@@ -552,21 +556,21 @@ export default function RegisterPage() {
                   />
                   <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', lineHeight: '18px', fontFamily: FONT_STACK }}>
                     {dict.auth.agreeToTermsPrompt || 'I agree to the'}{' '}
-                    <Link href="/terms" target="_blank" style={{ color: '#04648C', textDecoration: 'none', fontWeight: 600 }}>
+                    <Link href="/terms" target="_blank" className="auth-link" style={{ color: 'var(--brand-link)', textDecoration: 'none', fontWeight: 600 }}>
                       {dict.legal?.termsAndConditions || 'Terms & Conditions'}
                     </Link>
                     {', '}
-                    <Link href="/privacy" target="_blank" style={{ color: '#04648C', textDecoration: 'none', fontWeight: 600 }}>
+                    <Link href="/privacy" target="_blank" className="auth-link" style={{ color: 'var(--brand-link)', textDecoration: 'none', fontWeight: 600 }}>
                       {dict.legal?.privacyPolicy || 'Privacy Policy'}
                     </Link>
                     {' '}&{' '}
-                    <Link href="/cookies" target="_blank" style={{ color: '#04648C', textDecoration: 'none', fontWeight: 600 }}>
+                    <Link href="/cookies" target="_blank" className="auth-link" style={{ color: 'var(--brand-link)', textDecoration: 'none', fontWeight: 600 }}>
                       {dict.legal?.cookiePolicy || 'Cookie Policy'}
                     </Link>
                   </span>
                 </label>
                 {errors.acceptTerms && (
-                  <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>
+                  <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>
                     {errors.acceptTerms.message}
                   </p>
                 )}
@@ -635,13 +639,14 @@ export default function RegisterPage() {
                 </span>
                 <a
                   href="/login"
+                  className="auth-link"
                   style={{
                     fontSize: '12px',
-                    color: '#04648C',
+                    color: 'var(--brand-link)',
                     fontWeight: 600,
                     textDecoration: 'none',
                     fontFamily: FONT_STACK,
-                    transition: 'opacity 0.2s ease',
+                    transition: 'opacity 0.2s ease, color 0.2s ease',
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
                   onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}

@@ -91,9 +91,9 @@ export default function GatewaysPage() {
                   </div>
                   <div className="flex items-center gap-1.5 px-2.5 py-1 bg-muted/30 rounded-full text-xs font-medium border">
                     {gw.status === 'ONLINE' ? (
-                      <><Wifi className="w-3.5 h-3.5 text-green-500" /> <span className="text-green-600">Online</span></>
+                      <><Wifi className="w-3.5 h-3.5 text-green-500" /> <span className="text-green-600 dark:text-green-400">Online</span></>
                     ) : (
-                      <><WifiOff className="w-3.5 h-3.5 text-red-500" /> <span className="text-red-600">Offline</span></>
+                      <><WifiOff className="w-3.5 h-3.5 text-red-500" /> <span className="text-red-600 dark:text-red-400">Offline</span></>
                     )}
                   </div>
                 </div>

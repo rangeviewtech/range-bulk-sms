@@ -181,7 +181,7 @@ export default function SendSmsPage() {
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center pb-2 border-b">
                 <span className="text-sm text-muted-foreground">Wallet Balance</span>
-                <span className="font-semibold text-green-600">45,000 UGX</span>
+                <span className="font-semibold text-green-600 dark:text-green-400">45,000 UGX</span>
               </div>
               <div className="flex justify-between items-center pb-2 border-b">
                 <span className="text-sm text-muted-foreground">SMS Credits</span>

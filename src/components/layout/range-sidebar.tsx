@@ -782,10 +782,10 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                 <Link
                   href="/dashboard"
                   onClick={() => setIsUserMenuOpen(false)}
-                  className="flex items-center justify-between px-3.5 py-2 hover:bg-muted/70 transition-colors font-semibold text-[#04648C]"
+                  className="flex items-center justify-between px-3.5 py-2 hover:bg-muted/70 transition-colors font-semibold text-[#04648C] dark:text-[#38bdf8]"
                 >
                   <span>Range SMS App</span>
-                  <Check className="w-3.5 h-3.5 text-[#04648C]" />
+                  <Check className="w-3.5 h-3.5 text-[#04648C] dark:text-[#38bdf8]" />
                 </Link>
                 <div className="h-[1px] bg-border my-1" />
                 <Link
@@ -844,7 +844,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               className={cn(
                 "flex-1 flex items-center justify-center text-xs font-semibold border-b-2 transition-colors cursor-pointer",
                 activeNotiTab === "notifications"
-                  ? "border-[#04648C] text-[#04648C] bg-card"
+                  ? "border-[#04648C] text-[#04648C] dark:border-[#38bdf8] dark:text-[#38bdf8] bg-card"
                   : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
@@ -856,7 +856,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               className={cn(
                 "flex-1 flex items-center justify-center text-xs font-semibold border-b-2 transition-colors cursor-pointer",
                 activeNotiTab === "announcements"
-                  ? "border-[#04648C] text-[#04648C] bg-card"
+                  ? "border-[#04648C] text-[#04648C] dark:border-[#38bdf8] dark:text-[#38bdf8] bg-card"
                   : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >

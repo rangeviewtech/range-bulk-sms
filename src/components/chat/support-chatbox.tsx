@@ -21,7 +21,7 @@ export function SupportChatbox() {
         <span className="Title text-white">Support Chat</span>
         {isOpen && (
           <div className="down_arrow" style={{ display: 'flex' }} onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}>
-            <ChevronDown className="w-4 h-4 text-gray-600" />
+            <ChevronDown className="w-4 h-4 text-white/80 hover:text-white" />
           </div>
         )}
       </div>

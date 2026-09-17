@@ -68,7 +68,7 @@ function ResetPasswordForm() {
       strengthWidth = '66%';
     } else if (requirementsMet === 4) {
       strengthText = dict.auth.strengthStrong;
-      strengthColor = 'hsl(var(--success, 142 71% 45%))';
+      strengthColor = 'hsl(var(--success))';
       strengthWidth = '100%';
     }
   }
@@ -207,6 +207,7 @@ function ResetPasswordForm() {
             placeholder={dict.auth.newPasswordPlaceholder}
             autoComplete="new-password"
             disabled={loading}
+            aria-invalid={errors.password ? "true" : undefined}
             style={{
               width: '100%',
               height: '38px',
@@ -214,9 +215,9 @@ function ResetPasswordForm() {
               fontSize: '13px',
               backgroundColor: 'hsl(var(--muted))',
               border: errors.password
-                ? '1px solid #dc3545'
+                ? '1px solid hsl(var(--destructive))'
                 : (dirtyFields.password || touchedFields.password) && !errors.password
-                ? '1px solid #28a745'
+                ? '1px solid hsl(var(--success))'
                 : '1px solid hsl(var(--border))',
               borderRadius: '6px',
               color: 'hsl(var(--foreground))',
@@ -251,7 +252,7 @@ function ResetPasswordForm() {
           >
             {showPassword ? <EyeOff size={16} color='hsl(var(--muted-foreground))' /> : <Eye size={16} color='hsl(var(--muted-foreground))' />}
           </button>
-          {errors.password && <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{errors.password.message}</p>}
+          {errors.password && <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>{errors.password.message}</p>}
           
           {passwordValue.length > 0 && (
             <div style={{ marginTop: '8px' }}>
@@ -275,6 +276,7 @@ function ResetPasswordForm() {
             placeholder={dict.auth.confirmPasswordPlaceholder}
             autoComplete="new-password"
             disabled={loading}
+            aria-invalid={errors.confirmPassword || (touchedFields.confirmPassword && passwordValue !== confirmPasswordValue) ? "true" : undefined}
             style={{
               width: '100%',
               height: '38px',
@@ -282,9 +284,9 @@ function ResetPasswordForm() {
               fontSize: '13px',
               backgroundColor: 'hsl(var(--muted))',
               border: errors.confirmPassword || (touchedFields.confirmPassword && passwordValue !== confirmPasswordValue)
-                ? '1px solid #dc3545'
+                ? '1px solid hsl(var(--destructive))'
                 : (dirtyFields.confirmPassword || touchedFields.confirmPassword) && !errors.confirmPassword && passwordValue === confirmPasswordValue && confirmPasswordValue.length > 0
-                ? '1px solid #28a745'
+                ? '1px solid hsl(var(--success))'
                 : '1px solid hsl(var(--border))',
               borderRadius: '6px',
               color: 'hsl(var(--foreground))',
@@ -320,9 +322,9 @@ function ResetPasswordForm() {
             {showConfirmPassword ? <EyeOff size={16} color='hsl(var(--muted-foreground))' /> : <Eye size={16} color='hsl(var(--muted-foreground))' />}
           </button>
           {errors.confirmPassword ? (
-            <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{errors.confirmPassword.message}</p>
+            <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>{errors.confirmPassword.message}</p>
           ) : (touchedFields.confirmPassword && passwordValue !== confirmPasswordValue) ? (
-            <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{dict.validation.passwordsMismatch}</p>
+            <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>{dict.validation.passwordsMismatch}</p>
           ) : null}
         </div>
 
@@ -381,8 +383,8 @@ function ResetPasswordForm() {
         <div className="text-center auth-stagger-5" style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', gap: '6px', alignItems: 'center' }}>
           <Link
             href="/login"
-            style={{ color: '#04648C', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s' }}
-            className="hover:opacity-80"
+            className="auth-link hover:opacity-80"
+            style={{ color: 'var(--brand-link)', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s, color 0.2s' }}
           >
             {dict.auth.signInLink}
           </Link>

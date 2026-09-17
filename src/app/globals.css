@@ -83,6 +83,8 @@
   --warning-foreground: 218 30% 12%;
   --info: 198 94% 28%;
   --info-foreground: 0 0% 100%;
+  --brand-link: #04648C;
+  --brand-link-hover: #034b6a;
   --border: 214 32% 91%;
   --input: 214 32% 91%;
   --ring: 198 94% 28%; /* Brand Blue #04648C for crisp focus states */
@@ -117,17 +119,19 @@
   --secondary: 198 94% 28%; /* #04648C */
   --secondary-foreground: 0 0% 100%;
   --muted: 223 35% 18%;
-  --muted-foreground: 215 20% 65%;
+  --muted-foreground: 215 20% 72%;
   --accent: 223 35% 20%;
   --accent-foreground: 210 40% 98%;
-  --destructive: 0 62.8% 30.6%;
+  --destructive: 0 90% 68%;
   --destructive-foreground: 0 0% 98%;
   --success: 142 69% 58%;
   --success-foreground: 218 30% 12%;
   --warning: 38 92% 50%;
   --warning-foreground: 218 30% 12%;
-  --info: 198 94% 45%;
+  --info: 198 94% 60%;
   --info-foreground: 0 0% 100%;
+  --brand-link: #38bdf8;
+  --brand-link-hover: #7dd3fc;
   --border: 223 30% 20%;
   --input: 223 30% 20%;
   --ring: 48 98% 51%;
@@ -283,6 +287,14 @@ input:-webkit-autofill:active {
   box-shadow: 0 0 0 1px #04648C !important;
   outline: none !important;
 }
+.dark .form-control:focus, .dark .form-control:focus-visible, .dark .form-control:active {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 1px #38bdf8 !important;
+}
+.dark .prod-checkbox:checked {
+  background-color: #0284c7 !important;
+  border-color: #38bdf8 !important;
+}
 
 /* Theme Logo Toggle */
 .theme-logo-light { display: block; }
@@ -422,6 +434,56 @@ input:-webkit-autofill:active {
   outline: none !important;
 }
 
+.dark .auth-input:focus,
+.dark .auth-input:focus-visible,
+.dark .auth-input:active {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 1px #38bdf8 !important;
+}
+
+.auth-link {
+  color: var(--brand-link, #04648C) !important;
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+  opacity: 0.85;
+}
+
+.dark .auth-link,
+.dark a.auth-link {
+  color: #38bdf8 !important;
+}
+
+/* Invalid Input States */
+.form-control[aria-invalid="true"],
+.auth-input[aria-invalid="true"],
+.form-control.is-invalid,
+.auth-input.is-invalid {
+  border-color: hsl(var(--destructive)) !important;
+}
+
+.form-control[aria-invalid="true"]:focus,
+.form-control[aria-invalid="true"]:focus-visible,
+.form-control[aria-invalid="true"]:active,
+.auth-input[aria-invalid="true"]:focus,
+.auth-input[aria-invalid="true"]:focus-visible,
+.auth-input[aria-invalid="true"]:active {
+  border-color: hsl(var(--destructive)) !important;
+  box-shadow: 0 0 0 1px hsl(var(--destructive)) !important;
+}
+
+.auth-error-msg {
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  color: hsl(var(--destructive)) !important;
+  margin-top: 4px !important;
+  line-height: 1.3 !important;
+}
+
 /* Primary Button Modern Micro-Interactions & Styling */
 .auth-btn-primary {
   position: relative;
@@ -522,6 +584,13 @@ input:-webkit-autofill:active {
   background-color: hsl(var(--muted));
   border-color: #04648C !important;
   box-shadow: 0 4px 12px rgba(4, 100, 140, 0.18);
+  transform: translateY(-2px) !important;
+}
+
+.dark .auth-social-btn:hover:not(:disabled) {
+  background-color: hsl(var(--muted));
+  border-color: #38bdf8 !important;
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
   transform: translateY(-2px) !important;
 }
 
@@ -639,4 +708,44 @@ input:-webkit-autofill:active {
 .animate-indicator-slide {
   animation: navIndicatorSlide 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* ==========================================================================
+   Universal High-Contrast Dark Mode Semantic Color Protections
+   Guarantees that any text rendered on dark backgrounds uses visible tones
+   of the exact same colors (Red, Green, Blue, Amber/Yellow)
+   ========================================================================== */
+
+.dark .text-red-600,
+.dark .text-red-700,
+.dark .text-red-800 {
+  color: #f87171 !important; /* Luminous Red (same hue, high visibility) */
+}
+
+.dark .text-green-600,
+.dark .text-green-700,
+.dark .text-green-800,
+.dark .text-emerald-600,
+.dark .text-emerald-700,
+.dark .text-emerald-800 {
+  color: #4ade80 !important; /* Luminous Green (same hue, high visibility) */
+}
+
+.dark .text-blue-600,
+.dark .text-blue-700,
+.dark .text-blue-800,
+.dark .text-sky-600,
+.dark .text-sky-700,
+.dark .text-sky-800 {
+  color: #38bdf8 !important; /* Luminous Brand Blue tone (same hue, high visibility) */
+}
+
+.dark .text-amber-600,
+.dark .text-amber-700,
+.dark .text-amber-800,
+.dark .text-yellow-600,
+.dark .text-yellow-700,
+.dark .text-yellow-800 {
+  color: #fbbf24 !important; /* Luminous Amber/Yellow (same hue, high visibility) */
+}
+
 

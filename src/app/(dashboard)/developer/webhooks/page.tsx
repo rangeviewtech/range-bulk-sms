@@ -30,10 +30,10 @@ export default function WebhooksPage() {
               <TableRow>
                 <TableCell>https://api.mycompany.com/sms/callback</TableCell>
                 <TableCell>sms.delivered, sms.failed</TableCell>
-                <TableCell className="text-green-600">Active</TableCell>
+                <TableCell className="text-green-600 dark:text-green-400">Active</TableCell>
                 <TableCell>
                   <Button variant="ghost" size="sm">Edit</Button>
-                  <Button variant="ghost" size="sm" className="text-red-600">Delete</Button>
+                  <Button variant="ghost" size="sm" className="text-red-600 dark:text-red-400">Delete</Button>
                 </TableCell>
               </TableRow>
             </TableBody>

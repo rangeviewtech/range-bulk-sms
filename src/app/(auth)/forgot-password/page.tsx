@@ -118,6 +118,7 @@ export default function ForgotPasswordPage() {
             placeholder={dict.auth.emailPlaceholder}
             autoComplete="email"
             disabled={loading}
+            aria-invalid={errors.email ? "true" : undefined}
             style={{
               width: '100%',
               height: '38px',
@@ -125,9 +126,9 @@ export default function ForgotPasswordPage() {
               fontSize: '13px',
               backgroundColor: 'hsl(var(--muted))',
               border: errors.email
-                ? '1px solid #dc3545'
+                ? '1px solid hsl(var(--destructive))'
                 : (dirtyFields.email || touchedFields.email) && !errors.email
-                ? '1px solid #28a745'
+                ? '1px solid hsl(var(--success))'
                 : '1px solid hsl(var(--border))',
               borderRadius: '6px',
               color: 'hsl(var(--foreground))',
@@ -137,7 +138,7 @@ export default function ForgotPasswordPage() {
               fontFamily: FONT_STACK,
             }}
           />
-          {errors.email && <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{errors.email.message}</p>}
+          {errors.email && <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>{errors.email.message}</p>}
         </div>
 
         {/* Turnstile */}
@@ -196,8 +197,8 @@ export default function ForgotPasswordPage() {
           <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px', fontFamily: FONT_STACK }}>{dict.auth.rememberPasswordPrompt}</span>
           <Link
             href="/login"
-            style={{ color: '#04648C', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s' }}
-            className="hover:opacity-80"
+            className="auth-link hover:opacity-80"
+            style={{ color: 'var(--brand-link)', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s, color 0.2s' }}
           >
             {dict.auth.signInLink}
           </Link>

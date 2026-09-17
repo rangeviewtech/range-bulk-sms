@@ -326,8 +326,9 @@ export default function LoginPage() {
                   id="username"
                   className="form-control width100 auth-input"
                   placeholder={dict.auth.emailOrUsernamePlaceholder}
-                  autoComplete="username"
+                  autoComplete="email"
                   disabled={loading || !!socialLoading}
+                  aria-invalid={errors.email ? "true" : undefined}
                   style={{
                     width: '100%',
                     height: '38px',
@@ -335,9 +336,9 @@ export default function LoginPage() {
                     fontSize: '13px',
                     backgroundColor: 'hsl(var(--muted))',
                     border: errors.email
-                      ? '1px solid #dc3545'
+                      ? '1px solid hsl(var(--destructive))'
                       : touchedFields.email && !errors.email
-                      ? '1px solid #28a745'
+                      ? '1px solid hsl(var(--success))'
                       : '1px solid hsl(var(--border))',
                     borderRadius: '6px',
                     color: 'hsl(var(--foreground))',
@@ -347,7 +348,7 @@ export default function LoginPage() {
                     fontFamily: FONT_STACK,
                   }}
                 />
-                {errors.email && <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{errors.email.message}</p>}
+                {errors.email && <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>{errors.email.message}</p>}
               </div>
 
               {/* Password Field */}
@@ -360,6 +361,7 @@ export default function LoginPage() {
                   placeholder={dict.auth.passwordPlaceholder}
                   autoComplete="current-password"
                   disabled={loading || !!socialLoading}
+                  aria-invalid={errors.password ? "true" : undefined}
                   style={{
                     width: '100%',
                     height: '38px',
@@ -367,9 +369,9 @@ export default function LoginPage() {
                     fontSize: '13px',
                     backgroundColor: 'hsl(var(--muted))',
                     border: errors.password
-                      ? '1px solid #dc3545'
+                      ? '1px solid hsl(var(--destructive))'
                       : touchedFields.password && !errors.password
-                      ? '1px solid #28a745'
+                      ? '1px solid hsl(var(--success))'
                       : '1px solid hsl(var(--border))',
                     borderRadius: '6px',
                     color: 'hsl(var(--foreground))',
@@ -404,7 +406,7 @@ export default function LoginPage() {
                 >
                   {showPassword ? <EyeOff size={16} color='hsl(var(--muted-foreground))' /> : <Eye size={16} color='hsl(var(--muted-foreground))' />}
                 </button>
-                {errors.password && <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', fontFamily: FONT_STACK }}>{errors.password.message}</p>}
+                {errors.password && <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>{errors.password.message}</p>}
               </div>
 
               {/* Options */}
@@ -428,7 +430,7 @@ export default function LoginPage() {
                       setView('forgot');
                     }}
                     style={{ color: 'hsl(var(--foreground))', fontSize: '12px', textDecoration: 'none', fontFamily: FONT_STACK, transition: 'color 0.2s' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = '#04648C')}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--brand-link)')}
                     onMouseLeave={(e) => (e.currentTarget.style.color = 'hsl(var(--foreground))')}
                   >
                     {dict.auth.forgotPasswordLink}
@@ -436,7 +438,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Cloudflare Turnstile Ã¢â‚¬â€ Bot Protection */}
+              {/* Cloudflare Turnstile — Bot Protection */}
               <div className="auth-stagger-4">
                 <TurnstileWidget
                   variant="inline"
@@ -499,13 +501,14 @@ export default function LoginPage() {
                 </span>
                 <a
                   href="/register"
+                  className="auth-link"
                   style={{
                     fontSize: '12px',
-                    color: '#04648C',
+                    color: 'var(--brand-link)',
                     textDecoration: 'none',
                     fontWeight: 600,
                     fontFamily: FONT_STACK,
-                    transition: 'opacity 0.2s ease',
+                    transition: 'opacity 0.2s ease, color 0.2s ease',
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
                   onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
@@ -707,9 +710,9 @@ export default function LoginPage() {
                     fontSize: '13px',
                     backgroundColor: 'hsl(var(--muted))',
                     border: forgotUsername.length > 0 && !forgotUsername.includes('@')
-                      ? '1px solid #dc3545'
+                      ? '1px solid hsl(var(--destructive))'
                       : forgotUsername.length > 0 && forgotUsername.includes('@')
-                      ? '1px solid #28a745'
+                      ? '1px solid hsl(var(--success))'
                       : '1px solid hsl(var(--border))',
                     borderRadius: '6px',
                     color: 'hsl(var(--foreground))',
