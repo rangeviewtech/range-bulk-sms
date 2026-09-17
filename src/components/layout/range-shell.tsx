@@ -16,7 +16,7 @@ export function RangeShell({ children, className, user }: RangeShellProps) {
       <RangeSidebar user={user} />
       <div className="flex flex-col flex-1 min-w-0 pl-[90px]">
         {/* The sidebar is position fixed in range-sidebar, so we pad left 90px */}
-        <main className="flex-1 overflow-y-auto w-full h-full p-0">
+        <main className="flex-1 overflow-y-auto w-full h-full p-0 pt-14">
           {children}
         </main>
       </div>
