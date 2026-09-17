@@ -31,6 +31,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
+import { computeFlyoutPosition, computeDeepMenuPosition } from "@/lib/flyout-position";
 
 // Navigation Hierarchy Type
 export interface NavLeaf {
@@ -256,7 +257,41 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
   const [hoveredModule, setHoveredModule] = React.useState<NavModule | null>(null);
   const [hoveredCategory, setHoveredCategory] = React.useState<NavCategory | null>(null);
   const [categoryIndex, setCategoryIndex] = React.useState<number>(0);
-  const [flyoutTop, setFlyoutTop] = React.useState<number>(0);
+  const [flyoutPosition, setFlyoutPosition] = React.useState<{ top: number; left: number; maxHeight: number }>({
+    top: 0,
+    left: 90,
+    maxHeight: 800,
+  });
+  const [deepMenuOffset, setDeepMenuOffset] = React.useState<number>(0);
+  const [deepMenuMaxHeight, setDeepMenuMaxHeight] = React.useState<number>(800);
+
+  // Refs for measured bounds, scrolling, and flicker prevention
+  const sidebarRef = React.useRef<HTMLElement | null>(null);
+  const subMenuRef = React.useRef<HTMLDivElement | null>(null);
+  const deepMenuRef = React.useRef<HTMLDivElement | null>(null);
+  const treeModuleRef = React.useRef<HTMLDivElement | null>(null);
+  const closeTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  const cancelCloseTimer = React.useCallback(() => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  }, []);
+
+  const closeAllFlyouts = React.useCallback(() => {
+    cancelCloseTimer();
+    setHoveredModule(null);
+    setHoveredCategory(null);
+    setCategoryIndex(0);
+  }, [cancelCloseTimer]);
+
+  const scheduleClose = React.useCallback((delay = 180) => {
+    cancelCloseTimer();
+    closeTimerRef.current = setTimeout(() => {
+      closeAllFlyouts();
+    }, delay);
+  }, [cancelCloseTimer, closeAllFlyouts]);
 
   // Drawers & Dialogs
   const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
@@ -271,6 +306,94 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
   const allowedNavigation = React.useMemo(() => {
     return RANGE_NAVIGATION.filter(mod => !mod.roles || mod.roles.includes(userRole));
   }, [userRole]);
+
+  // Shared positioning function using measured element bounds
+  const updateFlyoutPosition = React.useCallback(() => {
+    if (!hoveredModule || typeof window === "undefined") return;
+
+    const parentEl = document.querySelector(`[data-module="${hoveredModule.title}"]`) as HTMLElement | null;
+    const sidebarEl = sidebarRef.current;
+    if (!parentEl || !sidebarEl) return;
+
+    const parentRect = parentEl.getBoundingClientRect();
+    const sidebarRect = sidebarEl.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+
+    const isLastItem =
+      allowedNavigation.length > 0 &&
+      allowedNavigation[allowedNavigation.length - 1].title === hoveredModule.title;
+
+    const subMenuEl = subMenuRef.current;
+    const measuredSubMenuHeight = subMenuEl
+      ? subMenuEl.getBoundingClientRect().height
+      : (hoveredModule.categories?.length || 0) * ITEM_HEIGHT + 33;
+
+    const pos = computeFlyoutPosition({
+      parentRect,
+      sidebarRect,
+      submenuHeight: measuredSubMenuHeight,
+      isLastItem,
+      viewportHeight,
+    });
+
+    setFlyoutPosition({
+      top: pos.top,
+      left: pos.left,
+      maxHeight: pos.maxHeight,
+    });
+
+    if (hoveredCategory) {
+      const deepMenuEl = deepMenuRef.current;
+      const deepMenuHeight = deepMenuEl
+        ? deepMenuEl.getBoundingClientRect().height
+        : hoveredCategory.items.length * ITEM_HEIGHT;
+
+      const headerHeight = 33;
+      const categoryRowTopOffset = headerHeight + categoryIndex * ITEM_HEIGHT;
+
+      const deepPos = computeDeepMenuPosition({
+        parentSubMenuTop: pos.top,
+        categoryRowTopOffset,
+        deepMenuHeight,
+        viewportHeight,
+      });
+
+      setDeepMenuOffset(deepPos.topOffset);
+      setDeepMenuMaxHeight(deepPos.maxHeight);
+    }
+  }, [hoveredModule, hoveredCategory, categoryIndex, allowedNavigation]);
+
+  // Recalculate positioning when submenu opens, page or sidebar scrolls, window resizes, or content changes
+  React.useEffect(() => {
+    if (!hoveredModule) return;
+
+    updateFlyoutPosition();
+    const rafId = requestAnimationFrame(() => {
+      updateFlyoutPosition();
+    });
+
+    const handleWindowResize = () => updateFlyoutPosition();
+    const handleScroll = () => updateFlyoutPosition();
+
+    window.addEventListener("resize", handleWindowResize);
+    window.addEventListener("scroll", handleScroll, true);
+
+    let observer: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(() => {
+        updateFlyoutPosition();
+      });
+      if (subMenuRef.current) observer.observe(subMenuRef.current);
+      if (deepMenuRef.current) observer.observe(deepMenuRef.current);
+    }
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", handleWindowResize);
+      window.removeEventListener("scroll", handleScroll, true);
+      if (observer) observer.disconnect();
+    };
+  }, [hoveredModule, hoveredCategory, updateFlyoutPosition]);
 
   // Flat list of all searchable screens
   const allSearchableScreens = React.useMemo(() => {
@@ -293,7 +416,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
       }
     });
     return screens;
-  }, []);
+  }, [allowedNavigation]);
 
   const filteredScreens = React.useMemo(() => {
     if (!searchQuery.trim()) return allSearchableScreens.slice(0, 15);
@@ -306,37 +429,37 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
     );
   }, [searchQuery, allSearchableScreens]);
 
-  // Global shortcut (Ctrl+K / Cmd+K) to toggle universal search
+  // Global shortcut (Ctrl+K / Cmd+K) and Escape key listener
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault();
         setIsSearchOpen((prev) => !prev);
+        return;
+      }
+      if (e.key === "Escape") {
+        if (hoveredModule) {
+          e.preventDefault();
+          closeAllFlyouts();
+          return;
+        }
+        if (isUserMenuOpen) {
+          setIsUserMenuOpen(false);
+          return;
+        }
+        if (isNotificationsOpen) {
+          setIsNotificationsOpen(false);
+          return;
+        }
+        if (isSearchOpen) {
+          setIsSearchOpen(false);
+          return;
+        }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
-  const closeAllFlyouts = () => {
-    setHoveredModule(null);
-    setHoveredCategory(null);
-    setCategoryIndex(0);
-  };
-
-  // Compute smart top offset for #deepMenu so it NEVER overflows the bottom of the screen or #subMenu
-  const deepMenuTopOffset = React.useMemo(() => {
-    if (!hoveredModule || !hoveredModule.categories || !hoveredCategory) return 0;
-    const deepMenuTotalHeight = hoveredCategory.items.length * ITEM_HEIGHT;
-    const naturalTop = 32 + (categoryIndex * ITEM_HEIGHT);
-
-    if (typeof window !== "undefined") {
-      // Ensure flyoutTop + offset + deepMenuTotalHeight <= window.innerHeight - 16
-      const maxAllowedOffset = Math.max(0, window.innerHeight - flyoutTop - deepMenuTotalHeight - 16);
-      return Math.min(naturalTop, maxAllowedOffset);
-    }
-    return 0;
-  }, [hoveredModule, hoveredCategory, categoryIndex, flyoutTop]);
+  }, [hoveredModule, isUserMenuOpen, isNotificationsOpen, isSearchOpen, closeAllFlyouts]);
 
   return (
     <>
@@ -344,11 +467,13 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
       <div 
         id="tree-outer-wrapper" 
         className="fixed top-0 left-0 h-full z-[60] pointer-events-none flex"
-        onMouseLeave={closeAllFlyouts}
+        onMouseLeave={() => scheduleClose(180)}
       >
         {/* 1. PRIMARY SIDEBAR (90px wide, #07163d) */}
         <aside
           id="left-tree"
+          ref={sidebarRef}
+          onMouseEnter={cancelCloseTimer}
           className="h-full w-[90px] bg-[#07163d] text-white flex flex-col pointer-events-auto select-none shadow-[4px_0_24px_rgba(0,0,0,0.4)] shrink-0 border-r border-white/5"
         >
           {/* LOGO CONTAINER (78px x 78px circular badge matching live site) */}
@@ -409,33 +534,51 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
           </div>
 
           {/* PRIMARY MODULES LIST */}
-          <div id="tree-module" className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden no-scrollbar pb-8">
-            {allowedNavigation.map((mod) => {
+          <div
+            id="tree-module"
+            ref={treeModuleRef}
+            onScroll={updateFlyoutPosition}
+            className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden no-scrollbar pb-8"
+          >
+            {allowedNavigation.map((mod, modIdx) => {
               const isHovered = hoveredModule?.title === mod.title;
               const isActive = mod.href ? pathname === mod.href : pathname.startsWith(`/${mod.title.toLowerCase()}`);
+              const isLast = modIdx === allowedNavigation.length - 1;
 
               return (
                 <div
                   key={mod.title}
+                  data-module={mod.title}
+                  id={`nav-module-${mod.title.toLowerCase().replace(/\s+/g, '-')}`}
                   className="w-full aspect-square shrink-0 relative flex flex-col items-center justify-center cursor-pointer group"
                   onMouseEnter={(e) => {
+                    cancelCloseTimer();
                     const rect = e.currentTarget.getBoundingClientRect();
-                    const maxCategoryItems = Math.max(
-                      1,
-                      ...(mod.categories?.map((c) => c.items.length) || [1])
-                    );
-                    const subMenuHeight = (mod.categories?.length || 0) * ITEM_HEIGHT + 32;
-                    const deepMenuHeight = maxCategoryItems * ITEM_HEIGHT;
-                    const totalFlyoutHeight = Math.max(subMenuHeight, deepMenuHeight);
-                    const maxTop = typeof window !== 'undefined'
-                      ? Math.max(10, window.innerHeight - totalFlyoutHeight - 16)
-                      : rect.top;
-                    setFlyoutTop(Math.max(10, Math.min(rect.top, maxTop)));
+                    const sidebarRect = sidebarRef.current?.getBoundingClientRect() || {
+                      top: 0,
+                      bottom: window.innerHeight,
+                      left: 0,
+                      right: 90,
+                      width: 90,
+                    };
+                    const initialSubMenuHeight = (mod.categories?.length || 0) * ITEM_HEIGHT + 33;
+                    const pos = computeFlyoutPosition({
+                      parentRect: rect,
+                      sidebarRect,
+                      submenuHeight: initialSubMenuHeight,
+                      isLastItem: isLast,
+                      viewportHeight: window.innerHeight,
+                    });
+
+                    setFlyoutPosition({
+                      top: pos.top,
+                      left: pos.left,
+                      maxHeight: pos.maxHeight,
+                    });
                     setHoveredModule(mod);
-                    // Don't auto-select first category — cascading reveal:
-                    // Layer 1 (categories) shows first, Layer 2 (deep menu) only on category hover
                     setHoveredCategory(null);
                     setCategoryIndex(0);
+                    setDeepMenuOffset(0);
                   }}
                 >
                   {mod.href && !mod.categories ? (
@@ -481,37 +624,48 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
         {hoveredModule && hoveredModule.categories && (
           <div
             id="flyout-container"
-            className="absolute left-[90px] flex select-none pointer-events-auto"
+            onMouseEnter={cancelCloseTimer}
+            onMouseLeave={() => scheduleClose(180)}
+            className="absolute flex select-none pointer-events-auto"
             style={{ 
-              top: `${flyoutTop}px` 
+              top: `${flyoutPosition.top}px`,
+              left: `${flyoutPosition.left}px`,
             }}
           >
-            {/* LAYER 2: Submenu Categories (170px wide, #1542b7 / rgb(21, 66, 183)) */}
+            {/* LAYER 2: Submenu Categories (170px wide, Range teal #04648C) */}
             <div
               id="subMenu"
-              className="w-[170px] bg-[#04648C] text-white flex flex-col border-r border-white/10 max-h-[calc(100vh-32px)] overflow-y-auto no-scrollbar animate-flyout-sub shadow-[4px_6px_16px_rgba(0,0,0,0.3)] z-10 shrink-0"
+              ref={subMenuRef}
+              className="w-[170px] bg-[#04648C] text-white flex flex-col border-r border-white/10 overflow-y-auto no-scrollbar animate-flyout-sub shadow-[4px_6px_16px_rgba(0,0,0,0.3)] z-10 shrink-0"
+              style={{
+                maxHeight: `${flyoutPosition.maxHeight}px`,
+              }}
             >
               {/* Module title header */}
               <div className="px-3 py-2 text-[10px] uppercase font-bold tracking-wider text-white/50 border-b border-white/10 bg-[#04648C]/80">
                 {hoveredModule.title}
               </div>
-              <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5">
+              <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5" role="menu">
                 {hoveredModule.categories.map((cat, idx) => {
                   const isCatHovered = hoveredCategory?.title === cat.title;
                   return (
                     <li
                       key={cat.title}
-                      onMouseEnter={() => {
-                        setHoveredCategory(cat);
-                        setCategoryIndex(idx);
-                        if (typeof window !== 'undefined') {
-                          const catHeight = cat.items.length * ITEM_HEIGHT;
-                          const maxAllowedTop = window.innerHeight - catHeight - 16;
-                          setFlyoutTop((prev) => Math.min(prev, Math.max(10, maxAllowedTop)));
+                      role="menuitem"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === "ArrowRight") {
+                          setHoveredCategory(cat);
+                          setCategoryIndex(idx);
                         }
                       }}
+                      onMouseEnter={() => {
+                        cancelCloseTimer();
+                        setHoveredCategory(cat);
+                        setCategoryIndex(idx);
+                      }}
                       className={cn(
-                        "h-[38px] px-3 flex items-center justify-between text-[12px] font-medium text-white/90 hover:text-white trakzee-menu-item cursor-pointer transition-all duration-150 group",
+                        "h-[38px] px-3 flex items-center justify-between text-[12px] font-medium text-white/90 hover:text-white trakzee-menu-item cursor-pointer transition-all duration-150 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FBCA07] focus-visible:ring-inset",
                         isCatHovered 
                           ? "bg-[#07163d] text-white font-semibold shadow-inner border-l-2 border-[#FBCA07]" 
                           : "hover:bg-[#07163d]/80 border-l-2 border-transparent"
@@ -530,26 +684,28 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               </ul>
             </div>
 
-            {/* LAYER 3: Deep Menu Screens (180px wide, positioned dynamically & clamped to subMenu bottom) */}
+            {/* LAYER 3: Deep Menu Screens (180px wide, Range teal #04648C) */}
             {hoveredCategory && (
               <div
                 id="deepMenu"
+                ref={deepMenuRef}
                 key={hoveredCategory.title}
-                className="w-[180px] bg-[#04648C] text-white flex flex-col h-fit max-h-[calc(100vh-32px)] overflow-y-auto no-scrollbar border-r border-white/10 animate-flyout-deep shadow-[4px_6px_18px_rgba(0,0,0,0.35)] shrink-0"
+                className="w-[180px] bg-[#04648C] text-white flex flex-col h-fit overflow-y-auto no-scrollbar border-r border-white/10 animate-flyout-deep shadow-[4px_6px_18px_rgba(0,0,0,0.35)] shrink-0 z-20"
                 style={{
-                  marginTop: `${deepMenuTopOffset}px`
+                  marginTop: `${deepMenuOffset}px`,
+                  maxHeight: `${deepMenuMaxHeight}px`,
                 }}
               >
-                <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5">
+                <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5" role="menu">
                   {hoveredCategory.items.map((screen) => {
                     const isCurrent = pathname === screen.href;
                     return (
-                      <li key={screen.title} className="h-[38px] cursor-pointer group">
+                      <li key={screen.title} role="menuitem" className="h-[38px] cursor-pointer group">
                         <Link
                           href={screen.href}
                           onClick={closeAllFlyouts}
                           className={cn(
-                            "w-full h-full px-3.5 flex items-center text-[12px] text-white/90 hover:text-white trakzee-menu-item transition-all duration-150 truncate border-l-2",
+                            "w-full h-full px-3.5 flex items-center text-[12px] text-white/90 hover:text-white trakzee-menu-item transition-all duration-150 truncate border-l-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FBCA07] focus-visible:ring-inset",
                             isCurrent 
                               ? "bg-[#07163d] text-white font-semibold border-[#FBCA07]" 
                               : "border-transparent hover:bg-[#07163d]/90 hover:border-white/30"
