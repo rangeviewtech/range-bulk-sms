@@ -53,12 +53,12 @@ export function LegalLayout({
               <img
                 src={appAssets.logo}
                 alt={appConfig.name}
-                className="h-8 object-contain theme-logo-light group-hover:opacity-90 transition-opacity"
+                className="h-10 w-auto object-contain theme-logo-light group-hover:opacity-90 transition-opacity"
               />
               <img
                 src={appAssets.logoLight}
                 alt={appConfig.name}
-                className="h-8 object-contain theme-logo-dark group-hover:opacity-90 transition-opacity"
+                className="h-10 w-auto object-contain theme-logo-dark group-hover:opacity-90 transition-opacity"
               />
             </Link>
 

@@ -12,11 +12,11 @@ export interface RangeLogoProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const sizeClasses = {
-  xs: "h-6 w-auto",
-  sm: "h-8 w-auto",
-  md: "h-10 w-auto",
-  lg: "h-12 w-auto",
-  xl: "h-16 w-auto",
+  xs: "h-7 w-auto",
+  sm: "h-9 w-auto",
+  md: "h-12 w-auto",
+  lg: "h-16 w-auto",
+  xl: "h-20 w-auto",
   full: "w-full h-auto",
 };
 

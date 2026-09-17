@@ -307,9 +307,11 @@ export default function RegisterPage() {
               alt={`${appConfig.name} logo`}
               className="logo-container theme-logo-light"
               style={{
-                margin: '0 auto 20px',
-                width: '180px',
-                height: '75px',
+                margin: '0 auto 24px',
+                width: '275px',
+                maxWidth: '92%',
+                height: 'auto',
+                maxHeight: '88px',
                 objectFit: 'contain',
               }}
             />
@@ -318,9 +320,11 @@ export default function RegisterPage() {
               alt={`${appConfig.name} logo`}
               className="logo-container theme-logo-dark"
               style={{
-                margin: '0 auto 20px',
-                width: '180px',
-                height: '75px',
+                margin: '0 auto 24px',
+                width: '275px',
+                maxWidth: '92%',
+                height: 'auto',
+                maxHeight: '88px',
                 objectFit: 'contain',
               }}
             />
