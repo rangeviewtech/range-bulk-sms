@@ -66,52 +66,7 @@ export function TurnstileWidget({
   if (variant === 'inline') {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '12px', marginBottom: '16px' }}>
-        <div style={{ 
-          display: 'inline-block',
-          overflow: 'hidden',
-          borderRadius: isLoaded ? '6px' : '0',
-          border: isLoaded ? '1px solid hsl(var(--border))' : 'none',
-          width: 'fit-content',
-          background: 'transparent'
-        }}>
-          <div style={{ margin: isLoaded ? '-1px' : '0', display: 'flex', width: isLoaded ? 'calc(100% + 2px)' : '100%' }}>
-            <Turnstile
-              key={`turnstile-${turnstileLang}`}
-              ref={ref}
-              siteKey={siteKey}
-              onSuccess={(token) => { setIsLoaded(true); onVerify(token); }}
-              onError={() => { setIsLoaded(true); onError?.(); }}
-              onExpire={() => {
-                onExpire?.();
-                ref.current?.reset();
-              }}
-              onBeforeInteractive={() => setIsLoaded(true)}
-              onAfterInteractive={() => setIsLoaded(true)}
-              options={{
-                theme: resolvedTheme === 'dark' ? 'dark' : 'light',
-                appearance,
-                size: 'normal',
-                language: turnstileLang,
-              }}
-              style={{ width: '100%' }}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex justify-center w-full my-3">
-      <div style={{ 
-        display: 'inline-block',
-        overflow: 'hidden',
-        borderRadius: isLoaded ? '6px' : '0',
-        border: isLoaded ? '1px solid hsl(var(--border))' : 'none',
-        width: 'fit-content',
-        background: 'transparent'
-      }}>
-        <div style={{ margin: isLoaded ? '-1px' : '0', display: 'flex', width: isLoaded ? 'calc(100% + 2px)' : '100%' }}>
+        <div style={{ display: 'inline-block', width: 'fit-content' }}>
           <Turnstile
             key={`turnstile-${turnstileLang}`}
             ref={ref}
@@ -130,9 +85,34 @@ export function TurnstileWidget({
               size: 'normal',
               language: turnstileLang,
             }}
-            style={{ width: '100%' }}
           />
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex justify-center w-full my-3">
+      <div style={{ display: 'inline-block', width: 'fit-content' }}>
+        <Turnstile
+          key={`turnstile-${turnstileLang}`}
+          ref={ref}
+          siteKey={siteKey}
+          onSuccess={(token) => { setIsLoaded(true); onVerify(token); }}
+          onError={() => { setIsLoaded(true); onError?.(); }}
+          onExpire={() => {
+            onExpire?.();
+            ref.current?.reset();
+          }}
+          onBeforeInteractive={() => setIsLoaded(true)}
+          onAfterInteractive={() => setIsLoaded(true)}
+          options={{
+            theme: resolvedTheme === 'dark' ? 'dark' : 'light',
+            appearance,
+            size: 'normal',
+            language: turnstileLang,
+          }}
+        />
       </div>
     </div>
   );
