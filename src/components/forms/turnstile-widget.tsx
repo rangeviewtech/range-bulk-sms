@@ -66,7 +66,7 @@ export function TurnstileWidget({
   if (variant === 'inline') {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '12px', marginBottom: '16px' }}>
-        <div style={{ display: 'inline-block', width: 'fit-content' }}>
+        <div style={{ display: 'inline-block', width: '100%' }}>
           <Turnstile
             key={`turnstile-${turnstileLang}`}
             ref={ref}
@@ -82,7 +82,7 @@ export function TurnstileWidget({
             options={{
               theme: resolvedTheme === 'dark' ? 'dark' : 'light',
               appearance,
-              size: 'normal',
+              size: 'flexible',
               language: turnstileLang,
             }}
           />
@@ -93,7 +93,7 @@ export function TurnstileWidget({
 
   return (
     <div className="flex justify-center w-full my-3">
-      <div style={{ display: 'inline-block', width: 'fit-content' }}>
+      <div style={{ display: 'inline-block', width: '100%' }}>
         <Turnstile
           key={`turnstile-${turnstileLang}`}
           ref={ref}
@@ -109,7 +109,7 @@ export function TurnstileWidget({
           options={{
             theme: resolvedTheme === 'dark' ? 'dark' : 'light',
             appearance,
-            size: 'normal',
+            size: 'flexible',
             language: turnstileLang,
           }}
         />
