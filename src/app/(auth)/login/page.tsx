@@ -854,16 +854,16 @@ export default function LoginPage() {
               <div style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase', fontFamily: FONT_STACK }}>
                 Get Mobile & Desktop App
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px', width: '100%' }}>
                 <a
                   href="https://play.google.com/store/apps/details?id=com.uffizio.rangesms&hl=en_IN"
                   target="_blank"
                   rel="noreferrer"
                   title="Google Play Store"
                   className="auth-store-badge hover-scale"
-                  style={{ textDecoration: 'none' }}
+                  style={{ flex: 1, textDecoration: 'none', display: 'flex', justifyContent: 'center' }}
                 >
-                  <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ height: '36px', width: 'auto', objectFit: 'contain' }} />
+                  <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ width: '100%', height: 'auto', maxHeight: '36px', objectFit: 'contain' }} />
                 </a>
                 <a
                   href="https://apps.apple.com/in/app/rangesms/id1396516275"
@@ -871,9 +871,9 @@ export default function LoginPage() {
                   rel="noreferrer"
                   title="Apple App Store"
                   className="auth-store-badge hover-scale"
-                  style={{ textDecoration: 'none' }}
+                  style={{ flex: 1, textDecoration: 'none', display: 'flex', justifyContent: 'center' }}
                 >
-                  <img src={appAssets.storeBadges.appStore} alt="Apple App Store" style={{ height: '36px', width: 'auto', objectFit: 'contain' }} />
+                  <img src={appAssets.storeBadges.appStore} alt="Apple App Store" style={{ width: '100%', height: 'auto', maxHeight: '36px', objectFit: 'contain' }} />
                 </a>
                 <a
                   href="https://apps.microsoft.com/store"
@@ -881,9 +881,9 @@ export default function LoginPage() {
                   rel="noreferrer"
                   title="Microsoft Store"
                   className="auth-store-badge hover-scale"
-                  style={{ textDecoration: 'none' }}
+                  style={{ flex: 1, textDecoration: 'none', display: 'flex', justifyContent: 'center' }}
                 >
-                  <img src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" style={{ height: '36px', width: 'auto', objectFit: 'contain' }} />
+                  <img src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" style={{ width: '100%', height: 'auto', maxHeight: '36px', objectFit: 'contain' }} />
                 </a>
               </div>
 
