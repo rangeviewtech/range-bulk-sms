@@ -24,13 +24,13 @@ export default function SendSmsPage() {
   const cost = segments * recipients * 10; // mock
 
   return (
-    <>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       <PageHeader
         title="Send SMS"
         description="Compose and send bulk SMS messages to your contacts."
       />
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
@@ -108,7 +108,7 @@ export default function SendSmsPage() {
                     Preview
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="w-[calc(100%-2rem)] max-w-md max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
                   <DialogHeader>
                     <DialogTitle>Message Preview</DialogTitle>
                     <DialogDescription>This is how your message will appear on a device.</DialogDescription>
@@ -116,7 +116,7 @@ export default function SendSmsPage() {
                   <div className="p-4 bg-muted rounded-md min-h-[100px] whitespace-pre-wrap font-sans text-sm">
                     {message || 'Your message preview will appear here.'}
                   </div>
-                  <DialogFooter>
+                  <DialogFooter className="flex-col-reverse sm:flex-row gap-2 pt-2">
                     <Button type="button" variant="secondary">Close</Button>
                   </DialogFooter>
                 </DialogContent>
@@ -191,6 +191,6 @@ export default function SendSmsPage() {
           </Card>
         </div>
       </div>
-    </>
+    </div>
   );
 }

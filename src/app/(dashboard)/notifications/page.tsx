@@ -18,13 +18,16 @@ export default async function NotificationsPage() {
   });
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center space-x-3 mb-6">
-        <Bell className="w-6 h-6 text-muted-foreground" />
-        <h1 className="text-2xl font-bold">Notifications</h1>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-4xl mx-auto">
+      <div className="flex items-center space-x-3 mb-2">
+        <Bell className="w-6 h-6 text-[#04648C] dark:text-[#FBCA07]" />
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Notifications</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">Stay updated with system and account alerts.</p>
+        </div>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-3 sm:gap-4">
         {notifications.length === 0 ? (
           <div className="text-center py-10 text-muted-foreground border rounded-lg bg-muted/20">
             No notifications available.
@@ -32,7 +35,7 @@ export default async function NotificationsPage() {
         ) : (
           notifications.map((n) => (
             <Card key={n.id} className={!n.readAt ? 'border-blue-200 dark:border-blue-900/40 bg-blue-50/50 dark:bg-blue-950/20' : ''}>
-              <CardHeader className="py-3 px-4 flex flex-row items-center justify-between">
+              <CardHeader className="py-3 px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <CardTitle className="text-sm font-semibold">{n.title}</CardTitle>
                 <span className="text-xs text-muted-foreground">{new Date(n.createdAt).toLocaleString()}</span>
               </CardHeader>

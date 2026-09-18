@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from 'recharts';
-import { ArrowLeft, CheckCircle2, XCircle, Clock, AlertCircle, FileDown } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, XCircle, FileDown } from 'lucide-react';
 import Link from 'next/link';
 import { use } from 'react';
 
@@ -19,8 +19,8 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
   const { id } = use(params);
 
   return (
-    <>
-      <div className="mb-4">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+      <div>
         <Button asChild variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
           <Link href="/sms/campaigns">
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -33,16 +33,16 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
         title="Campaign Analytics"
         description={`Detailed performance report for campaign ID: ${id}`}
         action={
-          <Button variant="outline">
+          <Button variant="outline" className="w-full sm:w-auto">
             <FileDown className="w-4 h-4 mr-2" />
             Export Report
           </Button>
         }
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card className="transition-all hover:border-secondary/40 hover:shadow-xs">
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between space-x-2">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Total Recipients</p>
@@ -55,7 +55,7 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
           </CardContent>
         </Card>
         <Card className="transition-all hover:border-secondary/40 hover:shadow-xs">
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between space-x-2">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Delivery Rate</p>
@@ -68,7 +68,7 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
           </CardContent>
         </Card>
         <Card className="transition-all hover:border-secondary/40 hover:shadow-xs">
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between space-x-2">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Total Cost</p>
@@ -81,7 +81,7 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
           </CardContent>
         </Card>
         <Card className="transition-all hover:border-secondary/40 hover:shadow-xs">
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between space-x-2">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Failed</p>
@@ -97,12 +97,12 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2">
-          <CardHeader>
+          <CardHeader className="p-4 sm:p-6">
             <CardTitle>Delivery Breakdown</CardTitle>
             <CardDescription>Status of all messages in this campaign</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="h-[300px] w-full">
+          <CardContent className="p-4 sm:p-6 pt-0">
+            <div className="h-[260px] sm:h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={deliveryData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.6} />
@@ -123,10 +123,10 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="p-4 sm:p-6">
             <CardTitle>Campaign Details</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="p-4 sm:p-6 pt-0 space-y-4">
             <div className="flex justify-between pb-3 border-b border-border">
               <span className="text-muted-foreground">Status</span>
               <Badge variant="success">COMPLETED</Badge>
@@ -152,6 +152,6 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
           </CardContent>
         </Card>
       </div>
-    </>
+    </div>
   );
 }

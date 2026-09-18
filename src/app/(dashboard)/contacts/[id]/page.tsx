@@ -6,29 +6,32 @@ import Link from 'next/link';
 
 export default function ContactDetailPage({ params }: { params: { id: string } }) {
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
           <Link href="/contacts">
             <Button variant="ghost" size="icon">
               <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
-          <h1 className="text-3xl font-bold tracking-tight">John Doe</h1>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">John Doe</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">Contact profile and conversation history</p>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          <Button variant="outline" className="flex-1 sm:flex-initial">
             <MessageSquare className="w-4 h-4 mr-2" />
             Send SMS
           </Button>
-          <Button variant="outline">
+          <Button variant="outline" className="flex-1 sm:flex-initial">
             <Edit className="w-4 h-4 mr-2" />
             Edit
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         <div className="col-span-1 flex flex-col gap-6">
           <Card>
             <CardHeader>

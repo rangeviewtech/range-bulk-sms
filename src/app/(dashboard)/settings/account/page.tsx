@@ -4,13 +4,16 @@ import { Input } from "@/components/ui/input";
 
 export default function AccountSettingsPage() {
   return (
-    <div className="space-y-6 p-6 max-w-2xl">
-      <h1 className="text-3xl font-bold tracking-tight">Account Settings</h1>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-2xl mx-auto">
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Account Settings</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Update your personal and organizational details.</p>
+      </div>
       
       <Card>
         <CardHeader>
           <CardTitle>Profile Details</CardTitle>
-          <CardDescription>Update your personal and organizational details.</CardDescription>
+          <CardDescription>Manage your primary contact and company credentials.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -25,7 +28,7 @@ export default function AccountSettingsPage() {
             <label className="text-sm font-medium">Company Name</label>
             <Input defaultValue="Acme Corp" />
           </div>
-          <Button>Save Changes</Button>
+          <Button className="w-full sm:w-auto">Save Changes</Button>
         </CardContent>
       </Card>
     </div>

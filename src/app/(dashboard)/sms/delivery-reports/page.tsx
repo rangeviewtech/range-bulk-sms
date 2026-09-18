@@ -25,12 +25,12 @@ export default function DeliveryReportsPage() {
   };
 
   return (
-    <>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       <PageHeader
         title="Delivery Reports"
         description="Detailed log of all messages sent and their delivery status."
         action={
-          <Button variant="outline">
+          <Button variant="outline" className="w-full sm:w-auto">
             <FileDown className="w-4 h-4 mr-2" />
             Export CSV
           </Button>
@@ -39,7 +39,7 @@ export default function DeliveryReportsPage() {
       
       <Card>
         <CardContent className="p-0">
-          <div className="p-4 border-b border-border flex flex-col sm:flex-row gap-4">
+          <div className="p-4 border-b border-border flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input placeholder="Search phone number..." className="pl-9" />
@@ -51,7 +51,7 @@ export default function DeliveryReportsPage() {
           </div>
           
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
+            <table className="w-full text-sm text-left min-w-[650px]">
               <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b border-border">
                 <tr>
                   <th className="px-6 py-4 font-medium">Phone Number</th>
@@ -75,15 +75,15 @@ export default function DeliveryReportsPage() {
             </table>
           </div>
           
-          <div className="p-4 border-t border-border flex justify-between items-center text-sm text-muted-foreground">
+          <div className="p-4 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-3 text-sm text-muted-foreground">
             <div>Showing 1 to 4 of 15,400 entries</div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" disabled>Previous</Button>
-              <Button variant="outline" size="sm">Next</Button>
+            <div className="flex gap-2 w-full sm:w-auto justify-end">
+              <Button variant="outline" size="sm" disabled className="flex-1 sm:flex-initial">Previous</Button>
+              <Button variant="outline" size="sm" className="flex-1 sm:flex-initial">Next</Button>
             </div>
           </div>
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 }

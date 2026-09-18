@@ -69,15 +69,15 @@ export default function AddGatewayPage() {
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto space-y-4 sm:space-y-6">
+      <div className="flex items-center gap-3 sm:gap-4">
         <Link href="/gateways">
-          <Button variant="outline" size="icon" className="w-8 h-8 rounded-full">
+          <Button variant="outline" size="icon" className="w-8 h-8 rounded-full shrink-0">
             <ArrowLeft className="w-4 h-4" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Add Physical Gateway</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Add Physical Gateway</h1>
           <p className="text-muted-foreground text-sm">
             Configure a new Android Phone or ESP32 Module to send SMS.
           </p>
@@ -153,11 +153,11 @@ export default function AddGatewayPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6 pt-4">
-            <div className="flex flex-col items-center justify-center p-8 bg-muted/40 rounded-xl border border-dashed border-border">
-              <span className="text-sm text-muted-foreground font-medium mb-2 uppercase tracking-widest">
+            <div className="flex flex-col items-center justify-center p-4 sm:p-8 bg-muted/40 rounded-xl border border-dashed border-border">
+              <span className="text-xs sm:text-sm text-muted-foreground font-medium mb-2 uppercase tracking-widest">
                 Pairing Code
               </span>
-              <span className="text-5xl font-mono font-bold text-foreground tracking-[0.2em]">
+              <span className="text-3xl sm:text-5xl font-mono font-bold text-foreground tracking-[0.15em] sm:tracking-[0.2em] break-all text-center">
                 {pairingCode}
               </span>
               <span className="text-xs text-muted-foreground mt-4">
@@ -175,11 +175,11 @@ export default function AddGatewayPage() {
               </ol>
             </div>
           </CardContent>
-          <CardFooter className="bg-muted/30 pt-4 flex justify-between">
-             <Link href="/gateways">
-               <Button variant="outline">Back to Gateways</Button>
+          <CardFooter className="bg-muted/30 p-4 sm:p-6 flex flex-col-reverse sm:flex-row justify-between gap-3">
+             <Link href="/gateways" className="w-full sm:w-auto">
+               <Button variant="outline" className="w-full sm:w-auto">Back to Gateways</Button>
              </Link>
-             <Button variant="default" onClick={() => router.push('/gateways')}>
+             <Button variant="default" onClick={() => router.push('/gateways')} className="w-full sm:w-auto">
                Done
              </Button>
           </CardFooter>

@@ -50,16 +50,16 @@ export default function GatewaysPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Physical Gateways</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Physical Gateways</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
             Manage your Android and ESP32 hardware SMS gateways.
           </p>
         </div>
-        <Link href="/gateways/add">
-          <Button>
+        <Link href="/gateways/add" className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" /> Add Gateway
           </Button>
         </Link>

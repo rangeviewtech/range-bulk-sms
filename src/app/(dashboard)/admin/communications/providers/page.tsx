@@ -20,13 +20,13 @@ export default async function ProvidersPage() {
   const _healthRecords = await db.providerHealth.findMany();
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       <PageHeader 
         heading="Provider Health" 
         description="Status and circuit breaker states for external communication APIs."
       />
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
           <CardHeader>
             <CardTitle>SMTP Primary</CardTitle>

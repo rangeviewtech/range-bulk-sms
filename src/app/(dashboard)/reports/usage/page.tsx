@@ -69,35 +69,36 @@ export default function UsageReportPage() {
       : 42;
 
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">API & System Usage</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">API & System Usage</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Real-time traffic load, latency metrics, and API gateway health monitoring.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={handleRefresh}
             disabled={refreshing || loading}
             aria-label="Refresh usage data"
+            className="flex-1 sm:flex-initial"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
-          <Button asChild className="bg-primary text-primary-foreground font-bold hover:bg-primary/90">
+          <Button asChild className="bg-primary text-primary-foreground font-bold hover:bg-primary/90 flex-1 sm:flex-initial">
             <Link href="/developer/api-keys">API Keys</Link>
           </Button>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card className="border-secondary/20 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total API Requests</CardTitle>

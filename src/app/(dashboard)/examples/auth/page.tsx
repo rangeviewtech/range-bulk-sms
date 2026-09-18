@@ -10,7 +10,7 @@ import { WizardAuth } from '@/components/blocks/auth/wizard-auth';
 
 export default function AuthExamplesPage() {
   return (
-    <div className="space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       <PageHeader 
         heading="Authentication Layouts" 
         description="Various reusable authentication templates for different project needs."

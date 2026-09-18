@@ -6,19 +6,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, ArrowRight, Table, Settings2, FileSpreadsheet } from 'lucide-react';
+import { Upload, ArrowRight, Settings2, FileSpreadsheet } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 
 export default function CustomSmsPage() {
   return (
-    <>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       <PageHeader
         title="Personalized SMS"
         description="Send customized messages using data from your spreadsheet."
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
@@ -123,7 +123,7 @@ export default function CustomSmsPage() {
           </Card>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

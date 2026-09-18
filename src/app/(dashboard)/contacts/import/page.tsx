@@ -4,39 +4,39 @@ import { Upload, Database, CheckCircle, AlertTriangle } from 'lucide-react';
 
 export default function ContactImportPage() {
   return (
-    <div className="flex flex-col gap-6 p-6 max-w-4xl mx-auto w-full">
-      <div className="mb-4">
-        <h1 className="text-3xl font-bold tracking-tight">Import Contacts</h1>
-        <p className="text-muted-foreground">Upload a CSV or Excel file to bulk import contacts.</p>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-4xl mx-auto w-full">
+      <div className="mb-2">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Import Contacts</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Upload a CSV or Excel file to bulk import contacts.</p>
       </div>
 
-      <div className="grid gap-6">
-        <div className="flex items-center justify-between pb-4 border-b">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">1</div>
-            <span className="font-medium text-lg">Upload File</span>
+      <div className="grid gap-4 sm:gap-6">
+        <div className="flex items-center justify-between pb-4 border-b gap-2">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs sm:text-sm">1</div>
+            <span className="font-medium text-xs sm:text-sm md:text-base">Upload File</span>
           </div>
-          <div className="flex items-center gap-3 opacity-50">
-            <div className="w-8 h-8 rounded-full border-2 flex items-center justify-center font-bold">2</div>
-            <span className="font-medium text-lg">Map Columns</span>
+          <div className="flex items-center gap-2 sm:gap-3 opacity-50">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 flex items-center justify-center font-bold text-xs sm:text-sm">2</div>
+            <span className="font-medium text-xs sm:text-sm md:text-base">Map Columns</span>
           </div>
-          <div className="flex items-center gap-3 opacity-50">
-            <div className="w-8 h-8 rounded-full border-2 flex items-center justify-center font-bold">3</div>
-            <span className="font-medium text-lg">Import</span>
+          <div className="flex items-center gap-2 sm:gap-3 opacity-50">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 flex items-center justify-center font-bold text-xs sm:text-sm">3</div>
+            <span className="font-medium text-xs sm:text-sm md:text-base">Import</span>
           </div>
         </div>
 
         <Card className="border-dashed border-2">
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-              <Upload className="w-8 h-8 text-muted-foreground" />
+          <CardContent className="flex flex-col items-center justify-center py-10 sm:py-16 text-center px-4">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+              <Upload className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Drag & Drop your file here</h3>
-            <p className="text-sm text-muted-foreground max-w-md mb-6">
+            <h3 className="text-base sm:text-lg font-semibold mb-2">Drag & Drop your file here</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground max-w-md mb-6">
               Supported formats: .csv, .xls, .xlsx. Maximum file size: 10MB. 
               The file should include a header row.
             </p>
-            <Button size="lg">Browse Files</Button>
+            <Button size="lg" className="w-full sm:w-auto">Browse Files</Button>
           </CardContent>
         </Card>
 

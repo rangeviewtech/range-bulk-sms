@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { RefreshCw, CheckCircle2, DollarSign, CreditCard, User, Building2 } from "lucide-react";
+import { RefreshCw, CheckCircle2, DollarSign, CreditCard, Building2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -102,14 +102,14 @@ export default function CommissionsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Page Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Commissions</h1>
-          <p className="text-muted-foreground">Manage agent commission statements, authorizations, and automated wallet disbursements.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Commissions</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Manage agent commission statements, authorizations, and automated wallet disbursements.</p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => fetchCommissions(activeTab)} disabled={loading}>
+        <Button variant="outline" size="sm" onClick={() => fetchCommissions(activeTab)} disabled={loading} className="w-full sm:w-auto">
           <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           Refresh
         </Button>
@@ -117,18 +117,19 @@ export default function CommissionsPage() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList>
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="pending">Pending Approval</TabsTrigger>
-          <TabsTrigger value="approved">Approved for Payout</TabsTrigger>
-          <TabsTrigger value="paid">Settled / Paid</TabsTrigger>
+        <TabsList className="flex flex-wrap sm:flex-nowrap h-auto gap-1 p-1 w-full sm:w-auto">
+          <TabsTrigger value="all" className="flex-1 sm:flex-initial text-xs sm:text-sm">All</TabsTrigger>
+          <TabsTrigger value="pending" className="flex-1 sm:flex-initial text-xs sm:text-sm">Pending Approval</TabsTrigger>
+          <TabsTrigger value="approved" className="flex-1 sm:flex-initial text-xs sm:text-sm">Approved for Payout</TabsTrigger>
+          <TabsTrigger value="paid" className="flex-1 sm:flex-initial text-xs sm:text-sm">Settled / Paid</TabsTrigger>
         </TabsList>
       </Tabs>
 
       {/* Main Table Card */}
       <Card>
-        <CardContent className="pt-6">
-          <Table>
+        <CardContent className="p-0 sm:p-6">
+          <div className="overflow-x-auto min-w-[800px]">
+            <Table className="min-w-[800px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Sales Agent</TableHead>
@@ -236,6 +237,7 @@ export default function CommissionsPage() {
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

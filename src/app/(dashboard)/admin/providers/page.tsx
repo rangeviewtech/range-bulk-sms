@@ -150,26 +150,26 @@ export default function ProvidersPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Page Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">SMS Providers</h1>
-          <p className="text-muted-foreground">Manage carrier aggregators, failover priorities, throughput rates, and credentials.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">SMS Providers</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Manage carrier aggregators, failover priorities, throughput rates, and credentials.</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={fetchProviders} disabled={loading}>
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto">
+          <Button variant="outline" size="sm" onClick={fetchProviders} disabled={loading} className="flex-1 sm:flex-initial">
             <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
           </Button>
 
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
-              <Button size="sm">
+              <Button size="sm" className="flex-1 sm:flex-initial">
                 <Plus className="mr-2 h-4 w-4" /> Add Provider
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="w-[calc(100%-2rem)] max-w-lg max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
               <form onSubmit={handleAddProvider}>
                 <DialogHeader>
                   <DialogTitle>Configure New SMS Gateway</DialogTitle>
@@ -179,7 +179,7 @@ export default function ProvidersPage() {
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="provName">Provider Slug</Label>
                       <Input
@@ -202,7 +202,7 @@ export default function ProvidersPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="provType">Protocol / Type</Label>
                       <Input
@@ -236,7 +236,7 @@ export default function ProvidersPage() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="provKey">API Key / Username</Label>
                       <Input
@@ -258,7 +258,7 @@ export default function ProvidersPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="provCost">Cost / SMS (UGX)</Label>
                       <Input
@@ -281,7 +281,7 @@ export default function ProvidersPage() {
                   </div>
                 </div>
 
-                <DialogFooter>
+                <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2">
                   <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)} disabled={submitting}>
                     Cancel
                   </Button>
@@ -297,8 +297,9 @@ export default function ProvidersPage() {
 
       {/* Table Card */}
       <Card>
-        <CardContent className="pt-6">
-          <Table>
+        <CardContent className="p-0 sm:p-6">
+          <div className="overflow-x-auto min-w-[850px]">
+            <Table className="min-w-[850px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Gateway</TableHead>
@@ -400,6 +401,7 @@ export default function ProvidersPage() {
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

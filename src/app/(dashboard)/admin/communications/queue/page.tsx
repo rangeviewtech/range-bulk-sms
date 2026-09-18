@@ -27,13 +27,13 @@ export default async function QueuePage() {
   const getCount = (status: string) => stats.find(s => s.status === status)?._count || 0;
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       <PageHeader 
         heading="Background Jobs & Queue" 
         description="Monitor asynchronous communication and system tasks."
       />
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pending</CardTitle>
@@ -76,9 +76,9 @@ export default async function QueuePage() {
         <CardHeader>
           <CardTitle>Recent Jobs</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
+        <CardContent className="p-0 sm:p-6">
+          <div className="overflow-x-auto min-w-[650px]">
+            <Table className="min-w-[650px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Type</TableHead>

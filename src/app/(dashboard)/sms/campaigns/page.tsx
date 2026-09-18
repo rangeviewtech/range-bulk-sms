@@ -4,7 +4,7 @@ import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, BarChart2, MoreHorizontal, Eye } from 'lucide-react';
+import { Plus, BarChart2, Eye } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CampaignsPage() {
@@ -25,12 +25,12 @@ export default function CampaignsPage() {
   };
 
   return (
-    <>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       <PageHeader
         title="SMS Campaigns"
         description="Manage your bulk messaging campaigns and view their performance."
         action={
-          <Button asChild>
+          <Button asChild className="w-full sm:w-auto">
             <Link href="/sms/campaigns/new">
               <Plus className="w-4 h-4 mr-2" />
               New Campaign
@@ -42,7 +42,7 @@ export default function CampaignsPage() {
       <Card>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
+            <table className="w-full text-sm text-left min-w-[650px]">
               <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b border-border">
                 <tr>
                   <th className="px-6 py-4 font-medium">Campaign Name</th>
@@ -98,6 +98,6 @@ export default function CampaignsPage() {
           </div>
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 }

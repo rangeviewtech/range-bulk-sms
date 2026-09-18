@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 export default function ContactsPage() {
   return (
-    <div className="flex flex-col gap-4 sm:gap-6 p-4 sm:p-6 lg:p-8">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Contacts</h1>
@@ -45,7 +45,8 @@ export default function ContactsPage() {
       </div>
 
       <div className="bg-card rounded-lg border shadow-sm overflow-hidden">
-        <Table>
+        <div className="overflow-x-auto min-w-[650px]">
+          <Table className="min-w-[650px]">
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
@@ -93,6 +94,7 @@ export default function ContactsPage() {
             </TableRow>
           </TableBody>
         </Table>
+        </div>
       </div>
     </div>
   );

@@ -103,7 +103,7 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -114,18 +114,19 @@ export default function TransactionsPage() {
               </Link>
             </Button>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Transaction History</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Transaction History</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             Audit ledger of all financial deposits, disbursements, and refunds.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={handleRefresh}
             disabled={refreshing || loading}
+            className="flex-1 sm:flex-initial"
           >
             <RefreshCw className={`h-4 w-4 mr-1.5 ${refreshing ? 'animate-spin' : ''}`} />
             Refresh
@@ -135,6 +136,7 @@ export default function TransactionsPage() {
             size="sm"
             onClick={handleExportCSV}
             disabled={transactions.length === 0}
+            className="flex-1 sm:flex-initial"
           >
             <Download className="mr-1.5 h-4 w-4" /> Export CSV
           </Button>
@@ -149,13 +151,13 @@ export default function TransactionsPage() {
             <CardDescription>Filtered by transaction category.</CardDescription>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-muted/40 p-1 rounded-lg border">
+          <div className="flex flex-wrap items-center gap-1.5 bg-muted/40 p-1 rounded-lg border w-full sm:w-auto">
             {['ALL', 'DEPOSIT', 'DEDUCTION', 'REFUND'].map((type) => (
               <Button
                 key={type}
                 variant={filterType === type ? 'default' : 'ghost'}
                 size="sm"
-                className={`text-xs px-3 py-1 h-7 ${
+                className={`text-xs px-3 py-1 h-7 flex-1 sm:flex-initial ${
                   filterType === type ? 'bg-primary text-primary-foreground font-bold shadow-none' : ''
                 }`}
                 onClick={() => handleTypeChange(type)}
@@ -165,7 +167,7 @@ export default function TransactionsPage() {
             ))}
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 sm:p-6">
           {loading ? (
             <div className="space-y-3 py-6">
               {[1, 2, 3, 4, 5].map((i) => (
@@ -180,8 +182,8 @@ export default function TransactionsPage() {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
+            <div className="overflow-x-auto min-w-[700px]">
+              <Table className="min-w-[700px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Reference</TableHead>
@@ -272,16 +274,17 @@ export default function TransactionsPage() {
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t pt-4 mt-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t p-4 sm:p-0 sm:pt-4 mt-4">
               <p className="text-xs text-muted-foreground">
                 Page {page} of {totalPages} ({totalRecords} total transactions)
               </p>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center justify-between w-full sm:w-auto gap-1.5">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page <= 1 || loading}
+                  className="flex-1 sm:flex-initial"
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" /> Previous
                 </Button>
@@ -290,6 +293,7 @@ export default function TransactionsPage() {
                   size="sm"
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages || loading}
+                  className="flex-1 sm:flex-initial"
                 >
                   Next <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>

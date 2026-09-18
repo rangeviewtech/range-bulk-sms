@@ -21,26 +21,26 @@ export default function NewCampaignPage() {
   ];
 
   return (
-    <>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-4xl mx-auto">
       <PageHeader
         title="Create Campaign"
         description="Launch a new SMS marketing campaign in 4 easy steps."
       />
 
-      <div className="max-w-3xl mx-auto space-y-8">
+      <div className="space-y-6">
         {/* Progress Bar */}
-        <div className="relative">
-          <div className="absolute top-1/2 left-0 w-full h-1 -translate-y-1/2 bg-muted rounded-full"></div>
+        <div className="relative px-2 sm:px-4">
+          <div className="absolute top-4 sm:top-1/2 left-4 right-4 sm:left-6 sm:right-6 h-1 -translate-y-1/2 bg-muted rounded-full"></div>
           <div 
-            className="absolute top-1/2 left-0 h-1 -translate-y-1/2 bg-primary rounded-full transition-all duration-300"
-            style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
+            className="absolute top-4 sm:top-1/2 left-4 sm:left-6 h-1 -translate-y-1/2 bg-primary rounded-full transition-all duration-300"
+            style={{ width: `calc(${((step - 1) / (steps.length - 1)) * 100}% - 12px)` }}
           ></div>
           
           <div className="relative flex justify-between">
             {steps.map((s) => (
-              <div key={s.id} className="flex flex-col items-center gap-2">
+              <div key={s.id} className="flex flex-col items-center gap-1.5 sm:gap-2">
                 <div 
-                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-colors ${
+                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm border-2 transition-colors ${
                     step > s.id 
                       ? 'bg-primary border-primary text-primary-foreground' 
                       : step === s.id 
@@ -48,9 +48,9 @@ export default function NewCampaignPage() {
                         : 'bg-background border-muted text-muted-foreground'
                   }`}
                 >
-                  {step > s.id ? <Check className="w-4 h-4" /> : s.id}
+                  {step > s.id ? <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : s.id}
                 </div>
-                <span className={`text-xs font-medium ${step >= s.id ? 'text-foreground' : 'text-muted-foreground'}`}>
+                <span className={`text-[11px] sm:text-xs font-medium ${step >= s.id ? 'text-foreground' : 'text-muted-foreground'}`}>
                   {s.title}
                 </span>
               </div>
@@ -131,7 +131,7 @@ export default function NewCampaignPage() {
               </div>
             )}
           </CardContent>
-          <CardFooter className="flex justify-between border-t border-border p-6">
+          <CardFooter className="flex justify-between border-t border-border p-4 sm:p-6 gap-3">
             <Button 
               variant="outline" 
               onClick={() => setStep(Math.max(1, step - 1))}
@@ -152,6 +152,6 @@ export default function NewCampaignPage() {
           </CardFooter>
         </Card>
       </div>
-    </>
+    </div>
   );
 }

@@ -2,14 +2,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Key } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export default function ApiKeysPage() {
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">API Keys</h1>
-        <Button><Plus className="mr-2 h-4 w-4" /> Generate New Key</Button>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">API Keys</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Manage your Developer API access keys and scopes.</p>
+        </div>
+        <Button className="w-full sm:w-auto"><Plus className="mr-2 h-4 w-4" /> Generate New Key</Button>
       </div>
 
       <Card>
@@ -17,8 +20,9 @@ export default function ApiKeysPage() {
           <CardTitle>Active API Keys</CardTitle>
           <CardDescription>Manage your Developer API access keys.</CardDescription>
         </CardHeader>
-        <CardContent>
-          <Table>
+        <CardContent className="p-0 sm:p-6">
+          <div className="overflow-x-auto min-w-[650px]">
+            <Table className="min-w-[650px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
@@ -47,6 +51,7 @@ export default function ApiKeysPage() {
               </TableRow>
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

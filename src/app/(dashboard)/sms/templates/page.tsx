@@ -15,32 +15,32 @@ export default function TemplatesPage() {
   ];
 
   return (
-    <>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       <PageHeader
         title="SMS Templates"
         description="Manage your reusable message templates."
         action={
-          <Button>
+          <Button className="w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
             Create Template
           </Button>
         }
       />
       
-      <div className="flex justify-between items-center mb-6 gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="relative w-full max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input placeholder="Search templates..." className="pl-9" />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {mockTemplates.map((template) => (
           <Card key={template.id} className="flex flex-col h-full hover:shadow-md transition-shadow">
-            <CardContent className="p-6 flex-1 flex flex-col">
+            <CardContent className="p-4 sm:p-6 flex-1 flex flex-col">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="font-semibold text-lg">{template.name}</h3>
+                  <h3 className="font-semibold text-base sm:text-lg">{template.name}</h3>
                   <Badge variant="secondary" className="mt-1 font-normal text-xs">{template.category}</Badge>
                 </div>
                 <div className="flex gap-1">
@@ -57,7 +57,7 @@ export default function TemplatesPage() {
                 {template.message}
               </div>
 
-              <div className="mt-auto pt-4 border-t border-border flex justify-between items-center">
+              <div className="mt-auto pt-4 border-t border-border flex justify-between items-center gap-2">
                 <div className="flex flex-wrap gap-1">
                   {template.variables.map(v => (
                     <span key={v} className="text-xs font-mono text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded">
@@ -65,7 +65,7 @@ export default function TemplatesPage() {
                     </span>
                   ))}
                 </div>
-                <Button variant="outline" size="sm" className="h-8 text-xs">
+                <Button variant="outline" size="sm" className="h-8 text-xs shrink-0">
                   <Copy className="w-3 h-3 mr-1.5" />
                   Use
                 </Button>
@@ -74,6 +74,6 @@ export default function TemplatesPage() {
           </Card>
         ))}
       </div>
-    </>
+    </div>
   );
 }

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, RefreshCw, Briefcase, Percent, Building2 } from "lucide-react";
+import { Plus, Search, RefreshCw, Briefcase } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -136,26 +136,26 @@ export default function AgentsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Page Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Agents</h1>
-          <p className="text-muted-foreground">Manage authorized sales agents, commission rates, and referral performance.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Agents</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Manage authorized sales agents, commission rates, and referral performance.</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => fetchAgents(search)} disabled={loading}>
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto">
+          <Button variant="outline" size="sm" onClick={() => fetchAgents(search)} disabled={loading} className="flex-1 sm:flex-initial">
             <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
           </Button>
 
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
-              <Button size="sm">
+              <Button size="sm" className="flex-1 sm:flex-initial">
                 <Plus className="mr-2 h-4 w-4" /> Add Agent
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[520px]">
+            <DialogContent className="w-[calc(100%-2rem)] max-w-lg max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
               <form onSubmit={handleAddAgent}>
                 <DialogHeader>
                   <DialogTitle>Register New Sales Agent</DialogTitle>
@@ -165,7 +165,7 @@ export default function AgentsPage() {
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="agentCompany">Agency / Business Name</Label>
                       <Input
@@ -191,7 +191,7 @@ export default function AgentsPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="agentName">Primary Contact Person</Label>
                       <Input
@@ -215,7 +215,7 @@ export default function AgentsPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="agentPassword">Initial Password</Label>
                       <Input
@@ -237,7 +237,7 @@ export default function AgentsPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="bankName">Settlement Bank</Label>
                       <Input
@@ -259,7 +259,7 @@ export default function AgentsPage() {
                   </div>
                 </div>
 
-                <DialogFooter>
+                <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2">
                   <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)} disabled={submitting}>
                     Cancel
                   </Button>
@@ -275,8 +275,8 @@ export default function AgentsPage() {
 
       {/* Main Table Card */}
       <Card>
-        <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-          <form onSubmit={handleSearch} className="relative flex-1 max-w-sm flex gap-2">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4 space-y-0 p-4 sm:p-6">
+          <form onSubmit={handleSearch} className="relative flex-1 w-full max-w-sm flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -290,12 +290,13 @@ export default function AgentsPage() {
               Search
             </Button>
           </form>
-          <div className="text-sm text-muted-foreground ml-auto">
+          <div className="text-sm text-muted-foreground sm:ml-auto">
             Total: <span className="font-semibold text-foreground">{agents.length}</span> agents
           </div>
         </CardHeader>
-        <CardContent>
-          <Table>
+        <CardContent className="p-0 sm:p-6 pt-0">
+          <div className="overflow-x-auto min-w-[850px]">
+            <Table className="min-w-[850px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Agency & Contact</TableHead>
@@ -388,6 +389,7 @@ export default function AgentsPage() {
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

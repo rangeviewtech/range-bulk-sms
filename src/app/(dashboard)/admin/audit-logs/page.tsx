@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Search, RefreshCw, Shield, User, Globe } from "lucide-react";
+import { Search, RefreshCw, User, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -57,14 +57,14 @@ export default function AuditLogsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Page Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Audit Logs</h1>
-          <p className="text-muted-foreground">Immutable compliance audit trail tracking security, authentication, and system configuration modifications.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Audit Logs</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Immutable compliance audit trail tracking security, authentication, and system configuration modifications.</p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => fetchLogs(search)} disabled={loading}>
+        <Button variant="outline" size="sm" onClick={() => fetchLogs(search)} disabled={loading} className="w-full sm:w-auto">
           <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           Refresh
         </Button>
@@ -72,8 +72,8 @@ export default function AuditLogsPage() {
 
       {/* Main Table Card */}
       <Card>
-        <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-          <form onSubmit={handleSearch} className="relative flex-1 max-w-sm flex gap-2">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4 space-y-0 p-4 sm:p-6">
+          <form onSubmit={handleSearch} className="relative flex-1 w-full max-w-sm flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -87,12 +87,13 @@ export default function AuditLogsPage() {
               Search
             </Button>
           </form>
-          <div className="text-sm text-muted-foreground ml-auto">
+          <div className="text-sm text-muted-foreground sm:ml-auto">
             Showing <span className="font-semibold text-foreground">{logs.length}</span> audit events
           </div>
         </CardHeader>
-        <CardContent>
-          <Table>
+        <CardContent className="p-0 sm:p-6 pt-0">
+          <div className="overflow-x-auto min-w-[800px]">
+            <Table className="min-w-[800px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Timestamp</TableHead>
@@ -170,6 +171,7 @@ export default function AuditLogsPage() {
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

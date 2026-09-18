@@ -201,17 +201,17 @@ export default function SupportPage() {
   };
 
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Support & Help Desk</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Support & Help Desk</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
             Open inquiries for sender ID approvals, carrier delivery, billing questions, or API integration.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             size="sm"
@@ -229,7 +229,7 @@ export default function SupportPage() {
                 <Plus className="mr-2 h-4 w-4" /> Open New Ticket
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[540px]">
+            <DialogContent className="w-[calc(100%-2rem)] max-w-lg max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
               <DialogHeader>
                 <DialogTitle>Open Support Ticket</DialogTitle>
                 <DialogDescription>
@@ -249,7 +249,7 @@ export default function SupportPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="category">Category</Label>
                     <Select value={newCategory} onValueChange={setNewCategory}>
@@ -295,7 +295,7 @@ export default function SupportPage() {
                   />
                 </div>
 
-                <DialogFooter className="pt-2">
+                <DialogFooter className="flex-col-reverse sm:flex-row gap-2 pt-2">
                   <Button
                     type="button"
                     variant="outline"
@@ -319,7 +319,7 @@ export default function SupportPage() {
       </div>
 
       {/* KPI Overview */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <Card className="border-secondary/20 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Active Tickets</CardTitle>
@@ -372,7 +372,7 @@ export default function SupportPage() {
             <CardDescription>Track status and updates on your inquiries.</CardDescription>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-muted/40 p-1 rounded-lg border">
+          <div className="flex flex-wrap items-center gap-1.5 bg-muted/40 p-1 rounded-lg border">
             {['ALL', 'OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'].map((s) => (
               <Button
                 key={s}
@@ -388,15 +388,15 @@ export default function SupportPage() {
             ))}
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 sm:p-6">
           {loading ? (
-            <div className="space-y-3 py-6">
+            <div className="space-y-3 p-4 sm:p-0 py-6">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="h-10 w-full bg-muted/40 animate-pulse rounded" />
               ))}
             </div>
           ) : filteredTickets.length === 0 ? (
-            <div className="text-center py-12 border border-dashed rounded-lg">
+            <div className="text-center py-12 m-4 sm:m-0 border border-dashed rounded-lg">
               <LifeBuoy className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
               <p className="text-sm font-medium text-foreground">No support tickets found</p>
               <p className="text-xs text-muted-foreground mt-1 mb-4">
@@ -411,8 +411,8 @@ export default function SupportPage() {
               </Button>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
+            <div className="overflow-x-auto min-w-[750px]">
+              <Table className="min-w-[750px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Ticket ID</TableHead>
@@ -469,7 +469,7 @@ export default function SupportPage() {
 
       {/* Ticket Conversation Detail Dialog */}
       <Dialog open={!!activeTicket} onOpenChange={(open) => !open && setActiveTicket(null)}>
-        <DialogContent className="sm:max-w-[620px] max-h-[85vh] flex flex-col">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-2xl max-h-[85vh] flex flex-col p-4 sm:p-6">
           {activeTicket && (
             <>
               <DialogHeader className="border-b pb-3">

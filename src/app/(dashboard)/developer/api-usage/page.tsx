@@ -2,12 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ApiUsagePage() {
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">API Usage</h1>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">API Usage</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Real-time statistics on API throughput, latency, and error rates.</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Requests (30d)</CardTitle>

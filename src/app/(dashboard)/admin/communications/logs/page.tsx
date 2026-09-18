@@ -41,7 +41,7 @@ export default async function LogsPage({
   const totalPages = Math.ceil(total / pageSize);
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       <PageHeader 
         heading="Communication Logs" 
         description="Audit trail of sent emails and SMS messages."
@@ -51,9 +51,9 @@ export default async function LogsPage({
         <CardHeader>
           <CardTitle>Recent Messages</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 sm:p-6">
           <div className="overflow-x-auto">
-            <Table>
+            <Table className="min-w-[650px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Channel</TableHead>
@@ -101,20 +101,20 @@ export default async function LogsPage({
           </div>
           
           {totalPages > 1 && (
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-muted-foreground">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 sm:p-0 border-t sm:border-t-0 mt-4">
+              <div className="text-sm text-muted-foreground text-center sm:text-left">
                 Showing {((pageNumber - 1) * pageSize) + 1} to {Math.min(pageNumber * pageSize, total)} of {total} entries
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center gap-2 w-full sm:w-auto">
                 <a 
                   href={`?page=${pageNumber - 1}&limit=${pageSize}`} 
-                  className={`px-3 py-1 text-sm border rounded hover:bg-muted ${pageNumber <= 1 ? 'pointer-events-none opacity-50' : ''}`}
+                  className={`flex-1 sm:flex-initial text-center px-3 py-1.5 text-sm border rounded-md hover:bg-muted ${pageNumber <= 1 ? 'pointer-events-none opacity-50' : ''}`}
                 >
                   Previous
                 </a>
                 <a 
                   href={`?page=${pageNumber + 1}&limit=${pageSize}`} 
-                  className={`px-3 py-1 text-sm border rounded hover:bg-muted ${pageNumber >= totalPages ? 'pointer-events-none opacity-50' : ''}`}
+                  className={`flex-1 sm:flex-initial text-center px-3 py-1.5 text-sm border rounded-md hover:bg-muted ${pageNumber >= totalPages ? 'pointer-events-none opacity-50' : ''}`}
                 >
                   Next
                 </a>

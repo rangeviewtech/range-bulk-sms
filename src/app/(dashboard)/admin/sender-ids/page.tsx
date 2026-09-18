@@ -153,12 +153,12 @@ export default function SenderIdsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Page Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Sender ID Approvals</h1>
-          <p className="text-muted-foreground">Verify regulatory UCC compliance and approve client alphanumeric sender masks.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Sender ID Approvals</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Verify regulatory UCC compliance and approve client alphanumeric sender masks.</p>
         </div>
         <Button variant="outline" size="sm" onClick={() => fetchSenderIds(activeTab, search)} disabled={loading}>
           <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
@@ -169,7 +169,7 @@ export default function SenderIdsPage() {
       {/* Tabs & Search */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
-          <TabsList>
+          <TabsList className="w-full sm:w-auto h-auto flex-wrap">
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="pending">Pending</TabsTrigger>
             <TabsTrigger value="approved">Approved</TabsTrigger>
@@ -194,8 +194,9 @@ export default function SenderIdsPage() {
 
       {/* Main Table Card */}
       <Card>
-        <CardContent className="pt-6">
-          <Table>
+        <CardContent className="p-0 sm:p-6">
+          <div className="overflow-x-auto min-w-[800px]">
+            <Table className="min-w-[800px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Sender ID Mask</TableHead>
@@ -301,12 +302,13 @@ export default function SenderIdsPage() {
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
 
       {/* Reject Reason Dialog */}
       <Dialog open={!!rejectId} onOpenChange={(open) => !open && setRejectId(null)}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-md max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle>Reject Sender ID Request</DialogTitle>
             <DialogDescription>
@@ -327,7 +329,7 @@ export default function SenderIdsPage() {
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="flex-col-reverse sm:flex-row gap-2 pt-2">
             <Button variant="outline" onClick={() => setRejectId(null)} disabled={rejecting}>
               Cancel
             </Button>

@@ -18,10 +18,10 @@ const links = [
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col md:flex-row gap-8">
-      <aside className="w-full md:w-64 space-y-1 shrink-0 border-r pr-4 min-h-[calc(100vh-100px)]">
+    <div className="flex flex-col md:flex-row gap-6 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+      <aside className="w-full md:w-56 flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-x-visible border-b md:border-b-0 md:border-r pb-3 md:pb-0 pr-0 md:pr-4 shrink-0 min-h-0 md:min-h-[calc(100vh-100px)]">
         {links.map(l => (
-          <Link key={l.href} href={l.href} className="block px-3 py-2 text-sm rounded-md hover:bg-muted">
+          <Link key={l.href} href={l.href} className="whitespace-nowrap px-3 py-1.5 text-sm rounded-md hover:bg-muted font-medium transition-colors">
             {l.label}
           </Link>
         ))}

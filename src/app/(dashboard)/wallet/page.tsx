@@ -131,7 +131,7 @@ export default function WalletPage() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -160,7 +160,7 @@ export default function WalletPage() {
                 <Plus className="mr-2 h-4 w-4" /> Deposit Funds
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[460px]">
+            <DialogContent className="w-[calc(100%-2rem)] max-w-md max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
               <DialogHeader>
                 <DialogTitle>Top-up Wallet</DialogTitle>
                 <DialogDescription>
@@ -171,7 +171,7 @@ export default function WalletPage() {
               <form onSubmit={handleDepositSubmit} className="space-y-4 pt-2">
                 <div className="space-y-2">
                   <Label htmlFor="quick-amount">Quick Select ({currency})</Label>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {PRESET_AMOUNTS.map((amt) => (
                       <Button
                         key={amt}
@@ -310,7 +310,7 @@ export default function WalletPage() {
 
       {/* Recent Transactions Card */}
       <Card className="border-secondary/20 shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <CardTitle className="text-lg">Recent Transactions</CardTitle>
             <CardDescription>Your latest wallet deposits, campaign deductions, and refunds.</CardDescription>
@@ -319,15 +319,15 @@ export default function WalletPage() {
             <Link href="/wallet/transactions">View All</Link>
           </Button>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 sm:p-6">
           {loading ? (
-            <div className="space-y-2 py-4">
+            <div className="space-y-2 p-4 sm:p-0 py-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="h-10 w-full bg-muted/40 animate-pulse rounded" />
               ))}
             </div>
           ) : transactions.length === 0 ? (
-            <div className="text-center py-10 border border-dashed rounded-lg">
+            <div className="text-center py-10 m-4 sm:m-0 border border-dashed rounded-lg">
               <WalletIcon className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
               <p className="text-sm font-medium text-foreground">No transactions recorded yet</p>
               <p className="text-xs text-muted-foreground mt-1 mb-4">
@@ -342,8 +342,8 @@ export default function WalletPage() {
               </Button>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
+            <div className="overflow-x-auto min-w-[650px]">
+              <Table className="min-w-[650px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Type</TableHead>

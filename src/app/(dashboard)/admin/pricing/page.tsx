@@ -127,14 +127,14 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Page Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Pricing Config</h1>
-          <p className="text-muted-foreground">Configure destination country, mobile network operator rates, and retail SMS selling margins.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Pricing Config</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Configure destination country, mobile network operator rates, and retail SMS selling margins.</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" size="sm" onClick={() => fetchPricing(search)} disabled={loading}>
             <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
@@ -146,7 +146,7 @@ export default function PricingPage() {
                 <Plus className="mr-2 h-4 w-4" /> Add Rule
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[480px]">
+            <DialogContent className="w-[calc(100%-2rem)] max-w-lg max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
               <form onSubmit={handleAddRule}>
                 <DialogHeader>
                   <DialogTitle>Add Network Pricing Rule</DialogTitle>
@@ -155,8 +155,8 @@ export default function PricingPage() {
                   </DialogDescription>
                 </DialogHeader>
 
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-3 sm:gap-4 py-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="countryCode">Country Code (ISO-2)</Label>
                       <Input
@@ -180,7 +180,7 @@ export default function PricingPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="netCode">Network Code</Label>
                       <Input
@@ -201,7 +201,7 @@ export default function PricingPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="cost">Cost / SMS</Label>
                       <Input
@@ -239,7 +239,7 @@ export default function PricingPage() {
                   </div>
                 </div>
 
-                <DialogFooter>
+                <DialogFooter className="flex-col-reverse sm:flex-row gap-2 pt-2">
                   <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)} disabled={submitting}>
                     Cancel
                   </Button>
@@ -255,8 +255,8 @@ export default function PricingPage() {
 
       {/* Main Table Card */}
       <Card>
-        <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-          <form onSubmit={handleSearch} className="relative flex-1 max-w-sm flex gap-2">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <form onSubmit={handleSearch} className="relative flex-1 max-w-sm flex gap-2 w-full">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -270,12 +270,13 @@ export default function PricingPage() {
               Search
             </Button>
           </form>
-          <div className="text-sm text-muted-foreground ml-auto">
+          <div className="text-sm text-muted-foreground">
             Total: <span className="font-semibold text-foreground">{pricing.length}</span> pricing rules
           </div>
         </CardHeader>
-        <CardContent>
-          <Table>
+        <CardContent className="p-0 sm:p-6">
+          <div className="overflow-x-auto min-w-[750px]">
+            <Table className="min-w-[750px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Country / Destination</TableHead>
@@ -366,6 +367,7 @@ export default function PricingPage() {
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

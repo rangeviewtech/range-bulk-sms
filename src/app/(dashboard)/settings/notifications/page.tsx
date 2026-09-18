@@ -89,10 +89,10 @@ export default async function NotificationSettingsPage({ searchParams }: { searc
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Notification Preferences</h1>
-        <p className="text-gray-500">Manage how you receive alerts and messages.</p>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Notification Preferences</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Manage how you receive alerts and messages.</p>
       </div>
 
       {feedback.error && <p role="alert" className="text-destructive">Unable to save. Check the international phone number and try again.</p>}
@@ -154,7 +154,7 @@ export default async function NotificationSettingsPage({ searchParams }: { searc
         </div>
         
         <div className="mt-6 flex justify-end">
-          <Button type="submit">Save Preferences</Button>
+          <Button type="submit" className="w-full sm:w-auto">Save Preferences</Button>
         </div>
       </form>
     </div>

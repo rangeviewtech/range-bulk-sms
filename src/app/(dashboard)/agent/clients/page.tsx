@@ -57,7 +57,7 @@ export default function AgentClientsPage() {
   );
 
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -68,14 +68,14 @@ export default function AgentClientsPage() {
               </Link>
             </Button>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">My Clients</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">My Clients</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             Overview of clients managed under your agency portfolio.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="relative w-64">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+          <div className="relative w-full sm:w-64">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search clients..."
@@ -90,6 +90,7 @@ export default function AgentClientsPage() {
             onClick={handleRefresh}
             disabled={refreshing || loading}
             aria-label="Refresh clients"
+            className="w-full sm:w-auto"
           >
             <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
           </Button>
@@ -104,15 +105,15 @@ export default function AgentClientsPage() {
             Performance metrics including all-time SMS volume and your commissions.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 sm:p-6">
           {loading ? (
-            <div className="space-y-3 py-6">
+            <div className="space-y-3 p-4 sm:p-0 py-6">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="h-10 w-full bg-muted/40 animate-pulse rounded" />
               ))}
             </div>
           ) : filteredClients.length === 0 ? (
-            <div className="text-center py-12 border border-dashed rounded-lg">
+            <div className="text-center py-12 m-4 sm:m-0 border border-dashed rounded-lg">
               <Users className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
               <p className="text-sm font-medium text-foreground">
                 {search ? 'No clients match your search' : 'No clients enrolled yet'}
@@ -124,8 +125,8 @@ export default function AgentClientsPage() {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
+            <div className="overflow-x-auto min-w-[750px]">
+              <Table className="min-w-[750px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Client Name</TableHead>

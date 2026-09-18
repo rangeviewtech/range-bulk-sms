@@ -84,7 +84,7 @@ export default function CommissionsPage() {
   };
 
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -95,13 +95,13 @@ export default function CommissionsPage() {
               </Link>
             </Button>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Commissions Ledger</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Commissions Ledger</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             Detailed commission statements generated on client SMS usage and campaigns.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             size="sm"
@@ -119,7 +119,7 @@ export default function CommissionsPage() {
       </div>
 
       {/* Summary KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <Card className="border-secondary/20 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Pending / Approved</CardTitle>
@@ -159,7 +159,7 @@ export default function CommissionsPage() {
             <CardDescription>Filtered by payout lifecycle status.</CardDescription>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-muted/40 p-1 rounded-lg border">
+          <div className="flex flex-wrap items-center gap-1.5 bg-muted/40 p-1 rounded-lg border">
             {['ALL', 'PENDING', 'APPROVED', 'PAID'].map((s) => (
               <Button
                 key={s}
@@ -175,15 +175,15 @@ export default function CommissionsPage() {
             ))}
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 sm:p-6">
           {loading ? (
-            <div className="space-y-3 py-6">
+            <div className="space-y-3 p-4 sm:p-0 py-6">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="h-10 w-full bg-muted/40 animate-pulse rounded" />
               ))}
             </div>
           ) : commissions.length === 0 ? (
-            <div className="text-center py-12 border border-dashed rounded-lg">
+            <div className="text-center py-12 m-4 sm:m-0 border border-dashed rounded-lg">
               <DollarSign className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
               <p className="text-sm font-medium text-foreground">No commission entries found</p>
               <p className="text-xs text-muted-foreground mt-1">
@@ -191,8 +191,8 @@ export default function CommissionsPage() {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
+            <div className="overflow-x-auto min-w-[750px]">
+              <Table className="min-w-[750px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Ref ID</TableHead>

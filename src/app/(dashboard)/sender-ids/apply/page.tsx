@@ -8,16 +8,16 @@ import Link from 'next/link';
 
 export default function SenderIdApplyPage() {
   return (
-    <div className="flex flex-col gap-6 p-6 max-w-3xl mx-auto w-full">
-      <div className="flex items-center gap-4 mb-4">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-3xl mx-auto w-full">
+      <div className="flex items-center gap-3 sm:gap-4 mb-2">
         <Link href="/sender-ids">
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className="shrink-0">
             <ArrowLeft className="w-4 h-4" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Request Sender ID</h1>
-          <p className="text-muted-foreground">Submit a new Sender ID for approval.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Request Sender ID</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Submit a new Sender ID for approval.</p>
         </div>
       </div>
 
@@ -57,11 +57,11 @@ export default function SenderIdApplyPage() {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex justify-between border-t p-6">
-          <Button variant="outline" asChild>
+        <CardFooter className="flex flex-col-reverse sm:flex-row justify-between gap-3 border-t p-4 sm:p-6">
+          <Button variant="outline" asChild className="w-full sm:w-auto">
             <Link href="/sender-ids">Cancel</Link>
           </Button>
-          <Button>Submit Request</Button>
+          <Button className="w-full sm:w-auto">Submit Request</Button>
         </CardFooter>
       </Card>
     </div>

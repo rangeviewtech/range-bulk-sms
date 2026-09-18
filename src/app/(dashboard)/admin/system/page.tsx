@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Activity, Server, ArrowRightLeft, RefreshCw, Cpu, Database, ShieldCheck, CheckCircle2, AlertCircle } from "lucide-react";
+import { Activity, Server, RefreshCw, Cpu, Database } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -80,21 +80,21 @@ export default function SystemPage() {
     : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Page Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">System Monitor</h1>
-          <p className="text-muted-foreground">Real-time infrastructure health, process metrics, and carrier connectivity status.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">System Monitor</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Real-time infrastructure health, process metrics, and carrier connectivity status.</p>
         </div>
-        <Button variant="outline" size="sm" onClick={fetchSystemData} disabled={loading}>
+        <Button variant="outline" size="sm" onClick={fetchSystemData} disabled={loading} className="w-full sm:w-auto">
           <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           Refresh Metrics
         </Button>
       </div>
 
       {/* Top 3 Health Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         {/* Node Process & Memory */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">

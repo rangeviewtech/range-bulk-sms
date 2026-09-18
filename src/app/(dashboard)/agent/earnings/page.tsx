@@ -130,7 +130,7 @@ export default function EarningsPage() {
   };
 
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -141,13 +141,13 @@ export default function EarningsPage() {
               </Link>
             </Button>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Earnings & Payouts</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Earnings & Payouts</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             Manage your reseller withdrawals via MTN Mobile Money, Airtel Money, or Bank Wire.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             size="sm"
@@ -168,7 +168,7 @@ export default function EarningsPage() {
                 <ArrowUpRight className="mr-1.5 h-4 w-4" /> Request Payout
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[460px]">
+            <DialogContent className="w-[calc(100%-2rem)] max-w-md max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
               <DialogHeader>
                 <DialogTitle>Request Commission Payout</DialogTitle>
                 <DialogDescription>
@@ -221,7 +221,7 @@ export default function EarningsPage() {
                   />
                 </div>
 
-                <DialogFooter className="pt-2">
+                <DialogFooter className="flex-col-reverse sm:flex-row gap-2 pt-2">
                   <Button
                     type="button"
                     variant="outline"
@@ -245,7 +245,7 @@ export default function EarningsPage() {
       </div>
 
       {/* KPI Balances */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <Card className="border-secondary/20 shadow-sm relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -298,15 +298,15 @@ export default function EarningsPage() {
             Historical records of completed commission withdrawals.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 sm:p-6">
           {loading ? (
-            <div className="space-y-3 py-6">
+            <div className="space-y-3 p-4 sm:p-0 py-6">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="h-10 w-full bg-muted/40 animate-pulse rounded" />
               ))}
             </div>
           ) : payouts.length === 0 ? (
-            <div className="text-center py-12 border border-dashed rounded-lg">
+            <div className="text-center py-12 m-4 sm:m-0 border border-dashed rounded-lg">
               <Wallet className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
               <p className="text-sm font-medium text-foreground">No completed payouts yet</p>
               <p className="text-xs text-muted-foreground mt-1">
@@ -314,8 +314,8 @@ export default function EarningsPage() {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
+            <div className="overflow-x-auto min-w-[650px]">
+              <Table className="min-w-[650px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Payout Ref</TableHead>

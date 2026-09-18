@@ -49,7 +49,7 @@ export default async function SecuritySettingsPage({
   const qrCode = setupSecret ? await generateMfaQrCode(session.user.email, setupSecret) : null;
   const { status } = await searchParams;
   return (
-    <div className="space-y-6 p-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       <PageHeader
         heading="Security Settings"
         description="Manage authenticator verification and your screen-lock PIN."

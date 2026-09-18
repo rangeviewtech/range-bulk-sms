@@ -54,7 +54,7 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -65,14 +65,14 @@ export default function PricingPage() {
               </Link>
             </Button>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">SMS Pricing & Coverage</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">SMS Pricing & Coverage</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             Transparent per-SMS rates across all supported domestic and international carrier routes.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="relative w-64">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+          <div className="relative w-full sm:w-64">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search country or network..."
@@ -87,6 +87,7 @@ export default function PricingPage() {
             onClick={handleRefresh}
             disabled={refreshing || loading}
             aria-label="Refresh pricing"
+            className="w-full sm:w-auto"
           >
             <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
           </Button>
@@ -94,7 +95,7 @@ export default function PricingPage() {
       </div>
 
       {/* Highlights Banner */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <Card className="border-secondary/20 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Domestic Rate</CardTitle>
@@ -110,32 +111,32 @@ export default function PricingPage() {
 
         <Card className="border-secondary/20 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Volume Discounts</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">East Africa EAC</CardTitle>
             <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
               <Sparkles className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Up to 20% Off</div>
-            <p className="text-xs text-muted-foreground mt-1">Automatic tier reduction for &gt; 100k messages/mo</p>
+            <div className="text-2xl font-bold">From UGX 65.00</div>
+            <p className="text-xs text-muted-foreground mt-1">Kenya, Tanzania, Rwanda cross-border</p>
           </CardContent>
         </Card>
 
         <Card className="border-secondary/20 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Delivery Guarantee</CardTitle>
-            <Badge variant="default" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
-              99.2% SLA
-            </Badge>
+            <CardTitle className="text-sm font-medium text-muted-foreground">International Hub</CardTitle>
+            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600">
+              <Globe className="h-4 w-4" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Real-Time DLR</div>
-            <p className="text-xs text-muted-foreground mt-1">Live delivery receipts and automatic refunds</p>
+            <div className="text-2xl font-bold">From UGX 110.00</div>
+            <p className="text-xs text-muted-foreground mt-1">Global 190+ countries via Tier 1 aggregators</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Rates Table */}
+      {/* Pricing Rate Table */}
       <Card className="border-secondary/20 shadow-sm">
         <CardHeader>
           <CardTitle>Global Coverage Pricing</CardTitle>
@@ -143,23 +144,23 @@ export default function PricingPage() {
             Showing {pricing.length} rate rules. All prices exclude standard VAT.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 sm:p-6">
           {loading ? (
-            <div className="space-y-3 py-6">
+            <div className="space-y-3 p-4 sm:p-0 py-6">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="h-10 w-full bg-muted/40 animate-pulse rounded" />
               ))}
             </div>
           ) : pricing.length === 0 ? (
-            <div className="text-center py-10 border border-dashed rounded-lg">
+            <div className="text-center py-10 m-4 sm:m-0 border border-dashed rounded-lg">
               <p className="text-sm font-medium text-foreground">No matching country or network found</p>
               <p className="text-xs text-muted-foreground mt-1">
                 Try searching for a different country code, country name, or carrier.
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
+            <div className="overflow-x-auto min-w-[650px]">
+              <Table className="min-w-[650px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Country</TableHead>

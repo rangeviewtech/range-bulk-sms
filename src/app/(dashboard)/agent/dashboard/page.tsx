@@ -60,28 +60,29 @@ export default function AgentDashboardPage() {
   };
 
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Agent Dashboard</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Agent Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
             Track your onboarded client volume, aggregate SMS spend, and accumulated commissions.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={handleRefresh}
             disabled={refreshing || loading}
             aria-label="Refresh metrics"
+            className="flex-1 sm:flex-initial"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
-          <Button asChild className="bg-primary text-primary-foreground font-bold hover:bg-primary/90">
+          <Button asChild className="bg-primary text-primary-foreground font-bold hover:bg-primary/90 flex-1 sm:flex-initial">
             <Link href="/agent/earnings">
               Request Payout <ArrowUpRight className="ml-1.5 h-4 w-4" />
             </Link>
@@ -90,7 +91,7 @@ export default function AgentDashboardPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card className="border-secondary/20 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Clients</CardTitle>
@@ -187,7 +188,7 @@ export default function AgentDashboardPage() {
               <p className="text-sm text-muted-foreground">No monthly trends data available yet</p>
             </div>
           ) : (
-            <div className="h-[320px] w-full">
+            <div className="h-[260px] sm:h-[320px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={data.monthlyTrends} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                   <defs>

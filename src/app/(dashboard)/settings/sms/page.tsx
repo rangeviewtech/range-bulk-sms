@@ -4,13 +4,16 @@ import { Input } from "@/components/ui/input";
 
 export default function SmsSettingsPage() {
   return (
-    <div className="space-y-6 p-6 max-w-2xl">
-      <h1 className="text-3xl font-bold tracking-tight">SMS Preferences</h1>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-2xl mx-auto">
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">SMS Preferences</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Set up defaults and callback URLs for your quick campaigns.</p>
+      </div>
       
       <Card>
         <CardHeader>
           <CardTitle>Default Settings</CardTitle>
-          <CardDescription>Set up defaults for your quick campaigns.</CardDescription>
+          <CardDescription>Default sender identity and delivery receipt callbacks.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -21,7 +24,7 @@ export default function SmsSettingsPage() {
             <label className="text-sm font-medium">Callback Webhook URL</label>
             <Input type="url" placeholder="https://..." />
           </div>
-          <Button>Save Preferences</Button>
+          <Button className="w-full sm:w-auto">Save Preferences</Button>
         </CardContent>
       </Card>
     </div>
