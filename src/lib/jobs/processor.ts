@@ -63,6 +63,8 @@ export async function processJobsBatch(batchSize: number = 10) {
           template: z.string().min(1),
           templateData: z.record(z.unknown()).optional(),
           category: z.string().optional(),
+          messageId: z.string().optional(),
+          recipientId: z.string().optional(),
         })
         .parse(job.payload);
       const { recipient, template, templateData } = payload;
@@ -84,9 +86,20 @@ export async function processJobsBatch(batchSize: number = 10) {
         case 'send-email':
           await SmtpProvider.send(recipient, resolved.subject || 'Notification', resolved.body);
           break;
-        case 'send-sms':
-          await PandoraSmsProvider.send(recipient, resolved.body);
+        case 'send-sms': {
+          const smsResult = await PandoraSmsProvider.send(recipient, resolved.body);
+          if (payload.recipientId) {
+            await prisma.messageRecipient.updateMany({
+              where: { id: payload.recipientId },
+              data: {
+                status: 'SENT',
+                providerMsgId: smsResult?.messageId ? String(smsResult.messageId) : undefined,
+                sentAt: new Date(),
+              },
+            });
+          }
           break;
+        }
         case 'send-telegram':
           await TelegramProvider.send(recipient, resolved.body);
           break;
@@ -105,8 +118,25 @@ export async function processJobsBatch(batchSize: number = 10) {
           throw new Error(`Unsupported job type: ${job.type}`);
       }
     } catch (e: unknown) {
-      lastError = e instanceof Error ? (e instanceof Error ? (e instanceof Error ? e.message : String(e)) : String(e)) : 'Unknown error';
+      lastError = e instanceof Error ? e.message : String(e);
       status = job.attempts >= job.maxAttempts - 1 ? 'DEAD_LETTER' : 'RETRYING';
+
+      // Mark recipient as failed if job reached dead letter
+      try {
+        const p = job.payload as Record<string, unknown>;
+        if (status === 'DEAD_LETTER' && typeof p?.recipientId === 'string') {
+          await prisma.messageRecipient.updateMany({
+            where: { id: p.recipientId },
+            data: {
+              status: 'FAILED',
+              failedAt: new Date(),
+              failureReason: lastError,
+            },
+          });
+        }
+      } catch {
+        // Ignore recipient update errors in dead letter catch block
+      }
     }
 
     await prisma.job.updateMany({

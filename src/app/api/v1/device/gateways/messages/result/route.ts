@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { withDeviceAuth } from '@/lib/gateways/device-auth';
+import { MessageStatus } from '@/generated/prisma/client';
 
 export const POST = async (req: NextRequest) => {
   return withDeviceAuth(req, async (req, { gatewayId }) => {
@@ -8,13 +9,13 @@ export const POST = async (req: NextRequest) => {
       const { attemptId, status, providerMsgId, errorCode, errorMessage } = await req.json();
 
       if (!attemptId || !status) {
-        return NextResponse.json({ error: 'Missing required fields' }, { status: 400 } as any);
+        return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
       }
 
       // Valid statuses from device: SUBMITTED_TO_MODEM, SENT, DELIVERED, FAILED
       const validStatuses = ['SUBMITTED_TO_MODEM', 'SENT', 'DELIVERED', 'FAILED'];
       if (!validStatuses.includes(status)) {
-        return NextResponse.json({ error: 'Invalid status' }, { status: 400 } as any);
+        return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
       }
 
       const attempt = await prisma.messageAttempt.findUnique({
@@ -22,7 +23,7 @@ export const POST = async (req: NextRequest) => {
       });
 
       if (!attempt || attempt.gatewayId !== gatewayId) {
-        return NextResponse.json({ error: 'Attempt not found or unauthorized' }, { status: 404 } as any);
+        return NextResponse.json({ error: 'Attempt not found or unauthorized' }, { status: 404 });
       }
 
       const updateData: import("@/generated/prisma/client").Prisma.MessageAttemptUpdateInput = {
@@ -61,7 +62,7 @@ export const POST = async (req: NextRequest) => {
           await prisma.message.update({
             where: { id: parentMessage.id },
             data: {
-              status: messageStatus as any,
+              status: messageStatus as MessageStatus,
               sentAt: status === 'SENT' ? now : undefined,
               deliveredAt: status === 'DELIVERED' ? now : undefined,
               failedAt: status === 'FAILED' ? now : undefined,
@@ -72,7 +73,7 @@ export const POST = async (req: NextRequest) => {
           await prisma.messageRecipient.updateMany({
             where: { messageId: parentMessage.id },
             data: {
-              status: messageStatus as any,
+              status: messageStatus as MessageStatus,
               sentAt: status === 'SENT' ? now : undefined,
               deliveredAt: status === 'DELIVERED' ? now : undefined,
               failedAt: status === 'FAILED' ? now : undefined,

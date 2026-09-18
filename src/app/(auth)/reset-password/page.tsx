@@ -1,12 +1,11 @@
  
  
-/* eslint-disable react-hooks/incompatible-library */
 'use client';
 
 import { useState, Suspense, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
@@ -32,14 +31,14 @@ function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token') || '';
 
-  const { register, handleSubmit, formState: { errors, touchedFields, dirtyFields }, setValue, watch, trigger } = useForm<ResetPasswordValues>({
+  const { register, handleSubmit, formState: { errors, touchedFields, dirtyFields }, setValue, control, trigger } = useForm<ResetPasswordValues>({
     resolver: zodResolver(resetPasswordSchema),
     mode: 'all',
     defaultValues: { token }
   });
 
-  const passwordValue = watch('password') || '';
-  const confirmPasswordValue = watch('confirmPassword') || '';
+  const passwordValue = useWatch({ control, name: 'password' }) || '';
+  const confirmPasswordValue = useWatch({ control, name: 'confirmPassword' }) || '';
 
   useEffect(() => {
     if (confirmPasswordValue) {

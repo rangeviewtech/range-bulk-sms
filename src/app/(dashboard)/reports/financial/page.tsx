@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, ArrowUpRight, ArrowDownRight, Wallet, DollarSign, RotateCcw } from 'lucide-react';
+import { RefreshCw, ArrowUpRight, ArrowDownRight, RotateCcw } from 'lucide-react';
 import {
   ResponsiveContainer,
   BarChart,
@@ -172,7 +172,7 @@ export default function FinancialReportPage() {
                   <XAxis dataKey="month" tickLine={false} axisLine={false} fontSize={12} />
                   <YAxis tickLine={false} axisLine={false} fontSize={12} />
                   <Tooltip
-                    formatter={(value: any) => [`UGX ${Number(value || 0).toLocaleString()}`, '']}
+                    formatter={(value: unknown) => [`UGX ${Number(value || 0).toLocaleString()}`, '']}
                     contentStyle={{
                       backgroundColor: 'hsl(var(--card))',
                       borderColor: 'hsl(var(--border))',

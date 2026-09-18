@@ -2,9 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifySession } from '@/lib/auth/session';
 import { hasPermission } from '@/lib/auth/authorization';
-import { smsProviderSchema } from '@/lib/validations/sender-id';
 
-export async function GET(req: Request) {
+export async function GET(_req: Request) {
   const session = await verifySession();
   if (!session || !(await hasPermission(session.userId, 'providers.manage'))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });

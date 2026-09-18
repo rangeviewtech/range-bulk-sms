@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, Prisma } from '@/lib/prisma';
 import { verifySession } from '@/lib/auth/session';
-import crypto from 'crypto';
 
-export const POST = async (req: NextRequest) => {
+export async function POST(req: NextRequest) {
   try {
     const session = await verifySession();
     if (!session || !session.user) {
@@ -12,7 +11,7 @@ export const POST = async (req: NextRequest) => {
 
     const { gatewayId } = await req.json();
     if (!gatewayId) {
-      return NextResponse.json({ error: 'Gateway ID required' }, { status: 400 } as any);
+      return NextResponse.json({ error: 'Gateway ID required' }, { status: 400 });
     }
 
     const gateway = await prisma.gateway.findUnique({
@@ -20,22 +19,24 @@ export const POST = async (req: NextRequest) => {
     });
 
     if (!gateway) {
-      return NextResponse.json({ error: 'Gateway not found' }, { status: 404 } as any);
+      return NextResponse.json({ error: 'Gateway not found' }, { status: 404 });
     }
 
     if (gateway.status === 'ONLINE') {
-      return NextResponse.json({ error: 'Gateway is already paired and online' }, { status: 400 } as any);
+      return NextResponse.json({ error: 'Gateway is already paired and online' }, { status: 400 });
     }
 
     // Generate a short numeric code
     const pairingCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    const config = (gateway.config as any) || {};
+    const config: Record<string, unknown> = (gateway.config && typeof gateway.config === 'object' && !Array.isArray(gateway.config))
+      ? { ...(gateway.config as Record<string, unknown>) }
+      : {};
     config.pairingCode = pairingCode;
 
     await prisma.gateway.update({
       where: { id: gatewayId },
-      data: { config, status: 'PENDING_PAIRING' }
+      data: { config: config as Prisma.InputJsonValue, status: 'PENDING_PAIRING' }
     });
 
     return NextResponse.json({ 
@@ -49,5 +50,5 @@ export const POST = async (req: NextRequest) => {
     console.error('Gateway Pair Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-};
+}
 

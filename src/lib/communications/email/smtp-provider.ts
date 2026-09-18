@@ -41,11 +41,10 @@ export class SmtpEmailProvider implements EmailProvider {
         success: true,
         messageId: info.messageId,
       };
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: unknown) {
       return {
         success: false,
-        error: (e instanceof Error ? (e instanceof Error ? e.message : String(e)) : String(e)) || 'Unknown SMTP Error',
+        error: e instanceof Error ? e.message : 'Unknown SMTP Error',
       };
     }
   }

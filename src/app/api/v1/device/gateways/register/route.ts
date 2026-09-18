@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, Prisma } from '@/lib/prisma';
 import { generateGatewayToken } from '@/lib/gateways/device-auth';
 
 export async function POST(req: NextRequest) {
@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     const { pairingCode, hardwareModel, appVersion, osVersion } = await req.json();
 
     if (!pairingCode) {
-      return NextResponse.json({ error: 'Pairing code is required' }, { status: 400 } as any);
+      return NextResponse.json({ error: 'Pairing code is required' }, { status: 400 });
     }
 
     // Find the gateway by pairing code (we store it temporarily in config during creation)
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
     let matchedGateway = null;
     for (const gw of gateways) {
-      const config = gw.config as any;
+      const config = gw.config as Record<string, unknown> | null;
       if (config && config.pairingCode === pairingCode) {
         matchedGateway = gw;
         break;
@@ -25,14 +25,16 @@ export async function POST(req: NextRequest) {
     }
 
     if (!matchedGateway) {
-      return NextResponse.json({ error: 'Invalid or expired pairing code' }, { status: 404 } as any);
+      return NextResponse.json({ error: 'Invalid or expired pairing code' }, { status: 404 });
     }
 
     // Generate permanent token
     const { token, hash } = generateGatewayToken();
 
     // Remove the pairing code, set to ONLINE
-    const updatedConfig = { ...(matchedGateway.config as any) };
+    const updatedConfig: Record<string, unknown> = (matchedGateway.config && typeof matchedGateway.config === 'object' && !Array.isArray(matchedGateway.config))
+      ? { ...(matchedGateway.config as Record<string, unknown>) }
+      : {};
     delete updatedConfig.pairingCode;
 
     await prisma.$transaction(async (tx) => {
@@ -41,7 +43,7 @@ export async function POST(req: NextRequest) {
         where: { id: matchedGateway.id },
         data: {
           status: 'ONLINE',
-          config: updatedConfig
+          config: updatedConfig as Prisma.InputJsonValue
         }
       });
 

@@ -1,5 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export interface RangeLogoProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -35,6 +36,7 @@ export function RangeLogo({
   size = "md",
   asLink = false,
   href = "/dashboard",
+  priority = false,
   className,
   ...props
 }: RangeLogoProps) {
@@ -44,9 +46,12 @@ export function RangeLogo({
   const renderContent = () => {
     if (variant === "icon") {
       return (
-        <img
+        <Image
           src="/images/brand/range-icon.svg"
           alt="Range Bulk SMS Mark"
+          width={64}
+          height={64}
+          priority={priority}
           className={cn(effectiveSizeClass, "object-contain shrink-0 select-none")}
         />
       );
@@ -54,9 +59,12 @@ export function RangeLogo({
 
     if (variant === "light") {
       return (
-        <img
+        <Image
           src="/images/brand/range-logo-light.svg"
           alt="Range Bulk SMS Platform"
+          width={240}
+          height={60}
+          priority={priority}
           className={cn(effectiveSizeClass, "object-contain select-none")}
         />
       );
@@ -64,9 +72,12 @@ export function RangeLogo({
 
     if (variant === "dark") {
       return (
-        <img
+        <Image
           src="/images/brand/range-logo-dark.svg"
           alt="Range Bulk SMS Platform"
+          width={240}
+          height={60}
+          priority={priority}
           className={cn(effectiveSizeClass, "object-contain select-none")}
         />
       );
@@ -74,9 +85,12 @@ export function RangeLogo({
 
     if (variant === "dark-alt") {
       return (
-        <img
+        <Image
           src="/images/brand/range-logo-dark-alt.svg"
           alt="Range Bulk SMS Platform"
+          width={240}
+          height={60}
+          priority={priority}
           className={cn(effectiveSizeClass, "object-contain select-none")}
         />
       );
@@ -84,9 +98,12 @@ export function RangeLogo({
 
     if (variant === "monochrome") {
       return (
-        <img
+        <Image
           src="/images/brand/range-logo-monochrome.svg"
           alt="Range Bulk SMS Platform"
+          width={240}
+          height={60}
+          priority={priority}
           className={cn(effectiveSizeClass, "object-contain select-none")}
         />
       );
@@ -95,14 +112,20 @@ export function RangeLogo({
     // Auto variant: Switch between light and dark according to theme
     return (
       <>
-        <img
+        <Image
           src="/images/brand/range-logo-light.svg"
           alt="Range Bulk SMS Platform"
+          width={240}
+          height={60}
+          priority={priority}
           className={cn(effectiveSizeClass, "object-contain select-none dark:hidden")}
         />
-        <img
+        <Image
           src="/images/brand/range-logo-dark.svg"
           alt="Range Bulk SMS Platform"
+          width={240}
+          height={60}
+          priority={priority}
           className={cn(effectiveSizeClass, "object-contain select-none hidden dark:block")}
         />
       </>

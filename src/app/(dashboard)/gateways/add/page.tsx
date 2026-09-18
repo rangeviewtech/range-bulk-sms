@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Server, Smartphone, Cpu, ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AddGatewayPage() {
@@ -19,7 +19,6 @@ export default function AddGatewayPage() {
   const [error, setError] = useState('');
   
   const [pairingCode, setPairingCode] = useState('');
-  const [createdGatewayId, setCreatedGatewayId] = useState('');
 
   const handleCreateAndPair = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,8 +43,6 @@ export default function AddGatewayPage() {
         throw new Error(createData.error || 'Failed to create gateway');
       }
 
-      setCreatedGatewayId(createData.gateway.id);
-
       // 2. Generate Pairing Code
       const pairRes = await fetch('/api/v1/gateways/pair', {
         method: 'POST',
@@ -62,7 +59,7 @@ export default function AddGatewayPage() {
       setPairingCode(pairData.pairingCode);
       
     } catch (err: unknown) {
-      setError((err instanceof Error ? (err instanceof Error ? (err instanceof Error ? err.message : String(err)) : String(err)) : String(err)));
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -169,7 +166,7 @@ export default function AddGatewayPage() {
               <h4 className="text-sm font-semibold">How to connect:</h4>
               <ol className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
                 <li>Open the Range SMS {type === 'ANDROID' ? 'Android App' : 'ESP32 Config Portal'}.</li>
-                <li>Select "Pair new Gateway".</li>
+                <li>Select &quot;Pair new Gateway&quot;.</li>
                 <li>Enter the 6-digit code shown above.</li>
                 <li>Wait for the device to show as <strong>Online</strong> in your dashboard.</li>
               </ol>

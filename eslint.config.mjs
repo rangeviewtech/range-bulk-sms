@@ -12,6 +12,7 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "generate-*.js",
   ]),
   {
     rules: {
@@ -22,7 +23,8 @@ const eslintConfig = defineConfig([
           "varsIgnorePattern": "^_",
           "caughtErrorsIgnorePattern": "^_"
         }
-      ]
+      ],
+      "react-hooks/set-state-in-effect": "off"
     }
   }
 ]);

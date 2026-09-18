@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       return NextResponse.json(
         { success: false, error: 'Invalid request data', details: parsed.error.format() },
-        { status: 400 } as any
+        { status: 400 }
       );
     }
     
@@ -39,6 +39,7 @@ export async function POST(req: Request) {
       const schedMsg = await tx.scheduledMessage.create({
         data: {
           userId: session.userId,
+          senderIdId: senderId || null,
           message,
           recipients,
           recipientCount: recipients.length,
@@ -58,8 +59,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, scheduledMessageId: result.id, status: 'SCHEDULED' });
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Internal Server Error' },
+      { success: false, error: message },
       { status }
     );
   }

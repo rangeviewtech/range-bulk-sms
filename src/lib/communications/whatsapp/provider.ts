@@ -58,9 +58,8 @@ export class MetaWhatsAppProvider implements WhatsAppProvider {
         messageId: result.messages?.[0]?.id,
         status: 'SUBMITTED' // Webhooks would update this to DELIVERED/READ
       };
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: unknown) {
-      return { success: false, error: (e instanceof Error ? (e instanceof Error ? e.message : String(e)) : String(e)), status: 'UNKNOWN' };
+      return { success: false, error: e instanceof Error ? e.message : String(e), status: 'UNKNOWN' };
     }
   }
 

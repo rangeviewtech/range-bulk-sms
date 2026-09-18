@@ -31,7 +31,7 @@ export class SmsProviderRouter {
 
   private updateHealth() {
     const now = new Date();
-    for (const [name, config] of this.providers.entries()) {
+    for (const config of this.providers.values()) {
       if (!config.healthy && config.cooldownUntil && now >= config.cooldownUntil) {
         config.healthy = true;
         config.failureCount = 0;
@@ -99,7 +99,7 @@ export class SmsProviderRouter {
         } else {
           this.handleFailure(primary.name);
         }
-      } catch (error) {
+      } catch (_error) {
         this.handleFailure(primary.name);
       }
     }
@@ -116,7 +116,7 @@ export class SmsProviderRouter {
           this.handleFailure(fallback.name);
           return result;
         }
-      } catch (error) {
+      } catch (_error) {
         this.handleFailure(fallback.name);
         return { success: false, status: 'FAILED', error: 'Fallback provider also failed' };
       }
@@ -132,7 +132,7 @@ export class SmsProviderRouter {
         const results = await primary.sendBulk(requests);
         this.handleSuccess(primary.name);
         return results;
-      } catch (err) {
+      } catch (_err) {
         this.handleFailure(primary.name);
       }
     }
@@ -143,7 +143,7 @@ export class SmsProviderRouter {
         const results = await fallback.sendBulk(requests);
         this.handleSuccess(fallback.name);
         return results;
-      } catch (err) {
+      } catch (_err) {
         this.handleFailure(fallback.name);
       }
     }

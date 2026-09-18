@@ -20,7 +20,7 @@ export default function WebhooksPage() {
           <CardDescription>Receive real-time delivery reports and inbound SMS.</CardDescription>
         </CardHeader>
         <CardContent className="p-0 sm:p-6">
-          <div className="overflow-x-auto min-w-[550px]">
+          <div className="w-full">
             <Table className="min-w-[550px]">
               <TableHeader>
                 <TableRow>

@@ -272,7 +272,7 @@ export default function ClientsPage() {
           </div>
         </CardHeader>
         <CardContent className="p-0 sm:p-6 pt-0">
-          <div className="overflow-x-auto min-w-[850px]">
+          <div className="w-full">
             <Table className="min-w-[850px]">
             <TableHeader>
               <TableRow>

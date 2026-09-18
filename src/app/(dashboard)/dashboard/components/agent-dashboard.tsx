@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Users, Coins, BadgeDollarSign, Building2, UserPlus, FileText } from "lucide-react";
+import { Coins, BadgeDollarSign, Building2, UserPlus, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";

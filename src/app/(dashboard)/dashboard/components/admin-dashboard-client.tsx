@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useSyncExternalStore } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Users, Server, BadgeDollarSign, Activity, Settings2, BarChart2, CheckCircle2, AlertCircle, ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -61,12 +61,10 @@ interface AdminDashboardClientProps {
   data: AdminDashboardData;
 }
 
-export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
-  const [mounted, setMounted] = useState(false);
+const emptySubscribe = () => () => {};
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   const { metrics, volumeTrends, revenueTrends, recentCampaigns, providers } = data;
 
@@ -104,7 +102,7 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
       icon: BadgeDollarSign,
       value: `UGX ${metrics.totalWalletBalance.toLocaleString()}`,
       subtext: "Total funds held in wallets",
-      href: "/billing/wallets",
+      href: "/wallet",
     },
     {
       title: "SMS Gateways",

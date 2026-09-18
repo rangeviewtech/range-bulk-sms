@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifySession } from '@/lib/auth/session';
 import { hasPermission } from '@/lib/auth/authorization';
-import { smsProviderSchema } from '@/lib/validations/sender-id';
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await verifySession();
@@ -33,7 +32,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await verifySession();
   if (!session || !(await hasPermission(session.userId, 'providers.manage'))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });

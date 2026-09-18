@@ -28,10 +28,8 @@ import {
   Plus,
   RefreshCw,
   LifeBuoy,
-  MessageSquare,
   Clock,
   CheckCircle,
-  AlertCircle,
   Send,
   User,
   ShieldCheck,
@@ -411,7 +409,7 @@ export default function SupportPage() {
               </Button>
             </div>
           ) : (
-            <div className="overflow-x-auto min-w-[750px]">
+            <div className="w-full">
               <Table className="min-w-[750px]">
                 <TableHeader>
                   <TableRow>

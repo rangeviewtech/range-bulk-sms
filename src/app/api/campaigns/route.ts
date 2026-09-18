@@ -36,8 +36,9 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Internal Server Error' },
+      { success: false, error: message },
       { status }
     );
   }
@@ -52,17 +53,45 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       return NextResponse.json(
         { success: false, error: 'Invalid request data', details: parsed.error.format() },
-        { status: 400 } as any
+        { status: 400 }
       );
     }
     
     const { name, senderId, message, variables, groupIds, scheduledAt } = parsed.data;
+
+    // Validate senderId ownership and approval status
+    if (senderId) {
+      const validSender = await prisma.senderId.findFirst({
+        where: { id: senderId, userId: session.userId, status: 'APPROVED' },
+      });
+      if (!validSender) {
+        return NextResponse.json(
+          { success: false, error: 'Specified Sender ID is invalid, unapproved, or does not belong to you' },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Validate groupIds ownership
+    if (groupIds.length > 0) {
+      const validGroups = await prisma.contactGroup.findMany({
+        where: { id: { in: groupIds }, userId: session.userId },
+        select: { id: true },
+      });
+      if (validGroups.length !== groupIds.length) {
+        return NextResponse.json(
+          { success: false, error: 'One or more contact groups do not exist or do not belong to you' },
+          { status: 400 }
+        );
+      }
+    }
 
     const campaign = await prisma.$transaction(async (tx) => {
       const camp = await tx.campaign.create({
         data: {
           userId: session.userId,
           name,
+          senderIdId: senderId || null,
           message,
           variables,
           status: scheduledAt ? 'SCHEDULED' : 'DRAFT',
@@ -85,8 +114,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, campaign });
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Internal Server Error' },
+      { success: false, error: message },
       { status }
     );
   }

@@ -4,7 +4,7 @@ import { requirePermission } from '@/lib/auth/authorization';
 import { successResponse, errorResponse } from '@/lib/api';
 import { contactGroupSchema } from '@/lib/validations/contacts';
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   try {
     const session = await requirePermission('contacts.view');
 

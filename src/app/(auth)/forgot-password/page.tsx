@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
  
-/* eslint-disable react-hooks/incompatible-library */
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { forgotPassword } from '../actions';
@@ -25,13 +24,13 @@ export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false);
   const [turnstileExpired, setTurnstileExpired] = useState(false);
 
-  const { register, handleSubmit, formState: { errors, touchedFields, dirtyFields }, setValue, watch } = useForm<ForgotPasswordValues>({
+  const { register, handleSubmit, formState: { errors, touchedFields, dirtyFields }, setValue, control } = useForm<ForgotPasswordValues>({
     resolver: zodResolver(forgotPasswordSchema),
     mode: 'all',
     reValidateMode: 'onChange',
   });
 
-  const turnstileToken = watch('turnstileToken');
+  const turnstileToken = useWatch({ control, name: 'turnstileToken' });
 
   const onSubmit = async (data: ForgotPasswordValues) => {
     if (turnstileExpired) {

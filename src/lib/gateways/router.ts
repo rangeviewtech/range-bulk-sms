@@ -1,5 +1,4 @@
-﻿import { prisma } from '@/lib/prisma';
-import { Message, Gateway } from '@/generated/prisma/client';
+import { prisma } from '@/lib/prisma';
 
 export class GatewayRouter {
   

@@ -159,7 +159,7 @@ export default function PricingPage() {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto min-w-[650px]">
+            <div className="w-full">
               <Table className="min-w-[650px]">
                 <TableHeader>
                   <TableRow>

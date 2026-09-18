@@ -21,10 +21,29 @@ services:
     networks:
       - backend
 
+  redis:
+    image: redis:7-alpine
+    container_name: master_template_redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - backend
+
 volumes:
   postgres_data:
     name: master_template_pg_data
+  redis_data:
+    name: master_template_redis_data
 
 networks:
   backend:
     name: master_template_network
+

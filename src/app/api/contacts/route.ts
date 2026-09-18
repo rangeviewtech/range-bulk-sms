@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, Prisma } from '@/lib/prisma';
 import { requirePermission } from '@/lib/auth/authorization';
 import { successResponse, paginatedResponse, errorResponse } from '@/lib/api';
 import { createContactSchema } from '@/lib/validations/contacts';
@@ -64,12 +64,22 @@ export async function POST(req: NextRequest) {
       return errorResponse(new Error('Contact with this phone number already exists.'), 400);
     }
 
-    const { groupIds, ...rest } = data;
-    const restData: any = { ...rest };
+    const { groupIds, customFields, ...rest } = data;
+
+    if (groupIds && groupIds.length > 0) {
+      const userGroups = await prisma.contactGroup.findMany({
+        where: { id: { in: groupIds }, userId: session.userId },
+        select: { id: true },
+      });
+      if (userGroups.length !== groupIds.length) {
+        return errorResponse(new Error('One or more contact groups do not exist or do not belong to you.'), 400);
+      }
+    }
 
     const contact = await prisma.contact.create({
       data: {
-        ...restData,
+        ...rest,
+        ...(customFields !== undefined && { customFields: customFields as Prisma.InputJsonValue }),
         normalizedPhone,
         userId: session.userId,
         groups: groupIds ? {

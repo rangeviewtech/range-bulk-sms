@@ -275,7 +275,7 @@ export default function PricingPage() {
           </div>
         </CardHeader>
         <CardContent className="p-0 sm:p-6">
-          <div className="overflow-x-auto min-w-[750px]">
+          <div className="w-full">
             <Table className="min-w-[750px]">
             <TableHeader>
               <TableRow>

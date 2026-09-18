@@ -1,19 +1,20 @@
+import { Metadata } from 'next';
 import { getApiDocs } from '@/lib/swagger';
-import SwaggerUI from '@/components/swagger-ui';
+import { DocsPortal } from '@/components/docs/docs-portal';
 
-export const metadata = {
-  title: 'API Documentation | Master Project',
-  description: 'API Documentation for the Master Project backend endpoints.',
+export const metadata: Metadata = {
+  title: 'Range Bulk SMS Developer Portal & Public API Documentation',
+  description:
+    'Comprehensive REST API reference, isolated Sandbox, multi-language code snippets, and real-time delivery receipt webhooks for Range Bulk SMS messaging platform.',
+  openGraph: {
+    title: 'Range Bulk SMS Developer Portal',
+    description: 'Enterprise Bulk SMS and Messaging Platform Public API Documentation',
+    type: 'website',
+  },
 };
 
 export default async function DocsPage() {
   const spec = await getApiDocs();
-  
-  return (
-    <div className="w-full min-h-screen p-4 py-8 bg-gray-50 dark:bg-gray-950">
-      <div className="w-full h-full min-h-screen bg-white dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden">
-        <SwaggerUI spec={spec} />
-      </div>
-    </div>
-  );
+
+  return <DocsPortal spec={spec} />;
 }

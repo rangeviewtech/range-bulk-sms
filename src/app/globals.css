@@ -693,22 +693,22 @@ input:-webkit-autofill:active {
 @keyframes flyoutSubMenuReveal {
   0% {
     opacity: 0;
-    transform: translateX(-8px) scale(0.98);
+    transform: translateX(-8px);
   }
   100% {
     opacity: 1;
-    transform: translateX(0) scale(1);
+    transform: translateX(0);
   }
 }
 
 @keyframes flyoutDeepMenuReveal {
   0% {
     opacity: 0;
-    transform: translateX(-6px) scale(0.985);
+    transform: translateX(-6px);
   }
   100% {
     opacity: 1;
-    transform: translateX(0) scale(1);
+    transform: translateX(0);
   }
 }
 

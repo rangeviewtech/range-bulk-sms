@@ -1,12 +1,10 @@
- 
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable react-hooks/incompatible-library */
 'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
@@ -105,7 +103,7 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors, touchedFields, dirtyFields },
-    watch,
+    control,
     trigger,
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -114,8 +112,8 @@ export default function RegisterPage() {
   });
 
   
-  const passwordValue = watch('password') || '';
-  const confirmPasswordValue = watch('confirmPassword') || '';
+  const passwordValue = useWatch({ control, name: 'password' }) || '';
+  const confirmPasswordValue = useWatch({ control, name: 'confirmPassword' }) || '';
 
   useEffect(() => {
     if (confirmPasswordValue) {
@@ -237,19 +235,14 @@ export default function RegisterPage() {
         }}
       >
         {slides.map((src, index) => (
-          <img
+          <Image
             key={src}
             src={src}
             alt={`Background Slide ${index + 1}`}
+            fill
+            priority={index === 0}
             className="auth-carousel-slide"
             style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              bottom: 0,
-              width: '100%',
-              maxWidth: '100%',
-              minHeight: '100%',
               objectFit: 'cover',
               opacity: index === currentImageIndex ? 1 : 0,
               zIndex: index === currentImageIndex ? 2 : 1,
@@ -303,9 +296,12 @@ export default function RegisterPage() {
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%', margin: 'auto 0', paddingTop: '24px', paddingBottom: '36px', boxSizing: 'border-box' }}>
           {/* .logo-container (Standardized Brand Logo) */}
           <>
-            <img
+            <Image
               src={appAssets.logo}
               alt={`${appConfig.name} logo`}
+              width={275}
+              height={88}
+              priority
               className="logo-container theme-logo-light"
               style={{
                 margin: '0 auto 24px',
@@ -316,9 +312,12 @@ export default function RegisterPage() {
                 objectFit: 'contain',
               }}
             />
-            <img
+            <Image
               src={appAssets.logoLight}
               alt={`${appConfig.name} logo`}
+              width={275}
+              height={88}
+              priority
               className="logo-container theme-logo-dark"
               style={{
                 margin: '0 auto 24px',

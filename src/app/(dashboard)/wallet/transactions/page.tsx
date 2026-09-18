@@ -182,7 +182,7 @@ export default function TransactionsPage() {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto min-w-[700px]">
+            <div className="w-full">
               <Table className="min-w-[700px]">
                 <TableHeader>
                   <TableRow>

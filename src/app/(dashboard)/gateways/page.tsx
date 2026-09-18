@@ -73,7 +73,7 @@ export default function GatewaysPage() {
             <Server className="w-12 h-12 text-muted-foreground/50 mb-4" />
             <h3 className="text-lg font-semibold">No Gateways Configured</h3>
             <p className="text-sm text-muted-foreground max-w-md mt-2 mb-6">
-              You haven't added any physical hardware gateways yet. Add an Android phone or ESP32 module to start sending SMS natively without a cloud provider.
+              You haven&apos;t added any physical hardware gateways yet. Add an Android phone or ESP32 module to start sending SMS natively without a cloud provider.
             </p>
             <Link href="/gateways/add">
               <Button variant="outline">Pair a Device</Button>

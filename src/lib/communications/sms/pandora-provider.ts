@@ -42,9 +42,8 @@ export class PandoraSmsProvider implements SmsProvider {
       } else {
         return { success: false, error: result.error_message || 'Unknown Pandora Error' };
       }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: unknown) {
-      return { success: false, error: (e instanceof Error ? (e instanceof Error ? e.message : String(e)) : String(e)) };
+      return { success: false, error: e instanceof Error ? e.message : 'Unknown Pandora Error' };
     }
   }
 

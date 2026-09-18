@@ -1,7 +1,9 @@
 import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
+import { redisLock } from '@/lib/redis';
 
 export function generateMessageId(): string {
+
   return `msg_${uuidv4()}`;
 }
 
@@ -21,3 +23,19 @@ export function generateTransactionReference(): string {
   const randomChars = crypto.randomBytes(3).toString('hex').toUpperCase(); // 6 hex characters
   return `TXN-${timestamp}-${randomChars}`;
 }
+
+
+/**
+ * Acquires a distributed lock on a message idempotency key to prevent double dispatch.
+ */
+export async function acquireMessageLock(idempotencyKey: string, ttlSeconds: number = 60) {
+  return redisLock.acquire(`sms:${idempotencyKey}`, ttlSeconds);
+}
+
+/**
+ * Releases the distributed lock on a message idempotency key.
+ */
+export async function releaseMessageLock(idempotencyKey: string, token: string) {
+  return redisLock.release(`sms:${idempotencyKey}`, token);
+}
+

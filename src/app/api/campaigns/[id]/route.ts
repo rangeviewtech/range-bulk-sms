@@ -5,7 +5,7 @@ import { updateCampaignSchema } from '@/lib/validations/sms';
 import { AppError } from '@/lib/errors';
 
 export async function GET(
-  req: Request,
+  _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -17,14 +17,15 @@ export async function GET(
     });
 
     if (!campaign || campaign.userId !== session.userId) {
-      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 } as any);
+      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
     }
 
     return NextResponse.json({ success: true, campaign });
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Internal Server Error' },
+      { success: false, error: message },
       { status }
     );
   }
@@ -43,7 +44,7 @@ export async function PUT(
     if (!parsed.success) {
       return NextResponse.json(
         { success: false, error: 'Invalid request data', details: parsed.error.format() },
-        { status: 400 } as any
+        { status: 400 }
       );
     }
 
@@ -52,19 +53,32 @@ export async function PUT(
     });
 
     if (!campaign || campaign.userId !== session.userId) {
-      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 } as any);
+      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
     }
 
     if (campaign.status !== 'DRAFT') {
-      return NextResponse.json({ success: false, error: 'Only DRAFT campaigns can be updated' }, { status: 400 } as any);
+      return NextResponse.json({ success: false, error: 'Only DRAFT campaigns can be updated' }, { status: 400 });
     }
 
     const { name, senderId, message, variables, scheduledAt } = parsed.data;
+
+    if (senderId) {
+      const validSender = await prisma.senderId.findFirst({
+        where: { id: senderId, userId: session.userId, status: 'APPROVED' },
+      });
+      if (!validSender) {
+        return NextResponse.json(
+          { success: false, error: 'Specified Sender ID is invalid, unapproved, or does not belong to you' },
+          { status: 400 }
+        );
+      }
+    }
 
     const updated = await prisma.campaign.update({
       where: { id },
       data: {
         ...(name && { name }),
+        ...(senderId !== undefined && { senderIdId: senderId || null }),
         ...(message && { message }),
         ...(variables && { variables }),
         ...(scheduledAt !== undefined && { scheduledAt: scheduledAt ? new Date(scheduledAt) : null })
@@ -74,15 +88,16 @@ export async function PUT(
     return NextResponse.json({ success: true, campaign: updated });
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Internal Server Error' },
+      { success: false, error: message },
       { status }
     );
   }
 }
 
 export async function DELETE(
-  req: Request,
+  _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -94,12 +109,12 @@ export async function DELETE(
     });
 
     if (!campaign || campaign.userId !== session.userId) {
-      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 } as any);
+      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
     }
 
     const allowedStatuses = ['DRAFT', 'COMPLETED', 'FAILED', 'CANCELLED'];
     if (!allowedStatuses.includes(campaign.status)) {
-      return NextResponse.json({ success: false, error: 'Cannot delete campaign in current status' }, { status: 400 } as any);
+      return NextResponse.json({ success: false, error: 'Cannot delete campaign in current status' }, { status: 400 });
     }
 
     await prisma.campaign.update({
@@ -110,8 +125,9 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Internal Server Error' },
+      { success: false, error: message },
       { status }
     );
   }

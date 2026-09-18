@@ -50,7 +50,7 @@ export async function PATCH(req: Request) {
     if (!parsed.success)
       return NextResponse.json(
         { success: false, error: 'Invalid notification action.' },
-        { status: 400 } as any
+        { status: 400 }
       );
     await prisma.notification.updateMany({
       where: {

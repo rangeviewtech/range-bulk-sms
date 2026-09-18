@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Upload, Database, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Upload, AlertTriangle } from 'lucide-react';
 
 export default function ContactImportPage() {
   return (

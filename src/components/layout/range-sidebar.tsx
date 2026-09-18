@@ -246,6 +246,7 @@ export const RANGE_NAVIGATION: NavModule[] = [
 
 
 const ITEM_HEIGHT = 38; // standard 38px height per menu row
+const SUBMENU_HEADER_HEIGHT = 31; // 31px measured height of submenu category title bar
 
 interface RangeSidebarProps {
   user?: { name?: string | null; email?: string | null; image?: string | null; role?: string } | null;
@@ -306,11 +307,15 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
   const [searchQuery, setSearchQuery] = React.useState("");
 
   // Close mobile drawer and flyouts on route navigation
-  React.useEffect(() => {
+  const [prevPathname, setPrevPathname] = React.useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
     setIsMobileOpen(false);
     setExpandedMobileModule(null);
-    closeAllFlyouts();
-  }, [pathname, closeAllFlyouts]);
+    setHoveredModule(null);
+    setHoveredCategory(null);
+    setCategoryIndex(0);
+  }
 
   const userRole = user?.role || "CLIENT";
   
@@ -336,8 +341,8 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
 
     const subMenuEl = subMenuRef.current;
     const measuredSubMenuHeight = subMenuEl
-      ? subMenuEl.getBoundingClientRect().height
-      : (hoveredModule.categories?.length || 0) * ITEM_HEIGHT + 33;
+      ? (subMenuEl.offsetHeight || subMenuEl.getBoundingClientRect().height)
+      : (hoveredModule.categories?.length || 0) * ITEM_HEIGHT + SUBMENU_HEADER_HEIGHT;
 
     const pos = computeFlyoutPosition({
       parentRect,
@@ -356,11 +361,10 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
     if (hoveredCategory) {
       const deepMenuEl = deepMenuRef.current;
       const deepMenuHeight = deepMenuEl
-        ? deepMenuEl.getBoundingClientRect().height
+        ? (deepMenuEl.offsetHeight || deepMenuEl.getBoundingClientRect().height)
         : hoveredCategory.items.length * ITEM_HEIGHT;
 
-      const headerHeight = 33;
-      const categoryRowTopOffset = headerHeight + categoryIndex * ITEM_HEIGHT;
+      const categoryRowTopOffset = SUBMENU_HEADER_HEIGHT + categoryIndex * ITEM_HEIGHT;
 
       const deepPos = computeDeepMenuPosition({
         parentSubMenuTop: pos.top,
@@ -662,7 +666,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                             right: 90,
                             width: 90,
                           };
-                          const initialSubMenuHeight = (mod.categories?.length || 0) * ITEM_HEIGHT + 33;
+                          const initialSubMenuHeight = (mod.categories?.length || 0) * ITEM_HEIGHT + SUBMENU_HEADER_HEIGHT;
                           const pos = computeFlyoutPosition({
                             parentRect: rect,
                             sidebarRect,

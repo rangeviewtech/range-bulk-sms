@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
-import { prisma } from '@/lib/prisma';
+import { prisma, Prisma } from '@/lib/prisma';
 import { requirePermission } from '@/lib/auth/authorization';
 import { sendSmsSchema } from '@/lib/validations/sms';
+import { WalletService } from '@/lib/wallet/service';
+import { enqueueJob } from '@/lib/jobs/db';
 import { AppError } from '@/lib/errors';
 
 export async function POST(req: Request) {
@@ -14,7 +15,7 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       return NextResponse.json(
         { success: false, error: 'Invalid request data', details: parsed.error.format() },
-        { status: 400 } as any
+        { status: 400 }
       );
     }
     
@@ -29,58 +30,82 @@ export async function POST(req: Request) {
       }
     }
 
-    // Cost calculation (simplified: 1 unit per recipient)
-    const units = recipients.length;
-    const cost = units * 10; // example cost 10 per unit
-
-    // Check wallet and deduct in transaction
-    const result = await prisma.$transaction(async (tx) => {
-      const wallet = await tx.wallet.findUnique({
-        where: { userId: session.userId },
+    // Validate senderId ownership and approval status
+    if (senderId) {
+      const validSender = await prisma.senderId.findFirst({
+        where: { id: senderId, userId: session.userId, status: 'APPROVED' },
       });
-
-      if (!wallet || wallet.balance.toNumber() < cost) {
-        throw new AppError('Insufficient wallet balance', 400);
+      if (!validSender) {
+        return NextResponse.json(
+          { success: false, error: 'Specified Sender ID is invalid, unapproved, or does not belong to you' },
+          { status: 400 }
+        );
       }
+    }
 
-      await tx.wallet.update({
-        where: { id: wallet.id },
-        data: { balance: { decrement: cost } },
-      });
+    // Cost calculation (10 units/currency per recipient)
+    const units = recipients.length;
+    const cost = units * 10;
+    const decimalCost = new Prisma.Decimal(cost);
 
-      // Create message
-      const msg = await tx.message.create({
-        data: {
-          userId: session.userId,
-          message,
-          recipientCount: recipients.length,
-          totalUnits: units,
-          totalCost: cost,
-          status: 'PENDING',
-          idempotencyKey,
-        }
-      });
-
-      // Create recipients
-      await tx.messageRecipient.createMany({
-        data: recipients.map((phone) => ({
-          messageId: msg.id,
-          phone,
-          status: 'PENDING',
-          cost: 10,
-        }))
-      });
-
-      return msg;
+    // Enforce ledger integrity via WalletService.deduct with row-level locking
+    const wallet = await WalletService.getOrCreateWallet({ userId: session.userId });
+    await WalletService.deduct(wallet.id, decimalCost, {
+      userId: session.userId,
+      description: `SMS Outbound dispatch (${units} recipients)`,
+      idempotencyKey: idempotencyKey ? `sms-wallet-${idempotencyKey}` : undefined,
     });
 
-    // In a real system, we would push to queue / SMS engine here.
-    
-    return NextResponse.json({ success: true, messageId: result.id, status: 'PENDING' });
+    // Create Message record
+    const msg = await prisma.message.create({
+      data: {
+        userId: session.userId,
+        senderIdId: senderId || null,
+        message,
+        recipientCount: recipients.length,
+        totalUnits: units,
+        totalCost: cost,
+        status: 'QUEUED',
+        idempotencyKey,
+      },
+    });
+
+    await prisma.messageRecipient.createMany({
+      data: recipients.map((phone) => ({
+        messageId: msg.id,
+        phone,
+        status: 'PENDING',
+        cost: 10,
+      })),
+    });
+
+    const recipientRecords = await prisma.messageRecipient.findMany({
+      where: { messageId: msg.id },
+    });
+
+    // Enqueue delivery jobs to the background job queue
+    for (const rec of recipientRecords) {
+      await enqueueJob({
+        type: 'send-sms',
+        queue: 'sms-default',
+        priority: 'NORMAL',
+        payload: {
+          recipient: rec.phone,
+          template: 'direct',
+          templateData: { body: message },
+          messageId: msg.id,
+          recipientId: rec.id,
+        },
+        idempotencyKey: idempotencyKey ? `job-${idempotencyKey}-${rec.id}` : undefined,
+      });
+    }
+
+    return NextResponse.json({ success: true, messageId: msg.id, status: 'QUEUED' });
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Internal Server Error' },
+      { success: false, error: message },
       { status }
     );
   }

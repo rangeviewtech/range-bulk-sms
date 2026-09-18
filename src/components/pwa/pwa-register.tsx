@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -81,7 +81,6 @@ export function PWARegister() {
 
     // Initial check
     if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsOffline(true);
     }
 

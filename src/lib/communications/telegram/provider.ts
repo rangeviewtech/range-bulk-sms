@@ -48,9 +48,8 @@ export class BotApiTelegramProvider implements TelegramProvider {
         messageId: result.result?.message_id?.toString(),
         status: 'DELIVERED' // Telegram bot API is usually synchronous to delivery
       };
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: unknown) {
-      return { success: false, error: (e instanceof Error ? (e instanceof Error ? e.message : String(e)) : String(e)), status: 'UNKNOWN' };
+      return { success: false, error: e instanceof Error ? e.message : String(e), status: 'UNKNOWN' };
     }
   }
 

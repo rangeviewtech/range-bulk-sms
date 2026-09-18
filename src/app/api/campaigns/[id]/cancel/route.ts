@@ -4,7 +4,7 @@ import { requirePermission } from '@/lib/auth/authorization';
 import { AppError } from '@/lib/errors';
 
 export async function POST(
-  req: Request,
+  _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -16,11 +16,11 @@ export async function POST(
     });
 
     if (!campaign || campaign.userId !== session.userId) {
-      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 } as any);
+      return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
     }
 
     if (!['SCHEDULED', 'PROCESSING'].includes(campaign.status)) {
-      return NextResponse.json({ success: false, error: 'Campaign cannot be cancelled in its current state' }, { status: 400 } as any);
+      return NextResponse.json({ success: false, error: 'Campaign cannot be cancelled in its current state' }, { status: 400 });
     }
 
     await prisma.campaign.update({
@@ -34,8 +34,9 @@ export async function POST(
     return NextResponse.json({ success: true, status: 'CANCELLED' });
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Internal Server Error' },
+      { success: false, error: message },
       { status }
     );
   }

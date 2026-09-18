@@ -14,7 +14,7 @@ export const ContactService = {
         phone: data.phone,
         normalizedPhone: normalized.normalized,
         email: data.email,
-        customFields: data.customFields as any || {},
+        customFields: data.customFields ?? {},
         groups: data.groupIds ? {
           create: data.groupIds.map(id => ({ contactGroupId: id }))
         } : undefined
@@ -92,7 +92,7 @@ export const ContactService = {
   },
   
   async addToGroup(contactIds: string[], groupId: string) {
-    const result = await prisma.contactGroup.update({
+    await prisma.contactGroup.update({
       where: { id: groupId },
       data: {
         members: {
@@ -104,7 +104,7 @@ export const ContactService = {
   },
   
   async removeFromGroup(contactIds: string[], groupId: string) {
-    const result = await prisma.contactGroup.update({
+    await prisma.contactGroup.update({
       where: { id: groupId },
       data: {
         members: {

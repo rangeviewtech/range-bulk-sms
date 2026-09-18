@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { prisma, Prisma, SenderIdStatus } from '@/lib/prisma';
 import { verifySession } from '@/lib/auth/session';
 import { hasPermission } from '@/lib/auth/authorization';
-import { senderIdActionSchema } from '@/lib/validations/sender-id';
+import { logAudit } from '@/lib/security/audit';
+
+const approveSchema = z.object({
+  action: z.enum(['approve', 'reject', 'suspend']),
+  reason: z.string().trim().max(500).optional(),
+});
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await verifySession();
@@ -11,8 +17,23 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   }
   const { id } = await params;
   try {
-    const body = await req.json();
-    const { action, reason } = body;
+    const rawBody = await req.json().catch(() => ({}));
+    const parseResult = approveSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid approval payload', details: parseResult.error.format() },
+        { status: 400 }
+      );
+    }
+
+    const { action, reason } = parseResult.data;
+
+    const existing = await prisma.senderId.findUnique({
+      where: { id },
+    });
+    if (!existing) {
+      return NextResponse.json({ error: 'Sender ID not found' }, { status: 404 });
+    }
 
     let dataUpdate: Prisma.SenderIdUpdateInput = {};
 
@@ -34,7 +55,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     const updated = await prisma.senderId.update({
       where: { id },
-      data: dataUpdate
+      data: dataUpdate,
+    });
+
+    await logAudit({
+      action: 'ADMIN_ACTION',
+      userId: session.userId,
+      category: 'SECURITY',
+      operation: 'UPDATE',
+      resourceType: 'SenderId',
+      resourceId: id,
+      metadata: { action, reason, previousStatus: existing.status, newStatus: updated.status },
     });
 
     return NextResponse.json({ success: true, senderId: updated });

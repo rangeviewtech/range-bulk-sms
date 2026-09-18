@@ -6,7 +6,7 @@ import { AppError } from '@/lib/errors';
 import { successResponse, errorResponse } from '@/lib/api';
 import { smsTemplateSchema } from '@/lib/validations/sms';
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   try {
     const session = await requirePermission('sms.view');
     

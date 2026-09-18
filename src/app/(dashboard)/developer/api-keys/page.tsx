@@ -21,7 +21,7 @@ export default function ApiKeysPage() {
           <CardDescription>Manage your Developer API access keys.</CardDescription>
         </CardHeader>
         <CardContent className="p-0 sm:p-6">
-          <div className="overflow-x-auto min-w-[650px]">
+          <div className="w-full">
             <Table className="min-w-[650px]">
             <TableHeader>
               <TableRow>

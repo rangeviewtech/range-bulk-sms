@@ -128,7 +128,7 @@ export default function CommissionsPage() {
       {/* Main Table Card */}
       <Card>
         <CardContent className="p-0 sm:p-6">
-          <div className="overflow-x-auto min-w-[800px]">
+          <div className="w-full">
             <Table className="min-w-[800px]">
             <TableHeader>
               <TableRow>

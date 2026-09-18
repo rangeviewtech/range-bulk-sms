@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { RefreshCw, Send, CheckCircle, BarChart3, AlertCircle } from 'lucide-react';
+import { RefreshCw, Send, CheckCircle, BarChart3 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface CampaignReportItem {

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -298,7 +298,7 @@ export default function ProvidersPage() {
       {/* Table Card */}
       <Card>
         <CardContent className="p-0 sm:p-6">
-          <div className="overflow-x-auto min-w-[850px]">
+          <div className="w-full">
             <Table className="min-w-[850px]">
             <TableHeader>
               <TableRow>

@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { verifySession } from '@/lib/auth/session';
 import { GatewayType } from '@/generated/prisma/client';
 
-export const GET = async (req: NextRequest) => {
+export const GET = async (_req: NextRequest) => {
   try {
     const session = await verifySession();
     if (!session || !session.user) {
@@ -35,12 +35,12 @@ export const POST = async (req: NextRequest) => {
     const { name, type, maxThroughput } = await req.json();
 
     if (!name || !type) {
-      return NextResponse.json({ error: 'Name and type are required' }, { status: 400 } as any);
+      return NextResponse.json({ error: 'Name and type are required' }, { status: 400 });
     }
 
     // Validate type
     if (!Object.values(GatewayType).includes(type as GatewayType)) {
-      return NextResponse.json({ error: 'Invalid gateway type' }, { status: 400 } as any);
+      return NextResponse.json({ error: 'Invalid gateway type' }, { status: 400 });
     }
 
     const gateway = await prisma.gateway.create({

@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @next/next/no-img-element */
- 
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
 import { LanguageToggle } from "@/components/navigation/language-toggle";
 import { useLanguage } from "@/hooks/use-language";
@@ -208,19 +206,14 @@ export default function LoginPage() {
         }}
       >
         {slides.map((src, index) => (
-          <img
+          <Image
             key={src}
             src={src}
             alt={`Background Slide ${index + 1}`}
+            fill
+            priority={index === 0}
             className="auth-carousel-slide"
             style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              bottom: 0,
-              width: '100%',
-              maxWidth: '100%',
-              minHeight: '100%',
               objectFit: 'cover',
               opacity: index === currentImageIndex ? 1 : 0,
               zIndex: index === currentImageIndex ? 2 : 1,
@@ -273,9 +266,12 @@ export default function LoginPage() {
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%', margin: 'auto 0', paddingTop: '24px', paddingBottom: '36px', boxSizing: 'border-box' }}>
         {/* .logo-container (Standardized Brand Logo) */}
           <>
-            <img
+            <Image
             src={appAssets.logo}
             alt={`${appConfig.name} logo`}
+            width={275}
+            height={88}
+            priority
             className="logo-container theme-logo-light"
             style={{
               margin: '0 auto 24px',
@@ -286,9 +282,12 @@ export default function LoginPage() {
               objectFit: 'contain',
             }}
           />
-            <img
+            <Image
             src={appAssets.logoLight}
             alt={`${appConfig.name} logo`}
+            width={275}
+            height={88}
+            priority
             className="logo-container theme-logo-dark"
             style={{
               margin: '0 auto 24px',

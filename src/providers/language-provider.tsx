@@ -23,7 +23,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     try {
       const stored = localStorage.getItem('app_language');
       if (stored) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setLanguageState(stored.toUpperCase() as LanguageCode);
       } else {
         const match = document.cookie.match(/app_language=([^;]+)/);

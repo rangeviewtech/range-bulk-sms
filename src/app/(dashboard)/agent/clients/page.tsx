@@ -125,7 +125,7 @@ export default function AgentClientsPage() {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto min-w-[750px]">
+            <div className="w-full">
               <Table className="min-w-[750px]">
                 <TableHeader>
                   <TableRow>

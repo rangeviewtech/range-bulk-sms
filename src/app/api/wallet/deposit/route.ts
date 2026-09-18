@@ -1,27 +1,61 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { WalletService } from '@/lib/wallet/service';
-import { verifySession } from '@/lib/auth/session';
-import { Prisma } from '@/generated/prisma/client';
-const { Decimal } = Prisma;
+import { requirePermission } from '@/lib/auth/authorization';
+import { depositSchema } from '@/lib/validations/wallet';
+import { logAudit } from '@/lib/security/audit';
+import { AppError } from '@/lib/errors';
+import { Prisma } from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await verifySession();
-    if (!session || !session.userId) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    // Only users with explicit wallet management permission (e.g., ADMIN) can directly credit funds
+    const session = await requirePermission('wallet.manage');
 
-    const body = await req.json();
-    const amount = new Decimal(body.amount);
+    const body = await req.json().catch(() => ({}));
+    const parsed = depositSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid deposit request', details: parsed.error.format() },
+        { status: 400 }
+      );
+    }
+
+    const { amount, paymentMethod, paymentRef, description } = parsed.data;
+    const decimalAmount = new Prisma.Decimal(amount);
     
     const wallet = await WalletService.getOrCreateWallet({ userId: session.userId });
     
-    const result = await WalletService.deposit(wallet.id, amount, {
+    const result = await WalletService.deposit(wallet.id, decimalAmount, {
       userId: session.userId,
-      description: body.description || 'Manual Deposit',
-      idempotencyKey: body.idempotencyKey
+      paymentMethod,
+      paymentRef,
+      description: description || `Direct deposit via ${paymentMethod}`,
+      idempotencyKey: paymentRef ? `dep-${paymentRef}` : undefined,
     });
 
-    return Response.json({ data: result });
+    await logAudit({
+      action: 'ADMIN_ACTION',
+      userId: session.userId,
+      category: 'APPLICATION',
+      operation: 'CREATE',
+      resourceType: 'Wallet',
+      resourceId: wallet.id,
+
+      metadata: {
+        amount,
+        paymentMethod,
+        paymentRef,
+        transactionRef: result.transactionRef,
+      },
+    });
+
+    return NextResponse.json({ success: true, data: result });
   } catch (error: unknown) {
-    return Response.json({ error: (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) }, { status: 500 });
+    if (error instanceof AppError) {
+      return NextResponse.json({ error: error.message }, { status: error.statusCode });
+    }
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+

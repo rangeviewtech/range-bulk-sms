@@ -98,7 +98,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, agent: result });
-  } catch (error: any) {
-    return NextResponse.json({ error: error?.message || 'Failed to create agent' }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Failed to create agent';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

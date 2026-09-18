@@ -38,30 +38,29 @@ describe("computeFlyoutPosition", () => {
   });
 
   describe("Last sidebar item (isLastItem: true, e.g. Settings)", () => {
-    it("aligns submenu.top exactly with parent.bottom when space allows", () => {
+    it("aligns submenu bottom flush with parent bottom on the same line when space allows", () => {
       const parentRect = { top: 500, bottom: 589, left: 0, right: 90, height: 89 };
+      const submenuHeight = 108;
       const res = computeFlyoutPosition({
         parentRect,
         sidebarRect,
-        submenuHeight: 108,
+        submenuHeight,
         isLastItem: true,
         viewportHeight: 1000,
       });
 
-      expect(res.top).toBe(589);
+      // Submenu bottom must equal parentRect.bottom so both share the exact same line
+      expect(res.top).toBe(481); // 589 - 108
+      expect(res.top + submenuHeight).toBe(parentRect.bottom);
       expect(res.left).toBe(90);
       expect(res.overflowsViewport).toBe(false);
     });
 
-    it("shifts upward by the minimum necessary amount when space is limited to keep bottom edge 8px above viewport", () => {
-      // Settings button located near the bottom of viewport
+    it("guarantees the main menu item and submenu card are on the exact same baseline line for Settings", () => {
       const parentRect = { top: 667, bottom: 756, left: 0, right: 90, height: 89 };
-      const submenuHeight = 109;
+      const submenuHeight = 107;
       const viewportHeight = 788;
 
-      // preferredTop = 756
-      // preferredTop + 109 = 865 > 780 (788 - 8)
-      // shiftedTop = 788 - 8 - 109 = 671
       const res = computeFlyoutPosition({
         parentRect,
         sidebarRect,
@@ -70,9 +69,32 @@ describe("computeFlyoutPosition", () => {
         viewportHeight,
       });
 
-      expect(res.top).toBe(671);
+      // top = 756 - 107 = 649, bottom = 756 (flush with Settings button bottom)
+      expect(res.top).toBe(649);
+      expect(res.top + submenuHeight).toBe(parentRect.bottom);
       expect(res.left).toBe(90);
-      expect(res.top + submenuHeight).toBe(780); // exactly 8px above 788
+      expect(res.overflowsViewport).toBe(false);
+    });
+
+    it("shifts upward to keep bottom edge 8px above viewport when parent bottom extends beyond viewport", () => {
+      // Parent bottom extends past viewport maxBottom
+      const parentRect = { top: 720, bottom: 815, left: 0, right: 90, height: 89 };
+      const submenuHeight = 109;
+      const viewportHeight = 800;
+
+      // maxBottom = 800 - 8 = 792
+      // shiftedTop = 792 - 109 = 683
+      const res = computeFlyoutPosition({
+        parentRect,
+        sidebarRect,
+        submenuHeight,
+        isLastItem: true,
+        viewportHeight,
+      });
+
+      expect(res.top).toBe(683);
+      expect(res.left).toBe(90);
+      expect(res.top + submenuHeight).toBe(792); // exactly 8px above 800
       expect(res.overflowsViewport).toBe(true);
     });
 

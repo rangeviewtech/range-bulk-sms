@@ -3,7 +3,6 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Search, Plus, MoreHorizontal, Tag } from 'lucide-react';
-import Link from 'next/link';
 
 export default function ContactTagsPage() {
   return (
@@ -25,7 +24,7 @@ export default function ContactTagsPage() {
       </div>
 
       <div className="bg-card rounded-lg border shadow-sm overflow-hidden">
-        <div className="overflow-x-auto min-w-[600px]">
+        <div className="w-full">
           <Table className="min-w-[600px]">
           <TableHeader>
             <TableRow>

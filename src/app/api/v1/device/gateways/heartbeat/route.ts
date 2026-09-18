@@ -8,7 +8,7 @@ export const POST = async (req: NextRequest) => {
       const { batteryLevel, isCharging, signalStrength, networkOperator } = await req.json();
 
       // Ensure device record exists
-      let device = await prisma.gatewayDevice.findFirst({
+      const device = await prisma.gatewayDevice.findFirst({
         where: { gatewayId }
       });
 

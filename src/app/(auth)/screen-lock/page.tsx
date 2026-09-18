@@ -1,10 +1,9 @@
  
  
-/* eslint-disable react-hooks/incompatible-library */
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { unlockScreen, logout } from '../actions';
@@ -24,12 +23,12 @@ export default function ScreenLockPage() {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileExpired, setTurnstileExpired] = useState(false);
 
-  const { handleSubmit, setValue, watch, formState: { errors } } = useForm<PinValues>({
+  const { handleSubmit, setValue, control, formState: { errors } } = useForm<PinValues>({
     resolver: zodResolver(pinSchema),
     mode: 'all',
   });
 
-  const pinValue = watch('pin');
+  const pinValue = useWatch({ control, name: 'pin' });
 
   const onSubmit = async (data: PinValues) => {
     if (turnstileExpired) {

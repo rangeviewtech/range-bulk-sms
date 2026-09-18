@@ -50,11 +50,12 @@ export interface DeepMenuPositionResult {
  * Rules:
  * - Upper sidebar items (e.g. Agent): Align submenu.top = parent.top, clamped to viewport.
  * - Last sidebar item (Settings):
- *   1. Prefer submenu.top = parent.bottom and submenu.left = sidebar.right (no horizontal gap).
- *   2. If that position would extend below viewport, move upward only as much as necessary
- *      to keep its bottom edge 8px above the viewport bottom.
- *   3. In this overflow case, viewport visibility takes priority over exact alignment with parent's bottom edge.
- *   4. If submenu is taller than available viewport, apply maximum height and internal scrolling.
+ *   1. Bottom-align submenu with parent: submenu.bottom = parent.bottom (i.e. submenu.top = parent.bottom - submenuHeight).
+ *      This places the main menu item and the submenu card on the exact same horizontal bottom line.
+ *   2. If submenu would extend below viewport (parentRect.bottom > maxBottom), shift upward so its bottom edge is 8px above viewport bottom.
+ *   3. If submenu would extend above viewport, clamp to paddingTop (8px).
+ *   4. Zero horizontal gap: submenu.left = sidebar.right.
+ *   5. If submenu is taller than available viewport, apply maximum height and internal scrolling.
  */
 export function computeFlyoutPosition({
   parentRect,
@@ -73,11 +74,16 @@ export function computeFlyoutPosition({
   let overflowsViewport = false;
 
   if (isLastItem) {
-    const preferredTop = parentRect.bottom;
+    const preferredTop = parentRect.bottom - submenuHeight;
     const maxBottom = viewportHeight - paddingBottom;
 
     if (preferredTop + submenuHeight <= maxBottom) {
-      top = preferredTop;
+      if (preferredTop >= paddingTop) {
+        top = preferredTop;
+      } else {
+        overflowsViewport = true;
+        top = paddingTop;
+      }
     } else {
       overflowsViewport = true;
       const shiftedTop = maxBottom - submenuHeight;
