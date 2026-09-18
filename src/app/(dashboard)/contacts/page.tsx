@@ -7,37 +7,37 @@ import Link from 'next/link';
 
 export default function ContactsPage() {
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="flex flex-col gap-4 sm:gap-6 p-4 sm:p-6 lg:p-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Contacts</h1>
-          <p className="text-muted-foreground">Manage your contact database and groups.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Contacts</h1>
+          <p className="text-sm text-muted-foreground">Manage your contact database and groups.</p>
         </div>
-        <div className="flex gap-2">
-          <Link href="/contacts/import">
-            <Button variant="outline">
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <Link href="/contacts/import" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto">
               <Download className="w-4 h-4 mr-2" />
               Import CSV
             </Button>
           </Link>
-          <Button>
+          <Button className="w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
             Add Contact
           </Button>
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-card p-4 rounded-lg border shadow-sm">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between items-stretch sm:items-center bg-card p-3 sm:p-4 rounded-lg border shadow-xs">
         <div className="flex w-full sm:max-w-sm items-center relative">
           <Search className="w-4 h-4 absolute left-3 text-muted-foreground" />
-          <Input placeholder="Search contacts..." className="pl-9" />
+          <Input placeholder="Search contacts..." className="pl-9 w-full" />
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
-          <Button variant="outline" className="w-full sm:w-auto">
+          <Button variant="outline" className="flex-1 sm:flex-initial">
             <Filter className="w-4 h-4 mr-2" />
             Groups
           </Button>
-          <Button variant="outline" className="w-full sm:w-auto">
+          <Button variant="outline" className="flex-1 sm:flex-initial">
             <Filter className="w-4 h-4 mr-2" />
             Tags
           </Button>

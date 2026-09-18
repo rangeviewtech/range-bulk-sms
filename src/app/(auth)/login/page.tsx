@@ -231,10 +231,9 @@ export default function LoginPage() {
 
       {/* ================= .form-main-container ================= */}
       <div
-        className="form-main-container auth-fade-in"
+        className="form-main-container auth-fade-in w-full sm:w-[340px]"
         style={{
           position: 'fixed',
-          width: '340px',
           maxWidth: '100%',
           height: '100vh',
           right: '0px',
@@ -244,7 +243,7 @@ export default function LoginPage() {
           backgroundColor: 'hsl(var(--card))',
           display: 'flex',
           flexDirection: 'column',
-          padding: '24px 28px',
+          padding: '24px 24px',
           boxSizing: 'border-box',
           zIndex: 20,
           boxShadow: '0 0 30px rgba(0,0,0,0.14)',

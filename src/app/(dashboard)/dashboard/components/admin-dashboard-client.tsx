@@ -135,21 +135,21 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
   };
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       {/* Page Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Platform overview, carrier delivery metrics, and live system status.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+          <p className="text-sm text-muted-foreground">Platform overview, carrier delivery metrics, and live system status.</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button asChild variant="outline" size="sm">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+          <Button asChild variant="outline" size="sm" className="w-full sm:w-auto">
             <Link href="/admin/system">
               <Activity className="w-4 h-4 mr-1.5" />
               System Monitor
             </Link>
           </Button>
-          <Button asChild size="sm">
+          <Button asChild size="sm" className="w-full sm:w-auto">
             <Link href="/admin/clients">
               <Users className="w-4 h-4 mr-1.5" />
               Manage Clients
@@ -159,7 +159,7 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
         {kpis.map((kpi, i) => (
           <Link key={i} href={kpi.href} className="transition-transform hover:-translate-y-0.5">
             <Card className="h-full border hover:border-secondary/40 hover:shadow-xs transition-all">
@@ -288,7 +288,7 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
             ) : (
               <ul className="divide-y divide-border">
                 {recentCampaigns.map((camp) => (
-                  <li key={camp.id} className="py-3 flex items-center justify-between first:pt-0 last:pb-0">
+                  <li key={camp.id} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 first:pt-0 last:pb-0">
                     <div>
                       <p className="font-medium text-sm text-foreground">{camp.name}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
@@ -324,12 +324,12 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
             ) : (
               <ul className="divide-y divide-border">
                 {providers.map((prov) => (
-                  <li key={prov.id} className="py-3 flex items-center justify-between first:pt-0 last:pb-0">
+                  <li key={prov.id} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 first:pt-0 last:pb-0">
                     <div className="flex items-center gap-3">
                       {prov.isActive ? (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                       ) : (
-                        <AlertCircle className="w-4 h-4 text-amber-500" />
+                        <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
                       )}
                       <div>
                         <p className="font-medium text-sm">{prov.displayName}</p>

@@ -26,7 +26,9 @@ import {
   Moon,
   Sun,
   Layers,
-  ArrowRight
+  ArrowRight,
+  Menu,
+  ChevronDown
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
@@ -294,12 +296,21 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
   }, [cancelCloseTimer, closeAllFlyouts]);
 
   // Drawers & Dialogs
+  const [isMobileOpen, setIsMobileOpen] = React.useState(false);
+  const [expandedMobileModule, setExpandedMobileModule] = React.useState<string | null>(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
   const [isAppsMenuOpen, setIsAppsMenuOpen] = React.useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = React.useState(false);
   const [activeNotiTab, setActiveNotiTab] = React.useState<"notifications" | "announcements">("notifications");
   const [isSearchOpen, setIsSearchOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
+
+  // Close mobile drawer and flyouts on route navigation
+  React.useEffect(() => {
+    setIsMobileOpen(false);
+    setExpandedMobileModule(null);
+    closeAllFlyouts();
+  }, [pathname, closeAllFlyouts]);
 
   const userRole = user?.role || "CLIENT";
   
@@ -438,6 +449,10 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
         return;
       }
       if (e.key === "Escape") {
+        if (isMobileOpen) {
+          setIsMobileOpen(false);
+          return;
+        }
         if (hoveredModule) {
           e.preventDefault();
           closeAllFlyouts();
@@ -459,25 +474,64 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [hoveredModule, isUserMenuOpen, isNotificationsOpen, isSearchOpen, closeAllFlyouts]);
+  }, [isMobileOpen, hoveredModule, isUserMenuOpen, isNotificationsOpen, isSearchOpen, closeAllFlyouts]);
 
   return (
     <>
+      {/* MOBILE DRAWER BACKDROP */}
+      {isMobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs z-[55] md:hidden transition-opacity"
+          onClick={() => setIsMobileOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* UNIFIED CONTAINER FOR SIDEBAR + FLYOUTS TO MAINTAIN MOUSE INTERACTION */}
       <div 
         id="tree-outer-wrapper" 
-        className="fixed top-0 left-0 h-full z-[60] pointer-events-none flex"
+        className={cn(
+          "fixed top-0 left-0 h-full z-[60] pointer-events-none flex transition-transform duration-300 ease-in-out",
+          isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        )}
         onMouseLeave={() => scheduleClose(180)}
       >
-        {/* 1. PRIMARY SIDEBAR (90px wide, #07163d) */}
+        {/* 1. PRIMARY SIDEBAR (w-[280px] on mobile, w-[90px] on desktop, #07163d) */}
         <aside
           id="left-tree"
           ref={sidebarRef}
-          onMouseEnter={cancelCloseTimer}
-          className="h-full w-[90px] bg-[#07163d] text-white flex flex-col pointer-events-auto select-none shadow-[4px_0_24px_rgba(0,0,0,0.4)] shrink-0 border-r border-white/5"
+          onMouseEnter={() => {
+            if (typeof window !== "undefined" && window.innerWidth >= 768) {
+              cancelCloseTimer();
+            }
+          }}
+          className="h-full w-[280px] sm:w-[300px] md:w-[90px] bg-[#07163d] text-white flex flex-col pointer-events-auto select-none shadow-[4px_0_24px_rgba(0,0,0,0.4)] shrink-0 border-r border-white/5 overflow-hidden"
         >
-          {/* LOGO CONTAINER (78px x 78px circular badge matching live site) */}
-          <div id="tree-logo" className="flex items-center justify-center p-2 pt-2.5">
+          {/* MOBILE DRAWER HEADER */}
+          <div className="flex items-center justify-between p-3.5 border-b border-white/10 md:hidden bg-black/20">
+            <div className="flex items-center gap-2.5">
+              <img
+                src="/images/brand/range-icon-transparent.svg"
+                alt="Range Bulk SMS Platform"
+                className="w-8 h-8 object-contain"
+              />
+              <div className="flex flex-col">
+                <span className="font-bold text-sm text-white leading-tight">Range SMS</span>
+                <span className="text-[10px] text-[#FBCA07] font-medium">Enterprise Platform</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsMobileOpen(false)}
+              className="p-1.5 text-white/70 hover:text-white rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+              aria-label="Close Navigation"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* DESKTOP LOGO CONTAINER (78px x 78px circular badge matching live site) */}
+          <div id="tree-logo" className="hidden md:flex items-center justify-center p-2 pt-2.5">
             <Link
               href="/dashboard"
               className="w-[78px] h-[78px] rounded-2xl bg-transparent hover:bg-white/5 border border-transparent flex flex-col items-center justify-center trakzee-logo-badge group overflow-hidden transition-all duration-300"
@@ -544,74 +598,169 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               const isHovered = hoveredModule?.title === mod.title;
               const isActive = mod.href ? pathname === mod.href : pathname.startsWith(`/${mod.title.toLowerCase()}`);
               const isLast = modIdx === allowedNavigation.length - 1;
+              const isExpanded = expandedMobileModule === mod.title;
 
               return (
-                <div
-                  key={mod.title}
-                  data-module={mod.title}
-                  id={`nav-module-${mod.title.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="w-full aspect-square shrink-0 relative flex flex-col items-center justify-center cursor-pointer group"
-                  onMouseEnter={(e) => {
-                    cancelCloseTimer();
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    const sidebarRect = sidebarRef.current?.getBoundingClientRect() || {
-                      top: 0,
-                      bottom: window.innerHeight,
-                      left: 0,
-                      right: 90,
-                      width: 90,
-                    };
-                    const initialSubMenuHeight = (mod.categories?.length || 0) * ITEM_HEIGHT + 33;
-                    const pos = computeFlyoutPosition({
-                      parentRect: rect,
-                      sidebarRect,
-                      submenuHeight: initialSubMenuHeight,
-                      isLastItem: isLast,
-                      viewportHeight: window.innerHeight,
-                    });
-
-                    setFlyoutPosition({
-                      top: pos.top,
-                      left: pos.left,
-                      maxHeight: pos.maxHeight,
-                    });
-                    setHoveredModule(mod);
-                    setHoveredCategory(null);
-                    setCategoryIndex(0);
-                    setDeepMenuOffset(0);
-                  }}
-                >
+                <div key={mod.title} className="w-full">
                   {mod.href && !mod.categories ? (
-                    <Link
-                      href={mod.href}
-                      className={cn(
-                        "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group",
-                        (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
-                      )}
-                    >
-                      {isActive && (
-                        <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#FBCA07] shadow-[0_0_10px_#FBCA07] animate-indicator-slide" />
-                      )}
-                      {mod.icon}
-                      <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px] group-hover:font-semibold transition-all">
-                        {mod.title}
-                      </span>
-                    </Link>
+                    <>
+                      {/* Desktop Module */}
+                      <div
+                        data-module={mod.title}
+                        id={`nav-module-${mod.title.toLowerCase().replace(/\s+/g, '-')}`}
+                        className="hidden md:flex w-full aspect-square shrink-0 relative flex-col items-center justify-center cursor-pointer group"
+                      >
+                        <Link
+                          href={mod.href}
+                          className={cn(
+                            "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group",
+                            (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
+                          )}
+                        >
+                          {isActive && (
+                            <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#FBCA07] shadow-[0_0_10px_#FBCA07] animate-indicator-slide" />
+                          )}
+                          {mod.icon}
+                          <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px] group-hover:font-semibold transition-all">
+                            {mod.title}
+                          </span>
+                        </Link>
+                      </div>
+
+                      {/* Mobile Module */}
+                      <Link
+                        href={mod.href}
+                        onClick={() => setIsMobileOpen(false)}
+                        className={cn(
+                          "flex md:hidden items-center justify-between px-4 py-3 text-sm text-white/80 hover:text-white hover:bg-white/5 border-l-3 transition-colors",
+                          isActive ? "bg-[#04648C] text-white font-semibold border-[#FBCA07]" : "border-transparent"
+                        )}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-5 h-5 flex items-center justify-center shrink-0 text-white/90">
+                            {mod.icon}
+                          </div>
+                          <span>{mod.title}</span>
+                        </div>
+                      </Link>
+                    </>
                   ) : (
-                    <div
-                      className={cn(
-                        "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group",
-                        (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
-                      )}
-                    >
-                      {isActive && (
-                        <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#FBCA07] shadow-[0_0_10px_#FBCA07] animate-indicator-slide" />
-                      )}
-                      {mod.icon}
-                      <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px] group-hover:font-semibold transition-all">
-                        {mod.title}
-                      </span>
-                    </div>
+                    <>
+                      {/* Desktop Module */}
+                      <div
+                        data-module={mod.title}
+                        id={`nav-module-${mod.title.toLowerCase().replace(/\s+/g, '-')}`}
+                        className="hidden md:flex w-full aspect-square shrink-0 relative flex-col items-center justify-center cursor-pointer group"
+                        onMouseEnter={(e) => {
+                          if (typeof window !== "undefined" && window.innerWidth < 768) return;
+                          cancelCloseTimer();
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const sidebarRect = sidebarRef.current?.getBoundingClientRect() || {
+                            top: 0,
+                            bottom: window.innerHeight,
+                            left: 0,
+                            right: 90,
+                            width: 90,
+                          };
+                          const initialSubMenuHeight = (mod.categories?.length || 0) * ITEM_HEIGHT + 33;
+                          const pos = computeFlyoutPosition({
+                            parentRect: rect,
+                            sidebarRect,
+                            submenuHeight: initialSubMenuHeight,
+                            isLastItem: isLast,
+                            viewportHeight: window.innerHeight,
+                          });
+
+                          setFlyoutPosition({
+                            top: pos.top,
+                            left: pos.left,
+                            maxHeight: pos.maxHeight,
+                          });
+                          setHoveredModule(mod);
+                          setHoveredCategory(null);
+                          setCategoryIndex(0);
+                          setDeepMenuOffset(0);
+                        }}
+                      >
+                        <div
+                          className={cn(
+                            "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group",
+                            (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
+                          )}
+                        >
+                          {isActive && (
+                            <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#FBCA07] shadow-[0_0_10px_#FBCA07] animate-indicator-slide" />
+                          )}
+                          {mod.icon}
+                          <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px] group-hover:font-semibold transition-all">
+                            {mod.title}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Mobile Accordion Module */}
+                      <div className="block md:hidden border-b border-white/5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setExpandedMobileModule((prev) => (prev === mod.title ? null : mod.title));
+                          }}
+                          className={cn(
+                            "w-full flex items-center justify-between px-4 py-3 text-sm text-white/80 hover:text-white hover:bg-white/5 border-l-3 transition-colors text-left cursor-pointer",
+                            isActive || isExpanded ? "bg-[#04648C]/40 text-white font-medium border-[#FBCA07]" : "border-transparent"
+                          )}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-5 h-5 flex items-center justify-center shrink-0 text-white/90">
+                              {mod.icon}
+                            </div>
+                            <span className="font-medium text-[13px]">{mod.title}</span>
+                          </div>
+                          <ChevronDown
+                            className={cn(
+                              "w-4 h-4 text-white/50 transition-transform duration-200",
+                              isExpanded && "rotate-180 text-[#FBCA07]"
+                            )}
+                          />
+                        </button>
+
+                        {/* Mobile Accordion Submenu */}
+                        {isExpanded && mod.categories && (
+                          <div className="bg-black/25 border-t border-white/10 py-1 px-3 space-y-3">
+                            {mod.categories.map((cat) => (
+                              <div key={cat.title} className="space-y-1">
+                                <div className="text-[10px] font-bold uppercase tracking-wider text-[#FBCA07] px-2 pt-1.5">
+                                  {cat.title}
+                                </div>
+                                <ul className="space-y-0.5 list-none m-0 p-0">
+                                  {cat.items.map((screen) => {
+                                    const isCurrent = pathname === screen.href;
+                                    return (
+                                      <li key={screen.title}>
+                                        <Link
+                                          href={screen.href}
+                                          onClick={() => {
+                                            setIsMobileOpen(false);
+                                          }}
+                                          className={cn(
+                                            "block px-2.5 py-1.5 text-xs rounded-md transition-colors",
+                                            isCurrent
+                                              ? "bg-[#04648C] text-white font-semibold"
+                                              : "text-white/80 hover:text-white hover:bg-white/10"
+                                          )}
+                                        >
+                                          {screen.title}
+                                        </Link>
+                                      </li>
+                                    );
+                                  })}
+                                </ul>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </>
                   )}
                 </div>
               );
@@ -620,13 +769,13 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
 
         </aside>
 
-        {/* 2. MULTI-LEVEL FLYOUT MENU (Layer 2 #subMenu + Layer 3 #deepMenu) */}
+        {/* 2. MULTI-LEVEL FLYOUT MENU (Layer 2 #subMenu + Layer 3 #deepMenu - Desktop only) */}
         {hoveredModule && hoveredModule.categories && (
           <div
             id="flyout-container"
             onMouseEnter={cancelCloseTimer}
             onMouseLeave={() => scheduleClose(180)}
-            className="absolute flex select-none pointer-events-auto"
+            className="hidden md:flex absolute select-none pointer-events-auto"
             style={{ 
               top: `${flyoutPosition.top}px`,
               left: `${flyoutPosition.left}px`,
@@ -727,10 +876,12 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
       {/* 3. USER PROFILE DRAWER / FLYOUT */}
       {isUserMenuOpen && (
         <div
-          className="fixed top-[80px] left-[90px] w-[210px] bg-card text-card-foreground border border-border shadow-[0_12px_36px_rgba(0,0,0,0.25)] rounded-md z-[70] py-1.5 text-xs font-medium animate-in fade-in slide-in-from-left-2 duration-200"
+          className="fixed top-14 left-3 md:top-[80px] md:left-[90px] w-[calc(100%-24px)] max-w-[240px] md:w-[210px] bg-card text-card-foreground border border-border shadow-[0_12px_36px_rgba(0,0,0,0.25)] rounded-md z-[70] py-1.5 text-xs font-medium animate-in fade-in slide-in-from-left-2 duration-200"
           onMouseLeave={() => {
-            setIsUserMenuOpen(false);
-            setIsAppsMenuOpen(false);
+            if (typeof window !== "undefined" && window.innerWidth >= 768) {
+              setIsUserMenuOpen(false);
+              setIsAppsMenuOpen(false);
+            }
           }}
         >
           {/* User Email Banner */}
@@ -835,7 +986,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
 
       {/* 4. NOTIFICATIONS DRAWER */}
       {isNotificationsOpen && (
-        <div className="fixed top-0 left-[90px] h-full w-[320px] bg-card text-card-foreground border-r border-border shadow-[0_16px_48px_rgba(0,0,0,0.3)] flex flex-col z-[70] animate-in slide-in-from-left duration-250 pointer-events-auto">
+        <div className="fixed top-0 left-0 md:left-[90px] h-full w-full sm:w-[320px] bg-card text-card-foreground border-r border-border shadow-[0_16px_48px_rgba(0,0,0,0.3)] flex flex-col z-[70] animate-in slide-in-from-left duration-250 pointer-events-auto">
           {/* Header Tabs */}
           <div className="h-[46px] flex items-stretch border-b border-border bg-muted/40">
             <button
@@ -903,26 +1054,51 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
         </div>
       )}
 
-      {/* 5. FIXED TOP NAVIGATION BAR (Fixed in position, contains Search & Theme Switcher ONLY) */}
+      {/* 5. FIXED TOP NAVIGATION BAR (Fixed in position, responsive left offset) */}
       {pathname !== "/tracking" && (
         <header
           id="top-navigation-bar"
-          className="fixed top-0 left-[90px] right-0 h-14 bg-background/80 backdrop-blur-md border-b border-border/40 z-40 flex items-center justify-end px-6 gap-2 select-none"
+          className="fixed top-0 left-0 md:left-[90px] right-0 h-14 bg-background/80 backdrop-blur-md border-b border-border/40 z-40 flex items-center justify-between px-3 sm:px-6 select-none transition-[left] duration-300"
         >
-          {/* Search Icon Button */}
-          <button
-            type="button"
-            id="universalSelectorSearchIcon"
-            onClick={() => setIsSearchOpen(true)}
-            className="h-9 w-9 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-all duration-200 cursor-pointer active:scale-95"
-            title="Search Screens (Ctrl+K)"
-            aria-label="Search Screens"
-          >
-            <Search className="w-[18px] h-[18px]" />
-          </button>
+          {/* Mobile Hamburger & Logo */}
+          <div className="flex items-center gap-2 md:hidden">
+            <button
+              type="button"
+              id="mobile-nav-toggle"
+              onClick={() => setIsMobileOpen((prev) => !prev)}
+              className="h-9 w-9 rounded-lg flex items-center justify-center text-foreground hover:bg-accent/60 transition-colors cursor-pointer active:scale-95"
+              title="Open Navigation Menu"
+              aria-label="Open Navigation Menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <img
+                src="/images/brand/range-icon-transparent.svg"
+                alt="Range Bulk SMS Platform"
+                className="w-7 h-7 object-contain"
+              />
+              <span className="font-bold text-sm tracking-tight text-foreground">Range SMS</span>
+            </Link>
+          </div>
 
-          {/* Theme Switcher Icon */}
-          <ThemeToggle />
+          <div className="hidden md:block" />
+
+          {/* Right Action Icons: Search & Theme Switcher */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              id="universalSelectorSearchIcon"
+              onClick={() => setIsSearchOpen(true)}
+              className="h-9 w-9 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-all duration-200 cursor-pointer active:scale-95"
+              title="Search Screens (Ctrl+K)"
+              aria-label="Search Screens"
+            >
+              <Search className="w-[18px] h-[18px]" />
+            </button>
+
+            <ThemeToggle />
+          </div>
         </header>
       )}
 

@@ -59,9 +59,9 @@ export default function SendSmsPage() {
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <Label htmlFor="message">Message Content</Label>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <Button variant="outline" size="sm" className="h-8">
                       <BookTemplate className="w-4 h-4 mr-2" />
                       Use Template
@@ -100,10 +100,10 @@ export default function SendSmsPage() {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="flex justify-between border-t border-border p-6 bg-muted/10">
+            <CardFooter className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-border p-4 sm:p-6 bg-muted/10">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline">
+                  <Button variant="outline" className="w-full sm:w-auto">
                     <Eye className="w-4 h-4 mr-2" />
                     Preview
                   </Button>
@@ -122,12 +122,12 @@ export default function SendSmsPage() {
                 </DialogContent>
               </Dialog>
 
-              <div className="flex gap-3">
-                <Button variant="secondary">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+                <Button variant="secondary" className="w-full sm:w-auto">
                   <Clock className="w-4 h-4 mr-2" />
                   Schedule
                 </Button>
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                <Button className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90">
                   <Send className="w-4 h-4 mr-2" />
                   Send Now
                 </Button>

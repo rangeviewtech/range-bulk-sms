@@ -131,23 +131,24 @@ export default function WalletPage() {
   };
 
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Wallet & Billing</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Wallet & Billing</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Manage your prepaid balance, SMS credits, and review transaction history.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={handleManualRefresh}
             disabled={refreshing || loading}
             aria-label="Refresh wallet data"
+            className="w-full sm:w-auto"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
             Refresh
@@ -155,7 +156,7 @@ export default function WalletPage() {
 
           <Dialog open={isDepositOpen} onOpenChange={setIsDepositOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-primary text-primary-foreground font-bold hover:bg-primary/90">
+              <Button className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90">
                 <Plus className="mr-2 h-4 w-4" /> Deposit Funds
               </Button>
             </DialogTrigger>

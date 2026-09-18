@@ -6,23 +6,23 @@ import { Button } from "@/components/ui/button";
 
 export function ClientDashboard() {
   return (
-    <div className="space-y-6 p-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Client Dashboard</h1>
-          <p className="text-muted-foreground">Manage your SMS campaigns and contacts.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Client Dashboard</h1>
+          <p className="text-sm text-muted-foreground">Manage your SMS campaigns and contacts.</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button asChild variant="outline">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+          <Button asChild variant="outline" className="w-full sm:w-auto">
             <Link href="/wallet">Top Up Wallet</Link>
           </Button>
-          <Button asChild>
+          <Button asChild className="w-full sm:w-auto">
             <Link href="/sms/send">Send SMS</Link>
           </Button>
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { title: "Total Contacts", icon: Users, value: "5,432" },
           { title: "SMS Sent (Month)", icon: Send, value: "12,450" },
@@ -54,7 +54,7 @@ export function ClientDashboard() {
                 { name: "Flash Sale Alert", status: "Running", date: "Today", count: 4500 },
                 { name: "Monthly Newsletter", status: "Draft", date: "Pending", count: 0 },
               ].map((campaign, i) => (
-                <div key={i} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-4 last:border-0 last:pb-0">
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">{campaign.name}</p>
                     <p className="text-sm text-muted-foreground">{campaign.date}</p>

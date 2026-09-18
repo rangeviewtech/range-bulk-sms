@@ -6,14 +6,14 @@ import { Button } from "@/components/ui/button";
 
 export function AgentDashboard() {
   return (
-    <div className="space-y-6 p-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Agent Portal</h1>
-          <p className="text-muted-foreground">Manage your clients and track commissions.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Agent Portal</h1>
+          <p className="text-sm text-muted-foreground">Manage your clients and track commissions.</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button asChild>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+          <Button asChild className="w-full sm:w-auto">
             <Link href="/agent/clients/new">
               <UserPlus className="mr-2 h-4 w-4" />
               Add Client
@@ -22,7 +22,7 @@ export function AgentDashboard() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { title: "My Clients", icon: Building2, value: "24" },
           { title: "Client SMS Volume", icon: FileText, value: "145,200" },
@@ -54,7 +54,7 @@ export function AgentDashboard() {
                 { name: "Globex Ltd", joined: "1 week ago", volume: "5.1k msgs", status: "Active" },
                 { name: "Initech", joined: "2 weeks ago", volume: "0 msgs", status: "Pending" },
               ].map((client, i) => (
-                <div key={i} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-4 last:border-0 last:pb-0">
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">{client.name}</p>
                     <p className="text-sm text-muted-foreground">Joined {client.joined}</p>
@@ -88,7 +88,7 @@ export function AgentDashboard() {
                 { client: "Globex Ltd", amount: "UGX 12,500", date: "Yesterday", status: "Approved" },
                 { client: "Acme Corp", amount: "UGX 8,000", date: "3 days ago", status: "Paid" },
               ].map((comm, i) => (
-                <div key={i} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-4 last:border-0 last:pb-0">
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">{comm.client}</p>
                     <p className="text-sm text-muted-foreground">{comm.date}</p>
