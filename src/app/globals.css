@@ -458,6 +458,41 @@ input:-webkit-autofill:active {
   color: #38bdf8 !important;
 }
 
+/* Elegant sleek scrollbar for auth form container */
+.form-main-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.dark .form-main-container {
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+
+.form-main-container::-webkit-scrollbar {
+  width: 5px;
+}
+
+.form-main-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.form-main-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 9999px;
+}
+
+.form-main-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.dark .form-main-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dark .form-main-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.38);
+}
+
 /* Invalid Input States */
 .form-control[aria-invalid="true"],
 .auth-input[aria-invalid="true"],
