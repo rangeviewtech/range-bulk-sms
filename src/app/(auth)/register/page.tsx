@@ -865,7 +865,7 @@ export default function RegisterPage() {
             </div>
 
             {/* Legal Links Footer */}
-            <div style={{ marginTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', flexWrap: 'wrap', width: '100%' }}>
+            <div style={{ marginTop: '14px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', flexWrap: 'wrap', width: '100%' }}>
               <Link
                 href="/terms"
                 target="_blank"
