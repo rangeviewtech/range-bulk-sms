@@ -88,6 +88,7 @@ export default function LoginPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [forgotUsername, setForgotUsername] = useState('');
   const [forgotAttempted, setForgotAttempted] = useState(false);
+  const [forgotTouched, setForgotTouched] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileExpired, setTurnstileExpired] = useState(false);
   const router = useRouter();
@@ -720,16 +721,17 @@ export default function LoginPage() {
                   autoComplete="email"
                   value={forgotUsername}
                   onChange={(e) => setForgotUsername(e.target.value)}
-                  aria-invalid={(forgotUsername.length > 0 || forgotAttempted) && !z.string().email().safeParse(forgotUsername).success ? "true" : undefined}
+                  onBlur={() => setForgotTouched(true)}
+                  aria-invalid={(forgotUsername.length > 0 || forgotAttempted || forgotTouched) && !z.string().email().safeParse(forgotUsername).success ? "true" : undefined}
                   style={{
                     width: '100%',
                     height: '38px',
                     padding: '6px 12px',
                     fontSize: '13px',
                     backgroundColor: 'hsl(var(--muted))',
-                    border: (forgotUsername.length > 0 || forgotAttempted) && !z.string().email().safeParse(forgotUsername).success
+                    border: (forgotUsername.length > 0 || forgotAttempted || forgotTouched) && !z.string().email().safeParse(forgotUsername).success
                       ? '1px solid hsl(var(--destructive))'
-                      : (forgotUsername.length > 0 || forgotAttempted) && z.string().email().safeParse(forgotUsername).success
+                      : (forgotUsername.length > 0 || forgotAttempted || forgotTouched) && z.string().email().safeParse(forgotUsername).success
                       ? '1px solid hsl(var(--success))'
                       : '1px solid hsl(var(--border))',
                     borderRadius: '6px',
@@ -741,7 +743,7 @@ export default function LoginPage() {
                     transition: 'border-color 0.2s ease',
                   }}
                 />
-                {(forgotUsername.length > 0 || forgotAttempted) && !z.string().email().safeParse(forgotUsername).success && (
+                {(forgotUsername.length > 0 || forgotAttempted || forgotTouched) && !z.string().email().safeParse(forgotUsername).success && (
                   <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>
                     {dict.validation.invalidEmail}
                   </p>
