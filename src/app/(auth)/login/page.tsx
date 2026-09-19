@@ -18,7 +18,7 @@ import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { isDev, formatErrorForEnv } from '@/lib/env';
 import { appConfig } from '@/config/app';
 import { appAssets } from '@/config/assets';
-import { socialLogin, login as loginAction } from '@/app/(auth)/actions';
+import { socialLogin, login as loginAction, forgotPassword } from '@/app/(auth)/actions';
 import { TurnstileWidget } from '@/components/forms/turnstile-widget';
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -89,6 +89,7 @@ export default function LoginPage() {
   const [forgotUsername, setForgotUsername] = useState('');
   const [forgotAttempted, setForgotAttempted] = useState(false);
   const [forgotTouched, setForgotTouched] = useState(false);
+  const [forgotSubmitted, setForgotSubmitted] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileExpired, setTurnstileExpired] = useState(false);
   const router = useRouter();
@@ -178,7 +179,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleRecover = (e: React.FormEvent) => {
+  const handleRecover = async (e: React.FormEvent) => {
     e.preventDefault();
     setForgotAttempted(true);
     const isEmailValid = z.string().email().safeParse(forgotUsername).success;
@@ -186,8 +187,35 @@ export default function LoginPage() {
       toast.error(dict.validation.invalidEmail || 'Please enter a valid email address');
       return;
     }
-    router.push('/forgot-password');
-    setView('login');
+
+    const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+    if (siteKey && !turnstileToken) {
+      toast.error('Please complete the security check before resetting password.');
+      return;
+    }
+    if (siteKey && turnstileExpired) {
+      toast.error('Security check has expired. Please verify again.');
+      setTurnstileToken(null);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.set('email', forgotUsername);
+      if (turnstileToken) formData.set('turnstileToken', turnstileToken);
+      
+      const res = await forgotPassword(formData);
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        setForgotSubmitted(true);
+      }
+    } catch (err) {
+      toast.error('Connection error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -704,112 +732,152 @@ export default function LoginPage() {
 
           {/* ================= VIEW 2: FORGOT PASSWORD ================= */}
           {view === 'forgot' && (
-            <form id="fgpwd_main" onSubmit={handleRecover} style={{ width: '100%', float: 'left' }}>
-              <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
-                {dict.auth.forgotPasswordTitle}
-              </h3>
-              <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
-                {dict.auth.forgotPasswordSubtitle}
-              </p>
-
-              <div className="form-group usernamefd" style={{ position: 'relative', marginBottom: '0.9rem' }}>
-                <input
-                  type="email"
-                  id="forgot_username"
-                  className="form-control width100 auth-input"
-                  placeholder={dict.auth.emailPlaceholder}
-                  autoComplete="email"
-                  value={forgotUsername}
-                  onChange={(e) => setForgotUsername(e.target.value)}
-                  onBlur={() => setForgotTouched(true)}
-                  aria-invalid={(forgotUsername.length > 0 || forgotAttempted || forgotTouched) && !z.string().email().safeParse(forgotUsername).success ? "true" : undefined}
-                  style={{
-                    width: '100%',
-                    height: '38px',
-                    padding: '6px 12px',
-                    fontSize: '13px',
-                    backgroundColor: 'hsl(var(--muted))',
-                    border: (forgotUsername.length > 0 || forgotAttempted || forgotTouched) && !z.string().email().safeParse(forgotUsername).success
-                      ? '1px solid hsl(var(--destructive))'
-                      : (forgotUsername.length > 0 || forgotAttempted || forgotTouched) && z.string().email().safeParse(forgotUsername).success
-                      ? '1px solid hsl(var(--success))'
-                      : '1px solid hsl(var(--border))',
-                    borderRadius: '6px',
-                    color: 'hsl(var(--foreground))',
-                    lineHeight: '19.5px',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                    fontFamily: FONT_STACK,
-                    transition: 'border-color 0.2s ease',
-                  }}
-                />
-                {(forgotUsername.length > 0 || forgotAttempted || forgotTouched) && !z.string().email().safeParse(forgotUsername).success && (
-                  <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>
-                    {dict.validation.invalidEmail}
+            <div style={{ width: '100%', float: 'left' }}>
+              {forgotSubmitted ? (
+                <div className="auth-fade-in" style={{ width: '100%' }}>
+                  <div className="auth-stagger-1">
+                    <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
+                      {dict.auth.checkInboxTitle}
+                    </h3>
+                    <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+                      {dict.auth.checkInboxSubtitle}
+                    </p>
+                  </div>
+                  <div className="login-con auth-stagger-2" style={{ marginTop: '20px' }}>
+                    <button
+                      type="button"
+                      onClick={() => { setView('login'); setForgotSubmitted(false); setForgotUsername(''); setForgotAttempted(false); setForgotTouched(false); }}
+                      className="btn btn-primary btn-main auth-btn-primary"
+                      style={{
+                        width: '100%',
+                        height: '38px',
+                        padding: '6px 28px',
+                        fontSize: '13.5px',
+                        lineHeight: '19.5px',
+                        backgroundColor: '#FBCA07',
+                        color: '#141B2D',
+                        fontWeight: 700,
+                        borderRadius: '7px',
+                        border: '0',
+                        cursor: 'pointer',
+                        textAlign: 'center',
+                        boxSizing: 'border-box',
+                        fontFamily: FONT_STACK,
+                      }}
+                    >
+                      {dict.auth.returnToSignInButton}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <form id="fgpwd_main" onSubmit={handleRecover} className="auth-fade-in" style={{ width: '100%' }}>
+                  <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
+                    {dict.auth.forgotPasswordTitle}
+                  </h3>
+                  <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+                    {dict.auth.forgotPasswordSubtitle}
                   </p>
-                )}
-              </div>
 
-              {/* Cloudflare Turnstile Ã¢â‚¬â€ Bot Protection */}
-              <TurnstileWidget
-                variant="inline"
-                onVerify={(token) => {
-                  setTurnstileToken(token);
-                  setTurnstileExpired(false);
-                }}
-                onError={() => {
-                  setTurnstileToken(null);
-                  toast.error('Security check failed. Please refresh and try again.');
-                }}
-                onExpire={() => {
-                  setTurnstileToken(null);
-                  setTurnstileExpired(true);
-                }}
-              />
-              {turnstileExpired && (
-                <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
-                  {dict.validation.securityCheckExpired}
-                </p>
+                  <div className="form-group usernamefd" style={{ position: 'relative', marginBottom: '0.9rem' }}>
+                    <input
+                      type="email"
+                      id="forgot_username"
+                      className="form-control width100 auth-input"
+                      placeholder={dict.auth.emailPlaceholder}
+                      autoComplete="email"
+                      value={forgotUsername}
+                      onChange={(e) => setForgotUsername(e.target.value)}
+                      onBlur={() => setForgotTouched(true)}
+                      aria-invalid={(forgotUsername.length > 0 || forgotAttempted || forgotTouched) && !z.string().email().safeParse(forgotUsername).success ? "true" : undefined}
+                      style={{
+                        width: '100%',
+                        height: '38px',
+                        padding: '6px 12px',
+                        fontSize: '13px',
+                        backgroundColor: 'hsl(var(--muted))',
+                        border: (forgotUsername.length > 0 || forgotAttempted || forgotTouched) && !z.string().email().safeParse(forgotUsername).success
+                          ? '1px solid hsl(var(--destructive))'
+                          : (forgotUsername.length > 0 || forgotAttempted || forgotTouched) && z.string().email().safeParse(forgotUsername).success
+                          ? '1px solid hsl(var(--success))'
+                          : '1px solid hsl(var(--border))',
+                        borderRadius: '6px',
+                        color: 'hsl(var(--foreground))',
+                        lineHeight: '19.5px',
+                        outline: 'none',
+                        boxSizing: 'border-box',
+                        fontFamily: FONT_STACK,
+                        transition: 'border-color 0.2s ease',
+                      }}
+                    />
+                    {(forgotUsername.length > 0 || forgotAttempted || forgotTouched) && !z.string().email().safeParse(forgotUsername).success && (
+                      <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>
+                        {dict.validation.invalidEmail}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Cloudflare Turnstile — Bot Protection */}
+                  <TurnstileWidget
+                    variant="inline"
+                    onVerify={(token) => {
+                      setTurnstileToken(token);
+                      setTurnstileExpired(false);
+                    }}
+                    onError={() => {
+                      setTurnstileToken(null);
+                      toast.error('Security check failed. Please refresh and try again.');
+                    }}
+                    onExpire={() => {
+                      setTurnstileToken(null);
+                      setTurnstileExpired(true);
+                    }}
+                  />
+                  {turnstileExpired && (
+                    <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
+                      {dict.validation.securityCheckExpired}
+                    </p>
+                  )}
+
+                  <div className="form-group" style={{ marginTop: '10px', marginBottom: '0px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', direction: 'ltr' }}>
+                    <div className="forget-con" style={{ flex: 1 }}>
+                      <button
+                        type="button"
+                        className="btn btn-secondary auth-btn-secondary"
+                        onClick={() => setView('login')}
+                        style={{
+                          width: '100%',
+                          height: '38px',
+                          padding: '6px 16px',
+                          fontSize: '13.5px',
+                          borderRadius: '7px',
+                          fontFamily: FONT_STACK,
+                        }}
+                      >
+                        {dict.auth.signInLink}
+                      </button>
+                    </div>
+                    <div className="login-con" style={{ flex: 1 }}>
+                      <button
+                        type="submit"
+                        className="btn btn-primary btn-main auth-btn-primary"
+                        disabled={loading}
+                        style={{
+                          width: '100%',
+                          height: '38px',
+                          padding: '6px 16px',
+                          fontSize: '13.5px',
+                          borderRadius: '7px',
+                          fontFamily: FONT_STACK,
+                          opacity: loading ? 0.7 : 1,
+                        }}
+                      >
+                        {loading ? dict.auth.sendingResetLink : dict.auth.sendResetLinkButton}
+                      </button>
+                    </div>
+                  </div>
+                </form>
               )}
-
-              <div className="form-group" style={{ marginTop: '10px', marginBottom: '0px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', direction: 'ltr' }}>
-                <div className="forget-con" style={{ flex: 1 }}>
-                  <button
-                    type="button"
-                    className="btn btn-secondary auth-btn-secondary"
-                    onClick={() => setView('login')}
-                    style={{
-                      width: '100%',
-                      height: '38px',
-                      padding: '6px 16px',
-                      fontSize: '13.5px',
-                      borderRadius: '7px',
-                      fontFamily: FONT_STACK,
-                    }}
-                  >
-                    {dict.auth.signInLink}
-                  </button>
-                </div>
-                <div className="login-con" style={{ flex: 1 }}>
-                  <button
-                    type="submit"
-                    className="btn btn-primary btn-main auth-btn-primary"
-                    disabled={loading}
-                    style={{
-                      width: '100%',
-                      height: '38px',
-                      padding: '6px 16px',
-                      fontSize: '13.5px',
-                      borderRadius: '7px',
-                      fontFamily: FONT_STACK,
-                      opacity: loading ? 0.7 : 1,
-                    }}
-                  >
-                    {loading ? dict.auth.sendingResetLink : dict.auth.sendResetLinkButton}
-                  </button>
-                </div>
-              </div>
-            </form>
+            </div>
           )}
 
           {/* ================= VIEW 3: GET MOBILE APP ================= */}
