@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useState, useEffect, Fragment } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { toast } from 'sonner';
+import { notify, toast } from '@/lib/notifications/toast';
+import { toastCatalog } from '@/lib/notifications/toast-catalog';
 import { registerSchema } from '@/lib/validations/auth';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { ThemeToggle } from '@/components/navigation/theme-toggle';
@@ -18,6 +18,7 @@ import { appConfig } from '@/config/app';
 import { appAssets } from '@/config/assets';
 import { socialLogin, register as registerAction } from '@/app/(auth)/actions';
 import { TurnstileWidget } from '@/components/forms/turnstile-widget';
+import { AuthLink } from '@/components/ui/auth-link';
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
@@ -102,7 +103,7 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors, touchedFields, dirtyFields },
+    formState: { errors, touchedFields, dirtyFields, isValid },
     control,
     trigger,
   } = useForm<RegisterFormValues>({
@@ -111,7 +112,8 @@ export default function RegisterPage() {
     reValidateMode: 'onChange',
   });
 
-  
+  const isRegisterValid = isValid && (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || (turnstileToken && !turnstileExpired));
+
   const passwordValue = useWatch({ control, name: 'password' }) || '';
   const confirmPasswordValue = useWatch({ control, name: 'confirmPassword' }) || '';
 
@@ -151,11 +153,11 @@ export default function RegisterPage() {
     // Block if Turnstile key is configured but token is missing
     const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
     if (siteKey && !turnstileToken) {
-      toast.error('Please complete the security check before logging in.');
+      notify.error(toastCatalog.security.turnstileRequired || 'Please complete the security check before logging in.');
       return;
     }
     if (siteKey && turnstileExpired) {
-      toast.error('Security check has expired. Please verify again.');
+      notify.error(toastCatalog.security.checkExpired || 'Security check has expired. Please verify again.');
       setTurnstileToken(null);
       return;
     }
@@ -172,21 +174,21 @@ export default function RegisterPage() {
       const res = await registerAction(formData);
       
       if (res?.error) {
-        toast.error(res.error);
+        notify.error(res.error);
         setLoading(false);
       } else {
-        toast.success('Account created successfully');
+        notify.success('Account created successfully');
         router.push('/dashboard');
       }
     } catch (err) {
       const formatted = formatErrorForEnv(err, 'Could not create account.');
       
       if (isDev) {
-        toast.error(`[DEV ERROR] ${formatted.code}`, {
+        notify.error(`[DEV ERROR] ${formatted.code}`, {
           description: `${formatted.message} (Timestamp: ${formatted.timestamp})`,
         });
       } else {
-        toast.error(formatted.message);
+        notify.error(formatted.message);
       }
       setLoading(false);
     }
@@ -198,18 +200,18 @@ export default function RegisterPage() {
   ) => {
     if (socialLoading || loading) return;
     setSocialLoading(provider);
-    const toastId = toast.loading(`Connecting to ${name}...`);
+    const toastId = notify.loading(`Connecting to ${name}...`);
 
     try {
       const res = await socialLogin(provider);
       if (res?.success) {
-        toast.success(`Welcome! Signed in with ${name}`, { id: toastId });
+        notify.success(`Welcome! Signed in with ${name}`, { id: toastId });
         router.push('/dashboard');
       } else {
-        toast.error(res.error || `Could not sign in with ${name}`, { id: toastId });
+        notify.error(res.error || `Could not sign in with ${name}`, { id: toastId });
       }
     } catch {
-      toast.error(`Connection error with ${name}. Please try again.`, { id: toastId });
+      notify.error(`Connection error with ${name}. Please try again.`, { id: toastId });
     } finally {
       setSocialLoading(null);
     }
@@ -217,55 +219,86 @@ export default function RegisterPage() {
 
   return (
     <div
-      className="relative min-h-screen w-full bg-background overflow-hidden select-none"
+      className="relative min-h-screen w-full bg-background overflow-hidden"
       style={{ fontFamily: FONT_STACK, fontSize: '13px', color: 'hsl(var(--foreground))' }}
     >
       {/* ================= #img-holder (Background Carousel) ================= */}
       <div 
         id="img-holder"
+        className="select-none pointer-events-none right-0 sm:right-[340px] bg-slate-950"
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
-          right: 0,
           bottom: 0,
           height: '100vh',
           zIndex: 0,
           overflow: 'hidden',
         }}
       >
-        {slides.map((src, index) => (
-          <Image
-            key={src}
-            src={src}
-            alt={`Background Slide ${index + 1}`}
-            fill
-            priority={index === 0}
-            className="auth-carousel-slide"
-            style={{
-              objectFit: 'cover',
-              opacity: index === currentImageIndex ? 1 : 0,
-              zIndex: index === currentImageIndex ? 2 : 1,
-            }}
-          />
-        ))}
+        {slides.map((src, index) => {
+          const isActive = index === currentImageIndex;
+          return (
+            <Fragment key={src}>
+              {/* Ambient Blurred Backdrop */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '-5%',
+                  left: '-5%',
+                  width: '110%',
+                  height: '110%',
+                  filter: 'blur(32px) brightness(0.6)',
+                  transform: 'scale(1.12)',
+                  opacity: isActive ? 0.8 : 0,
+                  transition: 'opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                  zIndex: isActive ? 1 : 0,
+                }}
+              >
+                <Image
+                  src={src}
+                  alt=""
+                  aria-hidden="true"
+                  fill
+                  priority={index === 0}
+                  style={{
+                    objectFit: 'cover',
+                    objectPosition: 'center',
+                  }}
+                />
+              </div>
+              {/* Razor-sharp Foreground Hero Slide */}
+              <Image
+                src={src}
+                alt={`Background Slide ${index + 1}`}
+                fill
+                priority={index === 0}
+                className="auth-carousel-slide"
+                style={{
+                  opacity: isActive ? 1 : 0,
+                  transition: 'opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                  zIndex: isActive ? 3 : 2,
+                }}
+              />
+            </Fragment>
+          );
+        })}
       </div>
 
       {/* ================= .form-main-container ================= */}
       <div
-        className="form-main-container auth-fade-in w-full sm:w-[340px]"
+        className="form-main-container auth-fade-in select-text w-full sm:w-[340px]"
         style={{
           position: 'fixed',
           maxWidth: '100%',
-          height: '100vh',
+          height: '100dvh',
           right: '0px',
           top: '0px',
           left: 'auto',
-          margin: 'auto',
           backgroundColor: 'hsl(var(--card))',
           display: 'flex',
           flexDirection: 'column',
-          padding: '24px 24px',
+          padding: '20px 24px',
           boxSizing: 'border-box',
           zIndex: 20,
           boxShadow: '0 0 30px rgba(0,0,0,0.14)',
@@ -293,7 +326,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Centered Wrapper for Logo + Form (Safe scroll-centering with margin: auto 0) */}
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%', margin: 'auto 0', paddingTop: '24px', paddingBottom: '36px', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', margin: 'auto 0', padding: '16px 0', boxSizing: 'border-box' }}>
           {/* .logo-container (Standardized Brand Logo) */}
           <>
             <Image
@@ -348,7 +381,7 @@ export default function RegisterPage() {
                   {dict.auth.createAccountTitle}
                 </h3>
 
-                <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+                <p className="auth-subtitle" style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK, width: '100%', textAlign: 'justify', textJustify: 'inter-word' }}>
                   {dict.auth.createAccountSubtitle}
                 </p>
               </div>
@@ -560,17 +593,17 @@ export default function RegisterPage() {
                   />
                   <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', lineHeight: '18px', fontFamily: FONT_STACK }}>
                     {dict.auth.agreeToTermsPrompt || 'I agree to the'}{' '}
-                    <Link href="/terms" target="_blank" className="auth-link" style={{ color: 'var(--brand-link)', textDecoration: 'none', fontWeight: 600 }}>
+                    <AuthLink href="/terms" external style={{ fontSize: '12px', fontFamily: FONT_STACK }}>
                       {dict.legal?.termsAndConditions || 'Terms & Conditions'}
-                    </Link>
+                    </AuthLink>
                     {', '}
-                    <Link href="/privacy" target="_blank" className="auth-link" style={{ color: 'var(--brand-link)', textDecoration: 'none', fontWeight: 600 }}>
+                    <AuthLink href="/privacy" external style={{ fontSize: '12px', fontFamily: FONT_STACK }}>
                       {dict.legal?.privacyPolicy || 'Privacy Policy'}
-                    </Link>
+                    </AuthLink>
                     {' '}&{' '}
-                    <Link href="/cookies" target="_blank" className="auth-link" style={{ color: 'var(--brand-link)', textDecoration: 'none', fontWeight: 600 }}>
+                    <AuthLink href="/cookies" external style={{ fontSize: '12px', fontFamily: FONT_STACK }}>
                       {dict.legal?.cookiePolicy || 'Cookie Policy'}
-                    </Link>
+                    </AuthLink>
                   </span>
                 </label>
                 {errors.acceptTerms && (
@@ -610,7 +643,7 @@ export default function RegisterPage() {
                   type="submit"
                   id="submit_button"
                   className="btn btn-primary btn-main auth-btn-primary"
-                  disabled={loading || !!socialLoading}
+                  disabled={loading || !!socialLoading || !isRegisterValid}
                   style={{
                     width: '100%',
                     height: '38px',
@@ -622,14 +655,14 @@ export default function RegisterPage() {
                     fontWeight: 700,
                     borderRadius: '7px',
                     border: '0',
-                    cursor: loading || !!socialLoading ? 'not-allowed' : 'pointer',
+                    cursor: loading || !!socialLoading || !isRegisterValid ? 'not-allowed' : 'pointer',
                     textAlign: 'center',
                     boxSizing: 'border-box',
                     fontFamily: FONT_STACK,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    opacity: loading ? 0.7 : 1,
+                    opacity: loading || !isRegisterValid ? 0.7 : 1,
                   }}
                 >
                   {loading ? dict.auth.creatingAccount : dict.auth.createAccountButton}
@@ -641,22 +674,15 @@ export default function RegisterPage() {
                 <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK }}>
                   {dict.auth.alreadyHaveAccountPrompt}{' '}
                 </span>
-                <a
+                <AuthLink
                   href="/login"
-                  className="auth-link"
                   style={{
                     fontSize: '12px',
-                    color: 'var(--brand-link)',
-                    fontWeight: 600,
-                    textDecoration: 'none',
                     fontFamily: FONT_STACK,
-                    transition: 'opacity 0.2s ease, color 0.2s ease',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
                 >
                   {dict.auth.signInLink}
-                </a>
+                </AuthLink>
               </div>
 
               {/* Divider */}
@@ -840,7 +866,7 @@ export default function RegisterPage() {
                   className="auth-store-badge hover-scale"
                   style={{ flex: 1, textDecoration: 'none', display: 'flex', justifyContent: 'center' }}
                 >
-                  <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ width: '100%', height: 'auto', maxHeight: '36px', objectFit: 'contain' }} />
+                  <Image src={appAssets.storeBadges.googlePlay} alt="Google Play Store" width={100} height={36} style={{ width: '100%', height: 'auto', maxHeight: '36px', objectFit: 'contain' }} />
                 </a>
                 <a
                   href="https://apps.apple.com/in/app/rangesms/id1396516275"
@@ -850,7 +876,7 @@ export default function RegisterPage() {
                   className="auth-store-badge hover-scale"
                   style={{ flex: 1, textDecoration: 'none', display: 'flex', justifyContent: 'center' }}
                 >
-                  <img src={appAssets.storeBadges.appStore} alt="Apple App Store" style={{ width: '100%', height: 'auto', maxHeight: '36px', objectFit: 'contain' }} />
+                  <Image src={appAssets.storeBadges.appStore} alt="Apple App Store" width={100} height={36} style={{ width: '100%', height: 'auto', maxHeight: '36px', objectFit: 'contain' }} />
                 </a>
                 <a
                   href="https://apps.microsoft.com/store"
@@ -860,68 +886,47 @@ export default function RegisterPage() {
                   className="auth-store-badge hover-scale"
                   style={{ flex: 1, textDecoration: 'none', display: 'flex', justifyContent: 'center' }}
                 >
-                  <img src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" style={{ width: '100%', height: 'auto', maxHeight: '36px', objectFit: 'contain' }} />
+                  <Image src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" width={100} height={36} style={{ width: '100%', height: 'auto', maxHeight: '36px', objectFit: 'contain' }} />
                 </a>
               </div>
 
             {/* Legal Links Footer */}
             <div style={{ marginTop: '14px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', flexWrap: 'wrap', width: '100%' }}>
-              <Link
+              <AuthLink
                 href="/terms"
-                target="_blank"
-                className="auth-link"
+                external
                 style={{
                   fontSize: '10.5px',
-                  color: 'var(--brand-link)',
-                  textDecoration: 'none',
-                  fontWeight: 600,
                   fontFamily: FONT_STACK,
                   whiteSpace: 'nowrap',
-                  transition: 'opacity 0.2s ease, color 0.2s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
               >
                 {dict.legal?.termsAndConditions || 'Terms & Conditions'}
-              </Link>
+              </AuthLink>
               <span aria-hidden="true" style={{ fontSize: '10px', color: 'var(--brand-link)', opacity: 0.5 }}>&bull;</span>
-              <Link
+              <AuthLink
                 href="/privacy"
-                target="_blank"
-                className="auth-link"
+                external
                 style={{
                   fontSize: '10.5px',
-                  color: 'var(--brand-link)',
-                  textDecoration: 'none',
-                  fontWeight: 600,
                   fontFamily: FONT_STACK,
                   whiteSpace: 'nowrap',
-                  transition: 'opacity 0.2s ease, color 0.2s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
               >
                 {dict.legal?.privacyPolicy || 'Privacy Policy'}
-              </Link>
+              </AuthLink>
               <span aria-hidden="true" style={{ fontSize: '10px', color: 'var(--brand-link)', opacity: 0.5 }}>&bull;</span>
-              <Link
+              <AuthLink
                 href="/cookies"
-                target="_blank"
-                className="auth-link"
+                external
                 style={{
                   fontSize: '10.5px',
-                  color: 'var(--brand-link)',
-                  textDecoration: 'none',
-                  fontWeight: 600,
                   fontFamily: FONT_STACK,
                   whiteSpace: 'nowrap',
-                  transition: 'opacity 0.2s ease, color 0.2s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
               >
                 {dict.legal?.cookiePolicy || 'Cookie Policy'}
-              </Link>
+              </AuthLink>
             </div>
           </div>
         </div>

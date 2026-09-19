@@ -27,169 +27,247 @@ export type AggregateAuditLog = {
 }
 
 export type AuditLogAvgAggregateOutputType = {
+  httpStatus: number | null
   durationMs: number | null
 }
 
 export type AuditLogSumAggregateOutputType = {
+  httpStatus: number | null
   durationMs: number | null
 }
 
 export type AuditLogMinAggregateOutputType = {
   id: string | null
-  requestId: string | null
-  traceId: string | null
-  userId: string | null
-  actorType: string | null
-  actorRole: string | null
-  action: string | null
+  schemaVersion: string | null
+  timestamp: Date | null
+  recordedAt: Date | null
+  eventName: string | null
   category: string | null
-  operation: string | null
-  resource: string | null
+  severity: string | null
+  outcome: string | null
+  actorType: string | null
+  actorId: string | null
+  actorRole: string | null
+  tenantId: string | null
   resourceType: string | null
   resourceId: string | null
-  status: string | null
-  durationMs: number | null
-  errorCode: string | null
-  reason: string | null
-  ipAddress: string | null
+  action: string | null
+  requestId: string | null
+  traceId: string | null
+  interactionId: string | null
+  jobId: string | null
+  transactionId: string | null
+  sourceIp: string | null
   userAgent: string | null
   route: string | null
   httpMethod: string | null
-  createdAt: Date | null
+  httpStatus: number | null
+  reasonCode: string | null
+  service: string | null
+  environment: string | null
+  deploymentId: string | null
+  durationMs: number | null
+  description: string | null
+  previousHash: string | null
+  hash: string | null
 }
 
 export type AuditLogMaxAggregateOutputType = {
   id: string | null
-  requestId: string | null
-  traceId: string | null
-  userId: string | null
-  actorType: string | null
-  actorRole: string | null
-  action: string | null
+  schemaVersion: string | null
+  timestamp: Date | null
+  recordedAt: Date | null
+  eventName: string | null
   category: string | null
-  operation: string | null
-  resource: string | null
+  severity: string | null
+  outcome: string | null
+  actorType: string | null
+  actorId: string | null
+  actorRole: string | null
+  tenantId: string | null
   resourceType: string | null
   resourceId: string | null
-  status: string | null
-  durationMs: number | null
-  errorCode: string | null
-  reason: string | null
-  ipAddress: string | null
+  action: string | null
+  requestId: string | null
+  traceId: string | null
+  interactionId: string | null
+  jobId: string | null
+  transactionId: string | null
+  sourceIp: string | null
   userAgent: string | null
   route: string | null
   httpMethod: string | null
-  createdAt: Date | null
+  httpStatus: number | null
+  reasonCode: string | null
+  service: string | null
+  environment: string | null
+  deploymentId: string | null
+  durationMs: number | null
+  description: string | null
+  previousHash: string | null
+  hash: string | null
 }
 
 export type AuditLogCountAggregateOutputType = {
   id: number
-  requestId: number
-  traceId: number
-  userId: number
-  actorType: number
-  actorRole: number
-  action: number
+  schemaVersion: number
+  timestamp: number
+  recordedAt: number
+  eventName: number
   category: number
-  operation: number
-  resource: number
+  severity: number
+  outcome: number
+  actorType: number
+  actorId: number
+  actorRole: number
+  tenantId: number
   resourceType: number
   resourceId: number
-  status: number
-  durationMs: number
-  errorCode: number
-  reason: number
-  changes: number
-  metadata: number
-  ipAddress: number
+  action: number
+  requestId: number
+  traceId: number
+  interactionId: number
+  jobId: number
+  transactionId: number
+  sourceIp: number
   userAgent: number
   route: number
   httpMethod: number
-  createdAt: number
+  httpStatus: number
+  reasonCode: number
+  changedFields: number
+  previousVersion: number
+  newVersion: number
+  service: number
+  environment: number
+  deploymentId: number
+  durationMs: number
+  description: number
+  previousHash: number
+  hash: number
   _all: number
 }
 
 
 export type AuditLogAvgAggregateInputType = {
+  httpStatus?: true
   durationMs?: true
 }
 
 export type AuditLogSumAggregateInputType = {
+  httpStatus?: true
   durationMs?: true
 }
 
 export type AuditLogMinAggregateInputType = {
   id?: true
-  requestId?: true
-  traceId?: true
-  userId?: true
-  actorType?: true
-  actorRole?: true
-  action?: true
+  schemaVersion?: true
+  timestamp?: true
+  recordedAt?: true
+  eventName?: true
   category?: true
-  operation?: true
-  resource?: true
+  severity?: true
+  outcome?: true
+  actorType?: true
+  actorId?: true
+  actorRole?: true
+  tenantId?: true
   resourceType?: true
   resourceId?: true
-  status?: true
-  durationMs?: true
-  errorCode?: true
-  reason?: true
-  ipAddress?: true
+  action?: true
+  requestId?: true
+  traceId?: true
+  interactionId?: true
+  jobId?: true
+  transactionId?: true
+  sourceIp?: true
   userAgent?: true
   route?: true
   httpMethod?: true
-  createdAt?: true
+  httpStatus?: true
+  reasonCode?: true
+  service?: true
+  environment?: true
+  deploymentId?: true
+  durationMs?: true
+  description?: true
+  previousHash?: true
+  hash?: true
 }
 
 export type AuditLogMaxAggregateInputType = {
   id?: true
-  requestId?: true
-  traceId?: true
-  userId?: true
-  actorType?: true
-  actorRole?: true
-  action?: true
+  schemaVersion?: true
+  timestamp?: true
+  recordedAt?: true
+  eventName?: true
   category?: true
-  operation?: true
-  resource?: true
+  severity?: true
+  outcome?: true
+  actorType?: true
+  actorId?: true
+  actorRole?: true
+  tenantId?: true
   resourceType?: true
   resourceId?: true
-  status?: true
-  durationMs?: true
-  errorCode?: true
-  reason?: true
-  ipAddress?: true
+  action?: true
+  requestId?: true
+  traceId?: true
+  interactionId?: true
+  jobId?: true
+  transactionId?: true
+  sourceIp?: true
   userAgent?: true
   route?: true
   httpMethod?: true
-  createdAt?: true
+  httpStatus?: true
+  reasonCode?: true
+  service?: true
+  environment?: true
+  deploymentId?: true
+  durationMs?: true
+  description?: true
+  previousHash?: true
+  hash?: true
 }
 
 export type AuditLogCountAggregateInputType = {
   id?: true
-  requestId?: true
-  traceId?: true
-  userId?: true
-  actorType?: true
-  actorRole?: true
-  action?: true
+  schemaVersion?: true
+  timestamp?: true
+  recordedAt?: true
+  eventName?: true
   category?: true
-  operation?: true
-  resource?: true
+  severity?: true
+  outcome?: true
+  actorType?: true
+  actorId?: true
+  actorRole?: true
+  tenantId?: true
   resourceType?: true
   resourceId?: true
-  status?: true
-  durationMs?: true
-  errorCode?: true
-  reason?: true
-  changes?: true
-  metadata?: true
-  ipAddress?: true
+  action?: true
+  requestId?: true
+  traceId?: true
+  interactionId?: true
+  jobId?: true
+  transactionId?: true
+  sourceIp?: true
   userAgent?: true
   route?: true
   httpMethod?: true
-  createdAt?: true
+  httpStatus?: true
+  reasonCode?: true
+  changedFields?: true
+  previousVersion?: true
+  newVersion?: true
+  service?: true
+  environment?: true
+  deploymentId?: true
+  durationMs?: true
+  description?: true
+  previousHash?: true
+  hash?: true
   _all?: true
 }
 
@@ -281,28 +359,41 @@ export type AuditLogGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 
 export type AuditLogGroupByOutputType = {
   id: string
-  requestId: string | null
-  traceId: string | null
-  userId: string | null
-  actorType: string
-  actorRole: string | null
-  action: string
+  schemaVersion: string
+  timestamp: Date
+  recordedAt: Date
+  eventName: string
   category: string
-  operation: string | null
-  resource: string | null
+  severity: string
+  outcome: string
+  actorType: string
+  actorId: string | null
+  actorRole: string | null
+  tenantId: string | null
   resourceType: string | null
   resourceId: string | null
-  status: string
-  durationMs: number | null
-  errorCode: string | null
-  reason: string | null
-  changes: runtime.JsonValue | null
-  metadata: runtime.JsonValue | null
-  ipAddress: string | null
+  action: string | null
+  requestId: string | null
+  traceId: string | null
+  interactionId: string | null
+  jobId: string | null
+  transactionId: string | null
+  sourceIp: string | null
   userAgent: string | null
   route: string | null
   httpMethod: string | null
-  createdAt: Date
+  httpStatus: number | null
+  reasonCode: string | null
+  changedFields: runtime.JsonValue | null
+  previousVersion: runtime.JsonValue | null
+  newVersion: runtime.JsonValue | null
+  service: string
+  environment: string
+  deploymentId: string | null
+  durationMs: number | null
+  description: string | null
+  previousHash: string | null
+  hash: string | null
   _count: AuditLogCountAggregateOutputType | null
   _avg: AuditLogAvgAggregateOutputType | null
   _sum: AuditLogSumAggregateOutputType | null
@@ -330,55 +421,81 @@ export type AuditLogWhereInput = {
   OR?: Prisma.AuditLogWhereInput[]
   NOT?: Prisma.AuditLogWhereInput | Prisma.AuditLogWhereInput[]
   id?: Prisma.StringFilter<"AuditLog"> | string
-  requestId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  traceId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  userId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  actorType?: Prisma.StringFilter<"AuditLog"> | string
-  actorRole?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  action?: Prisma.StringFilter<"AuditLog"> | string
+  schemaVersion?: Prisma.StringFilter<"AuditLog"> | string
+  timestamp?: Prisma.DateTimeFilter<"AuditLog"> | Date | string
+  recordedAt?: Prisma.DateTimeFilter<"AuditLog"> | Date | string
+  eventName?: Prisma.StringFilter<"AuditLog"> | string
   category?: Prisma.StringFilter<"AuditLog"> | string
-  operation?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  resource?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  severity?: Prisma.StringFilter<"AuditLog"> | string
+  outcome?: Prisma.StringFilter<"AuditLog"> | string
+  actorType?: Prisma.StringFilter<"AuditLog"> | string
+  actorId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  actorRole?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  tenantId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   resourceType?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   resourceId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  status?: Prisma.StringFilter<"AuditLog"> | string
-  durationMs?: Prisma.IntNullableFilter<"AuditLog"> | number | null
-  errorCode?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  reason?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  changes?: Prisma.JsonNullableFilter<"AuditLog">
-  metadata?: Prisma.JsonNullableFilter<"AuditLog">
-  ipAddress?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  action?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  requestId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  traceId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  interactionId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  jobId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  transactionId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  sourceIp?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   userAgent?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   route?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   httpMethod?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"AuditLog"> | Date | string
+  httpStatus?: Prisma.IntNullableFilter<"AuditLog"> | number | null
+  reasonCode?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  changedFields?: Prisma.JsonNullableFilter<"AuditLog">
+  previousVersion?: Prisma.JsonNullableFilter<"AuditLog">
+  newVersion?: Prisma.JsonNullableFilter<"AuditLog">
+  service?: Prisma.StringFilter<"AuditLog"> | string
+  environment?: Prisma.StringFilter<"AuditLog"> | string
+  deploymentId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  durationMs?: Prisma.IntNullableFilter<"AuditLog"> | number | null
+  description?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  previousHash?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  hash?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type AuditLogOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  requestId?: Prisma.SortOrderInput | Prisma.SortOrder
-  traceId?: Prisma.SortOrderInput | Prisma.SortOrder
-  userId?: Prisma.SortOrderInput | Prisma.SortOrder
-  actorType?: Prisma.SortOrder
-  actorRole?: Prisma.SortOrderInput | Prisma.SortOrder
-  action?: Prisma.SortOrder
+  schemaVersion?: Prisma.SortOrder
+  timestamp?: Prisma.SortOrder
+  recordedAt?: Prisma.SortOrder
+  eventName?: Prisma.SortOrder
   category?: Prisma.SortOrder
-  operation?: Prisma.SortOrderInput | Prisma.SortOrder
-  resource?: Prisma.SortOrderInput | Prisma.SortOrder
+  severity?: Prisma.SortOrder
+  outcome?: Prisma.SortOrder
+  actorType?: Prisma.SortOrder
+  actorId?: Prisma.SortOrderInput | Prisma.SortOrder
+  actorRole?: Prisma.SortOrderInput | Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   resourceType?: Prisma.SortOrderInput | Prisma.SortOrder
   resourceId?: Prisma.SortOrderInput | Prisma.SortOrder
-  status?: Prisma.SortOrder
-  durationMs?: Prisma.SortOrderInput | Prisma.SortOrder
-  errorCode?: Prisma.SortOrderInput | Prisma.SortOrder
-  reason?: Prisma.SortOrderInput | Prisma.SortOrder
-  changes?: Prisma.SortOrderInput | Prisma.SortOrder
-  metadata?: Prisma.SortOrderInput | Prisma.SortOrder
-  ipAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  action?: Prisma.SortOrderInput | Prisma.SortOrder
+  requestId?: Prisma.SortOrderInput | Prisma.SortOrder
+  traceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  interactionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  jobId?: Prisma.SortOrderInput | Prisma.SortOrder
+  transactionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceIp?: Prisma.SortOrderInput | Prisma.SortOrder
   userAgent?: Prisma.SortOrderInput | Prisma.SortOrder
   route?: Prisma.SortOrderInput | Prisma.SortOrder
   httpMethod?: Prisma.SortOrderInput | Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
+  httpStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  reasonCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  changedFields?: Prisma.SortOrderInput | Prisma.SortOrder
+  previousVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  newVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  service?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
+  deploymentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  durationMs?: Prisma.SortOrderInput | Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
+  previousHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  hash?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -387,55 +504,81 @@ export type AuditLogWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.AuditLogWhereInput | Prisma.AuditLogWhereInput[]
   OR?: Prisma.AuditLogWhereInput[]
   NOT?: Prisma.AuditLogWhereInput | Prisma.AuditLogWhereInput[]
-  requestId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  traceId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  userId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  actorType?: Prisma.StringFilter<"AuditLog"> | string
-  actorRole?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  action?: Prisma.StringFilter<"AuditLog"> | string
+  schemaVersion?: Prisma.StringFilter<"AuditLog"> | string
+  timestamp?: Prisma.DateTimeFilter<"AuditLog"> | Date | string
+  recordedAt?: Prisma.DateTimeFilter<"AuditLog"> | Date | string
+  eventName?: Prisma.StringFilter<"AuditLog"> | string
   category?: Prisma.StringFilter<"AuditLog"> | string
-  operation?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  resource?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  severity?: Prisma.StringFilter<"AuditLog"> | string
+  outcome?: Prisma.StringFilter<"AuditLog"> | string
+  actorType?: Prisma.StringFilter<"AuditLog"> | string
+  actorId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  actorRole?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  tenantId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   resourceType?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   resourceId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  status?: Prisma.StringFilter<"AuditLog"> | string
-  durationMs?: Prisma.IntNullableFilter<"AuditLog"> | number | null
-  errorCode?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  reason?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  changes?: Prisma.JsonNullableFilter<"AuditLog">
-  metadata?: Prisma.JsonNullableFilter<"AuditLog">
-  ipAddress?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  action?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  requestId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  traceId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  interactionId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  jobId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  transactionId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  sourceIp?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   userAgent?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   route?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   httpMethod?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"AuditLog"> | Date | string
+  httpStatus?: Prisma.IntNullableFilter<"AuditLog"> | number | null
+  reasonCode?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  changedFields?: Prisma.JsonNullableFilter<"AuditLog">
+  previousVersion?: Prisma.JsonNullableFilter<"AuditLog">
+  newVersion?: Prisma.JsonNullableFilter<"AuditLog">
+  service?: Prisma.StringFilter<"AuditLog"> | string
+  environment?: Prisma.StringFilter<"AuditLog"> | string
+  deploymentId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  durationMs?: Prisma.IntNullableFilter<"AuditLog"> | number | null
+  description?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  previousHash?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  hash?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id">
 
 export type AuditLogOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  requestId?: Prisma.SortOrderInput | Prisma.SortOrder
-  traceId?: Prisma.SortOrderInput | Prisma.SortOrder
-  userId?: Prisma.SortOrderInput | Prisma.SortOrder
-  actorType?: Prisma.SortOrder
-  actorRole?: Prisma.SortOrderInput | Prisma.SortOrder
-  action?: Prisma.SortOrder
+  schemaVersion?: Prisma.SortOrder
+  timestamp?: Prisma.SortOrder
+  recordedAt?: Prisma.SortOrder
+  eventName?: Prisma.SortOrder
   category?: Prisma.SortOrder
-  operation?: Prisma.SortOrderInput | Prisma.SortOrder
-  resource?: Prisma.SortOrderInput | Prisma.SortOrder
+  severity?: Prisma.SortOrder
+  outcome?: Prisma.SortOrder
+  actorType?: Prisma.SortOrder
+  actorId?: Prisma.SortOrderInput | Prisma.SortOrder
+  actorRole?: Prisma.SortOrderInput | Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   resourceType?: Prisma.SortOrderInput | Prisma.SortOrder
   resourceId?: Prisma.SortOrderInput | Prisma.SortOrder
-  status?: Prisma.SortOrder
-  durationMs?: Prisma.SortOrderInput | Prisma.SortOrder
-  errorCode?: Prisma.SortOrderInput | Prisma.SortOrder
-  reason?: Prisma.SortOrderInput | Prisma.SortOrder
-  changes?: Prisma.SortOrderInput | Prisma.SortOrder
-  metadata?: Prisma.SortOrderInput | Prisma.SortOrder
-  ipAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  action?: Prisma.SortOrderInput | Prisma.SortOrder
+  requestId?: Prisma.SortOrderInput | Prisma.SortOrder
+  traceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  interactionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  jobId?: Prisma.SortOrderInput | Prisma.SortOrder
+  transactionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceIp?: Prisma.SortOrderInput | Prisma.SortOrder
   userAgent?: Prisma.SortOrderInput | Prisma.SortOrder
   route?: Prisma.SortOrderInput | Prisma.SortOrder
   httpMethod?: Prisma.SortOrderInput | Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
+  httpStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  reasonCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  changedFields?: Prisma.SortOrderInput | Prisma.SortOrder
+  previousVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  newVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  service?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
+  deploymentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  durationMs?: Prisma.SortOrderInput | Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
+  previousHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  hash?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AuditLogCountOrderByAggregateInput
   _avg?: Prisma.AuditLogAvgOrderByAggregateInput
   _max?: Prisma.AuditLogMaxOrderByAggregateInput
@@ -448,209 +591,313 @@ export type AuditLogScalarWhereWithAggregatesInput = {
   OR?: Prisma.AuditLogScalarWhereWithAggregatesInput[]
   NOT?: Prisma.AuditLogScalarWhereWithAggregatesInput | Prisma.AuditLogScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
-  requestId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
-  traceId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
-  userId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
-  actorType?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
-  actorRole?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
-  action?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
+  schemaVersion?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
+  timestamp?: Prisma.DateTimeWithAggregatesFilter<"AuditLog"> | Date | string
+  recordedAt?: Prisma.DateTimeWithAggregatesFilter<"AuditLog"> | Date | string
+  eventName?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
   category?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
-  operation?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
-  resource?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  severity?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
+  outcome?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
+  actorType?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
+  actorId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  actorRole?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  tenantId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
   resourceType?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
   resourceId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
-  status?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
-  durationMs?: Prisma.IntNullableWithAggregatesFilter<"AuditLog"> | number | null
-  errorCode?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
-  reason?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
-  changes?: Prisma.JsonNullableWithAggregatesFilter<"AuditLog">
-  metadata?: Prisma.JsonNullableWithAggregatesFilter<"AuditLog">
-  ipAddress?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  action?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  requestId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  traceId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  interactionId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  jobId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  transactionId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  sourceIp?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
   userAgent?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
   route?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
   httpMethod?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
-  createdAt?: Prisma.DateTimeWithAggregatesFilter<"AuditLog"> | Date | string
+  httpStatus?: Prisma.IntNullableWithAggregatesFilter<"AuditLog"> | number | null
+  reasonCode?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  changedFields?: Prisma.JsonNullableWithAggregatesFilter<"AuditLog">
+  previousVersion?: Prisma.JsonNullableWithAggregatesFilter<"AuditLog">
+  newVersion?: Prisma.JsonNullableWithAggregatesFilter<"AuditLog">
+  service?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
+  environment?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
+  deploymentId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  durationMs?: Prisma.IntNullableWithAggregatesFilter<"AuditLog"> | number | null
+  description?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  previousHash?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  hash?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
 }
 
 export type AuditLogCreateInput = {
   id?: string
-  requestId?: string | null
-  traceId?: string | null
-  actorType?: string
+  schemaVersion?: string
+  timestamp: Date | string
+  recordedAt?: Date | string
+  eventName: string
+  category: string
+  severity: string
+  outcome: string
+  actorType: string
   actorRole?: string | null
-  action: string
-  category?: string
-  operation?: string | null
-  resource?: string | null
+  tenantId?: string | null
   resourceType?: string | null
   resourceId?: string | null
-  status?: string
-  durationMs?: number | null
-  errorCode?: string | null
-  reason?: string | null
-  changes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  ipAddress?: string | null
+  action?: string | null
+  requestId?: string | null
+  traceId?: string | null
+  interactionId?: string | null
+  jobId?: string | null
+  transactionId?: string | null
+  sourceIp?: string | null
   userAgent?: string | null
   route?: string | null
   httpMethod?: string | null
-  createdAt?: Date | string
+  httpStatus?: number | null
+  reasonCode?: string | null
+  changedFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  previousVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  newVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  service?: string
+  environment?: string
+  deploymentId?: string | null
+  durationMs?: number | null
+  description?: string | null
+  previousHash?: string | null
+  hash?: string | null
   user?: Prisma.UserCreateNestedOneWithoutAuditLogsInput
 }
 
 export type AuditLogUncheckedCreateInput = {
   id?: string
-  requestId?: string | null
-  traceId?: string | null
-  userId?: string | null
-  actorType?: string
+  schemaVersion?: string
+  timestamp: Date | string
+  recordedAt?: Date | string
+  eventName: string
+  category: string
+  severity: string
+  outcome: string
+  actorType: string
+  actorId?: string | null
   actorRole?: string | null
-  action: string
-  category?: string
-  operation?: string | null
-  resource?: string | null
+  tenantId?: string | null
   resourceType?: string | null
   resourceId?: string | null
-  status?: string
-  durationMs?: number | null
-  errorCode?: string | null
-  reason?: string | null
-  changes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  ipAddress?: string | null
+  action?: string | null
+  requestId?: string | null
+  traceId?: string | null
+  interactionId?: string | null
+  jobId?: string | null
+  transactionId?: string | null
+  sourceIp?: string | null
   userAgent?: string | null
   route?: string | null
   httpMethod?: string | null
-  createdAt?: Date | string
+  httpStatus?: number | null
+  reasonCode?: string | null
+  changedFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  previousVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  newVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  service?: string
+  environment?: string
+  deploymentId?: string | null
+  durationMs?: number | null
+  description?: string | null
+  previousHash?: string | null
+  hash?: string | null
 }
 
 export type AuditLogUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  traceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eventName?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  severity?: Prisma.StringFieldUpdateOperationsInput | string
+  outcome?: Prisma.StringFieldUpdateOperationsInput | string
   actorType?: Prisma.StringFieldUpdateOperationsInput | string
   actorRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  action?: Prisma.StringFieldUpdateOperationsInput | string
-  category?: Prisma.StringFieldUpdateOperationsInput | string
-  operation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  durationMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  changes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  traceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  interactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  jobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceIp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   route?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   httpMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  httpStatus?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  changedFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  previousVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  newVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  service?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
+  deploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  durationMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  previousHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.UserUpdateOneWithoutAuditLogsNestedInput
 }
 
 export type AuditLogUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  traceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  actorType?: Prisma.StringFieldUpdateOperationsInput | string
-  actorRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  action?: Prisma.StringFieldUpdateOperationsInput | string
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eventName?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.StringFieldUpdateOperationsInput | string
-  operation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  severity?: Prisma.StringFieldUpdateOperationsInput | string
+  outcome?: Prisma.StringFieldUpdateOperationsInput | string
+  actorType?: Prisma.StringFieldUpdateOperationsInput | string
+  actorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  actorRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  durationMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  changes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  traceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  interactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  jobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceIp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   route?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   httpMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  httpStatus?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  changedFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  previousVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  newVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  service?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
+  deploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  durationMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  previousHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AuditLogCreateManyInput = {
   id?: string
-  requestId?: string | null
-  traceId?: string | null
-  userId?: string | null
-  actorType?: string
+  schemaVersion?: string
+  timestamp: Date | string
+  recordedAt?: Date | string
+  eventName: string
+  category: string
+  severity: string
+  outcome: string
+  actorType: string
+  actorId?: string | null
   actorRole?: string | null
-  action: string
-  category?: string
-  operation?: string | null
-  resource?: string | null
+  tenantId?: string | null
   resourceType?: string | null
   resourceId?: string | null
-  status?: string
-  durationMs?: number | null
-  errorCode?: string | null
-  reason?: string | null
-  changes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  ipAddress?: string | null
+  action?: string | null
+  requestId?: string | null
+  traceId?: string | null
+  interactionId?: string | null
+  jobId?: string | null
+  transactionId?: string | null
+  sourceIp?: string | null
   userAgent?: string | null
   route?: string | null
   httpMethod?: string | null
-  createdAt?: Date | string
+  httpStatus?: number | null
+  reasonCode?: string | null
+  changedFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  previousVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  newVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  service?: string
+  environment?: string
+  deploymentId?: string | null
+  durationMs?: number | null
+  description?: string | null
+  previousHash?: string | null
+  hash?: string | null
 }
 
 export type AuditLogUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  traceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eventName?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  severity?: Prisma.StringFieldUpdateOperationsInput | string
+  outcome?: Prisma.StringFieldUpdateOperationsInput | string
   actorType?: Prisma.StringFieldUpdateOperationsInput | string
   actorRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  action?: Prisma.StringFieldUpdateOperationsInput | string
-  category?: Prisma.StringFieldUpdateOperationsInput | string
-  operation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  durationMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  changes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  traceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  interactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  jobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceIp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   route?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   httpMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  httpStatus?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  changedFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  previousVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  newVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  service?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
+  deploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  durationMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  previousHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AuditLogUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  traceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  actorType?: Prisma.StringFieldUpdateOperationsInput | string
-  actorRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  action?: Prisma.StringFieldUpdateOperationsInput | string
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eventName?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.StringFieldUpdateOperationsInput | string
-  operation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  severity?: Prisma.StringFieldUpdateOperationsInput | string
+  outcome?: Prisma.StringFieldUpdateOperationsInput | string
+  actorType?: Prisma.StringFieldUpdateOperationsInput | string
+  actorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  actorRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  durationMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  changes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  traceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  interactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  jobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceIp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   route?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   httpMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  httpStatus?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  changedFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  previousVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  newVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  service?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
+  deploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  durationMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  previousHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AuditLogListRelationFilter = {
@@ -665,83 +912,122 @@ export type AuditLogOrderByRelationAggregateInput = {
 
 export type AuditLogCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  requestId?: Prisma.SortOrder
-  traceId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  actorType?: Prisma.SortOrder
-  actorRole?: Prisma.SortOrder
-  action?: Prisma.SortOrder
+  schemaVersion?: Prisma.SortOrder
+  timestamp?: Prisma.SortOrder
+  recordedAt?: Prisma.SortOrder
+  eventName?: Prisma.SortOrder
   category?: Prisma.SortOrder
-  operation?: Prisma.SortOrder
-  resource?: Prisma.SortOrder
+  severity?: Prisma.SortOrder
+  outcome?: Prisma.SortOrder
+  actorType?: Prisma.SortOrder
+  actorId?: Prisma.SortOrder
+  actorRole?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   resourceType?: Prisma.SortOrder
   resourceId?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  durationMs?: Prisma.SortOrder
-  errorCode?: Prisma.SortOrder
-  reason?: Prisma.SortOrder
-  changes?: Prisma.SortOrder
-  metadata?: Prisma.SortOrder
-  ipAddress?: Prisma.SortOrder
+  action?: Prisma.SortOrder
+  requestId?: Prisma.SortOrder
+  traceId?: Prisma.SortOrder
+  interactionId?: Prisma.SortOrder
+  jobId?: Prisma.SortOrder
+  transactionId?: Prisma.SortOrder
+  sourceIp?: Prisma.SortOrder
   userAgent?: Prisma.SortOrder
   route?: Prisma.SortOrder
   httpMethod?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
+  httpStatus?: Prisma.SortOrder
+  reasonCode?: Prisma.SortOrder
+  changedFields?: Prisma.SortOrder
+  previousVersion?: Prisma.SortOrder
+  newVersion?: Prisma.SortOrder
+  service?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
+  deploymentId?: Prisma.SortOrder
+  durationMs?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  previousHash?: Prisma.SortOrder
+  hash?: Prisma.SortOrder
 }
 
 export type AuditLogAvgOrderByAggregateInput = {
+  httpStatus?: Prisma.SortOrder
   durationMs?: Prisma.SortOrder
 }
 
 export type AuditLogMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  requestId?: Prisma.SortOrder
-  traceId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  actorType?: Prisma.SortOrder
-  actorRole?: Prisma.SortOrder
-  action?: Prisma.SortOrder
+  schemaVersion?: Prisma.SortOrder
+  timestamp?: Prisma.SortOrder
+  recordedAt?: Prisma.SortOrder
+  eventName?: Prisma.SortOrder
   category?: Prisma.SortOrder
-  operation?: Prisma.SortOrder
-  resource?: Prisma.SortOrder
+  severity?: Prisma.SortOrder
+  outcome?: Prisma.SortOrder
+  actorType?: Prisma.SortOrder
+  actorId?: Prisma.SortOrder
+  actorRole?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   resourceType?: Prisma.SortOrder
   resourceId?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  durationMs?: Prisma.SortOrder
-  errorCode?: Prisma.SortOrder
-  reason?: Prisma.SortOrder
-  ipAddress?: Prisma.SortOrder
+  action?: Prisma.SortOrder
+  requestId?: Prisma.SortOrder
+  traceId?: Prisma.SortOrder
+  interactionId?: Prisma.SortOrder
+  jobId?: Prisma.SortOrder
+  transactionId?: Prisma.SortOrder
+  sourceIp?: Prisma.SortOrder
   userAgent?: Prisma.SortOrder
   route?: Prisma.SortOrder
   httpMethod?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
+  httpStatus?: Prisma.SortOrder
+  reasonCode?: Prisma.SortOrder
+  service?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
+  deploymentId?: Prisma.SortOrder
+  durationMs?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  previousHash?: Prisma.SortOrder
+  hash?: Prisma.SortOrder
 }
 
 export type AuditLogMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  requestId?: Prisma.SortOrder
-  traceId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  actorType?: Prisma.SortOrder
-  actorRole?: Prisma.SortOrder
-  action?: Prisma.SortOrder
+  schemaVersion?: Prisma.SortOrder
+  timestamp?: Prisma.SortOrder
+  recordedAt?: Prisma.SortOrder
+  eventName?: Prisma.SortOrder
   category?: Prisma.SortOrder
-  operation?: Prisma.SortOrder
-  resource?: Prisma.SortOrder
+  severity?: Prisma.SortOrder
+  outcome?: Prisma.SortOrder
+  actorType?: Prisma.SortOrder
+  actorId?: Prisma.SortOrder
+  actorRole?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   resourceType?: Prisma.SortOrder
   resourceId?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  durationMs?: Prisma.SortOrder
-  errorCode?: Prisma.SortOrder
-  reason?: Prisma.SortOrder
-  ipAddress?: Prisma.SortOrder
+  action?: Prisma.SortOrder
+  requestId?: Prisma.SortOrder
+  traceId?: Prisma.SortOrder
+  interactionId?: Prisma.SortOrder
+  jobId?: Prisma.SortOrder
+  transactionId?: Prisma.SortOrder
+  sourceIp?: Prisma.SortOrder
   userAgent?: Prisma.SortOrder
   route?: Prisma.SortOrder
   httpMethod?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
+  httpStatus?: Prisma.SortOrder
+  reasonCode?: Prisma.SortOrder
+  service?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
+  deploymentId?: Prisma.SortOrder
+  durationMs?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  previousHash?: Prisma.SortOrder
+  hash?: Prisma.SortOrder
 }
 
 export type AuditLogSumOrderByAggregateInput = {
+  httpStatus?: Prisma.SortOrder
   durationMs?: Prisma.SortOrder
 }
 
@@ -797,52 +1083,78 @@ export type NullableIntFieldUpdateOperationsInput = {
 
 export type AuditLogCreateWithoutUserInput = {
   id?: string
-  requestId?: string | null
-  traceId?: string | null
-  actorType?: string
+  schemaVersion?: string
+  timestamp: Date | string
+  recordedAt?: Date | string
+  eventName: string
+  category: string
+  severity: string
+  outcome: string
+  actorType: string
   actorRole?: string | null
-  action: string
-  category?: string
-  operation?: string | null
-  resource?: string | null
+  tenantId?: string | null
   resourceType?: string | null
   resourceId?: string | null
-  status?: string
-  durationMs?: number | null
-  errorCode?: string | null
-  reason?: string | null
-  changes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  ipAddress?: string | null
+  action?: string | null
+  requestId?: string | null
+  traceId?: string | null
+  interactionId?: string | null
+  jobId?: string | null
+  transactionId?: string | null
+  sourceIp?: string | null
   userAgent?: string | null
   route?: string | null
   httpMethod?: string | null
-  createdAt?: Date | string
+  httpStatus?: number | null
+  reasonCode?: string | null
+  changedFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  previousVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  newVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  service?: string
+  environment?: string
+  deploymentId?: string | null
+  durationMs?: number | null
+  description?: string | null
+  previousHash?: string | null
+  hash?: string | null
 }
 
 export type AuditLogUncheckedCreateWithoutUserInput = {
   id?: string
-  requestId?: string | null
-  traceId?: string | null
-  actorType?: string
+  schemaVersion?: string
+  timestamp: Date | string
+  recordedAt?: Date | string
+  eventName: string
+  category: string
+  severity: string
+  outcome: string
+  actorType: string
   actorRole?: string | null
-  action: string
-  category?: string
-  operation?: string | null
-  resource?: string | null
+  tenantId?: string | null
   resourceType?: string | null
   resourceId?: string | null
-  status?: string
-  durationMs?: number | null
-  errorCode?: string | null
-  reason?: string | null
-  changes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  ipAddress?: string | null
+  action?: string | null
+  requestId?: string | null
+  traceId?: string | null
+  interactionId?: string | null
+  jobId?: string | null
+  transactionId?: string | null
+  sourceIp?: string | null
   userAgent?: string | null
   route?: string | null
   httpMethod?: string | null
-  createdAt?: Date | string
+  httpStatus?: number | null
+  reasonCode?: string | null
+  changedFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  previousVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  newVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  service?: string
+  environment?: string
+  deploymentId?: string | null
+  durationMs?: number | null
+  description?: string | null
+  previousHash?: string | null
+  hash?: string | null
 }
 
 export type AuditLogCreateOrConnectWithoutUserInput = {
@@ -876,240 +1188,357 @@ export type AuditLogScalarWhereInput = {
   OR?: Prisma.AuditLogScalarWhereInput[]
   NOT?: Prisma.AuditLogScalarWhereInput | Prisma.AuditLogScalarWhereInput[]
   id?: Prisma.StringFilter<"AuditLog"> | string
-  requestId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  traceId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  userId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  actorType?: Prisma.StringFilter<"AuditLog"> | string
-  actorRole?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  action?: Prisma.StringFilter<"AuditLog"> | string
+  schemaVersion?: Prisma.StringFilter<"AuditLog"> | string
+  timestamp?: Prisma.DateTimeFilter<"AuditLog"> | Date | string
+  recordedAt?: Prisma.DateTimeFilter<"AuditLog"> | Date | string
+  eventName?: Prisma.StringFilter<"AuditLog"> | string
   category?: Prisma.StringFilter<"AuditLog"> | string
-  operation?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  resource?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  severity?: Prisma.StringFilter<"AuditLog"> | string
+  outcome?: Prisma.StringFilter<"AuditLog"> | string
+  actorType?: Prisma.StringFilter<"AuditLog"> | string
+  actorId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  actorRole?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  tenantId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   resourceType?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   resourceId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  status?: Prisma.StringFilter<"AuditLog"> | string
-  durationMs?: Prisma.IntNullableFilter<"AuditLog"> | number | null
-  errorCode?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  reason?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  changes?: Prisma.JsonNullableFilter<"AuditLog">
-  metadata?: Prisma.JsonNullableFilter<"AuditLog">
-  ipAddress?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  action?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  requestId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  traceId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  interactionId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  jobId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  transactionId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  sourceIp?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   userAgent?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   route?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   httpMethod?: Prisma.StringNullableFilter<"AuditLog"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"AuditLog"> | Date | string
+  httpStatus?: Prisma.IntNullableFilter<"AuditLog"> | number | null
+  reasonCode?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  changedFields?: Prisma.JsonNullableFilter<"AuditLog">
+  previousVersion?: Prisma.JsonNullableFilter<"AuditLog">
+  newVersion?: Prisma.JsonNullableFilter<"AuditLog">
+  service?: Prisma.StringFilter<"AuditLog"> | string
+  environment?: Prisma.StringFilter<"AuditLog"> | string
+  deploymentId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  durationMs?: Prisma.IntNullableFilter<"AuditLog"> | number | null
+  description?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  previousHash?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  hash?: Prisma.StringNullableFilter<"AuditLog"> | string | null
 }
 
 export type AuditLogCreateManyUserInput = {
   id?: string
-  requestId?: string | null
-  traceId?: string | null
-  actorType?: string
+  schemaVersion?: string
+  timestamp: Date | string
+  recordedAt?: Date | string
+  eventName: string
+  category: string
+  severity: string
+  outcome: string
+  actorType: string
   actorRole?: string | null
-  action: string
-  category?: string
-  operation?: string | null
-  resource?: string | null
+  tenantId?: string | null
   resourceType?: string | null
   resourceId?: string | null
-  status?: string
-  durationMs?: number | null
-  errorCode?: string | null
-  reason?: string | null
-  changes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  ipAddress?: string | null
+  action?: string | null
+  requestId?: string | null
+  traceId?: string | null
+  interactionId?: string | null
+  jobId?: string | null
+  transactionId?: string | null
+  sourceIp?: string | null
   userAgent?: string | null
   route?: string | null
   httpMethod?: string | null
-  createdAt?: Date | string
+  httpStatus?: number | null
+  reasonCode?: string | null
+  changedFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  previousVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  newVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  service?: string
+  environment?: string
+  deploymentId?: string | null
+  durationMs?: number | null
+  description?: string | null
+  previousHash?: string | null
+  hash?: string | null
 }
 
 export type AuditLogUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  traceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eventName?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  severity?: Prisma.StringFieldUpdateOperationsInput | string
+  outcome?: Prisma.StringFieldUpdateOperationsInput | string
   actorType?: Prisma.StringFieldUpdateOperationsInput | string
   actorRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  action?: Prisma.StringFieldUpdateOperationsInput | string
-  category?: Prisma.StringFieldUpdateOperationsInput | string
-  operation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  durationMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  changes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  traceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  interactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  jobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceIp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   route?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   httpMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  httpStatus?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  changedFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  previousVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  newVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  service?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
+  deploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  durationMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  previousHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AuditLogUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  traceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eventName?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  severity?: Prisma.StringFieldUpdateOperationsInput | string
+  outcome?: Prisma.StringFieldUpdateOperationsInput | string
   actorType?: Prisma.StringFieldUpdateOperationsInput | string
   actorRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  action?: Prisma.StringFieldUpdateOperationsInput | string
-  category?: Prisma.StringFieldUpdateOperationsInput | string
-  operation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  durationMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  changes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  traceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  interactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  jobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceIp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   route?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   httpMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  httpStatus?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  changedFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  previousVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  newVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  service?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
+  deploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  durationMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  previousHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AuditLogUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  traceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eventName?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  severity?: Prisma.StringFieldUpdateOperationsInput | string
+  outcome?: Prisma.StringFieldUpdateOperationsInput | string
   actorType?: Prisma.StringFieldUpdateOperationsInput | string
   actorRole?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  action?: Prisma.StringFieldUpdateOperationsInput | string
-  category?: Prisma.StringFieldUpdateOperationsInput | string
-  operation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  resource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resourceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  durationMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  changes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  action?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  traceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  interactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  jobId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceIp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   route?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   httpMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  httpStatus?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  changedFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  previousVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  newVersion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  service?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
+  deploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  durationMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  previousHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
 
 export type AuditLogSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  requestId?: boolean
-  traceId?: boolean
-  userId?: boolean
-  actorType?: boolean
-  actorRole?: boolean
-  action?: boolean
+  schemaVersion?: boolean
+  timestamp?: boolean
+  recordedAt?: boolean
+  eventName?: boolean
   category?: boolean
-  operation?: boolean
-  resource?: boolean
+  severity?: boolean
+  outcome?: boolean
+  actorType?: boolean
+  actorId?: boolean
+  actorRole?: boolean
+  tenantId?: boolean
   resourceType?: boolean
   resourceId?: boolean
-  status?: boolean
-  durationMs?: boolean
-  errorCode?: boolean
-  reason?: boolean
-  changes?: boolean
-  metadata?: boolean
-  ipAddress?: boolean
+  action?: boolean
+  requestId?: boolean
+  traceId?: boolean
+  interactionId?: boolean
+  jobId?: boolean
+  transactionId?: boolean
+  sourceIp?: boolean
   userAgent?: boolean
   route?: boolean
   httpMethod?: boolean
-  createdAt?: boolean
+  httpStatus?: boolean
+  reasonCode?: boolean
+  changedFields?: boolean
+  previousVersion?: boolean
+  newVersion?: boolean
+  service?: boolean
+  environment?: boolean
+  deploymentId?: boolean
+  durationMs?: boolean
+  description?: boolean
+  previousHash?: boolean
+  hash?: boolean
   user?: boolean | Prisma.AuditLog$userArgs<ExtArgs>
 }, ExtArgs["result"]["auditLog"]>
 
 export type AuditLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  requestId?: boolean
-  traceId?: boolean
-  userId?: boolean
-  actorType?: boolean
-  actorRole?: boolean
-  action?: boolean
+  schemaVersion?: boolean
+  timestamp?: boolean
+  recordedAt?: boolean
+  eventName?: boolean
   category?: boolean
-  operation?: boolean
-  resource?: boolean
+  severity?: boolean
+  outcome?: boolean
+  actorType?: boolean
+  actorId?: boolean
+  actorRole?: boolean
+  tenantId?: boolean
   resourceType?: boolean
   resourceId?: boolean
-  status?: boolean
-  durationMs?: boolean
-  errorCode?: boolean
-  reason?: boolean
-  changes?: boolean
-  metadata?: boolean
-  ipAddress?: boolean
+  action?: boolean
+  requestId?: boolean
+  traceId?: boolean
+  interactionId?: boolean
+  jobId?: boolean
+  transactionId?: boolean
+  sourceIp?: boolean
   userAgent?: boolean
   route?: boolean
   httpMethod?: boolean
-  createdAt?: boolean
+  httpStatus?: boolean
+  reasonCode?: boolean
+  changedFields?: boolean
+  previousVersion?: boolean
+  newVersion?: boolean
+  service?: boolean
+  environment?: boolean
+  deploymentId?: boolean
+  durationMs?: boolean
+  description?: boolean
+  previousHash?: boolean
+  hash?: boolean
   user?: boolean | Prisma.AuditLog$userArgs<ExtArgs>
 }, ExtArgs["result"]["auditLog"]>
 
 export type AuditLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  requestId?: boolean
-  traceId?: boolean
-  userId?: boolean
-  actorType?: boolean
-  actorRole?: boolean
-  action?: boolean
+  schemaVersion?: boolean
+  timestamp?: boolean
+  recordedAt?: boolean
+  eventName?: boolean
   category?: boolean
-  operation?: boolean
-  resource?: boolean
+  severity?: boolean
+  outcome?: boolean
+  actorType?: boolean
+  actorId?: boolean
+  actorRole?: boolean
+  tenantId?: boolean
   resourceType?: boolean
   resourceId?: boolean
-  status?: boolean
-  durationMs?: boolean
-  errorCode?: boolean
-  reason?: boolean
-  changes?: boolean
-  metadata?: boolean
-  ipAddress?: boolean
+  action?: boolean
+  requestId?: boolean
+  traceId?: boolean
+  interactionId?: boolean
+  jobId?: boolean
+  transactionId?: boolean
+  sourceIp?: boolean
   userAgent?: boolean
   route?: boolean
   httpMethod?: boolean
-  createdAt?: boolean
+  httpStatus?: boolean
+  reasonCode?: boolean
+  changedFields?: boolean
+  previousVersion?: boolean
+  newVersion?: boolean
+  service?: boolean
+  environment?: boolean
+  deploymentId?: boolean
+  durationMs?: boolean
+  description?: boolean
+  previousHash?: boolean
+  hash?: boolean
   user?: boolean | Prisma.AuditLog$userArgs<ExtArgs>
 }, ExtArgs["result"]["auditLog"]>
 
 export type AuditLogSelectScalar = {
   id?: boolean
-  requestId?: boolean
-  traceId?: boolean
-  userId?: boolean
-  actorType?: boolean
-  actorRole?: boolean
-  action?: boolean
+  schemaVersion?: boolean
+  timestamp?: boolean
+  recordedAt?: boolean
+  eventName?: boolean
   category?: boolean
-  operation?: boolean
-  resource?: boolean
+  severity?: boolean
+  outcome?: boolean
+  actorType?: boolean
+  actorId?: boolean
+  actorRole?: boolean
+  tenantId?: boolean
   resourceType?: boolean
   resourceId?: boolean
-  status?: boolean
-  durationMs?: boolean
-  errorCode?: boolean
-  reason?: boolean
-  changes?: boolean
-  metadata?: boolean
-  ipAddress?: boolean
+  action?: boolean
+  requestId?: boolean
+  traceId?: boolean
+  interactionId?: boolean
+  jobId?: boolean
+  transactionId?: boolean
+  sourceIp?: boolean
   userAgent?: boolean
   route?: boolean
   httpMethod?: boolean
-  createdAt?: boolean
+  httpStatus?: boolean
+  reasonCode?: boolean
+  changedFields?: boolean
+  previousVersion?: boolean
+  newVersion?: boolean
+  service?: boolean
+  environment?: boolean
+  deploymentId?: boolean
+  durationMs?: boolean
+  description?: boolean
+  previousHash?: boolean
+  hash?: boolean
 }
 
-export type AuditLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "requestId" | "traceId" | "userId" | "actorType" | "actorRole" | "action" | "category" | "operation" | "resource" | "resourceType" | "resourceId" | "status" | "durationMs" | "errorCode" | "reason" | "changes" | "metadata" | "ipAddress" | "userAgent" | "route" | "httpMethod" | "createdAt", ExtArgs["result"]["auditLog"]>
+export type AuditLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "schemaVersion" | "timestamp" | "recordedAt" | "eventName" | "category" | "severity" | "outcome" | "actorType" | "actorId" | "actorRole" | "tenantId" | "resourceType" | "resourceId" | "action" | "requestId" | "traceId" | "interactionId" | "jobId" | "transactionId" | "sourceIp" | "userAgent" | "route" | "httpMethod" | "httpStatus" | "reasonCode" | "changedFields" | "previousVersion" | "newVersion" | "service" | "environment" | "deploymentId" | "durationMs" | "description" | "previousHash" | "hash", ExtArgs["result"]["auditLog"]>
 export type AuditLogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.AuditLog$userArgs<ExtArgs>
 }
@@ -1127,28 +1556,41 @@ export type $AuditLogPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    requestId: string | null
-    traceId: string | null
-    userId: string | null
-    actorType: string
-    actorRole: string | null
-    action: string
+    schemaVersion: string
+    timestamp: Date
+    recordedAt: Date
+    eventName: string
     category: string
-    operation: string | null
-    resource: string | null
+    severity: string
+    outcome: string
+    actorType: string
+    actorId: string | null
+    actorRole: string | null
+    tenantId: string | null
     resourceType: string | null
     resourceId: string | null
-    status: string
-    durationMs: number | null
-    errorCode: string | null
-    reason: string | null
-    changes: runtime.JsonValue | null
-    metadata: runtime.JsonValue | null
-    ipAddress: string | null
+    action: string | null
+    requestId: string | null
+    traceId: string | null
+    interactionId: string | null
+    jobId: string | null
+    transactionId: string | null
+    sourceIp: string | null
     userAgent: string | null
     route: string | null
     httpMethod: string | null
-    createdAt: Date
+    httpStatus: number | null
+    reasonCode: string | null
+    changedFields: runtime.JsonValue | null
+    previousVersion: runtime.JsonValue | null
+    newVersion: runtime.JsonValue | null
+    service: string
+    environment: string
+    deploymentId: string | null
+    durationMs: number | null
+    description: string | null
+    previousHash: string | null
+    hash: string | null
   }, ExtArgs["result"]["auditLog"]>
   composites: {}
 }
@@ -1574,28 +2016,41 @@ export interface Prisma__AuditLogClient<T, Null = never, ExtArgs extends runtime
  */
 export interface AuditLogFieldRefs {
   readonly id: Prisma.FieldRef<"AuditLog", 'String'>
-  readonly requestId: Prisma.FieldRef<"AuditLog", 'String'>
-  readonly traceId: Prisma.FieldRef<"AuditLog", 'String'>
-  readonly userId: Prisma.FieldRef<"AuditLog", 'String'>
-  readonly actorType: Prisma.FieldRef<"AuditLog", 'String'>
-  readonly actorRole: Prisma.FieldRef<"AuditLog", 'String'>
-  readonly action: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly schemaVersion: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly timestamp: Prisma.FieldRef<"AuditLog", 'DateTime'>
+  readonly recordedAt: Prisma.FieldRef<"AuditLog", 'DateTime'>
+  readonly eventName: Prisma.FieldRef<"AuditLog", 'String'>
   readonly category: Prisma.FieldRef<"AuditLog", 'String'>
-  readonly operation: Prisma.FieldRef<"AuditLog", 'String'>
-  readonly resource: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly severity: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly outcome: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly actorType: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly actorId: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly actorRole: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly tenantId: Prisma.FieldRef<"AuditLog", 'String'>
   readonly resourceType: Prisma.FieldRef<"AuditLog", 'String'>
   readonly resourceId: Prisma.FieldRef<"AuditLog", 'String'>
-  readonly status: Prisma.FieldRef<"AuditLog", 'String'>
-  readonly durationMs: Prisma.FieldRef<"AuditLog", 'Int'>
-  readonly errorCode: Prisma.FieldRef<"AuditLog", 'String'>
-  readonly reason: Prisma.FieldRef<"AuditLog", 'String'>
-  readonly changes: Prisma.FieldRef<"AuditLog", 'Json'>
-  readonly metadata: Prisma.FieldRef<"AuditLog", 'Json'>
-  readonly ipAddress: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly action: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly requestId: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly traceId: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly interactionId: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly jobId: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly transactionId: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly sourceIp: Prisma.FieldRef<"AuditLog", 'String'>
   readonly userAgent: Prisma.FieldRef<"AuditLog", 'String'>
   readonly route: Prisma.FieldRef<"AuditLog", 'String'>
   readonly httpMethod: Prisma.FieldRef<"AuditLog", 'String'>
-  readonly createdAt: Prisma.FieldRef<"AuditLog", 'DateTime'>
+  readonly httpStatus: Prisma.FieldRef<"AuditLog", 'Int'>
+  readonly reasonCode: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly changedFields: Prisma.FieldRef<"AuditLog", 'Json'>
+  readonly previousVersion: Prisma.FieldRef<"AuditLog", 'Json'>
+  readonly newVersion: Prisma.FieldRef<"AuditLog", 'Json'>
+  readonly service: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly environment: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly deploymentId: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly durationMs: Prisma.FieldRef<"AuditLog", 'Int'>
+  readonly description: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly previousHash: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly hash: Prisma.FieldRef<"AuditLog", 'String'>
 }
     
 

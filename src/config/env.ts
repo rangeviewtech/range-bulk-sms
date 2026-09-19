@@ -9,6 +9,7 @@ const envSchema = z.object({
   // Optional but recommended
   UPSTASH_REDIS_REST_URL: z.string().url().optional(),
   UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
+  REDIS_URL: z.string().optional(),
   
   // Webhooks
   TELEGRAM_WEBHOOK_SECRET: z.string().optional(),

@@ -83,9 +83,43 @@ export async function processJobsBatch(batchSize: number = 10) {
       );
 
       switch (job.type) {
-        case 'send-email':
+        case 'send-email': {
+          // Pre-dispatch token check for password recovery
+          if (template === 'auth.password_reset') {
+            const rawToken = String(templateData?.token || '');
+            if (rawToken) {
+              const crypto = await import('crypto');
+              const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+              const validToken = await prisma.verificationToken.findFirst({
+                where: {
+                  token: { in: [tokenHash, rawToken] },
+                  identifier: recipient,
+                  type: 'PASSWORD_RESET',
+                  expiresAt: { gt: new Date() },
+                },
+              });
+
+              if (!validToken) {
+                // Token has expired or was already consumed
+                status = 'CANCELLED';
+                const { logger } = await import('@/lib/logger');
+                await logger.audit({
+                  eventName: 'EMAIL_DISPATCH_CANCELLED_EXPIRED_TOKEN',
+                  category: 'SECURITY',
+                  severity: 'WARN',
+                  outcome: 'SUCCESS',
+                  action: 'READ',
+                  description: `Password reset email cancelled: token already expired or consumed for ${recipient}`,
+                  metadata: { jobId: job.id, recipient },
+                });
+                break;
+              }
+            }
+          }
+
           await SmtpProvider.send(recipient, resolved.subject || 'Notification', resolved.body);
           break;
+        }
         case 'send-sms': {
           const smsResult = await PandoraSmsProvider.send(recipient, resolved.body);
           if (payload.recipientId) {
@@ -152,7 +186,7 @@ export async function processJobsBatch(batchSize: number = 10) {
           status === 'RETRYING'
             ? new Date(Date.now() + Math.min(3_600_000, Math.pow(5, job.attempts + 1) * 1000))
             : job.availableAt,
-        completedAt: status === 'SUCCEEDED' ? new Date() : null,
+        completedAt: status === 'SUCCEEDED' || status === 'CANCELLED' ? new Date() : null,
         failedAt: status === 'DEAD_LETTER' ? new Date() : null,
       },
     });

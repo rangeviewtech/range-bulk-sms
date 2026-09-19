@@ -7,7 +7,8 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { unlockScreen, logout } from '../actions';
-import { toast } from 'sonner';
+import { notify, toast } from '@/lib/notifications/toast';
+import { toastCatalog } from '@/lib/notifications/toast-catalog';
 import { pinSchema } from '@/lib/validations/auth';
 import { PinInput } from '@/components/forms/pin-input';
 import { TurnstileWidget } from '@/components/forms/turnstile-widget';
@@ -32,7 +33,7 @@ export default function ScreenLockPage() {
 
   const onSubmit = async (data: PinValues) => {
     if (turnstileExpired) {
-      toast.error(dict.validation.securityCheckExpired || 'Security check has expired. Please verify again.');
+      notify.error(dict.validation.securityCheckExpired || toastCatalog.security.checkExpired);
       return;
     }
     setLoading(true);
@@ -45,7 +46,7 @@ export default function ScreenLockPage() {
     const res = await unlockScreen(formData);
     
     if (res?.error) {
-      toast.error(res.error);
+      notify.error(res.error);
       setLoading(false);
     }
   };
@@ -57,7 +58,7 @@ export default function ScreenLockPage() {
           <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
             {dict.auth.sessionLockedTitle}
           </h3>
-          <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+          <p className="auth-subtitle" style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK, width: '100%', textAlign: 'justify', textJustify: 'inter-word' }}>
             {dict.auth.sessionLockedSubtitle}
           </p>
         </div>
@@ -98,7 +99,7 @@ export default function ScreenLockPage() {
           <div className="login-con auth-stagger-4" style={{ width: '100%', marginTop: '10px' }}>
             <button
               type="submit"
-              disabled={loading || (pinValue?.length !== 6)}
+              disabled={loading || (pinValue?.length !== 6) || (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? !turnstileToken || turnstileExpired : false)}
               className="btn btn-primary btn-main auth-btn-primary"
               style={{
                 width: '100%',
@@ -111,11 +112,11 @@ export default function ScreenLockPage() {
                 fontWeight: 700,
                 borderRadius: '7px',
                 border: '0',
-                cursor: loading || (pinValue?.length !== 6) ? 'not-allowed' : 'pointer',
+                cursor: loading || (pinValue?.length !== 6) || (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? !turnstileToken || turnstileExpired : false) ? 'not-allowed' : 'pointer',
                 textAlign: 'center',
                 boxSizing: 'border-box',
                 fontFamily: FONT_STACK,
-                opacity: loading || (pinValue?.length !== 6) ? 0.7 : 1,
+                opacity: loading || (pinValue?.length !== 6) || (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? !turnstileToken || turnstileExpired : false) ? 0.7 : 1,
               }}
             >
               {loading ? dict.auth.unlocking : dict.auth.unlockSessionButton}

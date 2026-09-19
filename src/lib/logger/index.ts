@@ -1,73 +1,177 @@
+import pino from 'pino';
 import { redactSensitiveData } from './redact';
 import { getRequestId } from './context';
+import { prisma } from '../prisma';
 
-type LogLevel = 'DEBUG' | 'INFO' | 'NOTICE' | 'WARN' | 'ERROR' | 'CRITICAL' | 'SECURITY' | 'AUDIT';
+export type LogSeverity = 'TRACE' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL' | 'SECURITY' | 'CRITICAL';
+export type LogCategory = 'APPLICATION' | 'SECURITY' | 'AUTHENTICATION' | 'AUTHORIZATION' | 'CRUD' | 'ADMIN' | 'DATABASE' | 'EMAIL' | 'CRON' | 'SYSTEM' | 'PERFORMANCE' | 'FORENSIC' | 'COMMUNICATION';
+export type LogOutcome = 'SUCCESS' | 'FAILURE' | 'DENIED' | 'UNKNOWN';
 
-interface LogEntry {
-  level: LogLevel;
-  message: string;
-  timestamp: string;
+export interface ForensicEvent {
+  eventName: string;
+  category: LogCategory;
+  severity: LogSeverity;
+  outcome: LogOutcome;
   requestId?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data?: any;
+  
+  // Actor info
+  actorType?: 'USER' | 'ADMIN' | 'SYSTEM' | 'WORKER' | 'SERVICE' | 'ANONYMOUS';
+  actorId?: string;
+  actorRole?: string;
+  tenantId?: string;
+  
+  // Resource info
+  resourceType?: string;
+  resourceId?: string;
+  
+  // Action info
+  action?: 'CREATE' | 'READ' | 'UPDATE' | 'DELETE' | string;
+  
+  // Trace / Request Context
+  traceId?: string;
+  interactionId?: string;
+  jobId?: string;
+  transactionId?: string;
+  
+  sourceIp?: string;
+  userAgent?: string;
+  route?: string;
+  httpMethod?: string;
+  httpStatus?: number;
+  
+  // Outcome & Changes
+  reasonCode?: string;
+  changedFields?: string[];
+  previousVersion?: unknown;
+  newVersion?: unknown;
+  
+  // System context
+  durationMs?: number;
+  description?: string;
+  
+  // Additional unstructured data
+  metadata?: Record<string, unknown>;
 }
 
-class Logger {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private async formatAndLog(level: LogLevel, message: string, data?: any) {
-    const requestId = await getRequestId();
-    const redactedData = data ? redactSensitiveData(data) : undefined;
-    
-    const entry: LogEntry = {
-      level,
-      message,
-      timestamp: new Date().toISOString(),
-      requestId,
-      data: redactedData,
-    };
+const pinoLogger = pino({
+  level: process.env.LOG_LEVEL || 'info',
+  formatters: {
+    level: (label) => {
+      return { level: label.toUpperCase() };
+    },
+  },
+  timestamp: pino.stdTimeFunctions.isoTime,
+});
 
-    if (process.env.NODE_ENV !== 'production') {
-      // Human-readable fallback for development
-      const colors = {
-        DEBUG: '\x1b[36m',
-        INFO: '\x1b[32m',
-        NOTICE: '\x1b[34m',
-        WARN: '\x1b[33m',
-        ERROR: '\x1b[31m',
-        CRITICAL: '\x1b[41m',
-        SECURITY: '\x1b[35m',
-        AUDIT: '\x1b[45m',
-      };
-      const color = colors[level] || '\x1b[0m';
-      console.log(`${color}[${level}]\x1b[0m [${requestId}] ${message}`, redactedData || '');
-    } else {
-      // Structured JSON for production
-      console.log(JSON.stringify(entry));
-    }
+class Logger {
+  private formatLog(severity: LogSeverity, message: string, metadata?: Record<string, unknown> | unknown) {
+    const redactedMeta = metadata && typeof metadata === 'object' ? redactSensitiveData(metadata) as object : {};
+    return {
+      severity,
+      message,
+      ...redactedMeta
+    };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  debug(message: string, data?: any) { return this.formatAndLog('DEBUG', message, data); }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  info(message: string, data?: any) { return this.formatAndLog('INFO', message, data); }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  warn(message: string, data?: any) { return this.formatAndLog('WARN', message, data); }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  error(message: string, errorOrData?: any, meta?: any) {
-    if (meta !== undefined || errorOrData instanceof Error) {
-      // old signature: error(message, error, meta)
-      return this.formatAndLog('ERROR', message, { 
-        error: errorOrData instanceof Error ? { message: errorOrData.message, stack: errorOrData.stack } : errorOrData, 
-        ...meta 
+  // Console / App Logging
+  trace(message: string, metadata?: Record<string, unknown> | unknown) { pinoLogger.trace(this.formatLog('TRACE', message, metadata)); }
+  debug(message: string, metadata?: Record<string, unknown> | unknown) { pinoLogger.debug(this.formatLog('DEBUG', message, metadata)); }
+  info(message: string, metadata?: Record<string, unknown> | unknown) { pinoLogger.info(this.formatLog('INFO', message, metadata)); }
+  warn(message: string, metadata?: Record<string, unknown> | unknown) { pinoLogger.warn(this.formatLog('WARN', message, metadata)); }
+  error(message: string, metadata?: Record<string, unknown> | unknown) { pinoLogger.error(this.formatLog('ERROR', message, metadata)); }
+  fatal(message: string, metadata?: Record<string, unknown> | unknown) { pinoLogger.fatal(this.formatLog('FATAL', message, metadata)); }
+  
+  // Backwards compatibility for existing code
+  security(message: string, data?: Record<string, unknown> | unknown) { pinoLogger.info(this.formatLog('SECURITY', message, { metadata: data, category: 'SECURITY', outcome: 'SUCCESS' })); }
+
+  /**
+   * Authoritative Forensic Audit Record
+   * This logs to Pino and attempts to durably save to the DB.
+   */
+  async audit(event: ForensicEvent) {
+    const requestId = await getRequestId();
+    
+    const redacted = redactSensitiveData(event) as ForensicEvent;
+
+    // Log to stdout
+    pinoLogger.info({
+      isAudit: true,
+      requestId,
+      ...redacted
+    }, event.description || event.eventName);
+
+    // Save to DB
+    try {
+      // Create hash chain for tamper resistance (simplified for now, ideally needs a robust lock/queue or trigger)
+      // Since this is asynchronous, we do a best-effort chaining using the latest log.
+      const lastLog = await prisma.auditLog.findFirst({
+        orderBy: { recordedAt: 'desc' },
+        select: { hash: true }
+      });
+      
+      const previousHash = lastLog?.hash || 'GENESIS';
+      
+      // Calculate current hash
+      const crypto = await import('crypto');
+      const payloadString = JSON.stringify({
+        eventName: redacted.eventName,
+        actorId: redacted.actorId,
+        timestamp: new Date().toISOString(),
+        previousHash
+      });
+      const hash = crypto.createHash('sha256').update(payloadString).digest('hex');
+
+      await prisma.auditLog.create({
+        data: {
+          timestamp: new Date(),
+          eventName: redacted.eventName,
+          category: redacted.category,
+          severity: redacted.severity,
+          outcome: redacted.outcome,
+          
+          actorType: redacted.actorType || 'SYSTEM',
+          actorId: redacted.actorId,
+          actorRole: redacted.actorRole,
+          tenantId: redacted.tenantId,
+          
+          resourceType: redacted.resourceType,
+          resourceId: redacted.resourceId,
+          action: redacted.action,
+          
+          requestId,
+          traceId: redacted.traceId,
+          interactionId: redacted.interactionId,
+          jobId: redacted.jobId,
+          transactionId: redacted.transactionId,
+          
+          sourceIp: redacted.sourceIp,
+          userAgent: redacted.userAgent,
+          route: redacted.route,
+          httpMethod: redacted.httpMethod,
+          httpStatus: redacted.httpStatus,
+          
+          reasonCode: redacted.reasonCode,
+          changedFields: redacted.changedFields ? JSON.stringify(redacted.changedFields) : null,
+          previousVersion: redacted.previousVersion ? JSON.stringify(redacted.previousVersion) : null,
+          newVersion: redacted.newVersion ? JSON.stringify(redacted.newVersion) : null,
+          
+          durationMs: redacted.durationMs,
+          description: redacted.description,
+          
+          previousHash,
+          hash
+        }
+      });
+    } catch (dbErr) {
+      // Fail-closed policy for high-risk operations where authoritative audit is mandatory should be implemented at the caller level.
+      // Here we record the failure to persist the audit log.
+      pinoLogger.error({
+        msg: 'FAILED TO PERSIST AUDIT LOG TO DB',
+        error: dbErr,
+        originalEvent: redacted
       });
     }
-    // new signature: error(message, data)
-    return this.formatAndLog('ERROR', message, errorOrData);
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  security(message: string, data?: any) { return this.formatAndLog('SECURITY', message, data); }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  audit(message: string, data?: any) { return this.formatAndLog('AUDIT', message, data); }
 }
 
 export const logger = new Logger();

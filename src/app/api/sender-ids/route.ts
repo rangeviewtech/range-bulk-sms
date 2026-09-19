@@ -40,8 +40,9 @@ export async function POST(req: NextRequest) {
 
     const senderId = await prisma.senderId.create({
       data: {
-        ...data,
-        userId: session.userId,
+        senderId: data.senderId,
+        purpose: data.purpose,
+        user: { connect: { id: session.userId } },
         status: 'PENDING'
       }
     });

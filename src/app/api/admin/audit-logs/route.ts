@@ -16,7 +16,7 @@ export async function GET(req: Request) {
   const logs = await prisma.auditLog.findMany({
     where: search ? {
       OR: [
-        { action: { contains: search, mode: 'insensitive' } },
+        { eventName: { contains: search, mode: 'insensitive' } },
         { resourceType: { contains: search, mode: 'insensitive' } },
         { user: { email: { contains: search, mode: 'insensitive' } } },
       ]
@@ -26,7 +26,7 @@ export async function GET(req: Request) {
         select: { id: true, name: true, email: true }
       }
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { recordedAt: 'desc' },
     take: limit
   });
 

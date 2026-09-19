@@ -3,14 +3,17 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
-import { requireAuth, encrypt, decrypt, createSession } from '@/lib/auth/session';
+import { requireAuth, encrypt, decrypt, createSession, destroySession } from '@/lib/auth/session';
 import { hashPassword, verifyPassword } from '@/lib/auth/password';
 import { generateMfaSecret, verifyMfaToken } from '@/lib/auth/mfa';
 import { checkRateLimit } from '@/lib/security/rate-limit';
+import { revokeUserDevice, revokeAllOtherDevices as revokeOtherDevicesHelper } from '@/lib/auth/device';
+import { logAudit } from '@/lib/security/audit';
 
 function result(status: string): never {
   redirect('/settings/security?status=' + status);
 }
+
 async function authorize(form: FormData) {
   const session = await requireAuth();
   if (!(await checkRateLimit('auth', 'security-settings:' + session.userId)).success)
@@ -73,6 +76,14 @@ export async function enableMfa(form: FormData) {
 
 export async function disableMfa(form: FormData) {
   const user = await authorize(form);
+
+  // Check if MFA is mandatory for this user's role
+  const { getEffectiveMfaRequirement } = await import('@/lib/auth/mfa-policy');
+  const policy = await getEffectiveMfaRequirement(user.id);
+  if (policy.type === 'MANDATORY_ROLE') {
+    result('mfa-mandatory');
+  }
+
   const token = form.get('token');
   if (
     !user.mfaSecret ||
@@ -100,4 +111,75 @@ export async function savePin(form: FormData) {
     data: { screenLockPin: await hashPassword(pin) },
   });
   result('pin-saved');
+}
+
+export async function revokeSession(form: FormData) {
+  const session = await requireAuth();
+  const sessionId = form.get('sessionId');
+  if (typeof sessionId !== 'string') result('invalid');
+
+  const cookieStore = await cookies();
+  const currentCookie = cookieStore.get('session')?.value;
+  const currentPayload = currentCookie ? await decrypt(currentCookie) : null;
+  const isCurrentSession = currentPayload?.sessionId === sessionId;
+
+  await prisma.session.deleteMany({
+    where: { id: sessionId, userId: session.userId },
+  });
+
+  await logAudit({
+    userId: session.userId,
+    action: 'SESSION_REVOKED',
+    resourceType: 'Session',
+    resourceId: sessionId,
+    category: 'SECURITY',
+  });
+
+  if (isCurrentSession) {
+    await destroySession();
+    redirect('/login');
+  }
+
+  result('session-revoked');
+}
+
+export async function revokeAllOtherSessions() {
+  const session = await requireAuth();
+  const cookieStore = await cookies();
+  const currentCookie = cookieStore.get('session')?.value;
+  const currentPayload = currentCookie ? await decrypt(currentCookie) : null;
+  const currentSessionId =
+    typeof currentPayload?.sessionId === 'string' ? currentPayload.sessionId : undefined;
+
+  await prisma.session.deleteMany({
+    where: {
+      userId: session.userId,
+      ...(currentSessionId ? { id: { not: currentSessionId } } : {}),
+    },
+  });
+
+  await logAudit({
+    userId: session.userId,
+    action: 'SESSION_REVOKED',
+    resourceType: 'Session',
+    category: 'SECURITY',
+    metadata: { allOther: true },
+  });
+
+  result('sessions-cleared');
+}
+
+export async function revokeDevice(form: FormData) {
+  const session = await requireAuth();
+  const deviceId = form.get('deviceId');
+  if (typeof deviceId !== 'string') result('invalid');
+
+  await revokeUserDevice(session.userId, deviceId);
+  result('device-revoked');
+}
+
+export async function revokeAllOtherDevices() {
+  const session = await requireAuth();
+  await revokeOtherDevicesHelper(session.userId);
+  result('devices-cleared');
 }

@@ -1,5 +1,6 @@
 import { EmailProvider, EmailPayload } from './provider';
 import * as nodemailer from 'nodemailer';
+import { logger } from '../../logger';
 
 export class SmtpEmailProvider implements EmailProvider {
   name = 'smtp-primary';
@@ -22,6 +23,7 @@ export class SmtpEmailProvider implements EmailProvider {
   }
 
   async send(payload: EmailPayload) {
+    const startTime = Date.now();
     try {
       const defaultFrom = process.env.SMTP_FROM_EMAIL || 'noreply@example.com';
       const defaultFromName = process.env.SMTP_FROM_NAME || 'Master Template';
@@ -36,15 +38,54 @@ export class SmtpEmailProvider implements EmailProvider {
         text: payload.text,
         replyTo: payload.replyTo,
       });
+      
+      const durationMs = Date.now() - startTime;
+
+      // Forensic Audit Log
+      await logger.audit({
+        eventName: 'EMAIL_SMTP_SENT',
+        category: 'COMMUNICATION',
+        severity: 'INFO',
+        outcome: 'SUCCESS',
+        resourceType: 'Email',
+        resourceId: info.messageId,
+        action: 'CREATE',
+        durationMs,
+        description: `Successfully sent email via SMTP`,
+        metadata: {
+          to: payload.to, // Explicitly safe to log the recipient domain (or full address if PII policy allows, but standard requires email recipient tracking)
+          subject: payload.subject,
+          smtpResponse: info.response,
+        }
+      });
 
       return {
         success: true,
         messageId: info.messageId,
       };
     } catch (e: unknown) {
+      const durationMs = Date.now() - startTime;
+      const errorMsg = e instanceof Error ? e.message : 'Unknown SMTP Error';
+      
+      await logger.audit({
+        eventName: 'EMAIL_SMTP_FAILED',
+        category: 'COMMUNICATION',
+        severity: 'ERROR',
+        outcome: 'FAILURE',
+        resourceType: 'Email',
+        action: 'CREATE',
+        durationMs,
+        reasonCode: 'SMTP_DELIVERY_FAILURE',
+        description: `Failed to send email: ${errorMsg}`,
+        metadata: {
+          to: payload.to,
+          subject: payload.subject,
+        }
+      });
+
       return {
         success: false,
-        error: e instanceof Error ? e.message : 'Unknown SMTP Error',
+        error: errorMsg,
       };
     }
   }

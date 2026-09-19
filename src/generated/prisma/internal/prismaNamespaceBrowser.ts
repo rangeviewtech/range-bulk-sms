@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   Session: 'Session',
+  UserDevice: 'UserDevice',
   VerificationToken: 'VerificationToken',
   Role: 'Role',
   Permission: 'Permission',
@@ -147,6 +148,12 @@ export const SessionScalarFieldEnum = {
   userId: 'userId',
   token: 'token',
   expiresAt: 'expiresAt',
+  lastActivityAt: 'lastActivityAt',
+  idleExpiresAt: 'idleExpiresAt',
+  rememberMe: 'rememberMe',
+  revokedAt: 'revokedAt',
+  revocationReason: 'revocationReason',
+  mfaVerified: 'mfaVerified',
   deviceInfo: 'deviceInfo',
   ipAddress: 'ipAddress',
   createdAt: 'createdAt',
@@ -154,6 +161,21 @@ export const SessionScalarFieldEnum = {
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+export const UserDeviceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  deviceHash: 'deviceHash',
+  deviceName: 'deviceName',
+  deviceInfo: 'deviceInfo',
+  ipAddress: 'ipAddress',
+  lastLoginAt: 'lastLoginAt',
+  createdAt: 'createdAt',
+  revokedAt: 'revokedAt'
+} as const
+
+export type UserDeviceScalarFieldEnum = (typeof UserDeviceScalarFieldEnum)[keyof typeof UserDeviceScalarFieldEnum]
 
 
 export const VerificationTokenScalarFieldEnum = {
@@ -209,28 +231,41 @@ export type RolePermissionScalarFieldEnum = (typeof RolePermissionScalarFieldEnu
 
 export const AuditLogScalarFieldEnum = {
   id: 'id',
-  requestId: 'requestId',
-  traceId: 'traceId',
-  userId: 'userId',
-  actorType: 'actorType',
-  actorRole: 'actorRole',
-  action: 'action',
+  schemaVersion: 'schemaVersion',
+  timestamp: 'timestamp',
+  recordedAt: 'recordedAt',
+  eventName: 'eventName',
   category: 'category',
-  operation: 'operation',
-  resource: 'resource',
+  severity: 'severity',
+  outcome: 'outcome',
+  actorType: 'actorType',
+  actorId: 'actorId',
+  actorRole: 'actorRole',
+  tenantId: 'tenantId',
   resourceType: 'resourceType',
   resourceId: 'resourceId',
-  status: 'status',
-  durationMs: 'durationMs',
-  errorCode: 'errorCode',
-  reason: 'reason',
-  changes: 'changes',
-  metadata: 'metadata',
-  ipAddress: 'ipAddress',
+  action: 'action',
+  requestId: 'requestId',
+  traceId: 'traceId',
+  interactionId: 'interactionId',
+  jobId: 'jobId',
+  transactionId: 'transactionId',
+  sourceIp: 'sourceIp',
   userAgent: 'userAgent',
   route: 'route',
   httpMethod: 'httpMethod',
-  createdAt: 'createdAt'
+  httpStatus: 'httpStatus',
+  reasonCode: 'reasonCode',
+  changedFields: 'changedFields',
+  previousVersion: 'previousVersion',
+  newVersion: 'newVersion',
+  service: 'service',
+  environment: 'environment',
+  deploymentId: 'deploymentId',
+  durationMs: 'durationMs',
+  description: 'description',
+  previousHash: 'previousHash',
+  hash: 'hash'
 } as const
 
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]

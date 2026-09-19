@@ -2,12 +2,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
 import { LanguageToggle } from "@/components/navigation/language-toggle";
 import { useLanguage } from "@/hooks/use-language";
 import { appAssets } from '@/config/assets';
 import { appConfig } from '@/config/app';
+import { AuthLink } from '@/components/ui/auth-link';
 
 const FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
@@ -26,60 +26,83 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div
-      className="relative min-h-screen w-full bg-white overflow-hidden select-none"
+      className="relative min-h-screen w-full bg-white overflow-hidden"
       style={{ fontFamily: FONT_STACK, fontSize: '13px', color: 'hsl(var(--foreground))' }}
     >
       {/* Background Carousel */}
       <div 
         id="img-holder"
+        className="select-none pointer-events-none right-0 sm:right-[340px] bg-slate-950"
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
-          right: 0,
           bottom: 0,
           height: '100vh',
           zIndex: 0,
           overflow: 'hidden',
         }}
       >
-        {slides.map((src, index) => (
-          <img
-            key={src}
-            src={src}
-            alt={`Background Slide ${index + 1}`}
-            className="auth-carousel-slide"
-            style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              bottom: 0,
-              width: '100%',
-              maxWidth: '100%',
-              minHeight: '100%',
-              objectFit: 'cover',
-              opacity: index === currentImageIndex ? 1 : 0,
-              zIndex: index === currentImageIndex ? 2 : 1,
-            }}
-          />
-        ))}
+        {slides.map((src, index) => {
+          const isActive = index === currentImageIndex;
+          return (
+            <React.Fragment key={src}>
+              {/* Ambient Blurred Backdrop */}
+              <img
+                src={src}
+                alt=""
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  top: '-5%',
+                  left: '-5%',
+                  width: '110%',
+                  height: '110%',
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                  filter: 'blur(32px) brightness(0.6)',
+                  transform: 'scale(1.12)',
+                  opacity: isActive ? 0.8 : 0,
+                  transition: 'opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                  zIndex: isActive ? 1 : 0,
+                }}
+              />
+              {/* Razor-sharp Foreground Hero Slide */}
+              <img
+                src={src}
+                alt={`Background Slide ${index + 1}`}
+                className="auth-carousel-slide"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  maxWidth: '100%',
+                  minHeight: '100%',
+                  opacity: isActive ? 1 : 0,
+                  transition: 'opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                  zIndex: isActive ? 3 : 2,
+                }}
+              />
+            </React.Fragment>
+          );
+        })}
       </div>
 
       {/* Form Main Container */}
       <div
-        className="form-main-container auth-fade-in w-full sm:w-[340px]"
+        className="form-main-container auth-fade-in select-text w-full sm:w-[340px]"
         style={{
           position: 'fixed',
           maxWidth: '100%',
-          height: '100vh',
+          height: '100dvh',
           right: '0px',
           top: '0px',
           left: 'auto',
-          margin: 'auto',
           backgroundColor: 'hsl(var(--card))',
           display: 'flex',
           flexDirection: 'column',
-          padding: '24px 24px',
+          padding: '20px 24px',
           boxSizing: 'border-box',
           zIndex: 20,
           boxShadow: '0 0 30px rgba(0,0,0,0.14)',
@@ -106,8 +129,8 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
           <LanguageToggle />
         </div>
 
-        {/* Centered Wrapper for Logo and Form (Safe scroll-centering with margin: auto 0) */}
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%', margin: 'auto 0', paddingTop: '24px', paddingBottom: '36px', boxSizing: 'border-box' }}>
+        {/* Content Wrapper (Safe vertical layout with no top-clipping on short screens) */}
+        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', margin: 'auto 0', paddingTop: '16px', paddingBottom: '16px', boxSizing: 'border-box' }}>
           {/* Brand Logo */}
           <div className="auth-stagger-1">
             <img
@@ -115,11 +138,11 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
               alt={`${appConfig.name} logo`}
               className="logo-container theme-logo-light"
               style={{
-                margin: '0 auto 24px',
-                width: '275px',
-                maxWidth: '92%',
+                margin: '0 auto 20px',
+                width: '260px',
+                maxWidth: '90%',
                 height: 'auto',
-                maxHeight: '88px',
+                maxHeight: '76px',
                 objectFit: 'contain',
                 transition: 'transform 0.3s ease',
               }}
@@ -129,11 +152,11 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
               alt={`${appConfig.name} logo`}
               className="logo-container theme-logo-dark"
               style={{
-                margin: '0 auto 24px',
-                width: '275px',
-                maxWidth: '92%',
+                margin: '0 auto 20px',
+                width: '260px',
+                maxWidth: '90%',
                 height: 'auto',
-                maxHeight: '88px',
+                maxHeight: '76px',
                 objectFit: 'contain',
                 transition: 'transform 0.3s ease',
               }}
@@ -154,65 +177,44 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
             {children}
           </div>
 
-          <div className="application-container auth-stagger-5" style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', width: '100%' }}>
+          <div className="application-container auth-stagger-5" style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', width: '100%' }}>
             {/* Legal Links Footer */}
-            <div style={{ marginTop: '14px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', flexWrap: 'wrap', width: '100%' }}>
-              <Link
+            <div style={{ marginTop: '10px', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', flexWrap: 'wrap', width: '100%' }}>
+              <AuthLink
                 href="/terms"
-                target="_blank"
-                className="auth-link"
+                external
                 style={{
                   fontSize: '10.5px',
-                  color: 'var(--brand-link)',
-                  textDecoration: 'none',
-                  fontWeight: 600,
                   fontFamily: FONT_STACK,
                   whiteSpace: 'nowrap',
-                  transition: 'opacity 0.2s ease, color 0.2s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
               >
                 {dict.legal?.termsAndConditions || 'Terms & Conditions'}
-              </Link>
+              </AuthLink>
               <span aria-hidden="true" style={{ fontSize: '10px', color: 'var(--brand-link)', opacity: 0.5 }}>&bull;</span>
-              <Link
+              <AuthLink
                 href="/privacy"
-                target="_blank"
-                className="auth-link"
+                external
                 style={{
                   fontSize: '10.5px',
-                  color: 'var(--brand-link)',
-                  textDecoration: 'none',
-                  fontWeight: 600,
                   fontFamily: FONT_STACK,
                   whiteSpace: 'nowrap',
-                  transition: 'opacity 0.2s ease, color 0.2s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
               >
                 {dict.legal?.privacyPolicy || 'Privacy Policy'}
-              </Link>
+              </AuthLink>
               <span aria-hidden="true" style={{ fontSize: '10px', color: 'var(--brand-link)', opacity: 0.5 }}>&bull;</span>
-              <Link
+              <AuthLink
                 href="/cookies"
-                target="_blank"
-                className="auth-link"
+                external
                 style={{
                   fontSize: '10.5px',
-                  color: 'var(--brand-link)',
-                  textDecoration: 'none',
-                  fontWeight: 600,
                   fontFamily: FONT_STACK,
                   whiteSpace: 'nowrap',
-                  transition: 'opacity 0.2s ease, color 0.2s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
               >
                 {dict.legal?.cookiePolicy || 'Cookie Policy'}
-              </Link>
+              </AuthLink>
             </div>
           </div>
         </div>

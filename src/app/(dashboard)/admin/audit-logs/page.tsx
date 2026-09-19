@@ -12,13 +12,16 @@ import { format } from "date-fns";
 
 interface AuditLogRecord {
   id: string;
-  action: string;
+  eventName: string;
+  category: string;
+  severity: string;
+  outcome: string;
   resourceType: string | null;
   resourceId: string | null;
-  status: string;
-  ipAddress: string | null;
+  sourceIp: string | null;
   userAgent: string | null;
-  createdAt: string;
+  recordedAt: string;
+  hash: string | null;
   user: {
     id: string;
     name: string | null;
@@ -122,7 +125,7 @@ export default function AuditLogsPage() {
                 logs.map((log) => (
                   <TableRow key={log.id}>
                     <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">
-                      {format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss")}
+                      {format(new Date(log.recordedAt), "yyyy-MM-dd HH:mm:ss")}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
@@ -140,9 +143,12 @@ export default function AuditLogsPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="font-mono text-xs font-semibold">
-                        {log.action}
-                      </Badge>
+                      <div className="flex flex-col space-y-1">
+                         <Badge variant="outline" className="font-mono text-[10px] uppercase font-semibold">
+                           {log.category}
+                         </Badge>
+                         <span className="font-mono text-xs">{log.eventName}</span>
+                      </div>
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
                       <span className="font-medium text-foreground">{log.resourceType || "General"}</span>
@@ -153,17 +159,24 @@ export default function AuditLogsPage() {
                       )}
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground font-mono">
-                      <div className="flex items-center gap-1">
-                        <Globe className="w-3 h-3 text-muted-foreground" />
-                        <span>{log.ipAddress || "127.0.0.1"}</span>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1">
+                          <Globe className="w-3 h-3 text-muted-foreground" />
+                          <span>{log.sourceIp || "127.0.0.1"}</span>
+                        </div>
+                        {log.hash && (
+                          <span className="text-[10px] truncate max-w-[120px]" title={log.hash}>
+                            {log.hash.slice(0, 16)}...
+                          </span>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
                       <Badge
-                        variant={log.status === "SUCCESS" ? "outline" : "destructive"}
-                        className={log.status === "SUCCESS" ? "text-emerald-600 border-emerald-600/30 bg-emerald-500/10 text-xs" : "text-xs"}
+                        variant={log.outcome === "SUCCESS" ? "outline" : "destructive"}
+                        className={log.outcome === "SUCCESS" ? "text-emerald-600 border-emerald-600/30 bg-emerald-500/10 text-xs" : "text-xs"}
                       >
-                        {log.status}
+                        {log.outcome}
                       </Badge>
                     </TableCell>
                   </TableRow>

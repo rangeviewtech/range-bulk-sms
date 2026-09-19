@@ -49,8 +49,13 @@ export async function POST(req: NextRequest) {
 
     const template = await prisma.smsTemplate.create({
       data: {
-        ...data,
-        userId: session.userId
+        name: data.name,
+        category: data.category,
+        message: data.message,
+        variables: data.variables,
+        isFavorite: data.isFavorite,
+        isShared: data.isShared,
+        user: { connect: { id: session.userId } }
       }
     });
 

@@ -10,7 +10,6 @@
  * - Background Slide 1:     /images/smart/slide-1.jpg   (or NEXT_PUBLIC_ASSET_SLIDE_1)
  * - Background Slide 2:     /images/smart/slide-2.png   (or NEXT_PUBLIC_ASSET_SLIDE_2)
  * - Background Slide 3:     /images/smart/slide-3.jpg   (or NEXT_PUBLIC_ASSET_SLIDE_3)
- * - Background Slide 4:     /images/smart/slide-4.jpg   (or NEXT_PUBLIC_ASSET_SLIDE_4)
  * - Google Play Store:      /images/smart/google-play-badge.svg
  * - Apple App Store:        /images/smart/app-store-badge.svg
  * - Microsoft Store:        /images/smart/microsoft-store-badge.svg
@@ -28,10 +27,9 @@ export const appAssets = {
 
   // Background Carousel Slides
   slides: [
-    process.env.NEXT_PUBLIC_ASSET_SLIDE_1 || '/images/smart/slide-1.jpg',
-    process.env.NEXT_PUBLIC_ASSET_SLIDE_2 || '/images/smart/slide-2.png',
-    process.env.NEXT_PUBLIC_ASSET_SLIDE_3 || '/images/smart/slide-3.jpg',
-    process.env.NEXT_PUBLIC_ASSET_SLIDE_4 || '/images/smart/slide-4.jpg',
+    process.env.NEXT_PUBLIC_ASSET_SLIDE_1 || '/images/smart/range-slide-1.jpg',
+    process.env.NEXT_PUBLIC_ASSET_SLIDE_2 || '/images/smart/range-slide-2.png',
+    process.env.NEXT_PUBLIC_ASSET_SLIDE_3 || '/images/smart/range-slide-3.jpg',
   ],
 
   // Store Badges

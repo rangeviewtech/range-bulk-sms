@@ -399,6 +399,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   User: 'User',
   Session: 'Session',
+  UserDevice: 'UserDevice',
   VerificationToken: 'VerificationToken',
   Role: 'Role',
   Permission: 'Permission',
@@ -464,7 +465,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "verificationToken" | "role" | "permission" | "userRole" | "rolePermission" | "auditLog" | "job" | "communicationLog" | "providerHealth" | "otpRecord" | "telegramLinkingToken" | "notificationPreference" | "notificationTemplate" | "notification" | "scheduledJob" | "cronExecution" | "organization" | "client" | "agent" | "contact" | "contactGroup" | "contactGroupMember" | "contactTag" | "contactTagAssignment" | "contactImport" | "senderId" | "smsTemplate" | "campaign" | "campaignGroup" | "message" | "messageRecipient" | "smsProvider" | "providerRoute" | "wallet" | "transaction" | "smsPricing" | "commission" | "commissionRule" | "apiKey" | "apiRequest" | "webhook" | "webhookDelivery" | "supportTicket" | "ticketMessage" | "scheduledMessage" | "gateway" | "gatewayDevice" | "gatewayToken" | "gatewayLog" | "messageAttempt"
+    modelProps: "user" | "session" | "userDevice" | "verificationToken" | "role" | "permission" | "userRole" | "rolePermission" | "auditLog" | "job" | "communicationLog" | "providerHealth" | "otpRecord" | "telegramLinkingToken" | "notificationPreference" | "notificationTemplate" | "notification" | "scheduledJob" | "cronExecution" | "organization" | "client" | "agent" | "contact" | "contactGroup" | "contactGroupMember" | "contactTag" | "contactTagAssignment" | "contactImport" | "senderId" | "smsTemplate" | "campaign" | "campaignGroup" | "message" | "messageRecipient" | "smsProvider" | "providerRoute" | "wallet" | "transaction" | "smsPricing" | "commission" | "commissionRule" | "apiKey" | "apiRequest" | "webhook" | "webhookDelivery" | "supportTicket" | "ticketMessage" | "scheduledMessage" | "gateway" | "gatewayDevice" | "gatewayToken" | "gatewayLog" | "messageAttempt"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -613,6 +614,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.SessionCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.SessionCountAggregateOutputType> | number
+        }
+      }
+    }
+    UserDevice: {
+      payload: Prisma.$UserDevicePayload<ExtArgs>
+      fields: Prisma.UserDeviceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserDeviceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDevicePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserDeviceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDevicePayload>
+        }
+        findFirst: {
+          args: Prisma.UserDeviceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDevicePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserDeviceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDevicePayload>
+        }
+        findMany: {
+          args: Prisma.UserDeviceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDevicePayload>[]
+        }
+        create: {
+          args: Prisma.UserDeviceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDevicePayload>
+        }
+        createMany: {
+          args: Prisma.UserDeviceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserDeviceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDevicePayload>[]
+        }
+        delete: {
+          args: Prisma.UserDeviceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDevicePayload>
+        }
+        update: {
+          args: Prisma.UserDeviceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDevicePayload>
+        }
+        deleteMany: {
+          args: Prisma.UserDeviceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserDeviceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserDeviceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDevicePayload>[]
+        }
+        upsert: {
+          args: Prisma.UserDeviceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDevicePayload>
+        }
+        aggregate: {
+          args: Prisma.UserDeviceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserDevice>
+        }
+        groupBy: {
+          args: Prisma.UserDeviceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserDeviceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserDeviceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserDeviceCountAggregateOutputType> | number
         }
       }
     }
@@ -4381,6 +4456,12 @@ export const SessionScalarFieldEnum = {
   userId: 'userId',
   token: 'token',
   expiresAt: 'expiresAt',
+  lastActivityAt: 'lastActivityAt',
+  idleExpiresAt: 'idleExpiresAt',
+  rememberMe: 'rememberMe',
+  revokedAt: 'revokedAt',
+  revocationReason: 'revocationReason',
+  mfaVerified: 'mfaVerified',
   deviceInfo: 'deviceInfo',
   ipAddress: 'ipAddress',
   createdAt: 'createdAt',
@@ -4388,6 +4469,21 @@ export const SessionScalarFieldEnum = {
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+export const UserDeviceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  deviceHash: 'deviceHash',
+  deviceName: 'deviceName',
+  deviceInfo: 'deviceInfo',
+  ipAddress: 'ipAddress',
+  lastLoginAt: 'lastLoginAt',
+  createdAt: 'createdAt',
+  revokedAt: 'revokedAt'
+} as const
+
+export type UserDeviceScalarFieldEnum = (typeof UserDeviceScalarFieldEnum)[keyof typeof UserDeviceScalarFieldEnum]
 
 
 export const VerificationTokenScalarFieldEnum = {
@@ -4443,28 +4539,41 @@ export type RolePermissionScalarFieldEnum = (typeof RolePermissionScalarFieldEnu
 
 export const AuditLogScalarFieldEnum = {
   id: 'id',
-  requestId: 'requestId',
-  traceId: 'traceId',
-  userId: 'userId',
-  actorType: 'actorType',
-  actorRole: 'actorRole',
-  action: 'action',
+  schemaVersion: 'schemaVersion',
+  timestamp: 'timestamp',
+  recordedAt: 'recordedAt',
+  eventName: 'eventName',
   category: 'category',
-  operation: 'operation',
-  resource: 'resource',
+  severity: 'severity',
+  outcome: 'outcome',
+  actorType: 'actorType',
+  actorId: 'actorId',
+  actorRole: 'actorRole',
+  tenantId: 'tenantId',
   resourceType: 'resourceType',
   resourceId: 'resourceId',
-  status: 'status',
-  durationMs: 'durationMs',
-  errorCode: 'errorCode',
-  reason: 'reason',
-  changes: 'changes',
-  metadata: 'metadata',
-  ipAddress: 'ipAddress',
+  action: 'action',
+  requestId: 'requestId',
+  traceId: 'traceId',
+  interactionId: 'interactionId',
+  jobId: 'jobId',
+  transactionId: 'transactionId',
+  sourceIp: 'sourceIp',
   userAgent: 'userAgent',
   route: 'route',
   httpMethod: 'httpMethod',
-  createdAt: 'createdAt'
+  httpStatus: 'httpStatus',
+  reasonCode: 'reasonCode',
+  changedFields: 'changedFields',
+  previousVersion: 'previousVersion',
+  newVersion: 'newVersion',
+  service: 'service',
+  environment: 'environment',
+  deploymentId: 'deploymentId',
+  durationMs: 'durationMs',
+  description: 'description',
+  previousHash: 'previousHash',
+  hash: 'hash'
 } as const
 
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
@@ -5837,6 +5946,7 @@ export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaC
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   session?: Prisma.SessionOmit
+  userDevice?: Prisma.UserDeviceOmit
   verificationToken?: Prisma.VerificationTokenOmit
   role?: Prisma.RoleOmit
   permission?: Prisma.PermissionOmit

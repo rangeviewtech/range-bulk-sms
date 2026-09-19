@@ -28,6 +28,11 @@ export type User = Prisma.UserModel
  */
 export type Session = Prisma.SessionModel
 /**
+ * Model UserDevice
+ * 
+ */
+export type UserDevice = Prisma.UserDeviceModel
+/**
  * Model VerificationToken
  * 
  */

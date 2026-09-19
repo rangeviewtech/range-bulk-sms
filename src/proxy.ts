@@ -4,6 +4,8 @@ import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 import { checkRateLimit } from '@/lib/security/rate-limit';
 
+import { resolveDashboardDestination } from '@/lib/auth/destination';
+
 // Define routing paths
 const protectedPrefixes = [
   '/dashboard',
@@ -20,6 +22,12 @@ const protectedPrefixes = [
   '/developer',
   '/sender-ids',
   '/support'
+];
+
+const guestRoutes = [
+  '/login',
+  '/register',
+  '/forgot-password',
 ];
 
 export async function proxy(request: NextRequest) {
@@ -53,7 +61,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // 1. CSRF Protection for state-changing requests
+  // 3. CSRF Protection for state-changing requests
   if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {
     const origin = request.headers.get('origin');
     const host = request.headers.get('host');
@@ -85,6 +93,8 @@ export async function proxy(request: NextRequest) {
   let hasSession = false;
   let mfaVerified = false;
   let signedScreenLocked = false;
+  let sessionRoles: string[] = [];
+  let isIdleExpired = false;
 
   if (sessionCookie) {
     try {
@@ -92,18 +102,75 @@ export async function proxy(request: NextRequest) {
       if (secret.length < 32) throw new Error('Invalid session configuration');
       const key = new TextEncoder().encode(secret);
       const { payload } = await jwtVerify(sessionCookie, key, { algorithms: ['HS256'] });
-      hasSession =
+
+      const isAbsoluteValid =
         typeof payload.sessionId === 'string' &&
         typeof payload.userId === 'string' &&
         typeof payload.expiresAt === 'string' &&
         Date.parse(payload.expiresAt) > Date.now();
-      mfaVerified = payload.mfaVerified === true;
-      signedScreenLocked = payload.screenLocked === true;
+
+      // Check 15-minute idle expiration for non-remembered sessions
+      if (
+        isAbsoluteValid &&
+        payload.rememberMe === false &&
+        typeof payload.idleExpiresAt === 'string' &&
+        Date.parse(payload.idleExpiresAt) <= Date.now()
+      ) {
+        isIdleExpired = true;
+      }
+
+      if (isAbsoluteValid && !isIdleExpired) {
+        hasSession = true;
+        mfaVerified = payload.mfaVerified === true;
+        signedScreenLocked = payload.screenLocked === true;
+        if (Array.isArray(payload.roles)) {
+          sessionRoles = payload.roles as string[];
+        }
+      }
     } catch (_e) {
       hasSession = false;
     }
   }
 
+  // If session expired due to idle timeout on a protected or active path, redirect with deletion
+  if (isIdleExpired) {
+    const expiredRedirect = NextResponse.redirect(new URL('/login?expired=1', request.url));
+    expiredRedirect.cookies.delete('session');
+    expiredRedirect.cookies.delete('screen_locked');
+    return expiredRedirect;
+  }
+
+  // 4. Guest Route Guards (redirect authenticated users away from login/register/etc.)
+  const isGuestRoute =
+    guestRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`)) ||
+    (pathname === '/reset-password' && !request.nextUrl.searchParams.get('token'));
+
+  if (isGuestRoute) {
+    if (hasSession && mfaVerified) {
+      const callbackUrl =
+        request.nextUrl.searchParams.get('callbackUrl') ||
+        request.nextUrl.searchParams.get('returnTo');
+      const destination = resolveDashboardDestination(sessionRoles, callbackUrl);
+      return NextResponse.redirect(new URL(destination, request.url));
+    }
+
+    if (hasSession && !mfaVerified) {
+      return NextResponse.redirect(new URL('/2fa/challenge', request.url));
+    }
+  }
+
+  // 5. 2FA Challenge Route Guard
+  if (pathname === '/2fa/challenge' || pathname.startsWith('/2fa/challenge/')) {
+    if (hasSession && mfaVerified) {
+      const destination = resolveDashboardDestination(sessionRoles);
+      return NextResponse.redirect(new URL(destination, request.url));
+    }
+    if (!hasSession) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+  }
+
+  // 6. Protected Routes Guard
   const isProtectedPath = protectedPrefixes.some(
     (prefix) => pathname === prefix || pathname.startsWith(prefix + '/')
   );
@@ -128,7 +195,10 @@ export async function proxy(request: NextRequest) {
     const screenLocked =
       signedScreenLocked || request.cookies.get('screen_locked')?.value === 'true';
     if (!hasSession || !screenLocked) {
-      return NextResponse.redirect(new URL(hasSession ? '/dashboard' : '/login', request.url));
+      const destination = hasSession
+        ? resolveDashboardDestination(sessionRoles)
+        : '/login';
+      return NextResponse.redirect(new URL(destination, request.url));
     }
   }
 

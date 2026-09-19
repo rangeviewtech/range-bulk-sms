@@ -4,6 +4,7 @@ export const loginSchema = z.object({
   email: z.string().trim().email('Please enter a valid email address').max(254),
   password: z.string().min(1, 'Please enter your password'),
   turnstileToken: z.string().optional(), // For bot protection
+  rememberMe: z.boolean().optional(),
 });
 
 export const registerSchema = z
@@ -35,9 +36,10 @@ export const forgotPasswordSchema = z.object({
 
 export const resetPasswordSchema = z
   .object({
-    token: z.string().uuid(),
+    token: z.string().min(20, 'Invalid token').max(128, 'Invalid token'),
     password: z
       .string()
+      .min(1, 'Password is required')
       .min(8, 'Password must be at least 8 characters')
       .max(128, 'Password must be at most 128 characters')
       .regex(/[A-Z]/, 'Password must include at least one uppercase letter')

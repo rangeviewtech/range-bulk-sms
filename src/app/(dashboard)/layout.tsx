@@ -1,9 +1,6 @@
-
- 
- 
 import { RangeShell } from '@/components/layout/range-shell';
 import { verifySession } from '@/lib/auth/session';
-import { InactivityProvider } from '@/components/providers/inactivity-provider';
+import { SessionIdleTracker } from '@/components/auth/session-idle-tracker';
 import { redirect } from 'next/navigation';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -20,10 +17,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
   };
 
   return (
-    <InactivityProvider timeoutMinutes={15}>
+    <SessionIdleTracker
+      rememberMe={session.rememberMe}
+      idleExpiresAt={session.idleExpiresAt?.toISOString()}
+      expiresAt={session.expiresAt.toISOString()}
+      timeoutMinutes={15}
+      warningMinutes={2}
+    >
       <RangeShell user={user}>
         {children}
       </RangeShell>
-    </InactivityProvider>
+    </SessionIdleTracker>
   );
 }

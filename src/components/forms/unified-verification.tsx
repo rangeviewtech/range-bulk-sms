@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { PinInput } from '@/components/forms/pin-input';
 import { TurnstileWidget } from '@/components/forms/turnstile-widget';
+import { AuthLink } from '@/components/ui/auth-link';
 import { verifyUnifiedVerification, resendUnifiedVerification } from '@/app/(auth)/actions';
 import { CommunicationChannel } from '@/generated/prisma';
-import { toast } from 'sonner';
+import { notify, toast } from '@/lib/notifications/toast';
 import { ShieldCheck, Smartphone, MessageSquare, Send, Mail } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 
@@ -19,9 +19,10 @@ interface UnifiedVerificationProps {
   defaultChannel?: string;
   defaultMethod?: VerificationMethod;
   allowedMethods?: VerificationMethod[];
+  maskedContact?: string;
 }
 
-export function UnifiedVerification({ userId, defaultChannel, defaultMethod, allowedMethods }: UnifiedVerificationProps) {
+export function UnifiedVerification({ userId, defaultChannel, defaultMethod, allowedMethods, maskedContact }: UnifiedVerificationProps) {
   const { dict } = useLanguage();
   const initialMethod: VerificationMethod = defaultMethod 
     ? defaultMethod 
@@ -77,7 +78,7 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
     }
 
     if (turnstileExpired) {
-      toast.error(dict.validation.securityCheckExpired || 'Security check has expired. Please verify again.');
+      notify.error(dict.validation.securityCheckExpired || 'Security check has expired. Please verify again.');
       return;
     }
 
@@ -94,7 +95,7 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
       const res = await verifyUnifiedVerification(formData);
       if (res?.error) {
         setError(res.error);
-        toast.error(res.error);
+        notify.error(res.error);
         setLoading(false);
       }
     } catch {
@@ -113,14 +114,14 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
       const res = await resendUnifiedVerification(userId, channel);
       if (res?.error) {
         setError(res.error);
-        toast.error(res.error);
+        notify.error(res.error);
       } else {
         const label = METHODS.find((m) => m.id === targetMethod)?.label || targetMethod;
-        toast.success(`A new verification code has been sent via ${label}.`);
+        notify.success(`A new verification code has been sent via ${label}.`);
         setCountdown(60);
       }
     } catch {
-      toast.error('Could not resend code. Please try again.');
+      notify.error('Could not resend code. Please try again.');
     } finally {
       setResending(false);
     }
@@ -133,9 +134,11 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
         <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
           {dict.auth.twoStepTitle}
         </h3>
-        <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+        <p className="auth-subtitle" style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK, width: '100%', textAlign: 'justify', textJustify: 'inter-word' }}>
           {method === 'APP'
             ? dict.auth.instructAuthApp
+            : maskedContact
+            ? `${method === 'SMS' ? dict.auth.instructSms : method === 'WHATSAPP' ? dict.auth.instructWhatsApp : method === 'TELEGRAM' ? dict.auth.instructTelegram : dict.auth.instructEmail} (${maskedContact})`
             : method === 'SMS'
             ? dict.auth.instructSms
             : method === 'WHATSAPP'
@@ -251,7 +254,7 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
         <div className="login-con auth-stagger-4" style={{ width: '100%', marginTop: '10px' }}>
           <button
             type="submit"
-            disabled={loading || code.length !== 6}
+            disabled={loading || code.length !== 6 || (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? !turnstileToken || turnstileExpired : false)}
             className="btn btn-primary btn-main auth-btn-primary"
             style={{
               width: '100%',
@@ -264,11 +267,11 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
               fontWeight: 700,
               borderRadius: '7px',
               border: '0',
-              cursor: loading || code.length !== 6 ? 'not-allowed' : 'pointer',
+              cursor: loading || code.length !== 6 || (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? !turnstileToken || turnstileExpired : false) ? 'not-allowed' : 'pointer',
               textAlign: 'center',
               boxSizing: 'border-box',
               fontFamily: FONT_STACK,
-              opacity: loading || code.length !== 6 ? 0.7 : 1,
+              opacity: loading || code.length !== 6 || (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? !turnstileToken || turnstileExpired : false) ? 0.7 : 1,
             }}
           >
             {loading ? dict.auth.verifying : dict.auth.verifyAndContinueButton}
@@ -286,39 +289,27 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
                 {dict.auth.resendIn} {countdown}s
               </span>
             ) : (
-              <button
-                type="button"
+              <AuthLink
                 onClick={() => handleResend(method)}
-                disabled={resending || loading}
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#04648C',
                   fontSize: '12px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  padding: 0,
                   fontFamily: FONT_STACK,
-                  transition: 'opacity 0.2s',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
               >
                 {resending ? dict.auth.resending : dict.auth.resendCode}
-              </button>
+              </AuthLink>
             )}
           </div>
         )}
 
         {/* Back to Sign In Link */}
         <div className="text-center auth-stagger-5" style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', gap: '6px', alignItems: 'center' }}>
-          <Link
+          <AuthLink
             href="/login"
-            style={{ color: '#04648C', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s' }}
-            className="hover:opacity-80"
+            style={{ fontSize: '12px', fontFamily: FONT_STACK }}
           >
             {dict.auth.signInLink}
-          </Link>
+          </AuthLink>
         </div>
       </form>
     </div>

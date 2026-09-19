@@ -459,37 +459,48 @@ async function main() {
     })
   }
 
-  // 9. Seed Demo Audit Logs
   await prisma.auditLog.createMany({
     data: [
       {
-        userId: adminUser.id,
-        action: 'AUTH_LOGIN',
+        actorId: adminUser.id,
+        actorType: 'USER',
+        timestamp: new Date(),
+        eventName: 'AUTH_LOGIN',
         resourceType: 'User',
         resourceId: adminUser.id,
         category: 'SECURITY',
-        status: 'SUCCESS',
+        outcome: 'SUCCESS',
+        severity: 'INFO',
       },
       {
-        userId: adminUser.id,
-        action: 'UPDATE_PRICING',
+        actorId: adminUser.id,
+        actorType: 'USER',
+        timestamp: new Date(),
+        eventName: 'UPDATE_PRICING',
         resourceType: 'SmsPricing',
         category: 'APPLICATION',
-        status: 'SUCCESS',
+        outcome: 'SUCCESS',
+        severity: 'INFO',
       },
       {
-        userId: adminUser.id,
-        action: 'APPROVE_SENDER_ID',
+        actorId: adminUser.id,
+        actorType: 'USER',
+        timestamp: new Date(),
+        eventName: 'APPROVE_SENDER_ID',
         resourceType: 'SenderId',
         category: 'APPLICATION',
-        status: 'SUCCESS',
+        outcome: 'SUCCESS',
+        severity: 'INFO',
       },
       {
-        userId: adminUser.id,
-        action: 'CREATE_PROVIDER',
+        actorId: adminUser.id,
+        actorType: 'USER',
+        timestamp: new Date(),
+        eventName: 'CREATE_PROVIDER',
         resourceType: 'SmsProvider',
         category: 'APPLICATION',
-        status: 'SUCCESS',
+        outcome: 'SUCCESS',
+        severity: 'INFO',
       },
     ]
   })

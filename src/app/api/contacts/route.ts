@@ -78,10 +78,14 @@ export async function POST(req: NextRequest) {
 
     const contact = await prisma.contact.create({
       data: {
-        ...rest,
-        ...(customFields !== undefined && { customFields: customFields as Prisma.InputJsonValue }),
+        firstName: rest.firstName,
+        lastName: rest.lastName,
+        phone: rest.phone,
+        email: rest.email || undefined,
+        countryCode: rest.countryCode,
         normalizedPhone,
-        userId: session.userId,
+        ...(customFields !== undefined && { customFields: customFields as Prisma.InputJsonValue }),
+        user: { connect: { id: session.userId } },
         groups: groupIds ? {
           create: groupIds.map(id => ({ contactGroupId: id }))
         } : undefined

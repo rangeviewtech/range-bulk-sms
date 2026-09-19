@@ -444,7 +444,7 @@ span.help-img img:hover {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     cursor: pointer;
 }
-button:after{
+.tree-container button:after{
   background: #505a64;
   opacity: .6;
   border: 0;
@@ -455,7 +455,7 @@ button:after{
   20% { transform: scale(1); }
   100% { opacity: 0; transform: scale(1); }
 }
-button:after {
+.tree-container button:after {
   visibility: hidden;
 }
 .arrow-menu{

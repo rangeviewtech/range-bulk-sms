@@ -81,6 +81,73 @@ export const EmailTemplates: Record<string, (data: any) => { subject: string, ht
       `,
     };
   },
+  'auth.new_device': (data) => {
+    const lang = (data.locale || data.lang || 'EN') as LanguageCode;
+    const t = getDictionary(lang).email;
+    const securityUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/settings/security`;
+    const deviceName = data.deviceName || data.userAgent || 'Unrecognized Device';
+    const ipAddress = data.ipAddress || 'Unknown IP';
+    const timestamp = data.time || new Date().toUTCString();
+
+    return {
+      subject: `${t.securityAlertSubject || 'Security Alert: New Device Sign-In Detected'}`,
+      text: `Hello ${data.name || 'there'},\n\nA new sign-in was detected on your account.\nDevice: ${deviceName}\nIP Address: ${ipAddress}\nTime: ${timestamp}\n\nIf this was not you, secure your account immediately:\n${securityUrl}`,
+      html: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <div style="margin-bottom: 16px;">
+            <span style="display: inline-block; padding: 4px 10px; background: #eff6ff; color: #04648C; font-size: 11px; font-weight: 700; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Security Notice</span>
+          </div>
+          <h2 style="font-size: 20px; font-weight: 600; color: #0f172a; margin-bottom: 12px;">${t.securityAlertSubject || 'New Device Sign-In Detected'}</h2>
+          <p style="font-size: 14px; color: #475569; line-height: 22px; margin-bottom: 16px;">
+            Hello <strong>${data.name || 'there'}</strong>, we noticed a successful sign-in to your Range Bulk SMS account from a device or location we haven't seen before.
+          </p>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 14px 16px; margin-bottom: 20px;">
+            <table style="width: 100%; font-size: 13px; color: #334155;">
+              <tr>
+                <td style="padding: 4px 0; font-weight: 600; width: 100px;">Device:</td>
+                <td style="padding: 4px 0;">${deviceName}</td>
+              </tr>
+              <tr>
+                <td style="padding: 4px 0; font-weight: 600;">IP Address:</td>
+                <td style="padding: 4px 0;">${ipAddress}</td>
+              </tr>
+              <tr>
+                <td style="padding: 4px 0; font-weight: 600;">Timestamp:</td>
+                <td style="padding: 4px 0;">${timestamp}</td>
+              </tr>
+            </table>
+          </div>
+          <p style="font-size: 13px; color: #64748b; line-height: 20px; margin-bottom: 20px;">
+            If this was you, no action is needed. If you did not sign in recently, please review your active sessions and change your password immediately.
+          </p>
+          <div style="margin-bottom: 24px;">
+            <a href="${securityUrl}" style="display: inline-block; padding: 10px 24px; background: #04648C; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 13px; border-radius: 6px;">Manage Security & Sessions</a>
+          </div>
+        </div>
+      `,
+    };
+  },
+  'auth.password_changed': (data) => {
+    const securityUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/settings/security`;
+    return {
+      subject: 'Security Alert: Password Changed Successfully',
+      text: `Hello ${data.name || 'there'},\n\nYour account password was changed successfully. If you did not make this change, please contact support immediately.\n\n${securityUrl}`,
+      html: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <h2 style="font-size: 20px; font-weight: 600; color: #0f172a; margin-bottom: 12px;">Password Changed Successfully</h2>
+          <p style="font-size: 14px; color: #475569; line-height: 22px; margin-bottom: 16px;">
+            Hello <strong>${data.name || 'there'}</strong>, your password for Range Bulk SMS has been successfully updated. All active sessions have been secured.
+          </p>
+          <p style="font-size: 13px; color: #64748b; line-height: 20px; margin-bottom: 20px;">
+            If you did not initiate this change, your account may be compromised. Please contact support immediately or reset your password.
+          </p>
+          <div style="margin-bottom: 24px;">
+            <a href="${securityUrl}" style="display: inline-block; padding: 10px 24px; background: #04648C; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 13px; border-radius: 6px;">Review Security Settings</a>
+          </div>
+        </div>
+      `,
+    };
+  },
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

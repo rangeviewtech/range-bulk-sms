@@ -7,7 +7,12 @@ const SENSITIVE_KEYS = new Set(
     'passwordHash',
     'token',
     'refreshToken',
+    'accessToken',
+    'sessionToken',
+    'jwt',
+    'resetToken',
     'apiKey',
+    'apiKeys',
     'secret',
     'mfaSecret',
     'pin',
@@ -19,6 +24,15 @@ const SENSITIVE_KEYS = new Set(
     'turnstileToken',
     'html',
     'text',
+    'body',
+    'rawBody',
+    'smtpPass',
+    'smtpPassword',
+    'cronSecret',
+    'encryptionKey',
+    'privateKey',
+    'url',
+    'link',
   ].map((key) => key.toLowerCase())
 );
 
@@ -34,14 +48,18 @@ export function redactSensitiveData(obj: unknown): unknown {
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(redactSensitiveData);
+    return obj.map(item => redactSensitiveData(item));
   }
 
   const redacted: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(obj)) {
     if (SENSITIVE_KEYS.has(key) || SENSITIVE_KEYS.has(key.toLowerCase())) {
-      redacted[key] = '[REDACTED]';
+      if (Array.isArray(value)) {
+        redacted[key] = value.map(() => '[REDACTED]');
+      } else {
+        redacted[key] = '[REDACTED]';
+      }
     } else {
       redacted[key] = redactSensitiveData(value);
     }

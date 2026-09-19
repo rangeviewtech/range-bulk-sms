@@ -1,4 +1,4 @@
-﻿import type { NextConfig } from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   async headers() {
@@ -48,6 +48,19 @@ const nextConfig: NextConfig = {
           {
             key: 'Strict-Transport-Security',
             value: 'max-age=31536000; includeSubDomains',
+          },
+        ],
+      },
+      {
+        source: '/reset-password',
+        headers: [
+          {
+            key: 'Referrer-Policy',
+            value: 'no-referrer',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate, proxy-revalidate',
           },
         ],
       },

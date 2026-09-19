@@ -43,6 +43,7 @@ model User {
   // Relationships
   roles                   UserRole[]
   sessions                Session[]
+  devices                 UserDevice[]
   auditLogs               AuditLog[]
   telegramLinkingTokens   TelegramLinkingToken[]
   notificationPreferences NotificationPreference[]
@@ -69,10 +70,16 @@ model User {
 }
 
 model Session {
-  id        String   @id @default(uuid())
-  userId    String
-  token     String   @unique
-  expiresAt DateTime
+  id               String    @id @default(uuid())
+  userId           String
+  token            String    @unique
+  expiresAt        DateTime
+  lastActivityAt   DateTime  @default(now())
+  idleExpiresAt    DateTime?
+  rememberMe       Boolean   @default(false)
+  revokedAt        DateTime?
+  revocationReason String?
+  mfaVerified      Boolean   @default(false)
 
   deviceInfo String?
   ipAddress  String?
@@ -84,6 +91,26 @@ model Session {
 
   @@index([userId])
   @@index([token])
+  @@index([userId, revokedAt])
+  @@index([expiresAt])
+  @@index([idleExpiresAt])
+}
+
+model UserDevice {
+  id          String    @id @default(uuid())
+  userId      String
+  deviceHash  String    @unique // SHA-256 digest of the 32-byte secure random hex device token
+  deviceName  String?   // Parsed friendly device/browser name
+  deviceInfo  String?   // Raw user-agent string
+  ipAddress   String?   // Last seen IP address
+  lastLoginAt DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  revokedAt   DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, deviceHash])
+  @@index([userId, revokedAt])
 }
 
 model VerificationToken {
@@ -157,51 +184,69 @@ model RolePermission {
 // -----------------------------------------------------------------------------
 
 model AuditLog {
-  id        String  @id @default(uuid())
-  requestId String? @db.VarChar(255)
-  traceId   String? @db.VarChar(255)
-
+  id              String   @id @default(uuid()) @map("event_id")
+  schemaVersion   String   @default("1.0") @map("schema_version")
+  timestamp       DateTime @map("timestamp")
+  recordedAt      DateTime @default(now()) @map("recorded_at")
+  eventName       String   @map("event_name")
+  category        String   @map("category")
+  severity        String   @map("severity")
+  outcome         String   @map("outcome") // SUCCESS, FAILURE, DENIED
+  
   // Actor info
-  userId    String?
-  actorType String  @default("USER") // e.g., USER, SYSTEM, ADMIN
-  actorRole String?
-
-  // Action info
-  action    String // e.g., LOGIN_SUCCESS, UPDATE_USER
-  category  String  @default("APPLICATION") // SECURITY, APPLICATION, AUDIT
-  operation String? // CREATE, READ, UPDATE, DELETE
-
+  actorType       String   @map("actor_type")
+  actorId         String?  @map("actor_id")
+  actorRole       String?  @map("actor_role")
+  tenantId        String?  @map("tenant_id")
+  
   // Resource info
-  resource     String? // Legacy / optional
-  resourceType String? // e.g., User, CommunicationLog
-  resourceId   String?
+  resourceType    String?  @map("resource_type")
+  resourceId      String?  @map("resource_id")
+  
+  // Action info
+  action          String?  @map("action") // CREATE, READ, UPDATE, DELETE
+  
+  // Trace / Request Context
+  requestId       String?  @map("request_id") @db.VarChar(255)
+  traceId         String?  @map("trace_id") @db.VarChar(255)
+  interactionId   String?  @map("interaction_id") @db.VarChar(255)
+  jobId           String?  @map("job_id") @db.VarChar(255)
+  transactionId   String?  @map("transaction_id") @db.VarChar(255)
+  
+  sourceIp        String?  @map("source_ip") @db.VarChar(45)
+  userAgent       String?  @map("user_agent") @db.Text
+  route           String?  @map("route")
+  httpMethod      String?  @map("http_method") @db.VarChar(10)
+  httpStatus      Int?     @map("http_status")
+  
+  // Outcome & Changes
+  reasonCode      String?  @map("reason_code")
+  changedFields   Json?    @map("changed_fields") // String array usually
+  previousVersion Json?    @map("previous_version")
+  newVersion      Json?    @map("new_version")
+  
+  // System context
+  service         String   @default("range-bulk-sms") @map("service")
+  environment     String   @default("production") @map("environment")
+  deploymentId    String?  @map("deployment_id")
+  durationMs      Int?     @map("duration_ms")
+  description     String?  @map("description") @db.Text
 
-  // Execution details
-  status     String  @default("SUCCESS") // SUCCESS, FAILURE
-  durationMs Int?
-  errorCode  String?
-  reason     String? @db.Text
+  // Tamper resistance
+  previousHash    String?  @map("previous_hash") // hash of the previous log
+  hash            String?  @map("hash") // hash of this log
 
-  // Changes tracking
-  changes  Json? // Before/After state
-  metadata Json? // Extra contextual data
+  user User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
 
-  // Request context
-  ipAddress  String?
-  userAgent  String? @db.Text
-  route      String?
-  httpMethod String?
-
-  createdAt DateTime @default(now())
-
-  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  @@index([userId])
-  @@index([action])
-  @@index([createdAt])
+  @@index([actorId])
+  @@index([eventName])
+  @@index([recordedAt])
   @@index([requestId])
   @@index([resourceType, resourceId])
-  @@index([category, status])
+  @@index([category, outcome])
+  @@index([jobId])
+  
+  @@map("audit_logs")
 }
 
 // -----------------------------------------------------------------------------

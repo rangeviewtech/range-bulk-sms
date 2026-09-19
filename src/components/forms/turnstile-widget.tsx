@@ -1,7 +1,7 @@
 'use client';
 
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useTheme } from 'next-themes';
 import { useLanguage } from '@/hooks/use-language';
 
@@ -27,7 +27,6 @@ export function TurnstileWidget({
   const ref = useRef<TurnstileInstance>(null);
   const { resolvedTheme } = useTheme();
   const { language } = useLanguage();
-  const [isLoaded, setIsLoaded] = useState(false);
 
   const turnstileLang = language.toLowerCase() === 'ae' ? 'ar' : language.toLowerCase();
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -65,20 +64,18 @@ export function TurnstileWidget({
 
   if (variant === 'inline') {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '12px', marginBottom: '16px' }}>
-        <div style={{ display: 'inline-block', width: '100%' }}>
+      <div className="turnstile-wrapper" style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '12px', marginBottom: '16px' }}>
+        <div style={{ display: 'block', width: '100%' }}>
           <Turnstile
             key={`turnstile-${turnstileLang}`}
             ref={ref}
             siteKey={siteKey}
-            onSuccess={(token) => { setIsLoaded(true); onVerify(token); }}
-            onError={() => { setIsLoaded(true); onError?.(); }}
+            onSuccess={(token) => { onVerify(token); }}
+            onError={() => { onError?.(); }}
             onExpire={() => {
               onExpire?.();
               ref.current?.reset();
             }}
-            onBeforeInteractive={() => setIsLoaded(true)}
-            onAfterInteractive={() => setIsLoaded(true)}
             options={{
               theme: resolvedTheme === 'dark' ? 'dark' : 'light',
               appearance,
@@ -92,20 +89,18 @@ export function TurnstileWidget({
   }
 
   return (
-    <div className="flex justify-center w-full my-3">
-      <div style={{ display: 'inline-block', width: '100%' }}>
+    <div className="turnstile-wrapper flex justify-center w-full my-3">
+      <div style={{ display: 'block', width: '100%' }}>
         <Turnstile
           key={`turnstile-${turnstileLang}`}
           ref={ref}
           siteKey={siteKey}
-          onSuccess={(token) => { setIsLoaded(true); onVerify(token); }}
-          onError={() => { setIsLoaded(true); onError?.(); }}
+          onSuccess={(token) => { onVerify(token); }}
+          onError={() => { onError?.(); }}
           onExpire={() => {
             onExpire?.();
             ref.current?.reset();
           }}
-          onBeforeInteractive={() => setIsLoaded(true)}
-          onAfterInteractive={() => setIsLoaded(true)}
           options={{
             theme: resolvedTheme === 'dark' ? 'dark' : 'light',
             appearance,

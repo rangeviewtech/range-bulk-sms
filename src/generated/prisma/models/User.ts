@@ -264,6 +264,7 @@ export type UserWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   roles?: Prisma.UserRoleListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
+  devices?: Prisma.UserDeviceListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenListRelationFilter
   notificationPreferences?: Prisma.NotificationPreferenceListRelationFilter
@@ -305,6 +306,7 @@ export type UserOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   roles?: Prisma.UserRoleOrderByRelationAggregateInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
+  devices?: Prisma.UserDeviceOrderByRelationAggregateInput
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenOrderByRelationAggregateInput
   notificationPreferences?: Prisma.NotificationPreferenceOrderByRelationAggregateInput
@@ -349,6 +351,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   roles?: Prisma.UserRoleListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
+  devices?: Prisma.UserDeviceListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenListRelationFilter
   notificationPreferences?: Prisma.NotificationPreferenceListRelationFilter
@@ -432,6 +435,7 @@ export type UserCreateInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -473,6 +477,7 @@ export type UserUncheckedCreateInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -514,6 +519,7 @@ export type UserUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -555,6 +561,7 @@ export type UserUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -732,6 +739,20 @@ export type UserUpdateOneRequiredWithoutSessionsNestedInput = {
   upsert?: Prisma.UserUpsertWithoutSessionsInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSessionsInput, Prisma.UserUpdateWithoutSessionsInput>, Prisma.UserUncheckedUpdateWithoutSessionsInput>
+}
+
+export type UserCreateNestedOneWithoutDevicesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDevicesInput, Prisma.UserUncheckedCreateWithoutDevicesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDevicesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutDevicesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDevicesInput, Prisma.UserUncheckedCreateWithoutDevicesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDevicesInput
+  upsert?: Prisma.UserUpsertWithoutDevicesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDevicesInput, Prisma.UserUpdateWithoutDevicesInput>, Prisma.UserUncheckedUpdateWithoutDevicesInput>
 }
 
 export type UserCreateNestedOneWithoutRolesInput = {
@@ -1065,6 +1086,7 @@ export type UserCreateWithoutSessionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -1105,6 +1127,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -1161,6 +1184,7 @@ export type UserUpdateWithoutSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -1201,6 +1225,187 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  client?: Prisma.ClientUncheckedUpdateOneWithoutUserNestedInput
+  agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
+  contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
+  contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
+  contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
+  senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
+  smsTemplates?: Prisma.SmsTemplateUncheckedUpdateManyWithoutUserNestedInput
+  campaigns?: Prisma.CampaignUncheckedUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutUserNestedInput
+  wallets?: Prisma.WalletUncheckedUpdateOneWithoutUserNestedInput
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
+  webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutDevicesInput = {
+  id?: string
+  email: string
+  name?: string | null
+  passwordHash?: string | null
+  status?: $Enums.UserStatus
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  mfaEnabled?: boolean
+  mfaSecret?: string | null
+  screenLockPin?: string | null
+  telegramChatId?: string | null
+  whatsappConsent?: boolean
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  client?: Prisma.ClientCreateNestedOneWithoutUserInput
+  agent?: Prisma.AgentCreateNestedOneWithoutUserInput
+  contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
+  contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
+  contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
+  senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
+  smsTemplates?: Prisma.SmsTemplateCreateNestedManyWithoutUserInput
+  campaigns?: Prisma.CampaignCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutUserInput
+  wallets?: Prisma.WalletCreateNestedOneWithoutUserInput
+  transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
+  webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutDevicesInput = {
+  id?: string
+  email: string
+  name?: string | null
+  passwordHash?: string | null
+  status?: $Enums.UserStatus
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  mfaEnabled?: boolean
+  mfaSecret?: string | null
+  screenLockPin?: string | null
+  telegramChatId?: string | null
+  whatsappConsent?: boolean
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  client?: Prisma.ClientUncheckedCreateNestedOneWithoutUserInput
+  agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
+  contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
+  contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
+  contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
+  senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
+  smsTemplates?: Prisma.SmsTemplateUncheckedCreateNestedManyWithoutUserInput
+  campaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutUserInput
+  wallets?: Prisma.WalletUncheckedCreateNestedOneWithoutUserInput
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
+  webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutDevicesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDevicesInput, Prisma.UserUncheckedCreateWithoutDevicesInput>
+}
+
+export type UserUpsertWithoutDevicesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDevicesInput, Prisma.UserUncheckedUpdateWithoutDevicesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDevicesInput, Prisma.UserUncheckedCreateWithoutDevicesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDevicesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDevicesInput, Prisma.UserUncheckedUpdateWithoutDevicesInput>
+}
+
+export type UserUpdateWithoutDevicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  client?: Prisma.ClientUpdateOneWithoutUserNestedInput
+  agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
+  contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
+  contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
+  contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
+  senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
+  smsTemplates?: Prisma.SmsTemplateUpdateManyWithoutUserNestedInput
+  campaigns?: Prisma.CampaignUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutUserNestedInput
+  wallets?: Prisma.WalletUpdateOneWithoutUserNestedInput
+  transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
+  webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDevicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -1241,6 +1446,7 @@ export type UserCreateWithoutRolesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -1281,6 +1487,7 @@ export type UserUncheckedCreateWithoutRolesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -1337,6 +1544,7 @@ export type UserUpdateWithoutRolesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -1377,6 +1585,7 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -1418,6 +1627,7 @@ export type UserCreateWithoutAuditLogsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -1458,6 +1668,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -1514,6 +1725,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -1554,6 +1766,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -1594,6 +1807,7 @@ export type UserCreateWithoutTelegramLinkingTokensInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -1634,6 +1848,7 @@ export type UserUncheckedCreateWithoutTelegramLinkingTokensInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -1690,6 +1905,7 @@ export type UserUpdateWithoutTelegramLinkingTokensInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -1730,6 +1946,7 @@ export type UserUncheckedUpdateWithoutTelegramLinkingTokensInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -1770,6 +1987,7 @@ export type UserCreateWithoutNotificationPreferencesInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -1810,6 +2028,7 @@ export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -1866,6 +2085,7 @@ export type UserUpdateWithoutNotificationPreferencesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -1906,6 +2126,7 @@ export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -1946,6 +2167,7 @@ export type UserCreateWithoutNotificationsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -1986,6 +2208,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -2042,6 +2265,7 @@ export type UserUpdateWithoutNotificationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -2082,6 +2306,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -2122,6 +2347,7 @@ export type UserCreateWithoutClientInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -2162,6 +2388,7 @@ export type UserUncheckedCreateWithoutClientInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -2218,6 +2445,7 @@ export type UserUpdateWithoutClientInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -2258,6 +2486,7 @@ export type UserUncheckedUpdateWithoutClientInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -2298,6 +2527,7 @@ export type UserCreateWithoutAgentInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -2338,6 +2568,7 @@ export type UserUncheckedCreateWithoutAgentInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -2394,6 +2625,7 @@ export type UserUpdateWithoutAgentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -2434,6 +2666,7 @@ export type UserUncheckedUpdateWithoutAgentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -2474,6 +2707,7 @@ export type UserCreateWithoutContactsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -2514,6 +2748,7 @@ export type UserUncheckedCreateWithoutContactsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -2570,6 +2805,7 @@ export type UserUpdateWithoutContactsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -2610,6 +2846,7 @@ export type UserUncheckedUpdateWithoutContactsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -2650,6 +2887,7 @@ export type UserCreateWithoutContactGroupsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -2690,6 +2928,7 @@ export type UserUncheckedCreateWithoutContactGroupsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -2746,6 +2985,7 @@ export type UserUpdateWithoutContactGroupsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -2786,6 +3026,7 @@ export type UserUncheckedUpdateWithoutContactGroupsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -2826,6 +3067,7 @@ export type UserCreateWithoutContactTagsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -2866,6 +3108,7 @@ export type UserUncheckedCreateWithoutContactTagsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -2922,6 +3165,7 @@ export type UserUpdateWithoutContactTagsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -2962,6 +3206,7 @@ export type UserUncheckedUpdateWithoutContactTagsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -3002,6 +3247,7 @@ export type UserCreateWithoutContactImportsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -3042,6 +3288,7 @@ export type UserUncheckedCreateWithoutContactImportsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -3098,6 +3345,7 @@ export type UserUpdateWithoutContactImportsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -3138,6 +3386,7 @@ export type UserUncheckedUpdateWithoutContactImportsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -3178,6 +3427,7 @@ export type UserCreateWithoutSenderIdsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -3218,6 +3468,7 @@ export type UserUncheckedCreateWithoutSenderIdsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -3274,6 +3525,7 @@ export type UserUpdateWithoutSenderIdsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -3314,6 +3566,7 @@ export type UserUncheckedUpdateWithoutSenderIdsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -3354,6 +3607,7 @@ export type UserCreateWithoutSmsTemplatesInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -3394,6 +3648,7 @@ export type UserUncheckedCreateWithoutSmsTemplatesInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -3450,6 +3705,7 @@ export type UserUpdateWithoutSmsTemplatesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -3490,6 +3746,7 @@ export type UserUncheckedUpdateWithoutSmsTemplatesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -3530,6 +3787,7 @@ export type UserCreateWithoutCampaignsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -3570,6 +3828,7 @@ export type UserUncheckedCreateWithoutCampaignsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -3626,6 +3885,7 @@ export type UserUpdateWithoutCampaignsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -3666,6 +3926,7 @@ export type UserUncheckedUpdateWithoutCampaignsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -3706,6 +3967,7 @@ export type UserCreateWithoutMessagesInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -3746,6 +4008,7 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -3802,6 +4065,7 @@ export type UserUpdateWithoutMessagesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -3842,6 +4106,7 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -3882,6 +4147,7 @@ export type UserCreateWithoutWalletsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -3922,6 +4188,7 @@ export type UserUncheckedCreateWithoutWalletsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -3978,6 +4245,7 @@ export type UserUpdateWithoutWalletsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -4018,6 +4286,7 @@ export type UserUncheckedUpdateWithoutWalletsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -4058,6 +4327,7 @@ export type UserCreateWithoutTransactionsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -4098,6 +4368,7 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -4154,6 +4425,7 @@ export type UserUpdateWithoutTransactionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -4194,6 +4466,7 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -4234,6 +4507,7 @@ export type UserCreateWithoutApiKeysInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -4274,6 +4548,7 @@ export type UserUncheckedCreateWithoutApiKeysInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -4330,6 +4605,7 @@ export type UserUpdateWithoutApiKeysInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -4370,6 +4646,7 @@ export type UserUncheckedUpdateWithoutApiKeysInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -4410,6 +4687,7 @@ export type UserCreateWithoutWebhooksInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -4450,6 +4728,7 @@ export type UserUncheckedCreateWithoutWebhooksInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -4506,6 +4785,7 @@ export type UserUpdateWithoutWebhooksInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -4546,6 +4826,7 @@ export type UserUncheckedUpdateWithoutWebhooksInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -4586,6 +4867,7 @@ export type UserCreateWithoutSupportTicketsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -4626,6 +4908,7 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -4682,6 +4965,7 @@ export type UserUpdateWithoutSupportTicketsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -4722,6 +5006,7 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -4762,6 +5047,7 @@ export type UserCreateWithoutScheduledMessagesInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -4802,6 +5088,7 @@ export type UserUncheckedCreateWithoutScheduledMessagesInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -4858,6 +5145,7 @@ export type UserUpdateWithoutScheduledMessagesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -4898,6 +5186,7 @@ export type UserUncheckedUpdateWithoutScheduledMessagesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -4938,6 +5227,7 @@ export type UserCreateWithoutGatewaysInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
@@ -4978,6 +5268,7 @@ export type UserUncheckedCreateWithoutGatewaysInput = {
   updatedAt?: Date | string
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
@@ -5034,6 +5325,7 @@ export type UserUpdateWithoutGatewaysInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
@@ -5074,6 +5366,7 @@ export type UserUncheckedUpdateWithoutGatewaysInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
@@ -5104,6 +5397,7 @@ export type UserUncheckedUpdateWithoutGatewaysInput = {
 export type UserCountOutputType = {
   roles: number
   sessions: number
+  devices: number
   auditLogs: number
   telegramLinkingTokens: number
   notificationPreferences: number
@@ -5127,6 +5421,7 @@ export type UserCountOutputType = {
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   roles?: boolean | UserCountOutputTypeCountRolesArgs
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
+  devices?: boolean | UserCountOutputTypeCountDevicesArgs
   auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
   telegramLinkingTokens?: boolean | UserCountOutputTypeCountTelegramLinkingTokensArgs
   notificationPreferences?: boolean | UserCountOutputTypeCountNotificationPreferencesArgs
@@ -5169,6 +5464,13 @@ export type UserCountOutputTypeCountRolesArgs<ExtArgs extends runtime.Types.Exte
  */
 export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.SessionWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDevicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserDeviceWhereInput
 }
 
 /**
@@ -5316,6 +5618,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   roles?: boolean | Prisma.User$rolesArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
+  devices?: boolean | Prisma.User$devicesArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
   telegramLinkingTokens?: boolean | Prisma.User$telegramLinkingTokensArgs<ExtArgs>
   notificationPreferences?: boolean | Prisma.User$notificationPreferencesArgs<ExtArgs>
@@ -5398,6 +5701,7 @@ export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   roles?: boolean | Prisma.User$rolesArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
+  devices?: boolean | Prisma.User$devicesArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
   telegramLinkingTokens?: boolean | Prisma.User$telegramLinkingTokensArgs<ExtArgs>
   notificationPreferences?: boolean | Prisma.User$notificationPreferencesArgs<ExtArgs>
@@ -5429,6 +5733,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     roles: Prisma.$UserRolePayload<ExtArgs>[]
     sessions: Prisma.$SessionPayload<ExtArgs>[]
+    devices: Prisma.$UserDevicePayload<ExtArgs>[]
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
     telegramLinkingTokens: Prisma.$TelegramLinkingTokenPayload<ExtArgs>[]
     notificationPreferences: Prisma.$NotificationPreferencePayload<ExtArgs>[]
@@ -5863,6 +6168,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   roles<T extends Prisma.User$rolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  devices<T extends Prisma.User$devicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$devicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserDevicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.User$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   telegramLinkingTokens<T extends Prisma.User$telegramLinkingTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$telegramLinkingTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TelegramLinkingTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notificationPreferences<T extends Prisma.User$notificationPreferencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationPreferencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -6366,6 +6672,30 @@ export type User$sessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.SessionScalarFieldEnum | Prisma.SessionScalarFieldEnum[]
+}
+
+/**
+ * User.devices
+ */
+export type User$devicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserDevice
+   */
+  select?: Prisma.UserDeviceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserDevice
+   */
+  omit?: Prisma.UserDeviceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserDeviceInclude<ExtArgs> | null
+  where?: Prisma.UserDeviceWhereInput
+  orderBy?: Prisma.UserDeviceOrderByWithRelationInput | Prisma.UserDeviceOrderByWithRelationInput[]
+  cursor?: Prisma.UserDeviceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserDeviceScalarFieldEnum | Prisma.UserDeviceScalarFieldEnum[]
 }
 
 /**

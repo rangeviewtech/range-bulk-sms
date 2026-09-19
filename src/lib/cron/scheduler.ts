@@ -1,10 +1,22 @@
 import { prisma } from '@/lib/prisma';
 import cronParser from 'cron-parser';
 import { logger } from '@/lib/logger';
+import { cleanupExpiredTokens } from '@/lib/cron/cleanup-tokens';
 
 export const CronScheduler = {
   async tick() {
     const now = new Date();
+
+    // 1. Run automatic background token cleanup
+    try {
+      await cleanupExpiredTokens();
+    } catch (cleanupErr) {
+      await logger.error('Scheduled token cleanup failed', {
+        error: cleanupErr instanceof Error ? cleanupErr.message : String(cleanupErr),
+      });
+    }
+
+    // 2. Evaluate scheduled jobs
     const dueJobs = await prisma.scheduledJob.findMany({
       where: {
         active: true,
@@ -51,7 +63,7 @@ export const CronScheduler = {
         });
         if (queued) queuedCount++;
       } catch (error) {
-        const message = error instanceof Error ? (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error)) : 'Scheduling failed';
+        const message = error instanceof Error ? error.message : 'Scheduling failed';
         await logger.error('Failed to evaluate scheduled job', { jobId: job.id });
         await prisma.cronExecution.create({
           data: { scheduledJobId: job.id, status: 'FAILED', errorMsg: message },
@@ -61,3 +73,4 @@ export const CronScheduler = {
     return queuedCount;
   },
 };
+

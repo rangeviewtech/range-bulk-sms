@@ -54,7 +54,7 @@ export const errorResponse = (
     if (typeof error === 'string') {
       errMessage = error;
     } else if (error instanceof Error) {
-      errMessage = (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error));
+      errMessage = error.message;
       errCode = error.name;
     } else if (error !== null && typeof error === 'object' && 'message' in error) {
       errMessage = String((error as Record<string, unknown>).message);
@@ -63,7 +63,7 @@ export const errorResponse = (
   } else {
     // In production, only expose known safe Application Errors
     if (error instanceof AppError && error.statusCode < 500) {
-      errMessage = (error instanceof Error ? (error instanceof Error ? error.message : String(error)) : String(error));
+      errMessage = error.message;
       errCode = error.code;
     }
   }

@@ -40,8 +40,9 @@ export async function POST(req: NextRequest) {
 
     const group = await prisma.contactGroup.create({
       data: {
-        ...data,
-        userId: session.userId
+        name: data.name,
+        description: data.description,
+        user: { connect: { id: session.userId } }
       }
     });
 

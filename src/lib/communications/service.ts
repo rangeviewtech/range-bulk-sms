@@ -69,4 +69,14 @@ export const NotificationService = {
       priority: 'NORMAL',
     });
   },
+
+  async sendPasswordChanged(email: string, name: string = 'User', lang: string = 'EN') {
+    return this.dispatch({
+      recipient: email,
+      channel: 'EMAIL',
+      template: 'auth.password_changed',
+      payload: { name, lang, locale: lang },
+      priority: 'CRITICAL',
+    });
+  },
 };

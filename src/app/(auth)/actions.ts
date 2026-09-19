@@ -1,5 +1,6 @@
 'use server';
 
+import crypto from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { verifyPassword, hashPassword } from '@/lib/auth/password';
 import {
@@ -21,6 +22,8 @@ import {
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { logAudit } from '@/lib/security/audit';
+import { resolveDashboardDestination } from '@/lib/auth/destination';
+import { withTransactionalAudit } from '@/lib/security/transactional-audit';
 import { checkRateLimit } from '@/lib/security/rate-limit';
 
 async function allowAuthAttempt(scope: string) {
@@ -30,6 +33,7 @@ async function allowAuthAttempt(scope: string) {
 }
 
 export async function login(formData: FormData) {
+  let targetDestination = '/dashboard';
   const data = Object.fromEntries(formData.entries());
 
   const parsed = loginSchema.safeParse(data);
@@ -88,23 +92,36 @@ export async function login(formData: FormData) {
       });
     }
 
-    // Determine MFA/OTP requirements
-    if (user.mfaEnabled || user.phone || user.telegramChatId) {
-      await createSession(user.id, false);
+    // Determine MFA/OTP requirements via central role-based policy matrix
+    const { getEffectiveMfaRequirement } = await import('@/lib/auth/mfa-policy');
+    const mfaRequirement = await getEffectiveMfaRequirement(user.id);
 
-      let channel = 'APP';
-      if (user.mfaEnabled) {
-        channel = 'APP';
-      } else if (user.telegramChatId) {
-        channel = 'TELEGRAM';
-      } else if (user.whatsappConsent) {
-        channel = 'WHATSAPP';
-      } else if (user.phone) {
-        channel = 'SMS';
-      }
+    const rememberMe =
+      data.rememberMe === 'true' ||
+      data.rememberMe === 'on' ||
+      parsed.data.rememberMe === true;
+    const callbackUrl =
+      (formData.get('callbackUrl') as string) ||
+      (formData.get('returnTo') as string) ||
+      null;
 
-      if (channel !== 'APP') {
-        const otpResult = await requestOtp(user.id, channel as CommunicationChannel);
+    if (mfaRequirement.required) {
+      const { createPreauthChallenge } = await import('@/lib/auth/preauth');
+      await createPreauthChallenge(
+        user.id,
+        mfaRequirement.defaultMethod,
+        mfaRequirement.allowedMethods,
+        rememberMe
+      );
+
+      // Create pre-auth temporary session for route guarding
+      await createSession(user.id, false, false);
+
+      if (mfaRequirement.defaultMethod !== 'APP') {
+        const otpResult = await requestOtp(
+          user.id,
+          mfaRequirement.defaultMethod as CommunicationChannel
+        );
         if (otpResult.error) {
           return { error: 'Could not send verification code. ' + otpResult.error };
         }
@@ -115,25 +132,39 @@ export async function login(formData: FormData) {
         action: 'LOGIN_MFA_CHALLENGE',
         resourceType: 'User',
         category: 'SECURITY',
+        metadata: {
+          enforcementType: mfaRequirement.type,
+          roles: mfaRequirement.roles,
+          method: mfaRequirement.defaultMethod,
+          rememberMe,
+        },
       });
-      return { redirect: `/2fa/challenge?userId=${user.id}&channel=${channel}` };
+
+      return { redirect: '/2fa/challenge' };
     }
 
-    // No 2FA/OTP configured - log them in directly
-    await createSession(user.id, true);
+    // No 2FA required (Client with single factor) - log them in directly
+    await createSession(user.id, true, rememberMe);
 
     await logAudit({
       userId: user.id,
       action: 'LOGIN_SUCCESS',
       resourceType: 'User',
       category: 'SECURITY',
+      metadata: {
+        roles: mfaRequirement.roles,
+        enforcementType: mfaRequirement.type,
+        rememberMe,
+      },
     });
+
+    targetDestination = resolveDashboardDestination(mfaRequirement.roles, callbackUrl);
   } catch (error) {
     console.error('Login error:', error);
     return { error: 'Something went wrong on our end. Please try again.' };
   }
 
-  redirect('/dashboard');
+  redirect(targetDestination);
 }
 
 export async function register(formData: FormData) {
@@ -163,23 +194,27 @@ export async function register(formData: FormData) {
 
     const passwordHash = await hashPassword(parsed.data.password);
 
-    const user = await prisma.user.create({
-      data: {
-        email: parsed.data.email,
-        name: parsed.data.name,
-        passwordHash,
-        status: 'ACTIVE',
+    const user = await withTransactionalAudit(
+      {
+        eventName: 'REGISTER_SUCCESS',
+        category: 'SECURITY',
+        action: 'CREATE',
+        resourceType: 'User',
+        actorType: 'USER'
       },
-    });
+      async (tx) => {
+        return tx.user.create({
+          data: {
+            email: parsed.data.email,
+            name: parsed.data.name,
+            passwordHash,
+            status: 'ACTIVE',
+          },
+        });
+      }
+    );
 
     await createSession(user.id, true);
-
-    await logAudit({
-      userId: user.id,
-      action: 'REGISTER_SUCCESS',
-      resourceType: 'User',
-      category: 'SECURITY',
-    });
 
     const { NotificationService } = await import('@/lib/communications/service');
     await NotificationService.dispatch({
@@ -248,25 +283,58 @@ export async function forgotPassword(formData: FormData) {
   const isBotFree = await verifyTurnstileToken(parsed.data.turnstileToken || '');
   if (!isBotFree) return { error: 'Security check failed.' };
 
-  const user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
+  const normalizedEmail = parsed.data.email.toLowerCase().trim();
+  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
 
   if (user) {
-    // Generate token
-    const token = crypto.randomUUID();
-    await prisma.verificationToken.create({
-      data: {
+    // Generate 256-bit cryptographically secure random token (64 hex characters)
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    // Compute SHA-256 digest to store in DB - plaintext token is NEVER stored
+    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+
+    // Invalidate any previous outstanding password reset tokens for this user
+    await prisma.verificationToken.deleteMany({
+      where: {
         identifier: user.email,
-        token: token,
         type: 'PASSWORD_RESET',
-        expiresAt: new Date(Date.now() + 1000 * 60 * 60), // 1 hour
       },
     });
 
-    // Enqueue background email job
+    // Store only the SHA-256 hash in database with 1 hour expiration
+    await prisma.verificationToken.create({
+      data: {
+        identifier: user.email,
+        token: tokenHash,
+        type: 'PASSWORD_RESET',
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60), // 1 hour TTL
+      },
+    });
+
+    await logAudit({
+      action: 'PASSWORD_RESET_REQUESTED',
+      actorType: 'ANONYMOUS',
+      category: 'SECURITY',
+      status: 'SUCCESS',
+      reason: 'Password reset token generated and queued for dispatch',
+      resourceType: 'User',
+      resourceId: user.id,
+    });
+
+    // Enqueue background email job with raw token in reset link
     const cookieStore = await cookies();
     const lang = cookieStore.get('app_language')?.value || 'EN';
     const { NotificationService } = await import('@/lib/communications/service');
-    await NotificationService.sendPasswordReset(user.email, token, lang);
+    await NotificationService.sendPasswordReset(user.email, rawToken, lang);
+  } else {
+    // Mitigate timing attacks by executing a dummy random generation
+    crypto.randomBytes(32);
+    await logAudit({
+      action: 'PASSWORD_RESET_REQUESTED',
+      actorType: 'ANONYMOUS',
+      category: 'SECURITY',
+      status: 'SUCCESS',
+      reason: 'Password reset requested for unregistered email (enumeration mitigated)',
+    });
   }
 
   // Always return success to prevent email enumeration attacks
@@ -274,10 +342,29 @@ export async function forgotPassword(formData: FormData) {
 }
 
 export async function resetPassword(formData: FormData) {
-  if (!(await allowAuthAttempt('resetPassword')))
+  if (!(await allowAuthAttempt('resetPassword'))) {
+    await logAudit({
+      action: 'RATE_LIMIT_TRIGGERED',
+      actorType: 'ANONYMOUS',
+      category: 'SECURITY',
+      status: 'FAILURE',
+      reason: 'Rate limit exceeded on password reset',
+    });
     return { error: 'Too many requests. Please try again later.' };
-  const parsed = resetPasswordSchema.safeParse(Object.fromEntries(formData.entries()));
-  if (!parsed.success) return { error: parsed.error.errors[0]?.message || 'Invalid input' };
+  }
+
+  const rawData = Object.fromEntries(formData.entries());
+  const parsed = resetPasswordSchema.safeParse(rawData);
+  if (!parsed.success) {
+    await logAudit({
+      action: 'PASSWORD_CHANGED',
+      actorType: 'ANONYMOUS',
+      category: 'SECURITY',
+      status: 'FAILURE',
+      reason: parsed.error.errors[0]?.message || 'Invalid input parameters on password reset',
+    });
+    return { error: parsed.error.errors[0]?.message || 'Invalid input' };
+  }
 
   // Verify Turnstile
   if (
@@ -286,46 +373,119 @@ export async function resetPassword(formData: FormData) {
     process.env.NODE_ENV === 'production'
   ) {
     const isBotFree = await verifyTurnstileToken(parsed.data.turnstileToken || '');
-    if (!isBotFree) return { error: 'Security check failed. Please try again.' };
+    if (!isBotFree) {
+      await logAudit({
+        action: 'UNAUTHORIZED_ACCESS',
+        actorType: 'ANONYMOUS',
+        category: 'SECURITY',
+        status: 'FAILURE',
+        reason: 'Turnstile verification failed during password reset',
+      });
+      return { error: 'Security check failed. Please try again.' };
+    }
   }
 
+  const rawToken = parsed.data.token.trim();
+  const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+
+  // Find token record by SHA-256 hash (or rawToken fallback for legacy migration)
   const tokenRecord = await prisma.verificationToken.findFirst({
     where: {
-      token: parsed.data.token,
+      token: { in: [tokenHash, rawToken] },
       type: 'PASSWORD_RESET',
       expiresAt: { gt: new Date() },
     },
   });
 
   if (!tokenRecord) {
+    await logAudit({
+      action: 'PASSWORD_CHANGED',
+      actorType: 'ANONYMOUS',
+      category: 'SECURITY',
+      status: 'FAILURE',
+      reason: 'Invalid or expired password reset token used',
+    });
     return { error: 'This reset link has expired or is invalid. Please request a new one.' };
   }
 
   const user = await prisma.user.findUnique({ where: { email: tokenRecord.identifier } });
-  if (!user) return { error: 'User not found.' };
+  if (!user) {
+    await logAudit({
+      action: 'PASSWORD_CHANGED',
+      actorType: 'ANONYMOUS',
+      category: 'SECURITY',
+      status: 'FAILURE',
+      reason: 'User account not found for valid token',
+    });
+    return { error: 'User not found.' };
+  }
 
   const passwordHash = await hashPassword(parsed.data.password);
 
-  const reset = await prisma.$transaction(async (tx) => {
-    const consumed = await tx.verificationToken.deleteMany({
-      where: { id: tokenRecord.id, expiresAt: { gt: new Date() } },
+  const reset = await withTransactionalAudit(
+    {
+      eventName: 'PASSWORD_RESET_SUCCESS',
+      category: 'SECURITY',
+      action: 'UPDATE',
+      resourceType: 'User',
+      resourceId: user.id,
+      actorId: user.id,
+      actorType: 'USER'
+    },
+    async (tx) => {
+      // Atomic compare-and-delete: single-use enforcement preventing race conditions
+      const consumed = await tx.verificationToken.deleteMany({
+        where: { id: tokenRecord.id, expiresAt: { gt: new Date() } },
+      });
+      if (consumed.count !== 1) return false;
+
+      // Update password hash
+      await tx.user.update({ where: { id: user.id }, data: { passwordHash } });
+
+      // Revoke all existing user sessions
+      await tx.session.deleteMany({ where: { userId: user.id } });
+
+      // Invalidate all remaining reset tokens for this user
+      await tx.verificationToken.deleteMany({
+        where: { identifier: user.email, type: 'PASSWORD_RESET' },
+      });
+
+      return true;
+    }
+  );
+
+  if (!reset) {
+    await logAudit({
+      action: 'PASSWORD_CHANGED',
+      actorType: 'USER',
+      userId: user.id,
+      category: 'SECURITY',
+      status: 'FAILURE',
+      reason: 'Atomic token consumption race condition on password reset',
     });
-    if (consumed.count !== 1) return false;
-    await tx.user.update({ where: { id: user.id }, data: { passwordHash } });
-    await tx.session.deleteMany({ where: { userId: user.id } });
-    await tx.verificationToken.deleteMany({
-      where: { identifier: user.email, type: 'PASSWORD_RESET' },
-    });
-    return true;
-  });
-  if (!reset) return { error: 'This reset link has expired or has already been used.' };
+    return { error: 'This reset link has expired or has already been used.' };
+  }
 
   await logAudit({
+    action: 'PASSWORD_CHANGED',
+    actorType: 'USER',
     userId: user.id,
-    action: 'PASSWORD_RESET_SUCCESS',
-    resourceType: 'User',
     category: 'SECURITY',
+    operation: 'UPDATE',
+    resourceType: 'User',
+    resourceId: user.id,
+    status: 'SUCCESS',
+    reason: 'User password reset completed and verified successfully',
   });
+
+  try {
+    const cookieStore = await cookies();
+    const lang = cookieStore.get('app_language')?.value || 'EN';
+    const { NotificationService } = await import('@/lib/communications/service');
+    await NotificationService.sendPasswordChanged(user.email, user.name || 'User', lang);
+  } catch (err) {
+    console.error('Failed to send password changed email:', err);
+  }
 
   return { success: true };
 }
@@ -349,16 +509,19 @@ import { CommunicationChannel } from '@/generated/prisma';
 
 export async function requestOtp(userId: string, channel: CommunicationChannel) {
   const session = await verifySession();
-  if (!session || session.userId !== userId || session.mfaVerified || session.screenLocked)
+  const { getPreauthChallenge } = await import('@/lib/auth/preauth');
+  const preauth = await getPreauthChallenge();
+  const effectiveUserId = session?.userId || preauth?.userId;
+
+  if (!effectiveUserId || (userId && effectiveUserId !== userId) || session?.mfaVerified || session?.screenLocked)
     return { error: 'Please sign in again to request a code.' };
-  if (session.user.mfaEnabled) return { error: 'Use your configured authenticator app.' };
   if (!['EMAIL', 'SMS', 'WHATSAPP', 'TELEGRAM'].includes(channel))
     return { error: 'Unsupported verification channel.' };
-  if (!(await allowAuthAttempt('otp-send:' + userId)))
+  if (!(await allowAuthAttempt('otp-send:' + effectiveUserId)))
     return { error: 'Too many requests. Please try again later.' };
   let user;
   try {
-    user = await prisma.user.findUnique({ where: { id: userId } });
+    user = await prisma.user.findUnique({ where: { id: effectiveUserId } });
   } catch (_error) {
     return { error: 'Invalid User ID format' };
   }
@@ -408,7 +571,11 @@ export async function verifyLoginOtp(
   turnstileToken?: string
 ) {
   const session = await verifySession();
-  if (!session || session.userId !== userId) return { error: 'Please sign in again.' };
+  const { getPreauthChallenge } = await import('@/lib/auth/preauth');
+  const preauth = await getPreauthChallenge();
+  const effectiveUserId = session?.userId || preauth?.userId;
+  if (!effectiveUserId || effectiveUserId !== userId) return { error: 'Please sign in again.' };
+
   const formData = new FormData();
   formData.set('code', code);
   formData.set('method', channel);
@@ -438,20 +605,33 @@ export async function generateTelegramLinkingToken() {
 
 export async function verifyUnifiedVerification(formData: FormData) {
   const session = await verifySession();
-  if (!session || session.mfaVerified || session.screenLocked)
+  const { getPreauthChallenge, clearPreauthChallenge, incrementPreauthAttempt } =
+    await import('@/lib/auth/preauth');
+  const preauth = await getPreauthChallenge();
+  const effectiveUserId = session?.userId || preauth?.userId;
+
+  if (!effectiveUserId || session?.mfaVerified || session?.screenLocked)
     return { error: 'Please sign in again.' };
-  if (!(await allowAuthAttempt('mfa:' + session.userId)))
+
+  const attemptStatus = await incrementPreauthAttempt();
+  if (!attemptStatus.allowed) {
+    return { error: 'Too many verification attempts. Please sign in again.' };
+  }
+
+  if (!(await allowAuthAttempt('mfa:' + effectiveUserId)))
     return { error: 'Too many attempts. Please try again later.' };
+
   const code = formData.get('code');
   const method = formData.get('method');
   if (typeof code !== 'string' || !/^\d{6}$/.test(code))
     return { error: 'Please enter a valid 6-digit code.' };
-  const user = await prisma.user.findUnique({ where: { id: session.userId } });
+
+  const user = await prisma.user.findUnique({ where: { id: effectiveUserId } });
   if (!user || user.status !== 'ACTIVE')
     return { error: 'Account unavailable. Please sign in again.' };
 
-  if (user.mfaEnabled) {
-    if (method !== 'APP' || !user.mfaSecret || !(await verifyMfaToken(code, user.mfaSecret))) {
+  if (method === 'APP') {
+    if (!user.mfaSecret || !(await verifyMfaToken(code, user.mfaSecret))) {
       return { error: 'Incorrect authenticator code. Please check your app and try again.' };
     }
   } else {
@@ -464,14 +644,34 @@ export async function verifyUnifiedVerification(formData: FormData) {
     const result = await OtpService.verifyOtp(identifier, 'LOGIN', code, user.id);
     if (!result.valid) return { error: result.error || 'Invalid or expired code.' };
   }
-  await createSession(user.id, true);
+
+  const rememberMe = preauth?.rememberMe ?? false;
+
+  await clearPreauthChallenge();
+  await createSession(user.id, true, rememberMe);
+
   await logAudit({
     userId: user.id,
-    action: user.mfaEnabled ? 'MFA_LOGIN_SUCCESS' : 'OTP_LOGIN_SUCCESS',
+    action: 'MFA_LOGIN_SUCCESS',
     resourceType: 'User',
+    resourceId: user.id,
     category: 'SECURITY',
+    status: 'SUCCESS',
+    metadata: { method, rememberMe },
   });
-  redirect('/dashboard');
+
+  const userWithRoles = await prisma.user.findUnique({
+    where: { id: effectiveUserId },
+    include: { roles: { include: { role: true } } },
+  });
+
+  const callbackUrl =
+    (formData.get('callbackUrl') as string) ||
+    (formData.get('returnTo') as string) ||
+    null;
+  const destination = resolveDashboardDestination(userWithRoles?.roles, callbackUrl);
+
+  redirect(destination);
 }
 
 export async function resendUnifiedVerification(
@@ -479,9 +679,17 @@ export async function resendUnifiedVerification(
   channel: CommunicationChannel
 ) {
   const session = await verifySession();
-  if (!session || (userIdParam && session.userId !== userIdParam))
+  const { getPreauthChallenge, updatePreauthMethod } = await import('@/lib/auth/preauth');
+  const preauth = await getPreauthChallenge();
+  const effectiveUserId = session?.userId || preauth?.userId;
+
+  if (!effectiveUserId || (userIdParam && effectiveUserId !== userIdParam))
     return { error: 'Please sign in again.' };
-  return requestOtp(session.userId, channel);
+
+  if (['EMAIL', 'SMS', 'WHATSAPP', 'TELEGRAM'].includes(channel)) {
+    await updatePreauthMethod(channel as 'EMAIL' | 'SMS' | 'WHATSAPP' | 'TELEGRAM');
+  }
+  return requestOtp(effectiveUserId, channel);
 }
 
 export async function lockScreen() {

@@ -8,9 +8,10 @@ import { useSearchParams } from 'next/navigation';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { toast } from 'sonner';
 import { resetPasswordSchema } from '@/lib/validations/auth';
 import { resetPassword } from '@/app/(auth)/actions';
+import { notify, toast } from '@/lib/notifications/toast';
+import { toastCatalog } from '@/lib/notifications/toast-catalog';
 import { TurnstileWidget } from '@/components/forms/turnstile-widget';
 import { AuthLayout } from '@/components/layout/auth-layout';
 import { useLanguage } from '@/hooks/use-language';
@@ -28,23 +29,30 @@ function ResetPasswordForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [turnstileExpired, setTurnstileExpired] = useState(false);
   
+  // Real-time interaction flags matching login & forgot-password pages
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  
   const searchParams = useSearchParams();
   const token = searchParams.get('token') || '';
 
-  const { register, handleSubmit, formState: { errors, touchedFields, dirtyFields }, setValue, control, trigger } = useForm<ResetPasswordValues>({
+  const { register, handleSubmit, formState: { errors }, setValue, control, trigger } = useForm<ResetPasswordValues>({
     resolver: zodResolver(resetPasswordSchema),
     mode: 'all',
-    defaultValues: { token }
+    reValidateMode: 'onChange',
+    defaultValues: { token, password: '', confirmPassword: '' }
   });
 
+  const turnstileToken = useWatch({ control, name: 'turnstileToken' });
   const passwordValue = useWatch({ control, name: 'password' }) || '';
   const confirmPasswordValue = useWatch({ control, name: 'confirmPassword' }) || '';
 
   useEffect(() => {
-    if (confirmPasswordValue) {
+    if (confirmPasswordTouched || confirmPasswordValue) {
       trigger('confirmPassword');
     }
-  }, [passwordValue, confirmPasswordValue, trigger]);
+  }, [passwordValue, confirmPasswordValue, confirmPasswordTouched, trigger]);
 
   const hasLength = passwordValue.length >= 8;
   const hasUpper = /[A-Z]/.test(passwordValue);
@@ -72,10 +80,32 @@ function ResetPasswordForm() {
     }
   }
 
+  // Exact validation state indicators
+  const isPasswordValid = hasLength && hasUpper && hasLower && hasNumber && !errors.password;
+  const isConfirmValid = confirmPasswordValue.length > 0 && confirmPasswordValue === passwordValue && !errors.confirmPassword;
+  const isTurnstileValid = !process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || (turnstileToken && !turnstileExpired);
+  const isResetValid = isPasswordValid && isConfirmValid && isTurnstileValid;
+
+  // Error visibility states (triggered on click-out/blur or submit attempt)
+  const showPasswordError = (passwordTouched || submitAttempted || passwordValue.length > 0) && !!errors.password;
+  const showConfirmPasswordError = (confirmPasswordTouched || submitAttempted || confirmPasswordValue.length > 0) && (
+    !!errors.confirmPassword || (passwordValue && confirmPasswordValue && passwordValue !== confirmPasswordValue) || (!confirmPasswordValue && (confirmPasswordTouched || submitAttempted))
+  );
+
+  const passwordRegister = register('password');
+  const confirmPasswordRegister = register('confirmPassword');
+
   const onSubmit = async (data: ResetPasswordValues) => {
+    setSubmitAttempted(true);
+
     if (turnstileExpired) {
-      toast.error(dict.validation.securityCheckExpired || 'Security check has expired. Please verify again.');
+      notify.error(dict.validation.securityCheckExpired || toastCatalog.security.checkExpired);
       setValue('turnstileToken', '');
+      return;
+    }
+
+    if (!isResetValid) {
+      await trigger();
       return;
     }
 
@@ -88,12 +118,13 @@ function ResetPasswordForm() {
     const res = await resetPassword(formData);
 
     if (res?.error) {
-      toast.error(res.error);
+      notify.error(res.error);
       setValue('turnstileToken', '');
       setLoading(false);
     } else {
       setSuccess(true);
-      toast.success(dict.auth.passwordUpdatedTitle || 'Password reset successfully! You can now log in.');
+      notify.flash('success', toastCatalog.passwordReset.passwordResetSuccess);
+      notify.success(dict.auth.passwordUpdatedTitle || toastCatalog.passwordReset.passwordResetSuccess);
     }
   };
 
@@ -190,7 +221,7 @@ function ResetPasswordForm() {
           <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
             {dict.auth.resetPasswordTitle}
           </h3>
-          <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+          <p className="auth-subtitle" style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK, width: '100%', textAlign: 'justify', textJustify: 'inter-word' }}>
             {dict.auth.resetPasswordSubtitle}
           </p>
         </div>
@@ -200,22 +231,27 @@ function ResetPasswordForm() {
         {/* Password Field */}
         <div className="form-group passwordfd auth-stagger-2" style={{ position: 'relative', marginBottom: '0.9rem' }}>
           <input
-            {...register('password')}
+            {...passwordRegister}
             type={showPassword ? 'text' : 'password'}
             className="form-control width100 auth-input"
             placeholder={dict.auth.newPasswordPlaceholder}
             autoComplete="new-password"
             disabled={loading}
-            aria-invalid={errors.password ? "true" : undefined}
+            onBlur={(e) => {
+              passwordRegister.onBlur(e);
+              setPasswordTouched(true);
+              trigger('password');
+            }}
+            aria-invalid={showPasswordError ? "true" : undefined}
             style={{
               width: '100%',
               height: '38px',
               padding: isRtl ? '6px 12px 6px 36px' : '6px 36px 6px 12px',
               fontSize: '13px',
               backgroundColor: 'hsl(var(--muted))',
-              border: errors.password
+              border: showPasswordError
                 ? '1px solid hsl(var(--destructive))'
-                : (dirtyFields.password || touchedFields.password) && !errors.password
+                : isPasswordValid
                 ? '1px solid hsl(var(--success))'
                 : '1px solid hsl(var(--border))',
               borderRadius: '6px',
@@ -224,6 +260,7 @@ function ResetPasswordForm() {
               outline: 'none',
               boxSizing: 'border-box',
               fontFamily: FONT_STACK,
+              transition: 'border-color 0.2s ease',
             }}
           />
           <button
@@ -251,7 +288,12 @@ function ResetPasswordForm() {
           >
             {showPassword ? <EyeOff size={16} color='hsl(var(--muted-foreground))' /> : <Eye size={16} color='hsl(var(--muted-foreground))' />}
           </button>
-          {errors.password && <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>{errors.password.message}</p>}
+          
+          {showPasswordError && (
+            <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>
+              {errors.password?.message || dict.validation.passwordRequired}
+            </p>
+          )}
           
           {passwordValue.length > 0 && (
             <div style={{ marginTop: '8px' }}>
@@ -269,22 +311,27 @@ function ResetPasswordForm() {
         {/* Confirm Password Field */}
         <div className="form-group auth-stagger-3" style={{ position: 'relative', marginBottom: '0.9rem' }}>
           <input
-            {...register('confirmPassword')}
+            {...confirmPasswordRegister}
             type={showConfirmPassword ? 'text' : 'password'}
             className="form-control width100 auth-input"
             placeholder={dict.auth.confirmPasswordPlaceholder}
             autoComplete="new-password"
             disabled={loading}
-            aria-invalid={errors.confirmPassword || (touchedFields.confirmPassword && passwordValue !== confirmPasswordValue) ? "true" : undefined}
+            onBlur={(e) => {
+              confirmPasswordRegister.onBlur(e);
+              setConfirmPasswordTouched(true);
+              trigger('confirmPassword');
+            }}
+            aria-invalid={showConfirmPasswordError ? "true" : undefined}
             style={{
               width: '100%',
               height: '38px',
               padding: isRtl ? '6px 12px 6px 36px' : '6px 36px 6px 12px',
               fontSize: '13px',
               backgroundColor: 'hsl(var(--muted))',
-              border: errors.confirmPassword || (touchedFields.confirmPassword && passwordValue !== confirmPasswordValue)
+              border: showConfirmPasswordError
                 ? '1px solid hsl(var(--destructive))'
-                : (dirtyFields.confirmPassword || touchedFields.confirmPassword) && !errors.confirmPassword && passwordValue === confirmPasswordValue && confirmPasswordValue.length > 0
+                : isConfirmValid
                 ? '1px solid hsl(var(--success))'
                 : '1px solid hsl(var(--border))',
               borderRadius: '6px',
@@ -293,6 +340,7 @@ function ResetPasswordForm() {
               outline: 'none',
               boxSizing: 'border-box',
               fontFamily: FONT_STACK,
+              transition: 'border-color 0.2s ease',
             }}
           />
           <button
@@ -320,15 +368,18 @@ function ResetPasswordForm() {
           >
             {showConfirmPassword ? <EyeOff size={16} color='hsl(var(--muted-foreground))' /> : <Eye size={16} color='hsl(var(--muted-foreground))' />}
           </button>
-          {errors.confirmPassword ? (
-            <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>{errors.confirmPassword.message}</p>
-          ) : (touchedFields.confirmPassword && passwordValue !== confirmPasswordValue) ? (
-            <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>{dict.validation.passwordsMismatch}</p>
-          ) : null}
+          
+          {showConfirmPasswordError && (
+            <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>
+              {!confirmPasswordValue 
+                ? (dict.validation.confirmPasswordRequired || 'Please confirm your password')
+                : (dict.validation.passwordsMismatch || "Passwords don't match")}
+            </p>
+          )}
         </div>
 
-        {/* Turnstile */}
-        <div className="auth-stagger-3">
+        {/* Turnstile — Full Width Matching Inputs */}
+        <div className="auth-stagger-3" style={{ width: '100%', marginBottom: '10px' }}>
           <TurnstileWidget
             variant="inline"
             onVerify={(token) => {
@@ -352,41 +403,52 @@ function ResetPasswordForm() {
           )}
         </div>
 
-        <div className="login-con auth-stagger-4" style={{ marginTop: '10px' }}>
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn btn-primary btn-main auth-btn-primary"
-            style={{
-              width: '100%',
-              height: '38px',
-              padding: '6px 28px',
-              fontSize: '13.5px',
-              lineHeight: '19.5px',
-              backgroundColor: '#FBCA07',
-              color: '#141B2D',
-              fontWeight: 700,
-              borderRadius: '7px',
-              border: '0',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              textAlign: 'center',
-              boxSizing: 'border-box',
-              fontFamily: FONT_STACK,
-              opacity: loading ? 0.7 : 1,
-            }}
-          >
-            {loading ? dict.auth.updatingPassword : dict.auth.updatePasswordButton}
-          </button>
-        </div>
-
-        <div className="text-center auth-stagger-5" style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', gap: '6px', alignItems: 'center' }}>
-          <Link
-            href="/login"
-            className="auth-link hover:opacity-80"
-            style={{ color: 'var(--brand-link)', fontSize: '12px', textDecoration: 'none', fontWeight: 600, fontFamily: FONT_STACK, transition: 'opacity 0.2s, color 0.2s' }}
-          >
-            {dict.auth.signInLink}
-          </Link>
+        {/* Side-by-side Actions: Sign in (secondary) + Update password (primary) */}
+        <div className="form-group auth-stagger-4" style={{ marginTop: '10px', marginBottom: '0px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', direction: 'ltr' }}>
+          <div className="forget-con" style={{ flex: 1 }}>
+            <Link href="/login" style={{ textDecoration: 'none', display: 'block', width: '100%' }}>
+              <button
+                type="button"
+                className="btn btn-secondary auth-btn-secondary"
+                style={{
+                  width: '100%',
+                  height: '38px',
+                  padding: '6px 16px',
+                  fontSize: '13.5px',
+                  borderRadius: '7px',
+                  fontFamily: FONT_STACK,
+                }}
+              >
+                {dict.auth.signInLink}
+              </button>
+            </Link>
+          </div>
+          <div className="login-con" style={{ flex: 1 }}>
+            <button
+              type="submit"
+              disabled={loading || !isResetValid}
+              className="btn btn-primary btn-main auth-btn-primary"
+              style={{
+                width: '100%',
+                height: '38px',
+                padding: '6px 16px',
+                fontSize: '13.5px',
+                lineHeight: '19.5px',
+                backgroundColor: '#FBCA07',
+                color: '#141B2D',
+                fontWeight: 700,
+                borderRadius: '7px',
+                border: '0',
+                cursor: loading || !isResetValid ? 'not-allowed' : 'pointer',
+                textAlign: 'center',
+                boxSizing: 'border-box',
+                fontFamily: FONT_STACK,
+                opacity: loading || !isResetValid ? 0.65 : 1,
+              }}
+            >
+              {loading ? dict.auth.updatingPassword : dict.auth.updatePasswordButton}
+            </button>
+          </div>
         </div>
       </form>
     </AuthLayout>

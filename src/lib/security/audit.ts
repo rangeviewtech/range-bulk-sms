@@ -1,6 +1,5 @@
-import { prisma } from '@/lib/prisma';
 import { headers } from 'next/headers';
-import { logger } from '@/lib/logger';
+import { logger, LogCategory, LogOutcome, ForensicEvent } from '@/lib/logger';
 import { getRequestId } from '@/lib/logger/context';
 
 export type AuditAction = 
@@ -9,10 +8,22 @@ export type AuditAction =
   | 'LOGOUT'
   | 'PASSWORD_CHANGED'
   | 'PASSWORD_RESET_SUCCESS'
+  | 'PASSWORD_RESET_REQUESTED'
   | 'SESSION_REVOKED'
+  | 'SESSION_CREATED'
+  | 'SESSION_IDLE_EXPIRED'
+  | 'SESSION_EXPIRED'
+  | 'SESSION_HEARTBEAT'
+  | 'SESSION_CLEANUP'
   | 'ROLE_CHANGED'
   | 'ADMIN_ACTION'
   | 'NEW_DEVICE_LOGIN'
+  | 'NEW_DEVICE_DETECTED'
+  | 'DEVICE_RECOGNIZED'
+  | 'DEVICE_REVOKED'
+  | 'SESSION_ROTATED'
+  | 'MFA_CHALLENGE_ISSUED'
+  | 'MFA_METHOD_SWITCHED'
   | 'REGISTER_SUCCESS'
   | 'OTP_LOGIN_SUCCESS'
   | 'MFA_LOGIN_SUCCESS'
@@ -28,14 +39,16 @@ export type AuditAction =
 export interface AuditParams {
   action: AuditAction;
   userId?: string;
-  actorType?: string;
-  category?: 'SECURITY' | 'APPLICATION' | 'AUDIT';
+  actorType?: 'USER' | 'ADMIN' | 'SYSTEM' | 'WORKER' | 'SERVICE' | 'ANONYMOUS';
+  category?: LogCategory;
   operation?: 'CREATE' | 'READ' | 'UPDATE' | 'DELETE';
   resourceType?: string;
   resourceId?: string;
-  status?: 'SUCCESS' | 'FAILURE';
+  status?: LogOutcome;
   durationMs?: number;
-  changes?: Record<string, unknown>; // For tracking before/after
+  changes?: string[];
+  previousVersion?: unknown;
+  newVersion?: unknown;
   metadata?: Record<string, unknown>;
   errorCode?: string;
   reason?: string;
@@ -46,52 +59,43 @@ export async function logAudit(params: AuditParams) {
     const headersList = await headers().catch(() => null);
     const ipAddress = headersList ? (headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || '127.0.0.1') : 'system';
     const userAgent = headersList ? headersList.get('user-agent') : null;
-    const httpMethod = headersList ? headersList.get('x-invoke-method') : null; // Next.js specific or general
+    const httpMethod = headersList ? headersList.get('x-invoke-method') : null;
     
     const requestId = await getRequestId();
 
-    const data = {
-      action: params.action,
-      requestId,
-      userId: params.userId,
-      actorType: params.actorType || 'USER',
+    const event: ForensicEvent = {
+      eventName: params.action,
       category: params.category || 'SECURITY',
-      operation: params.operation,
+      severity: params.status === 'FAILURE' ? 'ERROR' : 'INFO',
+      outcome: params.status || 'SUCCESS',
+      
+      actorType: params.actorType || 'USER',
+      actorId: params.userId,
+      
       resourceType: params.resourceType,
       resourceId: params.resourceId,
-      status: params.status || 'SUCCESS',
+      action: params.operation,
+      
+      sourceIp: ipAddress.substring(0, 45),
+      userAgent: userAgent || undefined,
+      httpMethod: httpMethod || undefined,
+      
       durationMs: params.durationMs,
-      errorCode: params.errorCode,
-      reason: params.reason,
-      changes: params.changes || {},
-      metadata: params.metadata || {},
-      ipAddress: ipAddress.substring(0, 45),
-      userAgent,
-      httpMethod
+      reasonCode: params.errorCode || params.reason,
+      changedFields: params.changes,
+      previousVersion: params.previousVersion,
+      newVersion: params.newVersion,
+      
+      metadata: params.metadata,
+      requestId
     };
 
-    // 1. Write to centralized logger
-    logger.audit(`[${data.action}] ${data.resourceType ? data.resourceType + ':' + data.resourceId : ''}`, data);
-
-    // 2. Fire-and-forget write to Prisma DB to avoid blocking the main request
-    Promise.resolve().then(async () => {
-      try {
-        await prisma.auditLog.create({
-          // @ts-expect-error - Ignore type errors if migration hasn't been run locally
-          data
-        });
-      } catch (dbError) {
-        logger.error('Failed to write audit log to database', { error: dbError });
-      }
-    });
-
+    await logger.audit(event);
   } catch (error) {
-    // We swallow audit errors in production so they don't break user flows
     logger.error('Failed to structure audit log', { error });
   }
 }
 
-// Keep legacy logAudit signature support for existing code that hasn't been updated
 export async function logAuditLegacy(
   action: AuditAction,
   userId?: string,

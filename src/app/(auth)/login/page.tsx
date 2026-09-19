@@ -1,18 +1,16 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
+import { useState, useEffect, Fragment } from 'react';
 import Image from 'next/image';
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
 import { LanguageToggle } from "@/components/navigation/language-toggle";
 import { useLanguage } from "@/hooks/use-language";
-import { Globe, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { toast } from 'sonner';
+import { notify } from '@/lib/notifications/toast';
+import { toastCatalog } from '@/lib/notifications/toast-catalog';
 import { loginSchema } from '@/lib/validations/auth';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { isDev, formatErrorForEnv } from '@/lib/env';
@@ -20,6 +18,7 @@ import { appConfig } from '@/config/app';
 import { appAssets } from '@/config/assets';
 import { socialLogin, login as loginAction, forgotPassword } from '@/app/(auth)/actions';
 import { TurnstileWidget } from '@/components/forms/turnstile-widget';
+import { AuthLink } from '@/components/ui/auth-link';
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
@@ -105,25 +104,39 @@ export default function LoginPage() {
     return () => clearInterval(interval);
   }, [slides.length]);
 
+  // Display notification if redirected due to session expiration
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('expired') === '1') {
+        notify.warning('Your session expired due to inactivity. Please sign in again.');
+      }
+    }
+  }, []);
+
   const {
     register,
     handleSubmit,
-    formState: { errors, touchedFields, dirtyFields },
+    formState: { errors, touchedFields, isValid },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     mode: 'all',
     reValidateMode: 'onChange',
   });
 
+  const isLoginValid = isValid && (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || (turnstileToken && !turnstileExpired));
+  const isEmailValid = z.string().email().safeParse(forgotUsername).success;
+  const isForgotValid = isEmailValid && (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || (turnstileToken && !turnstileExpired));
+
   const onSubmit = async (data: LoginFormValues) => {
     // Block if Turnstile key is configured but token is missing
     const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
     if (siteKey && !turnstileToken) {
-      toast.error('Please complete the security check before logging in.');
+      notify.error(toastCatalog.security.turnstileRequired || 'Please complete the security check before logging in.');
       return;
     }
     if (siteKey && turnstileExpired) {
-      toast.error('Security check has expired. Please verify again.');
+      notify.error(toastCatalog.security.checkExpired || 'Security check has expired. Please verify again.');
       setTurnstileToken(null);
       return;
     }
@@ -134,10 +147,18 @@ export default function LoginPage() {
       const formData = new FormData();
       formData.set('email', data.email);
       formData.set('password', data.password);
+      if (data.rememberMe) formData.set('rememberMe', 'true');
       if (turnstileToken) formData.set('turnstileToken', turnstileToken);
+
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const callbackUrl = params.get('callbackUrl') || params.get('returnTo');
+        if (callbackUrl) formData.set('callbackUrl', callbackUrl);
+      }
+
       const res = await loginAction(formData);
       if (res?.error) {
-        toast.error(res.error);
+        notify.error(res.error);
         return;
       }
       if (res?.redirect) router.push(res.redirect);
@@ -145,11 +166,11 @@ export default function LoginPage() {
       const formatted = formatErrorForEnv(err, 'Incorrect username / password.');
       
       if (isDev) {
-        toast.error(`[DEV ERROR] ${formatted.code}`, {
+        notify.error(`[DEV ERROR] ${formatted.code}`, {
           description: `${formatted.message} (Timestamp: ${formatted.timestamp})`,
         });
       } else {
-        toast.error(formatted.message);
+        notify.error(formatted.message);
       }
     } finally {
       setLoading(false);
@@ -162,18 +183,18 @@ export default function LoginPage() {
   ) => {
     if (socialLoading || loading) return;
     setSocialLoading(provider);
-    const toastId = toast.loading(`Connecting to ${name}...`);
+    const toastId = notify.loading(`Connecting to ${name}...`);
 
     try {
       const res = await socialLogin(provider);
       if (res?.success) {
-        toast.success(`Welcome! Signed in with ${name}`, { id: toastId });
+        notify.success(`Welcome! Signed in with ${name}`, { id: toastId });
         router.push('/dashboard');
       } else {
-        toast.error(res.error || `Could not sign in with ${name}`, { id: toastId });
+        notify.error(res.error || `Could not sign in with ${name}`, { id: toastId });
       }
     } catch {
-      toast.error(`Connection error with ${name}. Please try again.`, { id: toastId });
+      notify.error(`Connection error with ${name}. Please try again.`, { id: toastId });
     } finally {
       setSocialLoading(null);
     }
@@ -184,17 +205,17 @@ export default function LoginPage() {
     setForgotAttempted(true);
     const isEmailValid = z.string().email().safeParse(forgotUsername).success;
     if (!forgotUsername || !isEmailValid) {
-      toast.error(dict.validation.invalidEmail || 'Please enter a valid email address');
+      notify.error(dict.validation.invalidEmail || 'Please enter a valid email address');
       return;
     }
 
     const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
     if (siteKey && !turnstileToken) {
-      toast.error('Please complete the security check before resetting password.');
+      notify.error(toastCatalog.security.turnstileRequired || 'Please complete the security check before resetting password.');
       return;
     }
     if (siteKey && turnstileExpired) {
-      toast.error('Security check has expired. Please verify again.');
+      notify.error(toastCatalog.security.checkExpired || 'Security check has expired. Please verify again.');
       setTurnstileToken(null);
       return;
     }
@@ -207,12 +228,13 @@ export default function LoginPage() {
       
       const res = await forgotPassword(formData);
       if (res?.error) {
-        toast.error(res.error);
+        notify.error(res.error);
       } else {
+        notify.success(toastCatalog.passwordReset.forgotPasswordSent);
         setForgotSubmitted(true);
       }
-    } catch (err) {
-      toast.error('Connection error. Please try again.');
+    } catch (_err) {
+      notify.error(toastCatalog.generic.networkError || 'Connection error. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -220,55 +242,86 @@ export default function LoginPage() {
 
   return (
     <div
-      className="relative min-h-screen w-full bg-white overflow-hidden select-none"
+      className="relative min-h-screen w-full bg-white overflow-hidden"
       style={{ fontFamily: FONT_STACK, fontSize: '13px', color: 'hsl(var(--foreground))' }}
     >
       {/* ================= #img-holder (Background Carousel) ================= */}
       <div 
         id="img-holder"
+        className="select-none pointer-events-none right-0 sm:right-[340px] bg-slate-950"
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
-          right: 0,
           bottom: 0,
           height: '100vh',
           zIndex: 0,
           overflow: 'hidden',
         }}
       >
-        {slides.map((src, index) => (
-          <Image
-            key={src}
-            src={src}
-            alt={`Background Slide ${index + 1}`}
-            fill
-            priority={index === 0}
-            className="auth-carousel-slide"
-            style={{
-              objectFit: 'cover',
-              opacity: index === currentImageIndex ? 1 : 0,
-              zIndex: index === currentImageIndex ? 2 : 1,
-            }}
-          />
-        ))}
+        {slides.map((src, index) => {
+          const isActive = index === currentImageIndex;
+          return (
+            <Fragment key={src}>
+              {/* Ambient Blurred Backdrop */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '-5%',
+                  left: '-5%',
+                  width: '110%',
+                  height: '110%',
+                  filter: 'blur(32px) brightness(0.6)',
+                  transform: 'scale(1.12)',
+                  opacity: isActive ? 0.8 : 0,
+                  transition: 'opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                  zIndex: isActive ? 1 : 0,
+                }}
+              >
+                <Image
+                  src={src}
+                  alt=""
+                  aria-hidden="true"
+                  fill
+                  priority={index === 0}
+                  style={{
+                    objectFit: 'cover',
+                    objectPosition: 'center',
+                  }}
+                />
+              </div>
+              {/* Razor-sharp Foreground Hero Slide */}
+              <Image
+                src={src}
+                alt={`Background Slide ${index + 1}`}
+                fill
+                priority={index === 0}
+                className="auth-carousel-slide"
+                style={{
+                  opacity: isActive ? 1 : 0,
+                  transition: 'opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                  zIndex: isActive ? 3 : 2,
+                }}
+              />
+            </Fragment>
+          );
+        })}
       </div>
 
       {/* ================= .form-main-container ================= */}
       <div
-        className="form-main-container auth-fade-in w-full sm:w-[340px]"
+        className="form-main-container auth-fade-in select-text w-full sm:w-[340px]"
         style={{
           position: 'fixed',
           maxWidth: '100%',
-          height: '100vh',
+          height: '100dvh',
           right: '0px',
           top: '0px',
           left: 'auto',
-          margin: 'auto',
           backgroundColor: 'hsl(var(--card))',
           display: 'flex',
           flexDirection: 'column',
-          padding: '24px 24px',
+          padding: '20px 24px',
           boxSizing: 'border-box',
           zIndex: 20,
           boxShadow: '0 0 30px rgba(0,0,0,0.14)',
@@ -295,7 +348,7 @@ export default function LoginPage() {
           <LanguageToggle />
         </div>
         {/* Centered Wrapper for Logo + All Views (Safe scroll-centering with margin: auto 0) */}
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%', margin: 'auto 0', paddingTop: '24px', paddingBottom: '36px', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', margin: 'auto 0', padding: '16px 0', boxSizing: 'border-box' }}>
         {/* .logo-container (Standardized Brand Logo) */}
           <>
             <Image
@@ -351,7 +404,7 @@ export default function LoginPage() {
                   {dict.auth.signInTitle}
                 </h3>
 
-                <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+                <p className="auth-subtitle" style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK, width: '100%', textAlign: 'justify', textJustify: 'inter-word' }}>
                   {dict.auth.signInSubtitle}
                 </p>
               </div>
@@ -451,6 +504,7 @@ export default function LoginPage() {
               <div className="form-group auth-stagger-4" style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div className="remember-con" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <input
+                    {...register('rememberMe')}
                     type="checkbox"
                     id="remember"
                     className="prod-checkbox"
@@ -460,27 +514,19 @@ export default function LoginPage() {
                   </label>
                 </div>
                 <div className="forget-con">
-                  <a
-                    href="#"
+                  <AuthLink
                     id="forget-link"
                     onClick={(e) => {
                       e.preventDefault();
                       setView('forgot');
                     }}
-                    className="auth-link"
                     style={{
-                      color: 'var(--brand-link)',
                       fontSize: '12px',
-                      textDecoration: 'none',
-                      fontWeight: 600,
                       fontFamily: FONT_STACK,
-                      transition: 'opacity 0.2s ease, color 0.2s ease',
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                    onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
                   >
                     {dict.auth.forgotPasswordLink}
-                  </a>
+                  </AuthLink>
                 </div>
               </div>
 
@@ -494,7 +540,7 @@ export default function LoginPage() {
                   }}
                   onError={() => {
                     setTurnstileToken(null);
-                    toast.error('Security check failed. Please refresh and try again.');
+                    notify.error('Security check failed. Please refresh and try again.');
                   }}
                   onExpire={() => {
                     setTurnstileToken(null);
@@ -514,7 +560,7 @@ export default function LoginPage() {
                   type="submit"
                   id="submit_button"
                   className="btn btn-primary btn-main auth-btn-primary"
-                  disabled={loading || !!socialLoading}
+                  disabled={loading || !!socialLoading || !isLoginValid}
                   style={{
                     width: '100%',
                     height: '38px',
@@ -526,14 +572,14 @@ export default function LoginPage() {
                     fontWeight: 700,
                     borderRadius: '7px',
                     border: '0',
-                    cursor: loading || !!socialLoading ? 'not-allowed' : 'pointer',
+                    cursor: loading || !!socialLoading || !isLoginValid ? 'not-allowed' : 'pointer',
                     textAlign: 'center',
                     boxSizing: 'border-box',
                     fontFamily: FONT_STACK,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    opacity: loading ? 0.7 : 1,
+                    opacity: loading || !isLoginValid ? 0.7 : 1,
                   }}
                 >
                   {loading ? dict.auth.signingIn : dict.auth.signInButton}
@@ -545,22 +591,15 @@ export default function LoginPage() {
                 <span style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))', fontFamily: FONT_STACK }}>
                   {dict.auth.noAccountPrompt}{' '}
                 </span>
-                <a
+                <AuthLink
                   href="/register"
-                  className="auth-link"
                   style={{
                     fontSize: '12px',
-                    color: 'var(--brand-link)',
-                    textDecoration: 'none',
-                    fontWeight: 600,
                     fontFamily: FONT_STACK,
-                    transition: 'opacity 0.2s ease, color 0.2s ease',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
                 >
                   {dict.auth.createOneLink}
-                </a>
+                </AuthLink>
               </div>
 
               {/* Divider */}
@@ -739,7 +778,7 @@ export default function LoginPage() {
                     <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
                       {dict.auth.checkInboxTitle}
                     </h3>
-                    <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+                    <p className="auth-subtitle" style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '20px', lineHeight: '19.5px', fontFamily: FONT_STACK, width: '100%', textAlign: 'justify', textJustify: 'inter-word' }}>
                       {dict.auth.checkInboxSubtitle}
                     </p>
                   </div>
@@ -774,7 +813,7 @@ export default function LoginPage() {
                   <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
                     {dict.auth.forgotPasswordTitle}
                   </h3>
-                  <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK }}>
+                  <p className="auth-subtitle" style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: '16px', lineHeight: '19.5px', fontFamily: FONT_STACK, width: '100%', textAlign: 'justify', textJustify: 'inter-word' }}>
                     {dict.auth.forgotPasswordSubtitle}
                   </p>
 
@@ -825,7 +864,7 @@ export default function LoginPage() {
                     }}
                     onError={() => {
                       setTurnstileToken(null);
-                      toast.error('Security check failed. Please refresh and try again.');
+                      notify.error('Security check failed. Please refresh and try again.');
                     }}
                     onExpire={() => {
                       setTurnstileToken(null);
@@ -860,7 +899,7 @@ export default function LoginPage() {
                       <button
                         type="submit"
                         className="btn btn-primary btn-main auth-btn-primary"
-                        disabled={loading}
+                        disabled={loading || !isForgotValid}
                         style={{
                           width: '100%',
                           height: '38px',
@@ -868,7 +907,8 @@ export default function LoginPage() {
                           fontSize: '13.5px',
                           borderRadius: '7px',
                           fontFamily: FONT_STACK,
-                          opacity: loading ? 0.7 : 1,
+                          cursor: loading || !isForgotValid ? 'not-allowed' : 'pointer',
+                          opacity: loading || !isForgotValid ? 0.7 : 1,
                         }}
                       >
                         {loading ? dict.auth.sendingResetLink : dict.auth.sendResetLinkButton}
@@ -889,7 +929,7 @@ export default function LoginPage() {
                 onClick={() => setView('login')}
                 style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginBottom: '20px' }}
               >
-                <img className="back-img" src={appAssets.uiIcons.arrowLeft} alt="logo" style={{ width: '24px', marginRight: '10px', marginTop: '5px' }} />
+                <Image className="back-img" src={appAssets.uiIcons.arrowLeft} alt="back" width={24} height={24} style={{ width: '24px', height: '24px', marginRight: '10px', marginTop: '5px' }} />
                 <h3 className="back-head" style={{ fontSize: '20px', fontWeight: 500, color: 'hsl(var(--foreground))', margin: 0, lineHeight: '40px', fontFamily: FONT_STACK }}>
                   Login
                 </h3>
@@ -897,7 +937,7 @@ export default function LoginPage() {
 
               <div className="main-container" style={{ textAlign: 'center' }}>
                 <div className="rangesms-app" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '18px' }}>
-                  <img className="rangesms-img" src={appAssets.icon} alt="logo" style={{ width: '110px' }} />
+                  <Image className="rangesms-img" src={appAssets.icon} alt="logo" width={110} height={110} style={{ width: '110px', height: 'auto' }} />
                   <h3 style={{ fontSize: '24px', fontWeight: 500, color: 'hsl(var(--foreground))', margin: '0 0 16px 0', fontFamily: FONT_STACK }}>{appConfig.name}</h3>
                 </div>
 
@@ -906,20 +946,20 @@ export default function LoginPage() {
                 </p>
 
                 <div className="qr-code-container" style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-                  <img src={appAssets.qrCode} alt={`qr-code-${appConfig.name.toLowerCase()}`} className="qr-code" style={{ maxWidth: '150px' }} />
+                  <Image src={appAssets.qrCode} alt={`qr-code-${appConfig.name.toLowerCase()}`} className="qr-code" width={150} height={150} style={{ maxWidth: '150px', height: 'auto' }} />
                 </div>
 
                 <div className="appstore-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
                   <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
                     <a href="https://play.google.com/store/apps/details?id=com.uffizio.rangesms&hl=en_IN" data-value="android" target="_blank" rel="noreferrer" style={{ flex: 1 }}>
-                      <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ width: '100%', height: '36px', objectFit: 'contain' }} />
+                      <Image src={appAssets.storeBadges.googlePlay} alt="Google Play Store" width={120} height={36} style={{ width: '100%', height: '36px', objectFit: 'contain' }} />
                     </a>
                     <a href="https://apps.apple.com/in/app/rangesms/id1396516275" data-value="ios" target="_blank" rel="noreferrer" style={{ flex: 1 }}>
-                      <img src={appAssets.storeBadges.appStore} alt="Apple App Store" style={{ width: '100%', height: '36px', objectFit: 'contain' }} />
+                      <Image src={appAssets.storeBadges.appStore} alt="Apple App Store" width={120} height={36} style={{ width: '100%', height: '36px', objectFit: 'contain' }} />
                     </a>
                   </div>
                   <a href="https://apps.microsoft.com/store" data-value="microsoft" target="_blank" rel="noreferrer" style={{ width: '100%' }}>
-                    <img src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" style={{ width: '100%', height: '36px', objectFit: 'contain' }} />
+                    <Image src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" width={120} height={36} style={{ width: '100%', height: '36px', objectFit: 'contain' }} />
                   </a>
                 </div>
               </div>
@@ -942,7 +982,7 @@ export default function LoginPage() {
                   className="auth-store-badge hover-scale"
                   style={{ flex: 1, textDecoration: 'none', display: 'flex', justifyContent: 'center' }}
                 >
-                  <img src={appAssets.storeBadges.googlePlay} alt="Google Play Store" style={{ width: '100%', height: 'auto', maxHeight: '36px', objectFit: 'contain' }} />
+                  <Image src={appAssets.storeBadges.googlePlay} alt="Google Play Store" width={100} height={36} style={{ width: '100%', height: 'auto', maxHeight: '36px', objectFit: 'contain' }} />
                 </a>
                 <a
                   href="https://apps.apple.com/in/app/rangesms/id1396516275"
@@ -952,7 +992,7 @@ export default function LoginPage() {
                   className="auth-store-badge hover-scale"
                   style={{ flex: 1, textDecoration: 'none', display: 'flex', justifyContent: 'center' }}
                 >
-                  <img src={appAssets.storeBadges.appStore} alt="Apple App Store" style={{ width: '100%', height: 'auto', maxHeight: '36px', objectFit: 'contain' }} />
+                  <Image src={appAssets.storeBadges.appStore} alt="Apple App Store" width={100} height={36} style={{ width: '100%', height: 'auto', maxHeight: '36px', objectFit: 'contain' }} />
                 </a>
                 <a
                   href="https://apps.microsoft.com/store"
@@ -962,71 +1002,50 @@ export default function LoginPage() {
                   className="auth-store-badge hover-scale"
                   style={{ flex: 1, textDecoration: 'none', display: 'flex', justifyContent: 'center' }}
                 >
-                  <img src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" style={{ width: '100%', height: 'auto', maxHeight: '36px', objectFit: 'contain' }} />
+                  <Image src={appAssets.storeBadges.microsoftStore} alt="Microsoft Store" width={100} height={36} style={{ width: '100%', height: 'auto', maxHeight: '36px', objectFit: 'contain' }} />
                 </a>
-              </div>
-
-              {/* Legal Links Footer */}
-              <div style={{ marginTop: '14px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', flexWrap: 'wrap', width: '100%' }}>
-                <Link
-                  href="/terms"
-                  target="_blank"
-                  className="auth-link"
-                  style={{
-                    fontSize: '10.5px',
-                    color: 'var(--brand-link)',
-                    textDecoration: 'none',
-                    fontWeight: 600,
-                    fontFamily: FONT_STACK,
-                    whiteSpace: 'nowrap',
-                    transition: 'opacity 0.2s ease, color 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-                >
-                  {dict.legal?.termsAndConditions || 'Terms & Conditions'}
-                </Link>
-                <span aria-hidden="true" style={{ fontSize: '10px', color: 'var(--brand-link)', opacity: 0.5 }}>&bull;</span>
-                <Link
-                  href="/privacy"
-                  target="_blank"
-                  className="auth-link"
-                  style={{
-                    fontSize: '10.5px',
-                    color: 'var(--brand-link)',
-                    textDecoration: 'none',
-                    fontWeight: 600,
-                    fontFamily: FONT_STACK,
-                    whiteSpace: 'nowrap',
-                    transition: 'opacity 0.2s ease, color 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-                >
-                  {dict.legal?.privacyPolicy || 'Privacy Policy'}
-                </Link>
-                <span aria-hidden="true" style={{ fontSize: '10px', color: 'var(--brand-link)', opacity: 0.5 }}>&bull;</span>
-                <Link
-                  href="/cookies"
-                  target="_blank"
-                  className="auth-link"
-                  style={{
-                    fontSize: '10.5px',
-                    color: 'var(--brand-link)',
-                    textDecoration: 'none',
-                    fontWeight: 600,
-                    fontFamily: FONT_STACK,
-                    whiteSpace: 'nowrap',
-                    transition: 'opacity 0.2s ease, color 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
-                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-                >
-                  {dict.legal?.cookiePolicy || 'Cookie Policy'}
-                </Link>
               </div>
             </div>
           )}
+
+          {/* Legal Links Footer (Rendered unconditionally across all auth views: login, forgot, check-inbox, app) */}
+          <div style={{ marginTop: '16px', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', flexWrap: 'wrap', width: '100%' }}>
+            <AuthLink
+              href="/terms"
+              external
+              style={{
+                fontSize: '10.5px',
+                fontFamily: FONT_STACK,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {dict.legal?.termsAndConditions || 'Terms & Conditions'}
+            </AuthLink>
+            <span aria-hidden="true" style={{ fontSize: '10px', color: 'var(--brand-link)', opacity: 0.5 }}>&bull;</span>
+            <AuthLink
+              href="/privacy"
+              external
+              style={{
+                fontSize: '10.5px',
+                fontFamily: FONT_STACK,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {dict.legal?.privacyPolicy || 'Privacy Policy'}
+            </AuthLink>
+            <span aria-hidden="true" style={{ fontSize: '10px', color: 'var(--brand-link)', opacity: 0.5 }}>&bull;</span>
+            <AuthLink
+              href="/cookies"
+              external
+              style={{
+                fontSize: '10.5px',
+                fontFamily: FONT_STACK,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {dict.legal?.cookiePolicy || 'Cookie Policy'}
+            </AuthLink>
+          </div>
         </div>{/* end centered wrapper */}
 
 

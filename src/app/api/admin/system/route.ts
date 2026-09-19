@@ -26,7 +26,7 @@ export async function GET(_req: Request) {
     prisma.campaign.count(),
     prisma.smsProvider.findMany({ select: { name: true, displayName: true, type: true, isActive: true, priority: true } }),
     prisma.gateway.count(),
-    prisma.auditLog.findMany({ take: 5, orderBy: { createdAt: 'desc' } })
+    prisma.auditLog.findMany({ take: 5, orderBy: { recordedAt: 'desc' } })
   ]);
 
   const mem = process.memoryUsage();
