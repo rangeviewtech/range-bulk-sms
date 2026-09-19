@@ -708,24 +708,25 @@ export default function LoginPage() {
                 {dict.auth.forgotPasswordSubtitle}
               </p>
 
-              <div className="form-group usernamefd" style={{ position: 'relative', marginBottom: '1rem' }}>
+              <div className="form-group usernamefd" style={{ position: 'relative', marginBottom: '0.9rem' }}>
                 <input
                   type="email"
                   id="forgot_username"
-                  className="form-control"
+                  className="form-control width100 auth-input"
                   placeholder={dict.auth.emailPlaceholder}
                   autoComplete="email"
                   value={forgotUsername}
                   onChange={(e) => setForgotUsername(e.target.value)}
+                  aria-invalid={forgotUsername.length > 0 && !z.string().email().safeParse(forgotUsername).success ? "true" : undefined}
                   style={{
                     width: '100%',
                     height: '38px',
                     padding: '6px 12px',
                     fontSize: '13px',
                     backgroundColor: 'hsl(var(--muted))',
-                    border: forgotUsername.length > 0 && !forgotUsername.includes('@')
+                    border: forgotUsername.length > 0 && !z.string().email().safeParse(forgotUsername).success
                       ? '1px solid hsl(var(--destructive))'
-                      : forgotUsername.length > 0 && forgotUsername.includes('@')
+                      : forgotUsername.length > 0 && z.string().email().safeParse(forgotUsername).success
                       ? '1px solid hsl(var(--success))'
                       : '1px solid hsl(var(--border))',
                     borderRadius: '6px',
@@ -737,6 +738,11 @@ export default function LoginPage() {
                     transition: 'border-color 0.2s ease',
                   }}
                 />
+                {forgotUsername.length > 0 && !z.string().email().safeParse(forgotUsername).success && (
+                  <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>
+                    {dict.validation.invalidEmail}
+                  </p>
+                )}
               </div>
 
               {/* Cloudflare Turnstile Ã¢â‚¬â€ Bot Protection */}
