@@ -28,21 +28,7 @@ export interface FlyoutPositionResult {
   overflowsViewport: boolean;
 }
 
-export interface DeepMenuPositionOptions {
-  parentSubMenuTop: number;
-  categoryRowTopOffset: number;
-  deepMenuHeight: number;
-  viewportHeight: number;
-  paddingBottom?: number;
-  paddingTop?: number;
-}
 
-export interface DeepMenuPositionResult {
-  topOffset: number;
-  screenTop: number;
-  maxHeight: number;
-  overflowsViewport: boolean;
-}
 
 /**
  * Computes submenu flyout position relative to the viewport.
@@ -110,39 +96,3 @@ export function computeFlyoutPosition({
   };
 }
 
-/**
- * Computes deep menu (Layer 3) offset relative to the submenu container,
- * ensuring it stays inside the viewport with at least paddingBottom space at the bottom.
- */
-export function computeDeepMenuPosition({
-  parentSubMenuTop,
-  categoryRowTopOffset,
-  deepMenuHeight,
-  viewportHeight,
-  paddingBottom = 8,
-  paddingTop = 8,
-}: DeepMenuPositionOptions): DeepMenuPositionResult {
-  const naturalScreenTop = parentSubMenuTop + categoryRowTopOffset;
-  const maxBottom = viewportHeight - paddingBottom;
-  const maxHeight = Math.max(100, viewportHeight - (paddingTop + paddingBottom));
-
-  let screenTop: number;
-  let overflowsViewport = false;
-
-  if (naturalScreenTop + deepMenuHeight <= maxBottom) {
-    screenTop = Math.max(paddingTop, naturalScreenTop);
-  } else {
-    overflowsViewport = true;
-    const shiftedTop = maxBottom - deepMenuHeight;
-    screenTop = Math.max(paddingTop, shiftedTop);
-  }
-
-  const topOffset = screenTop - parentSubMenuTop;
-
-  return {
-    topOffset: Math.round(topOffset),
-    screenTop: Math.round(screenTop),
-    maxHeight: Math.round(maxHeight),
-    overflowsViewport,
-  };
-}

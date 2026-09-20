@@ -33,7 +33,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
-import { computeFlyoutPosition, computeDeepMenuPosition } from "@/lib/flyout-position";
+import { computeFlyoutPosition } from "@/lib/flyout-position";
 
 // Navigation Hierarchy Type
 export interface NavLeaf {
@@ -265,8 +265,6 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
     left: 90,
     maxHeight: 800,
   });
-  const [deepMenuOffset, setDeepMenuOffset] = React.useState<number>(0);
-  const [deepMenuMaxHeight, setDeepMenuMaxHeight] = React.useState<number>(800);
 
   // Refs for measured bounds, scrolling, and flicker prevention
   const sidebarRef = React.useRef<HTMLElement | null>(null);
@@ -357,25 +355,6 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
       left: pos.left,
       maxHeight: pos.maxHeight,
     });
-
-    if (hoveredCategory) {
-      const deepMenuEl = deepMenuRef.current;
-      const deepMenuHeight = deepMenuEl
-        ? (deepMenuEl.offsetHeight || deepMenuEl.getBoundingClientRect().height)
-        : hoveredCategory.items.length * ITEM_HEIGHT;
-
-      const categoryRowTopOffset = SUBMENU_HEADER_HEIGHT + categoryIndex * ITEM_HEIGHT;
-
-      const deepPos = computeDeepMenuPosition({
-        parentSubMenuTop: pos.top,
-        categoryRowTopOffset,
-        deepMenuHeight,
-        viewportHeight,
-      });
-
-      setDeepMenuOffset(deepPos.topOffset);
-      setDeepMenuMaxHeight(deepPos.maxHeight);
-    }
   }, [hoveredModule, hoveredCategory, categoryIndex, allowedNavigation]);
 
   // Recalculate positioning when submenu opens, page or sidebar scrolls, window resizes, or content changes
@@ -683,7 +662,6 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                           setHoveredModule(mod);
                           setHoveredCategory(null);
                           setCategoryIndex(0);
-                          setDeepMenuOffset(0);
                         }}
                       >
                         <div
@@ -779,7 +757,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
             id="flyout-container"
             onMouseEnter={cancelCloseTimer}
             onMouseLeave={() => scheduleClose(180)}
-            className="hidden md:flex absolute select-none pointer-events-auto"
+            className="hidden md:block absolute select-none pointer-events-auto"
             style={{ 
               top: `${flyoutPosition.top}px`,
               left: `${flyoutPosition.left}px`,
@@ -843,10 +821,9 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                 id="deepMenu"
                 ref={deepMenuRef}
                 key={hoveredCategory.title}
-                className="w-[180px] bg-[#04648C] text-white flex flex-col h-fit overflow-y-auto no-scrollbar border-r border-white/10 animate-flyout-deep shadow-[4px_6px_18px_rgba(0,0,0,0.35)] shrink-0 z-20"
+                className="w-[180px] bg-[#04648C] text-white flex flex-col overflow-y-auto no-scrollbar border-r border-white/10 animate-flyout-deep shadow-[4px_6px_18px_rgba(0,0,0,0.35)] shrink-0 z-20 absolute left-[170px] bottom-0 h-max"
                 style={{
-                  marginTop: `${deepMenuOffset}px`,
-                  maxHeight: `${deepMenuMaxHeight}px`,
+                  maxHeight: `${flyoutPosition.maxHeight}px`,
                 }}
               >
                 <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5" role="menu">
