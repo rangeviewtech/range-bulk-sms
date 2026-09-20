@@ -29,10 +29,13 @@ interface SystemData {
   }[];
   recentLogs: {
     id: string;
-    action: string;
+    action: string | null;
+    eventName: string;
     resourceType: string | null;
-    status: string;
-    createdAt: string;
+    outcome: string;
+    status?: string;
+    recordedAt: string;
+    timestamp: string;
   }[];
   system: {
     uptimeSeconds: number;
@@ -207,13 +210,13 @@ export default function SystemPage() {
                 {data.recentLogs.map((log) => (
                   <div key={log.id} className="flex justify-between items-center border-b pb-2.5 last:border-0 last:pb-0">
                     <div>
-                      <p className="text-sm font-medium font-mono text-foreground">{log.action}</p>
+                      <p className="text-sm font-medium font-mono text-foreground">{log.action || log.eventName}</p>
                       <p className="text-xs text-muted-foreground">
-                        Resource: {log.resourceType || "System"} • {format(new Date(log.createdAt), "MMM dd, HH:mm:ss")}
+                        Resource: {log.resourceType || "System"} • {format(new Date(log.recordedAt || log.timestamp), "MMM dd, HH:mm:ss")}
                       </p>
                     </div>
-                    <Badge variant={log.status === "SUCCESS" ? "outline" : "destructive"} className="text-xs">
-                      {log.status}
+                    <Badge variant={log.outcome === "SUCCESS" ? "outline" : "destructive"} className="text-xs">
+                      {log.outcome || log.status}
                     </Badge>
                   </div>
                 ))}
