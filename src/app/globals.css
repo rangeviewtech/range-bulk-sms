@@ -174,11 +174,17 @@
     width: 5px;
     height: 5px;
   }
+  /* Exhaustively hide all scrollbar stepper/arrow buttons */
   ::-webkit-scrollbar-button,
-  *::-webkit-scrollbar-button {
+  ::-webkit-scrollbar-button:single-button,
+  ::-webkit-scrollbar-button:vertical:decrement,
+  ::-webkit-scrollbar-button:vertical:increment,
+  ::-webkit-scrollbar-button:horizontal:decrement,
+  ::-webkit-scrollbar-button:horizontal:increment {
     display: none !important;
     width: 0 !important;
     height: 0 !important;
+    background: transparent !important;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
@@ -202,13 +208,15 @@
     background: rgba(255, 255, 255, 0.38);
   }
 
-  /* Firefox global scrollbar */
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-  }
-  .dark * {
-    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+  /* Firefox standard scrollbar — only for non-WebKit browsers (Firefox thin scrollbars never render arrows) */
+  @supports not (-webkit-appearance: none) {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    }
+    .dark * {
+      scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+    }
   }
 }
 
@@ -245,19 +253,20 @@
   }
 
   /* Sleek scrollbar for dark sidebar backgrounds — always uses light thumb */
-  .sidebar-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
-  }
   .sidebar-scrollbar::-webkit-scrollbar {
     width: 5px;
     height: 5px;
   }
   .sidebar-scrollbar::-webkit-scrollbar-button,
-  .sidebar-scrollbar *::-webkit-scrollbar-button {
+  .sidebar-scrollbar::-webkit-scrollbar-button:single-button,
+  .sidebar-scrollbar::-webkit-scrollbar-button:vertical:decrement,
+  .sidebar-scrollbar::-webkit-scrollbar-button:vertical:increment,
+  .sidebar-scrollbar::-webkit-scrollbar-button:horizontal:decrement,
+  .sidebar-scrollbar::-webkit-scrollbar-button:horizontal:increment {
     display: none !important;
     width: 0 !important;
     height: 0 !important;
+    background: transparent !important;
   }
   .sidebar-scrollbar::-webkit-scrollbar-track {
     background: transparent;
@@ -271,6 +280,13 @@
   }
   .sidebar-scrollbar::-webkit-scrollbar-corner {
     background: transparent;
+  }
+
+  @supports not (-webkit-appearance: none) {
+    .sidebar-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+    }
   }
 }
 /* Prevent Chrome browser autofill from darkening inputs */
