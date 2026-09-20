@@ -19,6 +19,7 @@ import {
 import { Search, Plus, Download, RefreshCw, Trash2, User, Phone, Mail } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { TableSkeletonRows } from '@/components/blocks/ui/skeleton-layouts';
 
 interface ContactItem {
   id: string;
@@ -335,12 +336,7 @@ export default function ContactsPage() {
               </TableHeader>
               <TableBody>
                 {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
-                      <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2 text-primary" />
-                      Loading contacts...
-                    </TableCell>
-                  </TableRow>
+                  <TableSkeletonRows columns={5} rows={5} />
                 ) : contacts.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, RefreshCw, Trash2, Globe, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { TableSkeletonRows } from "@/components/blocks/ui/skeleton-layouts";
 import {
   Dialog,
   DialogContent,
@@ -290,12 +291,7 @@ export default function PricingPage() {
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
-                    <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2 text-primary" />
-                    Loading pricing rules...
-                  </TableCell>
-                </TableRow>
+                <TableSkeletonRows columns={7} rows={5} />
               ) : pricing.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, RefreshCw, Server, Trash2, CheckCircle2, XCircle, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { TableSkeletonRows } from "@/components/blocks/ui/skeleton-layouts";
 import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
@@ -314,12 +315,7 @@ export default function ProvidersPage() {
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center py-12 text-muted-foreground">
-                    <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2 text-primary" />
-                    Loading providers...
-                  </TableCell>
-                </TableRow>
+                <TableSkeletonRows columns={8} rows={5} />
               ) : providers.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center py-12 text-muted-foreground">

@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/select';
 import { ArrowLeft, RefreshCw, DollarSign, Wallet, CheckCircle, ArrowUpRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { TableSkeletonRows } from '@/components/blocks/ui/skeleton-layouts';
 
 interface PaidRecord {
   id: string;
@@ -299,34 +300,32 @@ export default function EarningsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0 sm:p-6">
-          {loading ? (
-            <div className="space-y-3 p-4 sm:p-0 py-6">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-10 w-full bg-muted/40 animate-pulse rounded" />
-              ))}
-            </div>
-          ) : payouts.length === 0 ? (
-            <div className="text-center py-12 m-4 sm:m-0 border border-dashed rounded-lg">
-              <Wallet className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
-              <p className="text-sm font-medium text-foreground">No completed payouts yet</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                When you request a commission payout, disbursement details will be tracked here.
-              </p>
-            </div>
-          ) : (
-            <div className="w-full">
-              <Table className="min-w-[650px]">
-                <TableHeader>
+          <div className="w-full overflow-x-auto">
+            <Table className="min-w-[650px]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Payout Ref</TableHead>
+                  <TableHead>Client Ref</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Disbursed Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableSkeletonRows columns={5} rows={5} />
+                ) : payouts.length === 0 ? (
                   <TableRow>
-                    <TableHead>Payout Ref</TableHead>
-                    <TableHead>Client Ref</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Disbursed Date</TableHead>
+                    <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
+                      <Wallet className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+                      <p className="text-sm font-medium text-foreground">No completed payouts yet</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        When you request a commission payout, disbursement details will be tracked here.
+                      </p>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {payouts.map((p) => (
+                ) : (
+                  payouts.map((p) => (
                     <TableRow key={p.id}>
                       <TableCell className="font-mono text-xs font-semibold">
                         {p.transactionRef || `PAY-${p.id.slice(0, 6).toUpperCase()}`}
@@ -350,11 +349,11 @@ export default function EarningsPage() {
                         })}
                       </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

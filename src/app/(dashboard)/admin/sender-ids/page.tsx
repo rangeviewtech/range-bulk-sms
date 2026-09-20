@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { TableSkeletonRows } from "@/components/blocks/ui/skeleton-layouts";
 import { RefreshCw, Search, Check, X, ShieldAlert, AtSign } from "lucide-react";
 import {
   Dialog,
@@ -209,12 +210,7 @@ export default function SenderIdsPage() {
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
-                    <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2 text-primary" />
-                    Loading Sender IDs...
-                  </TableCell>
-                </TableRow>
+                <TableSkeletonRows columns={6} rows={5} />
               ) : senderIds.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">

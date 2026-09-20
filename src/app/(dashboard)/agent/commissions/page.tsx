@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, RefreshCw, DollarSign, Clock, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { TableSkeletonRows } from '@/components/blocks/ui/skeleton-layouts';
 
 interface CommissionRecord {
   id: string;
@@ -176,36 +177,34 @@ export default function CommissionsPage() {
           </div>
         </CardHeader>
         <CardContent className="p-0 sm:p-6">
-          {loading ? (
-            <div className="space-y-3 p-4 sm:p-0 py-6">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-10 w-full bg-muted/40 animate-pulse rounded" />
-              ))}
-            </div>
-          ) : commissions.length === 0 ? (
-            <div className="text-center py-12 m-4 sm:m-0 border border-dashed rounded-lg">
-              <DollarSign className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
-              <p className="text-sm font-medium text-foreground">No commission entries found</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Commissions will automatically generate when your clients dispatch SMS campaigns.
-              </p>
-            </div>
-          ) : (
-            <div className="w-full">
-              <Table className="min-w-[750px]">
-                <TableHeader>
+          <div className="w-full overflow-x-auto">
+            <Table className="min-w-[750px]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Ref ID</TableHead>
+                  <TableHead>Client</TableHead>
+                  <TableHead>Messages</TableHead>
+                  <TableHead>SMS Value</TableHead>
+                  <TableHead>Commission Amount</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableSkeletonRows columns={7} rows={5} />
+                ) : commissions.length === 0 ? (
                   <TableRow>
-                    <TableHead>Ref ID</TableHead>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Messages</TableHead>
-                    <TableHead>SMS Value</TableHead>
-                    <TableHead>Commission Amount</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
+                      <DollarSign className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+                      <p className="text-sm font-medium text-foreground">No commission entries found</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Commissions will automatically generate when your clients dispatch SMS campaigns.
+                      </p>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {commissions.map((comm) => (
+                ) : (
+                  commissions.map((comm) => (
                     <TableRow key={comm.id}>
                       <TableCell className="font-mono text-xs font-medium">
                         {comm.transactionRef || comm.id.slice(0, 8)}
@@ -234,11 +233,11 @@ export default function CommissionsPage() {
                       </TableCell>
                       <TableCell>{getStatusBadge(comm.status)}</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

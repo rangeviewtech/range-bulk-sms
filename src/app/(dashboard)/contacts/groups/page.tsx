@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dialog';
 import { Search, Plus, Trash2, Users, RefreshCw, FolderPlus } from 'lucide-react';
 import { toast } from 'sonner';
+import { TableSkeletonRows } from '@/components/blocks/ui/skeleton-layouts';
 
 interface GroupItem {
   id: string;
@@ -257,12 +258,7 @@ export default function ContactGroupsPage() {
               </TableHeader>
               <TableBody>
                 {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
-                      <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2 text-primary" />
-                      Loading contact groups...
-                    </TableCell>
-                  </TableRow>
+                  <TableSkeletonRows columns={5} rows={5} />
                 ) : filteredGroups.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">

@@ -1,6 +1,6 @@
 import { PageHeader } from '@/components/layout/page-header';
 import { CookieBanner } from '@/components/blocks/ui/cookie-banner';
-import { DashboardSkeleton, ProfileSkeleton } from '@/components/blocks/ui/skeleton-layouts';
+import { DashboardSkeleton, ProfileSkeleton, TablePageSkeleton } from '@/components/blocks/ui/skeleton-layouts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 export default function UiExamplesPage() {
@@ -32,6 +32,16 @@ export default function UiExamplesPage() {
           </CardHeader>
           <CardContent className="bg-muted/30 p-6 rounded-b-xl border-t">
             <ProfileSkeleton />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Table Directory Skeleton</CardTitle>
+            <CardDescription>Mirrors data directory tables (Clients, Users, Contacts, etc.).</CardDescription>
+          </CardHeader>
+          <CardContent className="bg-muted/30 p-6 rounded-b-xl border-t">
+            <TablePageSkeleton columns={6} rows={4} />
           </CardContent>
         </Card>
       </div>

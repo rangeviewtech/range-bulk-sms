@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Search, RefreshCw, User, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { TableSkeletonRows } from "@/components/blocks/ui/skeleton-layouts";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -109,12 +110,7 @@ export default function AuditLogsPage() {
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
-                    <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2 text-primary" />
-                    Loading audit trail...
-                  </TableCell>
-                </TableRow>
+                <TableSkeletonRows columns={6} rows={6} />
               ) : logs.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">

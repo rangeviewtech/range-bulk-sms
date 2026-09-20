@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Info, RefreshCw, AtSign } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { TableSkeletonRows } from '@/components/blocks/ui/skeleton-layouts';
 
 interface UserSenderId {
   id: string;
@@ -119,12 +120,7 @@ export default function SenderIdsPage() {
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
-                    <RefreshCw className="h-5 w-5 animate-spin mx-auto mb-2 text-primary" />
-                    Loading Sender IDs...
-                  </TableCell>
-                </TableRow>
+                <TableSkeletonRows columns={5} rows={5} />
               ) : senderIds.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">

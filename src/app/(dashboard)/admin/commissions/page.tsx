@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { TableSkeletonRows } from "@/components/blocks/ui/skeleton-layouts";
 import { RefreshCw, CheckCircle2, DollarSign, CreditCard, Building2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -142,12 +143,7 @@ export default function CommissionsPage() {
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
-                    <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2 text-primary" />
-                    Loading commissions...
-                  </TableCell>
-                </TableRow>
+                <TableSkeletonRows columns={6} rows={5} />
               ) : commissions.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
