@@ -16,6 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogBody,
 } from '@/components/ui/dialog';
 import {
   Plus,
@@ -160,7 +161,7 @@ export default function WalletPage() {
                 <Plus className="mr-2 h-4 w-4" /> Deposit Funds
               </Button>
             </DialogTrigger>
-            <DialogContent className="w-[calc(100%-2rem)] max-w-md max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
+            <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
               <DialogHeader>
                 <DialogTitle>Top-up Wallet</DialogTitle>
                 <DialogDescription>
@@ -168,63 +169,65 @@ export default function WalletPage() {
                 </DialogDescription>
               </DialogHeader>
 
-              <form onSubmit={handleDepositSubmit} className="space-y-4 pt-2">
-                <div className="space-y-2">
-                  <Label htmlFor="quick-amount">Quick Select ({currency})</Label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {PRESET_AMOUNTS.map((amt) => (
-                      <Button
-                        key={amt}
-                        type="button"
-                        variant={depositAmount === amt.toString() ? 'default' : 'outline'}
-                        size="sm"
-                        className={
-                          depositAmount === amt.toString()
-                            ? 'bg-primary text-primary-foreground font-bold'
-                            : ''
-                        }
-                        onClick={() => setDepositAmount(amt.toString())}
-                      >
-                        {amt.toLocaleString()}
-                      </Button>
-                    ))}
+              <form onSubmit={handleDepositSubmit} className="flex flex-col flex-1 overflow-hidden">
+                <DialogBody>
+                  <div className="space-y-2">
+                    <Label htmlFor="quick-amount">Quick Select ({currency})</Label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {PRESET_AMOUNTS.map((amt) => (
+                        <Button
+                          key={amt}
+                          type="button"
+                          variant={depositAmount === amt.toString() ? 'default' : 'outline'}
+                          size="sm"
+                          className={
+                            depositAmount === amt.toString()
+                              ? 'bg-primary text-primary-foreground font-bold'
+                              : ''
+                          }
+                          onClick={() => setDepositAmount(amt.toString())}
+                        >
+                          {amt.toLocaleString()}
+                        </Button>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="amount" required>Custom Amount ({currency})</Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    min="1000"
-                    step="1000"
-                    value={depositAmount}
-                    onChange={(e) => setDepositAmount(e.target.value)}
-                    placeholder="Enter amount"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description">Payment Reference / Note</Label>
-                  <Input
-                    id="description"
-                    value={depositDescription}
-                    onChange={(e) => setDepositDescription(e.target.value)}
-                    placeholder="e.g. MTN Mobile Money deposit"
-                  />
-                </div>
-
-                <div className="rounded-md bg-secondary/10 p-3 text-xs text-secondary-foreground space-y-1">
-                  <div className="font-semibold flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-secondary" /> Instant Credit
+                  <div className="space-y-2">
+                    <Label htmlFor="amount" required>Custom Amount ({currency})</Label>
+                    <Input
+                      id="amount"
+                      type="number"
+                      min="1000"
+                      step="1000"
+                      value={depositAmount}
+                      onChange={(e) => setDepositAmount(e.target.value)}
+                      placeholder="Enter amount"
+                      required
+                    />
                   </div>
-                  <p className="text-muted-foreground">
-                    Funds are immediately credited to your wallet balance for SMS campaigns.
-                  </p>
-                </div>
 
-                <DialogFooter className="pt-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Payment Reference / Note</Label>
+                    <Input
+                      id="description"
+                      value={depositDescription}
+                      onChange={(e) => setDepositDescription(e.target.value)}
+                      placeholder="e.g. MTN Mobile Money deposit"
+                    />
+                  </div>
+
+                  <div className="rounded-md bg-secondary/10 p-3 text-xs text-secondary-foreground space-y-1">
+                    <div className="font-semibold flex items-center gap-1.5">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-secondary" /> Instant Credit
+                    </div>
+                    <p className="text-muted-foreground">
+                      Funds are immediately credited to your wallet balance for SMS campaigns.
+                    </p>
+                  </div>
+                </DialogBody>
+
+                <DialogFooter>
                   <Button
                     type="button"
                     variant="outline"

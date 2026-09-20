@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogBody } from '@/components/ui/dialog';
 import { Plus, Search, Trash2, Copy, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -213,15 +213,16 @@ export default function TemplatesPage() {
 
       {/* Create Template Dialog */}
       <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-md max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
-          <form onSubmit={handleCreateTemplate}>
-            <DialogHeader>
-              <DialogTitle>Create SMS Template</DialogTitle>
-              <DialogDescription>
-                Design reusable message templates with dynamic placeholders like {'{{name}}'}.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 my-3">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
+          <DialogHeader>
+            <DialogTitle>Create SMS Template</DialogTitle>
+            <DialogDescription>
+              Design reusable message templates with dynamic placeholders like {'{{name}}'}.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleCreateTemplate} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+            <DialogBody>
               <div className="space-y-2">
                 <Label htmlFor="template-name" required>Template Name</Label>
                 <Input
@@ -263,12 +264,13 @@ export default function TemplatesPage() {
                   Variables formatted as <span className="font-mono">{`{{variable}}`}</span> will be automatically recognized.
                 </p>
               </div>
-            </div>
-            <DialogFooter className="gap-2 sm:gap-0">
+            </DialogBody>
+
+            <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setCreateDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" className="bg-primary text-primary-foreground font-semibold">
+              <Button type="submit">
                 Save Template
               </Button>
             </DialogFooter>

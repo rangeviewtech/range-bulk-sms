@@ -16,6 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogBody,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -171,16 +172,16 @@ export default function UsersPage() {
                 <Plus className="mr-2 h-4 w-4" /> Add User
               </Button>
             </DialogTrigger>
-            <DialogContent className="w-[calc(100%-2rem)] max-w-md max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
-              <form onSubmit={handleAddUser}>
-                <DialogHeader>
-                  <DialogTitle>Create System User</DialogTitle>
-                  <DialogDescription>
-                    Provision a login identity with designated platform access levels.
-                  </DialogDescription>
-                </DialogHeader>
+            <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
+              <DialogHeader>
+                <DialogTitle>Create System User</DialogTitle>
+                <DialogDescription>
+                  Provision a login identity with designated platform access levels.
+                </DialogDescription>
+              </DialogHeader>
 
-                <div className="grid gap-4 py-4">
+              <form onSubmit={handleAddUser} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+                <DialogBody>
                   <div className="space-y-2">
                     <Label htmlFor="userName" required>Full Name</Label>
                     <Input
@@ -228,9 +229,9 @@ export default function UsersPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
+                </DialogBody>
 
-                <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2">
+                <DialogFooter>
                   <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)} disabled={submitting}>
                     Cancel
                   </Button>

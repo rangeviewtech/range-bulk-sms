@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogBody,
 } from '@/components/ui/dialog';
 import { Search, Plus, Trash2, Users, RefreshCw, FolderPlus } from 'lucide-react';
 import { toast } from 'sonner';
@@ -174,16 +175,16 @@ export default function ContactGroupsPage() {
               Create Group
             </Button>
           </DialogTrigger>
-          <DialogContent className="w-[calc(100%-2rem)] max-w-md max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
-            <form onSubmit={handleCreateGroup}>
-              <DialogHeader>
-                <DialogTitle>Create Subscriber Group</DialogTitle>
-                <DialogDescription>
-                  Define a named segment to organize contacts and automate SMS blasts.
-                </DialogDescription>
-              </DialogHeader>
+          <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
+            <DialogHeader>
+              <DialogTitle>Create Subscriber Group</DialogTitle>
+              <DialogDescription>
+                Define a named segment to organize contacts and automate SMS blasts.
+              </DialogDescription>
+            </DialogHeader>
 
-              <div className="space-y-4 py-4">
+            <form onSubmit={handleCreateGroup} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+              <DialogBody>
                 <div className="space-y-1.5">
                   <Label htmlFor="grpName" required>Group Name</Label>
                   <Input
@@ -205,9 +206,9 @@ export default function ContactGroupsPage() {
                     onChange={(e) => setGroupDescription(e.target.value)}
                   />
                 </div>
-              </div>
+              </DialogBody>
 
-              <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2">
+              <DialogFooter>
                 <Button
                   type="button"
                   variant="outline"

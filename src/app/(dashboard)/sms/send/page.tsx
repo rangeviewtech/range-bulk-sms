@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Send, Clock, BookTemplate, Eye, FileText, Activity, Loader2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogBody } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
 const TEMPLATES = [
@@ -369,20 +369,22 @@ export default function SendSmsPage() {
 
       {/* Message Preview Modal */}
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-md max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
           <DialogHeader>
             <DialogTitle>Message Handset Preview</DialogTitle>
             <DialogDescription>
               Simulated preview of how your message displays on a recipient device.
             </DialogDescription>
           </DialogHeader>
-          <div className="my-2 p-4 bg-muted/60 rounded-xl min-h-[120px] whitespace-pre-wrap font-sans text-sm border">
-            <div className="text-[11px] font-mono text-muted-foreground mb-2 flex items-center justify-between">
-              <span>FROM: {senderId}</span>
-              <span>NOW</span>
+          <DialogBody>
+            <div className="p-4 bg-muted/60 rounded-xl min-h-[120px] whitespace-pre-wrap font-sans text-sm border">
+              <div className="text-[11px] font-mono text-muted-foreground mb-2 flex items-center justify-between">
+                <span>FROM: {senderId}</span>
+                <span>NOW</span>
+              </div>
+              {message || 'Your message preview will appear here.'}
             </div>
-            {message || 'Your message preview will appear here.'}
-          </div>
+          </DialogBody>
           <DialogFooter>
             <Button variant="secondary" onClick={() => setPreviewOpen(false)} className="w-full sm:w-auto">
               Close Preview
@@ -393,32 +395,34 @@ export default function SendSmsPage() {
 
       {/* Template Selector Modal */}
       <Dialog open={templateModalOpen} onOpenChange={setTemplateModalOpen}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-lg max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-lg p-0 overflow-hidden">
           <DialogHeader>
             <DialogTitle>Select Message Template</DialogTitle>
             <DialogDescription>
               Choose a pre-approved template to populate into your message composer.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-3 my-2">
-            {TEMPLATES.map((tmpl) => (
-              <div
-                key={tmpl.id}
-                onClick={() => handleSelectTemplate(tmpl.content)}
-                className="p-3 bg-card hover:bg-muted/50 rounded-lg border border-border cursor-pointer transition-colors space-y-1.5"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-sm">{tmpl.name}</span>
-                  <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-muted text-muted-foreground">
-                    {tmpl.category}
-                  </span>
+          <DialogBody>
+            <div className="space-y-3">
+              {TEMPLATES.map((tmpl) => (
+                <div
+                  key={tmpl.id}
+                  onClick={() => handleSelectTemplate(tmpl.content)}
+                  className="p-3 bg-card hover:bg-muted/50 rounded-lg border border-border cursor-pointer transition-colors space-y-1.5"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-sm">{tmpl.name}</span>
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-muted text-muted-foreground">
+                      {tmpl.category}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground font-sans line-clamp-2">
+                    {tmpl.content}
+                  </p>
                 </div>
-                <p className="text-xs text-muted-foreground font-sans line-clamp-2">
-                  {tmpl.content}
-                </p>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </DialogBody>
           <DialogFooter>
             <Button variant="outline" onClick={() => setTemplateModalOpen(false)} className="w-full sm:w-auto">
               Cancel
@@ -429,32 +433,34 @@ export default function SendSmsPage() {
 
       {/* Schedule Modal */}
       <Dialog open={scheduleOpen} onOpenChange={setScheduleOpen}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-md max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
           <DialogHeader>
             <DialogTitle>Schedule Message Dispatch</DialogTitle>
             <DialogDescription>
               Pick a future date and time when our automated queue will deliver this broadcast.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 my-2">
-            <div className="space-y-2">
-              <Label htmlFor="schedule-time">Delivery Date &amp; Time</Label>
-              <Input
-                id="schedule-time"
-                type="datetime-local"
-                value={scheduleDate}
-                onChange={(e) => setScheduleDate(e.target.value)}
-              />
+          <DialogBody>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="schedule-time">Delivery Date &amp; Time</Label>
+                <Input
+                  id="schedule-time"
+                  type="datetime-local"
+                  value={scheduleDate}
+                  onChange={(e) => setScheduleDate(e.target.value)}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Scheduled broadcasts will queue in the background and deduct wallet credits at dispatch time.
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Scheduled broadcasts will queue in the background and deduct wallet credits at dispatch time.
-            </p>
-          </div>
-          <DialogFooter className="gap-2 sm:gap-0">
+          </DialogBody>
+          <DialogFooter>
             <Button variant="outline" onClick={() => setScheduleOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleConfirmSchedule} className="bg-primary text-primary-foreground font-semibold">
+            <Button onClick={handleConfirmSchedule}>
               Confirm Schedule
             </Button>
           </DialogFooter>

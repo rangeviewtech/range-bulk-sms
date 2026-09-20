@@ -33,9 +33,9 @@ export function PortalGuidesModal({ topic, onClose }: PortalGuidesModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md duration-200 animate-in fade-in">
       <div
-        className="relative w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-2xl border shadow-2xl p-6 sm:p-8"
+        className="relative w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-xl border shadow-[0_24px_64px_rgba(0,0,0,0.4)] p-6 sm:p-8 animate-in zoom-in-95 duration-200"
         style={{
           backgroundColor: PORTAL_COLORS.cardBg,
           borderColor: PORTAL_COLORS.border,
@@ -46,7 +46,7 @@ export function PortalGuidesModal({ topic, onClose }: PortalGuidesModalProps) {
         <button
           onClick={onClose}
           aria-label="Close guide modal"
-          className="absolute top-5 right-5 p-2 rounded-lg hover:opacity-80 transition-opacity"
+          className="absolute top-4 right-4 p-1.5 rounded-md hover:opacity-80 transition-opacity cursor-pointer"
           style={{ color: PORTAL_COLORS.secondaryText, backgroundColor: PORTAL_COLORS.elevatedBg }}
         >
           <X className="h-4 w-4" />

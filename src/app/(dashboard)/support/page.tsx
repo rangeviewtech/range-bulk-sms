@@ -16,6 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogBody,
 } from '@/components/ui/dialog';
 import {
   Select,
@@ -227,7 +228,7 @@ export default function SupportPage() {
                 <Plus className="mr-2 h-4 w-4" /> Open New Ticket
               </Button>
             </DialogTrigger>
-            <DialogContent className="w-[calc(100%-2rem)] max-w-lg max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
+            <DialogContent className="w-[calc(100%-2rem)] max-w-lg p-0 overflow-hidden">
               <DialogHeader>
                 <DialogTitle>Open Support Ticket</DialogTitle>
                 <DialogDescription>
@@ -235,65 +236,67 @@ export default function SupportPage() {
                 </DialogDescription>
               </DialogHeader>
 
-              <form onSubmit={handleCreateTicket} className="space-y-4 pt-2">
-                <div className="space-y-2">
-                  <Label htmlFor="subject" required>Subject</Label>
-                  <Input
-                    id="subject"
-                    value={newSubject}
-                    onChange={(e) => setNewSubject(e.target.value)}
-                    placeholder="e.g. Sender ID approval for RANGEBRAND"
-                    required
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <form onSubmit={handleCreateTicket} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+                <DialogBody>
                   <div className="space-y-2">
-                    <Label htmlFor="category" required>Category</Label>
-                    <Select value={newCategory} onValueChange={setNewCategory}>
-                      <SelectTrigger id="category">
-                        <SelectValue placeholder="Select Category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Sender ID">Sender ID Registration</SelectItem>
-                        <SelectItem value="Billing & Wallet">Billing & Wallet</SelectItem>
-                        <SelectItem value="SMS Delivery">SMS Delivery & DLR</SelectItem>
-                        <SelectItem value="API & Webhooks">API & Developer</SelectItem>
-                        <SelectItem value="Account & Security">Account & Security</SelectItem>
-                        <SelectItem value="General">General Inquiry</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="subject" required>Subject</Label>
+                    <Input
+                      id="subject"
+                      value={newSubject}
+                      onChange={(e) => setNewSubject(e.target.value)}
+                      placeholder="e.g. Sender ID approval for RANGEBRAND"
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="category" required>Category</Label>
+                      <Select value={newCategory} onValueChange={setNewCategory}>
+                        <SelectTrigger id="category">
+                          <SelectValue placeholder="Select Category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Sender ID">Sender ID Registration</SelectItem>
+                          <SelectItem value="Billing & Wallet">Billing & Wallet</SelectItem>
+                          <SelectItem value="SMS Delivery">SMS Delivery & DLR</SelectItem>
+                          <SelectItem value="API & Webhooks">API & Developer</SelectItem>
+                          <SelectItem value="Account & Security">Account & Security</SelectItem>
+                          <SelectItem value="General">General Inquiry</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="priority" required>Priority</Label>
+                      <Select value={newPriority} onValueChange={setNewPriority}>
+                        <SelectTrigger id="priority">
+                          <SelectValue placeholder="Select Priority" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="LOW">Low</SelectItem>
+                          <SelectItem value="MEDIUM">Medium</SelectItem>
+                          <SelectItem value="HIGH">High</SelectItem>
+                          <SelectItem value="URGENT">Urgent (Service Outage)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="priority" required>Priority</Label>
-                    <Select value={newPriority} onValueChange={setNewPriority}>
-                      <SelectTrigger id="priority">
-                        <SelectValue placeholder="Select Priority" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="LOW">Low</SelectItem>
-                        <SelectItem value="MEDIUM">Medium</SelectItem>
-                        <SelectItem value="HIGH">High</SelectItem>
-                        <SelectItem value="URGENT">Urgent (Service Outage)</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="message" required>Description / Details</Label>
+                    <Textarea
+                      id="message"
+                      rows={4}
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      placeholder="Provide details, campaign IDs, or error codes..."
+                      required
+                    />
                   </div>
-                </div>
+                </DialogBody>
 
-                <div className="space-y-2">
-                  <Label htmlFor="message" required>Description / Details</Label>
-                  <Textarea
-                    id="message"
-                    rows={4}
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Provide details, campaign IDs, or error codes..."
-                    required
-                  />
-                </div>
-
-                <DialogFooter className="flex-col-reverse sm:flex-row gap-2 pt-2">
+                <DialogFooter>
                   <Button
                     type="button"
                     variant="outline"
@@ -304,7 +307,6 @@ export default function SupportPage() {
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-primary text-primary-foreground font-bold hover:bg-primary/90"
                     disabled={submitting}
                   >
                     {submitting ? 'Submitting...' : 'Submit Ticket'}
@@ -467,10 +469,10 @@ export default function SupportPage() {
 
       {/* Ticket Conversation Detail Dialog */}
       <Dialog open={!!activeTicket} onOpenChange={(open) => !open && setActiveTicket(null)}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-2xl max-h-[85vh] flex flex-col p-4 sm:p-6">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-2xl max-h-[85vh] p-0 overflow-hidden">
           {activeTicket && (
             <>
-              <DialogHeader className="border-b pb-3">
+              <DialogHeader>
                 <div className="flex items-center justify-between pr-6">
                   <div className="space-y-1">
                     <DialogTitle className="text-lg flex items-center gap-2">
@@ -487,7 +489,7 @@ export default function SupportPage() {
               </DialogHeader>
 
               {/* Message Thread */}
-              <div className="flex-1 overflow-y-auto space-y-3 py-4 pr-1">
+              <DialogBody className="p-5 sm:p-6 overflow-y-auto space-y-3 flex-1">
                 {activeTicket.messages?.map((msg) => {
                   const isAdmin = msg.isAdminResponse;
                   return (
@@ -531,10 +533,10 @@ export default function SupportPage() {
                     </div>
                   );
                 })}
-              </div>
+              </DialogBody>
 
               {/* Reply Form */}
-              <form onSubmit={handleSendReply} className="border-t pt-3 space-y-2">
+              <form onSubmit={handleSendReply} className="p-4 bg-muted/30 border-t border-border space-y-2 shrink-0">
                 <div className="flex gap-2">
                   <Textarea
                     rows={2}
@@ -547,7 +549,7 @@ export default function SupportPage() {
                   <Button
                     type="submit"
                     disabled={submittingReply || !replyText.trim() || activeTicket.status === 'CLOSED'}
-                    className="bg-primary text-primary-foreground font-bold hover:bg-primary/90 self-end"
+                    className="self-end"
                   >
                     <Send className="h-4 w-4" />
                   </Button>

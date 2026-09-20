@@ -16,6 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogBody,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
@@ -156,16 +157,16 @@ export default function ClientsPage() {
                 <Plus className="mr-2 h-4 w-4" /> Add Client
               </Button>
             </DialogTrigger>
-            <DialogContent className="w-[calc(100%-2rem)] max-w-lg max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
-              <form onSubmit={handleAddClient}>
-                <DialogHeader>
-                  <DialogTitle>Register New Client Account</DialogTitle>
-                  <DialogDescription>
-                    Create a corporate client profile with an authenticated user and dedicated SMS wallet.
-                  </DialogDescription>
-                </DialogHeader>
+            <DialogContent className="w-[calc(100%-2rem)] max-w-lg p-0 overflow-hidden">
+              <DialogHeader>
+                <DialogTitle>Register New Client Account</DialogTitle>
+                <DialogDescription>
+                  Create a corporate client profile with an authenticated user and dedicated SMS wallet.
+                </DialogDescription>
+              </DialogHeader>
 
-                <div className="grid gap-4 py-4">
+              <form onSubmit={handleAddClient} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+                <DialogBody>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="companyName" required>Company Name</Label>
@@ -235,9 +236,9 @@ export default function ClientsPage() {
                       />
                     </div>
                   </div>
-                </div>
+                </DialogBody>
 
-                <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2">
+                <DialogFooter>
                   <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)} disabled={submitting}>
                     Cancel
                   </Button>

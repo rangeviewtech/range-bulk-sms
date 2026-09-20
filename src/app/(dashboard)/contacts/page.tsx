@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogBody,
 } from '@/components/ui/dialog';
 import { Search, Plus, Download, RefreshCw, Trash2, User, Phone, Mail } from 'lucide-react';
 import Link from 'next/link';
@@ -214,16 +215,16 @@ export default function ContactsPage() {
                 Add Contact
               </Button>
             </DialogTrigger>
-            <DialogContent className="w-[calc(100%-2rem)] max-w-md max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
-              <form onSubmit={handleAddContact}>
-                <DialogHeader>
-                  <DialogTitle>Add New Contact</DialogTitle>
-                  <DialogDescription>
-                    Store contact identity and phone number for SMS dispatches.
-                  </DialogDescription>
-                </DialogHeader>
+            <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
+              <DialogHeader>
+                <DialogTitle>Add New Contact</DialogTitle>
+                <DialogDescription>
+                  Store contact identity and phone number for SMS dispatches.
+                </DialogDescription>
+              </DialogHeader>
 
-                <div className="grid gap-4 py-4">
+              <form onSubmit={handleAddContact} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+                <DialogBody>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
                       <Label htmlFor="contactFirst">First Name</Label>
@@ -266,9 +267,9 @@ export default function ContactsPage() {
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
-                </div>
+                </DialogBody>
 
-                <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2">
+                <DialogFooter>
                   <Button
                     type="button"
                     variant="outline"

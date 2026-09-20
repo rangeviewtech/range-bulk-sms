@@ -16,6 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogBody,
 } from '@/components/ui/dialog';
 import {
   Select,
@@ -169,7 +170,7 @@ export default function EarningsPage() {
                 <ArrowUpRight className="mr-1.5 h-4 w-4" /> Request Payout
               </Button>
             </DialogTrigger>
-            <DialogContent className="w-[calc(100%-2rem)] max-w-md max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
+            <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
               <DialogHeader>
                 <DialogTitle>Request Commission Payout</DialogTitle>
                 <DialogDescription>
@@ -177,52 +178,54 @@ export default function EarningsPage() {
                 </DialogDescription>
               </DialogHeader>
 
-              <form onSubmit={handleRequestPayout} className="space-y-4 pt-2">
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <Label htmlFor="amount" required>Payout Amount (UGX)</Label>
-                    <span className="text-xs text-muted-foreground">
-                      Max: UGX {availableForPayout.toLocaleString()}
-                    </span>
+              <form onSubmit={handleRequestPayout} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+                <DialogBody>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <Label htmlFor="amount" required>Payout Amount (UGX)</Label>
+                      <span className="text-xs text-muted-foreground">
+                        Max: UGX {availableForPayout.toLocaleString()}
+                      </span>
+                    </div>
+                    <Input
+                      id="amount"
+                      type="number"
+                      min="10000"
+                      step="5000"
+                      value={payoutAmount}
+                      onChange={(e) => setPayoutAmount(e.target.value)}
+                      placeholder={`e.g. ${availableForPayout}`}
+                      required
+                    />
                   </div>
-                  <Input
-                    id="amount"
-                    type="number"
-                    min="10000"
-                    step="5000"
-                    value={payoutAmount}
-                    onChange={(e) => setPayoutAmount(e.target.value)}
-                    placeholder={`e.g. ${availableForPayout}`}
-                    required
-                  />
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="method" required>Payout Method</Label>
-                  <Select value={payoutMethod} onValueChange={setPayoutMethod}>
-                    <SelectTrigger id="method">
-                      <SelectValue placeholder="Select Method" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Mobile Money - MTN">MTN Mobile Money</SelectItem>
-                      <SelectItem value="Mobile Money - Airtel">Airtel Money</SelectItem>
-                      <SelectItem value="Bank Wire">Standard Bank Transfer</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="method" required>Payout Method</Label>
+                    <Select value={payoutMethod} onValueChange={setPayoutMethod}>
+                      <SelectTrigger id="method">
+                        <SelectValue placeholder="Select Method" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Mobile Money - MTN">MTN Mobile Money</SelectItem>
+                        <SelectItem value="Mobile Money - Airtel">Airtel Money</SelectItem>
+                        <SelectItem value="Bank Wire">Standard Bank Transfer</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="details" required>Account / Mobile Number</Label>
-                  <Input
-                    id="details"
-                    value={payoutDetails}
-                    onChange={(e) => setPayoutDetails(e.target.value)}
-                    placeholder="e.g. 256770123456 or Bank Account details"
-                    required
-                  />
-                </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="details" required>Account / Mobile Number</Label>
+                    <Input
+                      id="details"
+                      value={payoutDetails}
+                      onChange={(e) => setPayoutDetails(e.target.value)}
+                      placeholder="e.g. 256770123456 or Bank Account details"
+                      required
+                    />
+                  </div>
+                </DialogBody>
 
-                <DialogFooter className="flex-col-reverse sm:flex-row gap-2 pt-2">
+                <DialogFooter>
                   <Button
                     type="button"
                     variant="outline"
@@ -233,7 +236,6 @@ export default function EarningsPage() {
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-primary text-primary-foreground font-bold hover:bg-primary/90"
                     disabled={submitting}
                   >
                     {submitting ? 'Submitting...' : 'Confirm Withdrawal'}

@@ -16,6 +16,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogBody,
 } from '@/components/ui/dialog';
 import {
   Upload,
@@ -684,15 +685,15 @@ export default function CustomSmsPage() {
 
       {/* Review & Dispatch Dialog Modal */}
       <Dialog open={isReviewOpen} onOpenChange={setIsReviewOpen}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-lg max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-lg p-0 overflow-hidden">
           <DialogHeader>
-            <DialogTitle>Confirm & Dispatch Campaign</DialogTitle>
+            <DialogTitle>Confirm &amp; Dispatch Campaign</DialogTitle>
             <DialogDescription>
               Review the details and calculated carrier costs before launching your personalized campaign.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 py-3">
+          <DialogBody>
             <div className="space-y-2">
               <Label htmlFor="campName" required>Campaign Name</Label>
               <Input
@@ -730,9 +731,9 @@ export default function CustomSmsPage() {
                 {interpolatedPreview}
               </div>
             </div>
-          </div>
+          </DialogBody>
 
-          <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2">
+          <DialogFooter>
             <Button
               type="button"
               variant="outline"
@@ -745,7 +746,6 @@ export default function CustomSmsPage() {
               type="button"
               onClick={handleDispatchCampaign}
               disabled={sending}
-              className="bg-primary text-primary-foreground"
             >
               {sending ? (
                 <>

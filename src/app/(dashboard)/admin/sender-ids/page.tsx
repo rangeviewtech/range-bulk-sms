@@ -16,6 +16,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogBody,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -304,7 +305,7 @@ export default function SenderIdsPage() {
 
       {/* Reject Reason Dialog */}
       <Dialog open={!!rejectId} onOpenChange={(open) => !open && setRejectId(null)}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-md max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
           <DialogHeader>
             <DialogTitle>Reject Sender ID Request</DialogTitle>
             <DialogDescription>
@@ -312,7 +313,7 @@ export default function SenderIdsPage() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 py-3">
+          <DialogBody>
             <div className="space-y-2">
               <Label htmlFor="reason">Rejection Reason</Label>
               <Textarea
@@ -323,9 +324,9 @@ export default function SenderIdsPage() {
                 onChange={(e) => setRejectReason(e.target.value)}
               />
             </div>
-          </div>
+          </DialogBody>
 
-          <DialogFooter className="flex-col-reverse sm:flex-row gap-2 pt-2">
+          <DialogFooter>
             <Button variant="outline" onClick={() => setRejectId(null)} disabled={rejecting}>
               Cancel
             </Button>
