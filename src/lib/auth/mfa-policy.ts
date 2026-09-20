@@ -99,7 +99,12 @@ export async function getEffectiveMfaRequirement(userId: string): Promise<MfaReq
   // or at least TOTP app for these roles. Email OTP is strictly a low-assurance mechanism.
   const isPrivileged = isAdmin || isAgent;
 
-  if (!isPrivileged) {
+  // We only restrict Email/SMS fallback if they actually have a strong method configured.
+  // If they don't have anything configured yet, we MUST allow Email so they can bootstrap
+  // their account and set up WebAuthn/TOTP in their settings.
+  const needsBootstrap = isPrivileged && !hasConfiguredWebAuthn && !hasConfiguredTotp;
+
+  if (!isPrivileged || needsBootstrap) {
     if (user.email) {
       allowedMethods.push('EMAIL');
     }
