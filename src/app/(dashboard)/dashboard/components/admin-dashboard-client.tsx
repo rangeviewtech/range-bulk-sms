@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useSyncExternalStore } from "react";
+import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Users, Server, BadgeDollarSign, Activity, Settings2, BarChart2, CheckCircle2, AlertCircle, ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -161,14 +162,22 @@ export function AdminDashboardClient({ data }: AdminDashboardClientProps) {
         {kpis.map((kpi, i) => (
           <Link key={i} href={kpi.href} className="transition-transform hover:-translate-y-0.5">
             <Card className="h-full border hover:border-secondary/40 hover:shadow-xs transition-all">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 sm:p-5 pb-2">
                 <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{kpi.title}</CardTitle>
                 <div className="flex h-7 w-7 items-center justify-center rounded-md bg-secondary/10 text-secondary dark:bg-secondary/25 dark:text-secondary-foreground">
                   <kpi.icon className="h-3.5 w-3.5" />
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold tracking-tight">{kpi.value}</div>
+              <CardContent className="p-4 sm:p-5 pt-0">
+                <div
+                  className={cn(
+                    "font-bold tracking-tight whitespace-nowrap",
+                    kpi.value.length > 10 ? "text-lg sm:text-xl 2xl:text-2xl" : "text-2xl"
+                  )}
+                  title={kpi.value}
+                >
+                  {kpi.value}
+                </div>
                 <p className="text-xs text-muted-foreground mt-1 truncate">{kpi.subtext}</p>
               </CardContent>
             </Card>

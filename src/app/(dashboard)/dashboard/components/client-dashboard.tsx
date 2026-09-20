@@ -35,7 +35,7 @@ export function ClientDashboard() {
               <kpi.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{kpi.value}</div>
+              <div className="text-2xl font-bold whitespace-nowrap">{kpi.value}</div>
             </CardContent>
           </Card>
         ))}

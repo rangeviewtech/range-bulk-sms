@@ -97,7 +97,7 @@ export default function FinancialReportPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">
+            <div className="text-2xl font-bold text-foreground whitespace-nowrap">
               {loading ? (
                 <div className="h-7 w-28 bg-muted animate-pulse rounded" />
               ) : (
@@ -116,7 +116,7 @@ export default function FinancialReportPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">
+            <div className="text-2xl font-bold text-foreground whitespace-nowrap">
               {loading ? (
                 <div className="h-7 w-28 bg-muted animate-pulse rounded" />
               ) : (
@@ -135,7 +135,7 @@ export default function FinancialReportPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-secondary dark:text-primary">
+            <div className="text-2xl font-bold text-secondary dark:text-primary whitespace-nowrap">
               {loading ? (
                 <div className="h-7 w-24 bg-muted animate-pulse rounded" />
               ) : (
