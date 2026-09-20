@@ -237,7 +237,7 @@ export default function SupportPage() {
 
               <form onSubmit={handleCreateTicket} className="space-y-4 pt-2">
                 <div className="space-y-2">
-                  <Label htmlFor="subject">Subject</Label>
+                  <Label htmlFor="subject" required>Subject</Label>
                   <Input
                     id="subject"
                     value={newSubject}
@@ -249,7 +249,7 @@ export default function SupportPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="category" required>Category</Label>
                     <Select value={newCategory} onValueChange={setNewCategory}>
                       <SelectTrigger id="category">
                         <SelectValue placeholder="Select Category" />
@@ -266,7 +266,7 @@ export default function SupportPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="priority">Priority</Label>
+                    <Label htmlFor="priority" required>Priority</Label>
                     <Select value={newPriority} onValueChange={setNewPriority}>
                       <SelectTrigger id="priority">
                         <SelectValue placeholder="Select Priority" />
@@ -282,7 +282,7 @@ export default function SupportPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="message">Description / Details</Label>
+                  <Label htmlFor="message" required>Description / Details</Label>
                   <Textarea
                     id="message"
                     rows={4}

@@ -11,9 +11,10 @@ interface FormFieldProps {
   description?: string;
   children: React.ReactNode;
   className?: string;
+  required?: boolean;
 }
 
-export function FormField({ name, label, description, children, className }: FormFieldProps) {
+export function FormField({ name, label, description, children, className, required }: FormFieldProps) {
   const { control, formState: { errors } } = useFormContext();
   const error = errors[name]?.message as string | undefined;
 
@@ -24,7 +25,7 @@ export function FormField({ name, label, description, children, className }: For
       render={({ field }) => (
         <div className={cn("space-y-2", className)}>
           {label && (
-            <Label className={cn(error && "text-destructive")}>
+            <Label required={required} className={cn(error && "text-destructive")}>
               {label}
             </Label>
           )}

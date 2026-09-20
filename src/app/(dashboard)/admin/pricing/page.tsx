@@ -159,7 +159,7 @@ export default function PricingPage() {
                 <div className="grid gap-3 sm:gap-4 py-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="countryCode">Country Code (ISO-2)</Label>
+                      <Label htmlFor="countryCode" required>Country Code (ISO-2)</Label>
                       <Input
                         id="countryCode"
                         placeholder="UG"
@@ -170,7 +170,7 @@ export default function PricingPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="countryName">Country Name</Label>
+                      <Label htmlFor="countryName" required>Country Name</Label>
                       <Input
                         id="countryName"
                         placeholder="Uganda"
@@ -204,7 +204,7 @@ export default function PricingPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="cost">Cost / SMS</Label>
+                      <Label htmlFor="cost" required>Cost / SMS</Label>
                       <Input
                         id="cost"
                         type="number"
@@ -216,7 +216,7 @@ export default function PricingPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="price">Selling Price</Label>
+                      <Label htmlFor="price" required>Selling Price</Label>
                       <Input
                         id="price"
                         type="number"
@@ -228,7 +228,7 @@ export default function PricingPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="curr">Currency</Label>
+                      <Label htmlFor="curr" required>Currency</Label>
                       <Input
                         id="curr"
                         placeholder="UGX"

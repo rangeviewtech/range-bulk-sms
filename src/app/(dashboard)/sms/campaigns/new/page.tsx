@@ -144,7 +144,7 @@ export default function NewCampaignPage() {
             {step === 1 && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="campaign-name">Campaign Name *</Label>
+                  <Label htmlFor="campaign-name" required>Campaign Name</Label>
                   <Input
                     id="campaign-name"
                     placeholder="e.g. Summer Promo 2026"
@@ -157,7 +157,7 @@ export default function NewCampaignPage() {
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="sender-id-select">Sender ID *</Label>
+                  <Label htmlFor="sender-id-select" required>Sender ID</Label>
                   <Select value={senderId} onValueChange={setSenderId}>
                     <SelectTrigger id="sender-id-select">
                       <SelectValue placeholder="Select Sender ID" />
@@ -178,7 +178,7 @@ export default function NewCampaignPage() {
             {step === 2 && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="contact-group-select">Select Contact Group *</Label>
+                  <Label htmlFor="contact-group-select" required>Select Contact Group</Label>
                   <Select value={selectedGroupId} onValueChange={setSelectedGroupId}>
                     <SelectTrigger id="contact-group-select">
                       <SelectValue placeholder="Select groups" />
@@ -218,7 +218,7 @@ export default function NewCampaignPage() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="message-body">Message Content *</Label>
+                    <Label htmlFor="message-body" required>Message Content</Label>
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <Sparkles className="w-3.5 h-3.5 text-primary" />
                       <span>Click to insert:</span>

@@ -64,7 +64,10 @@ export default function ScreenLockPage() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div className="auth-stagger-2" style={{ padding: '16px 0 8px 0' }}>
+          <div className="auth-stagger-2" style={{ padding: '16px 0 8px 0', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', textAlign: 'center', fontFamily: FONT_STACK }}>
+              6-Digit Security PIN <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span>
+            </label>
             <PinInput 
               value={pinValue || ''}
               onChange={(val) => setValue('pin', val, { shouldValidate: true })}

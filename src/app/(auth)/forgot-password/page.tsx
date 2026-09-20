@@ -128,9 +128,13 @@ export default function ForgotPasswordPage() {
 
         {/* Email Field */}
         <div className="form-group auth-stagger-2" style={{ position: 'relative', marginBottom: '1.25rem' }}>
+          <label htmlFor="forgot-email" style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK }}>
+            {dict.auth.emailPlaceholder || 'Email Address'} <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span>
+          </label>
           <input
             {...emailRegister}
             type="email"
+            id="forgot-email"
             className="form-control auth-input"
             placeholder={dict.auth.emailPlaceholder}
             autoComplete="email"

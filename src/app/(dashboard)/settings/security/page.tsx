@@ -154,7 +154,7 @@ export default async function SecuritySettingsPage({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="setup-token">Enter 6-digit authenticator code</Label>
+                  <Label htmlFor="setup-token" required>Enter 6-digit authenticator code</Label>
                   <Input
                     id="setup-token"
                     name="token"
@@ -174,7 +174,7 @@ export default async function SecuritySettingsPage({
             ) : (
               <form action={user.mfaEnabled ? disableMfa : beginMfaSetup} className="space-y-4">
                 <div>
-                  <Label htmlFor="mfa-password">Current Password</Label>
+                  <Label htmlFor="mfa-password" required>Current Password</Label>
                   <Input
                     id="mfa-password"
                     name="password"
@@ -186,7 +186,7 @@ export default async function SecuritySettingsPage({
                 </div>
                 {user.mfaEnabled && (
                   <div>
-                    <Label htmlFor="disable-token">Authenticator Code</Label>
+                    <Label htmlFor="disable-token" required>Authenticator Code</Label>
                     <Input
                       id="disable-token"
                       name="token"
@@ -239,7 +239,7 @@ export default async function SecuritySettingsPage({
           <CardContent>
             <form action={savePin} className="space-y-4">
               <div>
-                <Label htmlFor="pin-password">Current Password</Label>
+                <Label htmlFor="pin-password" required>Current Password</Label>
                 <Input
                   id="pin-password"
                   name="password"
@@ -250,7 +250,7 @@ export default async function SecuritySettingsPage({
                 />
               </div>
               <div>
-                <Label htmlFor="new-pin">New 6-Digit PIN</Label>
+                <Label htmlFor="new-pin" required>New 6-Digit PIN</Label>
                 <Input
                   id="new-pin"
                   name="pin"

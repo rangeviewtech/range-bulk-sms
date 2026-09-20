@@ -411,6 +411,9 @@ export default function LoginPage() {
 
               {/* Email / Username Field */}
               <div className="form-group usernamefd auth-stagger-2" style={{ position: 'relative', marginBottom: '0.9rem' }}>
+                <label htmlFor="username" style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK }}>
+                  {dict.auth.emailOrUsernamePlaceholder || 'Email or Username'} <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span>
+                </label>
                 <input
                   {...register('email')}
                   type="text"
@@ -444,59 +447,64 @@ export default function LoginPage() {
 
               {/* Password Field */}
               <div className="form-group passwordfd auth-stagger-3" style={{ position: 'relative', marginBottom: '0.9rem' }}>
-                <input
-                  {...register('password')}
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  className="form-control width100 auth-input"
-                  placeholder={dict.auth.passwordPlaceholder}
-                  autoComplete="current-password"
-                  disabled={loading || !!socialLoading}
-                  aria-invalid={errors.password ? "true" : undefined}
-                  style={{
-                    width: '100%',
-                    height: '38px',
-                    padding: isRtl ? '6px 12px 6px 36px' : '6px 36px 6px 12px',
-                    fontSize: '13px',
-                    backgroundColor: 'hsl(var(--muted))',
-                    border: errors.password
-                      ? '1px solid hsl(var(--destructive))'
-                      : touchedFields.password && !errors.password
-                      ? '1px solid hsl(var(--success))'
-                      : '1px solid hsl(var(--border))',
-                    borderRadius: '6px',
-                    color: 'hsl(var(--foreground))',
-                    lineHeight: '19.5px',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                    fontFamily: FONT_STACK,
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  className="field-icon"
-                  style={{
-                    position: 'absolute',
-                    top: '19px',
-                    right: isRtl ? 'auto' : '12px',
-                    left: isRtl ? '12px' : 'auto',
-                    transform: 'translateY(-50%)',
-                    cursor: 'pointer',
-                    background: 'none',
-                    border: 'none',
-                    padding: 0,
-                    margin: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'hsl(var(--muted-foreground))',
-                    transition: 'transform 0.15s ease, opacity 0.15s ease',
-                  }}
-                >
-                  {showPassword ? <EyeOff size={16} color='hsl(var(--muted-foreground))' /> : <Eye size={16} color='hsl(var(--muted-foreground))' />}
-                </button>
+                <label htmlFor="password" style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK }}>
+                  {dict.auth.passwordPlaceholder || 'Password'} <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span>
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    {...register('password')}
+                    type={showPassword ? 'text' : 'password'}
+                    id="password"
+                    className="form-control width100 auth-input"
+                    placeholder={dict.auth.passwordPlaceholder}
+                    autoComplete="current-password"
+                    disabled={loading || !!socialLoading}
+                    aria-invalid={errors.password ? "true" : undefined}
+                    style={{
+                      width: '100%',
+                      height: '38px',
+                      padding: isRtl ? '6px 12px 6px 36px' : '6px 36px 6px 12px',
+                      fontSize: '13px',
+                      backgroundColor: 'hsl(var(--muted))',
+                      border: errors.password
+                        ? '1px solid hsl(var(--destructive))'
+                        : touchedFields.password && !errors.password
+                        ? '1px solid hsl(var(--success))'
+                        : '1px solid hsl(var(--border))',
+                      borderRadius: '6px',
+                      color: 'hsl(var(--foreground))',
+                      lineHeight: '19.5px',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                      fontFamily: FONT_STACK,
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    className="field-icon"
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      right: isRtl ? 'auto' : '12px',
+                      left: isRtl ? '12px' : 'auto',
+                      transform: 'translateY(-50%)',
+                      cursor: 'pointer',
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      margin: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'hsl(var(--muted-foreground))',
+                      transition: 'transform 0.15s ease, opacity 0.15s ease',
+                    }}
+                  >
+                    {showPassword ? <EyeOff size={16} color='hsl(var(--muted-foreground))' /> : <Eye size={16} color='hsl(var(--muted-foreground))' />}
+                  </button>
+                </div>
                 {errors.password && <p className="auth-error-msg" style={{ fontFamily: FONT_STACK }}>{errors.password.message}</p>}
               </div>
 
@@ -818,6 +826,9 @@ export default function LoginPage() {
                   </p>
 
                   <div className="form-group usernamefd" style={{ position: 'relative', marginBottom: '0.9rem' }}>
+                    <label htmlFor="forgot_username" style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK }}>
+                      {dict.auth.emailPlaceholder || 'Email Address'} <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span>
+                    </label>
                     <input
                       type="email"
                       id="forgot_username"

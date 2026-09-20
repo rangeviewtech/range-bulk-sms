@@ -168,7 +168,7 @@ export default function ClientsPage() {
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="companyName">Company Name</Label>
+                      <Label htmlFor="companyName" required>Company Name</Label>
                       <Input
                         id="companyName"
                         placeholder="e.g. Acme Africa Ltd"
@@ -190,7 +190,7 @@ export default function ClientsPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Primary Contact Person</Label>
+                      <Label htmlFor="name" required>Primary Contact Person</Label>
                       <Input
                         id="name"
                         placeholder="e.g. Sarah Kintu"
@@ -200,7 +200,7 @@ export default function ClientsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email">Official Email</Label>
+                      <Label htmlFor="email" required>Official Email</Label>
                       <Input
                         id="email"
                         type="email"
@@ -214,7 +214,7 @@ export default function ClientsPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="password">Initial Password</Label>
+                      <Label htmlFor="password" required>Initial Password</Label>
                       <Input
                         id="password"
                         type="password"

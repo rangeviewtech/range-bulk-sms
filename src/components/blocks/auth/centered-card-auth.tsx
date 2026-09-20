@@ -18,13 +18,13 @@ export function CenteredCardAuth() {
         
         <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
           <div className="space-y-2">
-            <Label htmlFor="centered-email">Email</Label>
+            <Label htmlFor="centered-email" required>Email</Label>
             <Input id="centered-email" type="email" placeholder="m@example.com" required />
           </div>
           
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <Label htmlFor="centered-password">Password</Label>
+              <Label htmlFor="centered-password" required>Password</Label>
               <Link href="#" className="text-sm font-medium text-primary hover:underline">
                 Forgot password?
               </Link>

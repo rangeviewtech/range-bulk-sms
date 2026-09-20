@@ -182,7 +182,7 @@ export default function UsersPage() {
 
                 <div className="grid gap-4 py-4">
                   <div className="space-y-2">
-                    <Label htmlFor="userName">Full Name</Label>
+                    <Label htmlFor="userName" required>Full Name</Label>
                     <Input
                       id="userName"
                       placeholder="e.g. David Mukasa"
@@ -193,7 +193,7 @@ export default function UsersPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="userEmail">Email Address</Label>
+                    <Label htmlFor="userEmail" required>Email Address</Label>
                     <Input
                       id="userEmail"
                       type="email"
@@ -205,7 +205,7 @@ export default function UsersPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="userPass">Initial Password</Label>
+                    <Label htmlFor="userPass" required>Initial Password</Label>
                     <Input
                       id="userPass"
                       type="password"
@@ -216,7 +216,7 @@ export default function UsersPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="userRole">Platform Role</Label>
+                    <Label htmlFor="userRole" required>Platform Role</Label>
                     <Select value={roleName} onValueChange={setRoleName}>
                       <SelectTrigger id="userRole">
                         <SelectValue placeholder="Select role" />

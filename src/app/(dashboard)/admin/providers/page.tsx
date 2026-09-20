@@ -182,7 +182,7 @@ export default function ProvidersPage() {
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="provName">Provider Slug</Label>
+                      <Label htmlFor="provName" required>Provider Slug</Label>
                       <Input
                         id="provName"
                         placeholder="e.g. infobip"
@@ -192,7 +192,7 @@ export default function ProvidersPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="provDisplay">Display Name</Label>
+                      <Label htmlFor="provDisplay" required>Display Name</Label>
                       <Input
                         id="provDisplay"
                         placeholder="e.g. InfoBip Global"
@@ -205,7 +205,7 @@ export default function ProvidersPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="provType">Protocol / Type</Label>
+                      <Label htmlFor="provType" required>Protocol / Type</Label>
                       <Input
                         id="provType"
                         value={type}
@@ -214,7 +214,7 @@ export default function ProvidersPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="provPriority">Priority Order (1 = Primary)</Label>
+                      <Label htmlFor="provPriority" required>Priority Order (1 = Primary)</Label>
                       <Input
                         id="provPriority"
                         type="number"
@@ -227,7 +227,7 @@ export default function ProvidersPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="provUrl">API Endpoint / Base URL</Label>
+                    <Label htmlFor="provUrl" required>API Endpoint / Base URL</Label>
                     <Input
                       id="provUrl"
                       placeholder="https://api.infobip.com"

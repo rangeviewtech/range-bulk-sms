@@ -21,13 +21,13 @@ export function SplitScreenAuth() {
           
           <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" required>Email</Label>
               <Input id="email" type="email" placeholder="m@example.com" required />
             </div>
             
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" required>Password</Label>
                 <Link href="#" className="text-sm font-medium text-primary hover:underline">
                   Forgot password?
                 </Link>

@@ -96,17 +96,17 @@ export default function AddGatewayPage() {
               )}
               
               <div className="space-y-2">
-                <label className="text-sm font-medium">Gateway Name</label>
+                <label className="text-sm font-medium">Gateway Name <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span></label>
                 <Input 
                   placeholder="e.g., MTN Uganda Primary Phone" 
                   value={name} 
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => setName(e.target.value)} 
                   required 
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Hardware Type</label>
+                <label className="text-sm font-medium">Hardware Type <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span></label>
                 <Select value={type} onValueChange={setType}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select type" />

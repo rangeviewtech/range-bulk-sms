@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function AccountSettingsPage() {
   return (
@@ -17,16 +18,16 @@ export default function AccountSettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Full Name</label>
-            <Input defaultValue="John Doe" />
+            <Label htmlFor="fullName" required>Full Name</Label>
+            <Input id="fullName" defaultValue="John Doe" required />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Email Address</label>
-            <Input type="email" defaultValue="john@example.com" />
+            <Label htmlFor="emailAddress" required>Email Address</Label>
+            <Input id="emailAddress" type="email" defaultValue="john@example.com" required />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Company Name</label>
-            <Input defaultValue="Acme Corp" />
+            <Label htmlFor="companyName">Company Name</Label>
+            <Input id="companyName" defaultValue="Acme Corp" />
           </div>
           <Button className="w-full sm:w-auto">Save Changes</Button>
         </CardContent>

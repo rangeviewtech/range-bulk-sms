@@ -185,7 +185,7 @@ export default function ContactGroupsPage() {
 
               <div className="space-y-4 py-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="grpName">Group Name *</Label>
+                  <Label htmlFor="grpName" required>Group Name</Label>
                   <Input
                     id="grpName"
                     placeholder="e.g. VIP Customers or October Leads"

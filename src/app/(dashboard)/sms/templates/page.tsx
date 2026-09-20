@@ -223,7 +223,7 @@ export default function TemplatesPage() {
             </DialogHeader>
             <div className="space-y-4 my-3">
               <div className="space-y-2">
-                <Label htmlFor="template-name">Template Name *</Label>
+                <Label htmlFor="template-name" required>Template Name</Label>
                 <Input
                   id="template-name"
                   placeholder="e.g. Welcome Message"
@@ -250,7 +250,7 @@ export default function TemplatesPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="template-body">Message Body *</Label>
+                <Label htmlFor="template-body" required>Message Body</Label>
                 <Textarea
                   id="template-body"
                   rows={4}

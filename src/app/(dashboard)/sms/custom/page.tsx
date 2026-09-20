@@ -468,8 +468,8 @@ export default function CustomSmsPage() {
             <CardContent className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="phoneCol" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Phone Number Column *
+                  <Label htmlFor="phoneCol" required className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Phone Number Column
                   </Label>
                   <Select value={phoneColumn} onValueChange={setPhoneColumn} disabled={headers.length === 0}>
                     <SelectTrigger id="phoneCol">
@@ -489,7 +489,7 @@ export default function CustomSmsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="senderIdSelect" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <Label htmlFor="senderIdSelect" required className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Sender ID
                   </Label>
                   <Select value={selectedSenderId} onValueChange={setSelectedSenderId}>
@@ -694,7 +694,7 @@ export default function CustomSmsPage() {
 
           <div className="space-y-4 py-3">
             <div className="space-y-2">
-              <Label htmlFor="campName">Campaign Name</Label>
+              <Label htmlFor="campName" required>Campaign Name</Label>
               <Input
                 id="campName"
                 value={campaignName}

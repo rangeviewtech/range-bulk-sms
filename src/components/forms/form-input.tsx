@@ -10,10 +10,10 @@ interface FormInputProps extends React.ComponentProps<typeof Input> {
   description?: string;
 }
 
-export function FormInput({ name, label, description, className, ...props }: FormInputProps) {
+export function FormInput({ name, label, description, className, required, ...props }: FormInputProps) {
   return (
-    <FormField name={name} label={label} description={description} className={className}>
-      <Input {...props} />
+    <FormField name={name} label={label} description={description} required={required} className={className}>
+      <Input required={required} {...props} />
     </FormField>
   );
 }

@@ -69,11 +69,11 @@ export function SocialFirstAuth() {
         
         <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
           <div className="space-y-2">
-            <Label htmlFor="social-email">Email</Label>
+            <Label htmlFor="social-email" required>Email</Label>
             <Input id="social-email" type="email" placeholder="m@example.com" required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="social-password">Password</Label>
+            <Label htmlFor="social-password" required>Password</Label>
             <Input id="social-password" type="password" required />
           </div>
           

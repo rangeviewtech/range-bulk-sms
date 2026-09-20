@@ -180,7 +180,7 @@ export default function EarningsPage() {
               <form onSubmit={handleRequestPayout} className="space-y-4 pt-2">
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <Label htmlFor="amount">Payout Amount (UGX)</Label>
+                    <Label htmlFor="amount" required>Payout Amount (UGX)</Label>
                     <span className="text-xs text-muted-foreground">
                       Max: UGX {availableForPayout.toLocaleString()}
                     </span>
@@ -198,7 +198,7 @@ export default function EarningsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="method">Payout Method</Label>
+                  <Label htmlFor="method" required>Payout Method</Label>
                   <Select value={payoutMethod} onValueChange={setPayoutMethod}>
                     <SelectTrigger id="method">
                       <SelectValue placeholder="Select Method" />
@@ -212,7 +212,7 @@ export default function EarningsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="details">Account / Mobile Number</Label>
+                  <Label htmlFor="details" required>Account / Mobile Number</Label>
                   <Input
                     id="details"
                     value={payoutDetails}

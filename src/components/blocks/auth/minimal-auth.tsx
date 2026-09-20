@@ -22,13 +22,13 @@ export function MinimalAuth() {
         
         <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
           <div className="space-y-2">
-            <Label htmlFor="minimal-email">Email</Label>
+            <Label htmlFor="minimal-email" required>Email</Label>
             <Input id="minimal-email" type="email" placeholder="m@example.com" required className="bg-transparent" />
           </div>
           
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <Label htmlFor="minimal-password">Password</Label>
+              <Label htmlFor="minimal-password" required>Password</Label>
               <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                 Forgot password?
               </Link>

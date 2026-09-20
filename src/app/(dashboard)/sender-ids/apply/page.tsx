@@ -85,7 +85,7 @@ export default function SenderIdApplyPage() {
           <CardContent className="space-y-6">
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <Label htmlFor="senderId">Desired Sender ID *</Label>
+                <Label htmlFor="senderId" required>Desired Sender ID</Label>
                 <span className="text-xs text-muted-foreground font-mono">{senderId.length}/11 chars</span>
               </div>
               <Input
@@ -104,7 +104,7 @@ export default function SenderIdApplyPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="purpose">Purpose of Usage *</Label>
+              <Label htmlFor="purpose" required>Purpose of Usage</Label>
               <Textarea
                 id="purpose"
                 placeholder="Please explain what kind of messages you will send using this Sender ID (e.g. transactional alerts, OTPs, customer updates)."

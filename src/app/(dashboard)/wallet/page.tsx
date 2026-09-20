@@ -192,7 +192,7 @@ export default function WalletPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="amount">Custom Amount ({currency})</Label>
+                  <Label htmlFor="amount" required>Custom Amount ({currency})</Label>
                   <Input
                     id="amount"
                     type="number"

@@ -48,7 +48,7 @@ export function WizardAuth() {
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="wizard-email">Email</Label>
+              <Label htmlFor="wizard-email" required>Email</Label>
               <Input id="wizard-email" type="email" placeholder="m@example.com" />
             </div>
             <Button className="w-full" onClick={() => setStep(2)}>
@@ -67,7 +67,7 @@ export function WizardAuth() {
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="wizard-password">Password</Label>
+              <Label htmlFor="wizard-password" required>Password</Label>
               <Input id="wizard-password" type="password" />
             </div>
             <div className="flex gap-2">
@@ -92,7 +92,7 @@ export function WizardAuth() {
             </div>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="wizard-name">Full Name</Label>
+                <Label htmlFor="wizard-name" required>Full Name</Label>
                 <Input id="wizard-name" type="text" placeholder="John Doe" />
               </div>
               <div className="space-y-2">

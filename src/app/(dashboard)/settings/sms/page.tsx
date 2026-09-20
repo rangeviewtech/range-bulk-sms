@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function SmsSettingsPage() {
   return (
@@ -17,12 +18,12 @@ export default function SmsSettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Default Sender ID</label>
-            <Input defaultValue="ACME" />
+            <Label htmlFor="defaultSenderId" required>Default Sender ID</Label>
+            <Input id="defaultSenderId" defaultValue="ACME" required />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Callback Webhook URL</label>
-            <Input type="url" placeholder="https://..." />
+            <Label htmlFor="webhookUrl">Callback Webhook URL</Label>
+            <Input id="webhookUrl" type="url" placeholder="https://..." />
           </div>
           <Button className="w-full sm:w-auto">Save Preferences</Button>
         </CardContent>

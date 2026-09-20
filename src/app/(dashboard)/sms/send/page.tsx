@@ -160,7 +160,7 @@ export default function SendSmsPage() {
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="sender">Sender ID</Label>
+                  <Label htmlFor="sender" required>Sender ID</Label>
                   <Select value={senderId} onValueChange={setSenderId}>
                     <SelectTrigger id="sender">
                       <SelectValue placeholder="Select sender ID" />
@@ -175,7 +175,7 @@ export default function SendSmsPage() {
 
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <Label htmlFor="recipients">Recipients</Label>
+                    <Label htmlFor="recipients" required>Recipients</Label>
                     <span className="text-xs text-muted-foreground font-medium">
                       {totalRecipients} detected
                     </span>
@@ -192,7 +192,7 @@ export default function SendSmsPage() {
 
               <div className="space-y-2">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <Label htmlFor="message">Message Content</Label>
+                  <Label htmlFor="message" required>Message Content</Label>
                   <div className="flex flex-wrap items-center gap-2">
                     <Button
                       variant="outline"

@@ -288,7 +288,10 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
         ) : (
           <>
             {/* 6-Digit PIN Box */}
-            <div className="auth-stagger-2" style={{ padding: '8px 0', width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <div className="auth-stagger-2" style={{ padding: '8px 0', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', textAlign: 'center', fontFamily: FONT_STACK }}>
+                6-Digit Verification Code <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span>
+              </label>
               <PinInput
                 value={code}
                 onChange={(val) => {

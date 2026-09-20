@@ -24,9 +24,10 @@ interface FormSelectProps {
   options: Option[];
   placeholder?: string;
   className?: string;
+  required?: boolean;
 }
 
-export function FormSelect({ name, label, description, options, placeholder = "Select an option", className }: FormSelectProps) {
+export function FormSelect({ name, label, description, options, placeholder = "Select an option", className, required }: FormSelectProps) {
   const { control, formState: { errors } } = useFormContext();
   const error = errors[name]?.message as string | undefined;
 
@@ -36,7 +37,7 @@ export function FormSelect({ name, label, description, options, placeholder = "S
       name={name}
       render={({ field: { value, onChange, ...field } }) => (
         <div className={cn("space-y-2", className)}>
-          {label && <Label className={cn(error && "text-destructive")}>{label}</Label>}
+          {label && <Label required={required} className={cn(error && "text-destructive")}>{label}</Label>}
           <Select onValueChange={onChange} value={value}>
             <SelectTrigger {...field}>
               <SelectValue placeholder={placeholder} />

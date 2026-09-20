@@ -11,9 +11,10 @@ interface FormCheckboxProps {
   label: string;
   description?: string;
   className?: string;
+  required?: boolean;
 }
 
-export function FormCheckbox({ name, label, description, className }: FormCheckboxProps) {
+export function FormCheckbox({ name, label, description, className, required }: FormCheckboxProps) {
   const { control, formState: { errors } } = useFormContext();
   const error = errors[name]?.message as string | undefined;
 
@@ -30,7 +31,7 @@ export function FormCheckbox({ name, label, description, className }: FormCheckb
             {...field}
           />
           <div className="space-y-1 leading-none">
-            <Label htmlFor={name} className={cn(error && "text-destructive")}>{label}</Label>
+            <Label htmlFor={name} required={required} className={cn(error && "text-destructive")}>{label}</Label>
             {description && !error && <p className="text-[0.8rem] text-muted-foreground">{description}</p>}
             {error && <p className="text-[0.8rem] font-medium text-destructive">{error}</p>}
           </div>

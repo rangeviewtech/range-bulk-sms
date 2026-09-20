@@ -25,7 +25,7 @@ export function MagicLinkAuth() {
         
         <form className="space-y-4 pt-2" onSubmit={(e) => e.preventDefault()}>
           <div className="space-y-2">
-            <Label htmlFor="magic-email" className="sr-only">Email</Label>
+            <Label htmlFor="magic-email" required>Email Address</Label>
             <Input id="magic-email" type="email" placeholder="name@example.com" required />
           </div>
           

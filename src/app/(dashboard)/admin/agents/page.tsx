@@ -168,7 +168,7 @@ export default function AgentsPage() {
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="agentCompany">Agency / Business Name</Label>
+                      <Label htmlFor="agentCompany" required>Agency / Business Name</Label>
                       <Input
                         id="agentCompany"
                         placeholder="e.g. Apex Telecom Ltd"
@@ -178,7 +178,7 @@ export default function AgentsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="rate">Commission Rate (%)</Label>
+                      <Label htmlFor="rate" required>Commission Rate (%)</Label>
                       <Input
                         id="rate"
                         type="number"
@@ -194,7 +194,7 @@ export default function AgentsPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="agentName">Primary Contact Person</Label>
+                      <Label htmlFor="agentName" required>Primary Contact Person</Label>
                       <Input
                         id="agentName"
                         placeholder="e.g. Patrick Okello"
@@ -204,7 +204,7 @@ export default function AgentsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="agentEmail">Official Email</Label>
+                      <Label htmlFor="agentEmail" required>Official Email</Label>
                       <Input
                         id="agentEmail"
                         type="email"
@@ -218,7 +218,7 @@ export default function AgentsPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="agentPassword">Initial Password</Label>
+                      <Label htmlFor="agentPassword" required>Initial Password</Label>
                       <Input
                         id="agentPassword"
                         type="password"

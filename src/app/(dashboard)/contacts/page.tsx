@@ -246,7 +246,7 @@ export default function ContactsPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="contactPhone">Phone Number *</Label>
+                    <Label htmlFor="contactPhone" required>Phone Number</Label>
                     <Input
                       id="contactPhone"
                       placeholder="e.g. +256700123456 or 0700123456"

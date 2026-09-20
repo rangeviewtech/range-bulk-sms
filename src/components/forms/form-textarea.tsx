@@ -10,10 +10,10 @@ interface FormTextareaProps extends React.ComponentProps<typeof Textarea> {
   description?: string;
 }
 
-export function FormTextarea({ name, label, description, className, ...props }: FormTextareaProps) {
+export function FormTextarea({ name, label, description, className, required, ...props }: FormTextareaProps) {
   return (
-    <FormField name={name} label={label} description={description} className={className}>
-      <Textarea {...props} />
+    <FormField name={name} label={label} description={description} required={required} className={className}>
+      <Textarea required={required} {...props} />
     </FormField>
   );
 }
