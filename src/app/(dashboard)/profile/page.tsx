@@ -12,7 +12,7 @@ export default async function ProfilePage() {
   const roleNames = roles.map(item => item.role.name).join(', ') || 'User';
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-4xl mx-auto animate-in fade-in duration-300">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 animate-in fade-in duration-300">
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2.5">
           <User className="w-6 h-6 text-[#04648C] dark:text-[#FBCA07]" />

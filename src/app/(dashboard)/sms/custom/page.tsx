@@ -328,7 +328,7 @@ export default function CustomSmsPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <PageHeader
         title="Personalized SMS (Spreadsheet)"
         description="Broadcast customized, dynamic messages using columns from your CSV or Excel dataset."

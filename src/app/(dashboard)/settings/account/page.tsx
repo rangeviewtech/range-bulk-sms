@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 
 export default function AccountSettingsPage() {
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-2xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Account Settings</h1>
         <p className="text-sm text-muted-foreground mt-0.5">Update your personal and organizational details.</p>

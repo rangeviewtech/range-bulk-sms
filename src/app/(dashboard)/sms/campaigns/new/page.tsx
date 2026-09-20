@@ -95,7 +95,7 @@ export default function NewCampaignPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <PageHeader
         title="Create Campaign"
         description="Launch a new SMS marketing campaign in 4 easy steps."

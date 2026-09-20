@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 
 export default function UiExamplesPage() {
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-7xl mx-auto pb-12">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 pb-12">
       <PageHeader 
         heading="UI Components & Blocks" 
         description="Reusable composite UI blocks like cookie banners and loading skeletons."

@@ -18,7 +18,7 @@ export default async function NotificationsPage() {
   });
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <div className="flex items-center space-x-3 mb-2">
         <Bell className="w-6 h-6 text-[#04648C] dark:text-[#FBCA07]" />
         <div>

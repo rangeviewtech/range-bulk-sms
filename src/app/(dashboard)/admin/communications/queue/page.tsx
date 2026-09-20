@@ -27,7 +27,7 @@ export default async function QueuePage() {
   const getCount = (status: string) => stats.find(s => s.status === status)?._count || 0;
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <PageHeader 
         heading="Background Jobs & Queue" 
         description="Monitor asynchronous communication and system tasks."

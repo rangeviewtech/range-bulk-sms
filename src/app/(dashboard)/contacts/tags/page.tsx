@@ -6,7 +6,7 @@ import { Search, Plus, MoreHorizontal, Tag } from 'lucide-react';
 
 export default function ContactTagsPage() {
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Contact Tags</h1>

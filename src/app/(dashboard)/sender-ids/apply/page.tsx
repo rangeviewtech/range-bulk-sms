@@ -61,7 +61,7 @@ export default function SenderIdApplyPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-3xl mx-auto w-full">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <div className="flex items-center gap-3 sm:gap-4 mb-2">
         <Link href="/sender-ids">
           <Button variant="ghost" size="icon" className="shrink-0">

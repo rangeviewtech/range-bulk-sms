@@ -4,7 +4,7 @@ import { Upload, AlertTriangle } from 'lucide-react';
 
 export default function ContactImportPage() {
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-4xl mx-auto w-full">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <div className="mb-2">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Import Contacts</h1>
         <p className="text-sm text-muted-foreground mt-0.5">Upload a CSV or Excel file to bulk import contacts.</p>

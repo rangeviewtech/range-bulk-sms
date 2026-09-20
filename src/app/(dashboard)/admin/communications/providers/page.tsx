@@ -20,7 +20,7 @@ export default async function ProvidersPage() {
   const _healthRecords = await db.providerHealth.findMany();
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <PageHeader 
         heading="Provider Health" 
         description="Status and circuit breaker states for external communication APIs."

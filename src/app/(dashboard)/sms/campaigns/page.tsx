@@ -53,7 +53,7 @@ export default function CampaignsPage() {
   });
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <PageHeader
         title="SMS Campaigns"
         description="Manage your bulk messaging campaigns and view their performance."
