@@ -35,8 +35,10 @@ async function allowAuthAttempt(scope: string) {
 export async function login(formData: FormData) {
   let targetDestination = '/dashboard';
   const data = Object.fromEntries(formData.entries());
+  const rawRemember = formData.get('rememberMe');
+  const rememberMe = rawRemember === 'true' || rawRemember === 'on' || rawRemember === '1';
 
-  const parsed = loginSchema.safeParse(data);
+  const parsed = loginSchema.safeParse({ ...data, rememberMe });
   if (!parsed.success) {
     return {
       error: parsed.error.errors[0]?.message || 'Please check your information and try again.',
@@ -96,10 +98,7 @@ export async function login(formData: FormData) {
     const { getEffectiveMfaRequirement } = await import('@/lib/auth/mfa-policy');
     const mfaRequirement = await getEffectiveMfaRequirement(user.id);
 
-    const rememberMe =
-      data.rememberMe === 'true' ||
-      data.rememberMe === 'on' ||
-      parsed.data.rememberMe === true;
+
     const callbackUrl =
       (formData.get('callbackUrl') as string) ||
       (formData.get('returnTo') as string) ||
