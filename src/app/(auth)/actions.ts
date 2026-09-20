@@ -343,6 +343,18 @@ export async function forgotPassword(formData: FormData) {
   return { success: true };
 }
 
+export async function validateResetToken(rawToken: string): Promise<boolean> {
+  const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+  const tokenRecord = await prisma.verificationToken.findFirst({
+    where: {
+      token: { in: [tokenHash, rawToken] },
+      type: 'PASSWORD_RESET',
+      expiresAt: { gt: new Date() },
+    },
+  });
+  return !!tokenRecord;
+}
+
 export async function resetPassword(formData: FormData) {
   if (!(await allowAuthAttempt('resetPassword'))) {
     await logAudit({

@@ -9,7 +9,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { resetPasswordSchema } from '@/lib/validations/auth';
-import { resetPassword } from '@/app/(auth)/actions';
+import { resetPassword, validateResetToken } from '@/app/(auth)/actions';
 import { notify, toast } from '@/lib/notifications/toast';
 import { toastCatalog } from '@/lib/notifications/toast-catalog';
 import { TurnstileWidget } from '@/components/forms/turnstile-widget';
@@ -36,6 +36,23 @@ function ResetPasswordForm() {
   
   const searchParams = useSearchParams();
   const token = searchParams.get('token') || '';
+
+  const [isTokenValidating, setIsTokenValidating] = useState(true);
+  const [isTokenValid, setIsTokenValid] = useState(false);
+
+  useEffect(() => {
+    if (!token) {
+      setIsTokenValidating(false);
+      return;
+    }
+    validateResetToken(token).then((isValid) => {
+      setIsTokenValid(isValid);
+      setIsTokenValidating(false);
+    }).catch(() => {
+      setIsTokenValid(false);
+      setIsTokenValidating(false);
+    });
+  }, [token]);
 
   const { register, handleSubmit, formState: { errors }, setValue, control, trigger } = useForm<ResetPasswordValues>({
     resolver: zodResolver(resetPasswordSchema),
@@ -128,7 +145,17 @@ function ResetPasswordForm() {
     }
   };
 
-  if (!token) {
+  if (isTokenValidating) {
+    return (
+      <AuthLayout>
+        <div className="auth-fade-in" style={{ width: '100%', float: 'left', textAlign: 'center', padding: '40px 0' }}>
+          <div style={{ display: 'inline-block', width: '24px', height: '24px', border: '3px solid rgba(251, 202, 7, 0.3)', borderTopColor: '#FBCA07', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+        </div>
+      </AuthLayout>
+    );
+  }
+
+  if (!token || !isTokenValid) {
     return (
       <AuthLayout>
         <div className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
