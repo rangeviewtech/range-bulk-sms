@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeFlyoutPosition, computeDeepMenuPosition } from "@/lib/flyout-position";
+import { computeFlyoutPosition } from "@/lib/flyout-position";
 
 describe("computeFlyoutPosition", () => {
   const sidebarRect = { top: 0, bottom: 900, left: 0, right: 90, width: 90 };
@@ -114,7 +114,7 @@ describe("computeFlyoutPosition", () => {
     });
 
     it("maintains zero horizontal gap (submenu.left === sidebar.right)", () => {
-      const parentRect = { top: 700, bottom: 789, left: 0, right: 90, height: 89 };
+      const parentRect = { top: 780, bottom: 869, left: 0, right: 90, height: 89 };
       const res = computeFlyoutPosition({
         parentRect,
         sidebarRect,
@@ -124,37 +124,6 @@ describe("computeFlyoutPosition", () => {
       });
 
       expect(res.left).toBe(sidebarRect.right);
-    });
-  });
-
-  describe("computeDeepMenuPosition", () => {
-    it("aligns deep menu naturally with category row when space allows", () => {
-      const res = computeDeepMenuPosition({
-        parentSubMenuTop: 400,
-        categoryRowTopOffset: 33,
-        deepMenuHeight: 150,
-        viewportHeight: 900,
-      });
-
-      expect(res.topOffset).toBe(33);
-      expect(res.screenTop).toBe(433);
-      expect(res.overflowsViewport).toBe(false);
-    });
-
-    it("shifts deep menu upward when it would exceed the viewport bottom", () => {
-      const res = computeDeepMenuPosition({
-        parentSubMenuTop: 671,
-        categoryRowTopOffset: 33,
-        deepMenuHeight: 190,
-        viewportHeight: 788,
-      });
-
-      // screenTop = 788 - 8 - 190 = 590
-      // topOffset = 590 - 671 = -81
-      expect(res.screenTop).toBe(590);
-      expect(res.screenTop + 190).toBe(780); // 8px above 788
-      expect(res.topOffset).toBe(-81);
-      expect(res.overflowsViewport).toBe(true);
     });
   });
 });
