@@ -171,17 +171,35 @@
   }
 
   ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 5px;
+    height: 5px;
   }
   ::-webkit-scrollbar-track {
-    @apply bg-transparent;
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-muted-foreground/30 rounded-full border-[3px] border-solid border-transparent bg-clip-padding;
+    background: rgba(0, 0, 0, 0.18);
+    border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/50;
+    background: rgba(0, 0, 0, 0.35);
+  }
+
+  /* Dark mode global scrollbar */
+  .dark ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.38);
+  }
+
+  /* Firefox global scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  }
+  .dark * {
+    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
   }
 }
 
@@ -216,6 +234,26 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+
+  /* Sleek scrollbar for dark sidebar backgrounds — always uses light thumb */
+  .sidebar-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+  }
+  .sidebar-scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  .sidebar-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .sidebar-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 9999px;
+  }
+  .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.38);
+  }
 }
 /* Prevent Chrome browser autofill from darkening inputs */
 input:-webkit-autofill,
@@ -227,20 +265,7 @@ input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
 }
 
-/* Custom scrollbar for language dropdown to match production */
-.dropdown-content::-webkit-scrollbar {
-  width: 6px;
-}
-.dropdown-content::-webkit-scrollbar-track {
-  background: #f6f6f6;
-}
-.dropdown-content::-webkit-scrollbar-thumb {
-  background: #888888;
-  border-radius: 3px;
-}
-.dropdown-content::-webkit-scrollbar-thumb:hover {
-  background: #555555;
-}
+/* Dropdown scrollbar: inherits global sleek scrollbar styling */
 
 /* Custom Checkbox to match production pixel-for-pixel */
 .prod-checkbox {
@@ -555,41 +580,10 @@ button.auth-animated-link:focus-visible::after,
   }
 }
 
-/* Elegant sleek scrollbar for auth form container */
+/* Auth form container — scrollbar inherits global sleek styling */
 .form-main-container {
   height: 100vh;
   height: 100dvh;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-}
-
-.dark .form-main-container {
-  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
-}
-
-.form-main-container::-webkit-scrollbar {
-  width: 5px;
-}
-
-.form-main-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.form-main-container::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.18);
-  border-radius: 9999px;
-}
-
-.form-main-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.35);
-}
-
-.dark .form-main-container::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.dark .form-main-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.38);
 }
 
 /* Auth Input Specifications */

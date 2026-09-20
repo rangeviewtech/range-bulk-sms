@@ -575,7 +575,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
             id="tree-module"
             ref={treeModuleRef}
             onScroll={updateFlyoutPosition}
-            className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden no-scrollbar pb-8"
+            className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden sidebar-scrollbar pb-8"
           >
             {allowedNavigation.map((mod, modIdx) => {
               const isHovered = hoveredModule?.title === mod.title;
@@ -767,7 +767,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
             <div
               id="subMenu"
               ref={subMenuRef}
-              className="w-[170px] bg-[#04648C] text-white flex flex-col border-r border-white/10 overflow-y-auto no-scrollbar animate-flyout-sub shadow-[4px_6px_16px_rgba(0,0,0,0.3)] z-10 shrink-0"
+              className="w-[170px] bg-[#04648C] text-white flex flex-col border-r border-white/10 overflow-y-auto sidebar-scrollbar animate-flyout-sub shadow-[4px_6px_16px_rgba(0,0,0,0.3)] z-10 shrink-0"
               style={{
                 maxHeight: `${flyoutPosition.maxHeight}px`,
               }}
@@ -821,7 +821,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                 id="deepMenu"
                 ref={deepMenuRef}
                 key={hoveredCategory.title}
-                className="w-[180px] bg-[#04648C] text-white flex flex-col overflow-y-auto no-scrollbar border-r border-white/10 animate-flyout-deep shadow-[4px_6px_18px_rgba(0,0,0,0.35)] shrink-0 z-20 absolute left-[170px] bottom-0 h-max"
+                className="w-[180px] bg-[#04648C] text-white flex flex-col overflow-y-auto sidebar-scrollbar border-r border-white/10 animate-flyout-deep shadow-[4px_6px_18px_rgba(0,0,0,0.35)] shrink-0 z-20 absolute left-[170px] bottom-0 h-max"
                 style={{
                   maxHeight: `${flyoutPosition.maxHeight}px`,
                 }}
