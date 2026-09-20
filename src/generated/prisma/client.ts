@@ -57,6 +57,11 @@ export type Session = Prisma.SessionModel
  */
 export type UserDevice = Prisma.UserDeviceModel
 /**
+ * Model Authenticator
+ * 
+ */
+export type Authenticator = Prisma.AuthenticatorModel
+/**
  * Model VerificationToken
  * 
  */

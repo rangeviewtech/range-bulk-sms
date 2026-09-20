@@ -15,9 +15,10 @@ export const OtpService = {
   /**
    * Generates a random numeric OTP and stores its hash securely.
    */
-  async createOtp(opts: GenerateOtpOptions) {
+  async createOtp(opts: GenerateOtpOptions, tx?: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+    const client = tx ?? db;
     // 1. Invalidate any existing active OTPs for this exact purpose and identifier
-    await db.otpRecord.updateMany({
+    await client.otpRecord.updateMany({
       where: {
         identifier: opts.identifier,
         purpose: opts.purpose,
@@ -39,7 +40,7 @@ export const OtpService = {
     const ttlSeconds = opts.ttlSeconds || parseInt(process.env.OTP_TTL_SECONDS || '300', 10);
     const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
 
-    const record = await db.otpRecord.create({
+    const record = await client.otpRecord.create({
       data: {
         userId: opts.userId,
         identifier: opts.identifier,

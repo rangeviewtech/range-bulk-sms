@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requirePermission, hasPermission } from '@/lib/auth/authorization';
-import { requireAuth } from '@/lib/auth/session';
+import { requireAuth } from '@/lib/dal';
 import { AppError } from '@/lib/errors';
 import { successResponse, errorResponse } from '@/lib/api';
 import { smsTemplateSchema } from '@/lib/validations/sms';

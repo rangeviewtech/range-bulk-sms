@@ -11,6 +11,7 @@
 export type * from './models/User'
 export type * from './models/Session'
 export type * from './models/UserDevice'
+export type * from './models/Authenticator'
 export type * from './models/VerificationToken'
 export type * from './models/Role'
 export type * from './models/Permission'

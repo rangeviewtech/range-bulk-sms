@@ -44,6 +44,7 @@ model User {
   roles                   UserRole[]
   sessions                Session[]
   devices                 UserDevice[]
+  authenticators          Authenticator[]
   auditLogs               AuditLog[]
   telegramLinkingTokens   TelegramLinkingToken[]
   notificationPreferences NotificationPreference[]
@@ -111,6 +112,24 @@ model UserDevice {
 
   @@index([userId, deviceHash])
   @@index([userId, revokedAt])
+}
+
+model Authenticator {
+  id                   String  @id @default(uuid())
+  credentialID         Bytes   @unique
+  credentialPublicKey  Bytes
+  counter              BigInt  @default(0)
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  lastUsed  DateTime @default(now())
+
+  @@index([userId])
 }
 
 model VerificationToken {

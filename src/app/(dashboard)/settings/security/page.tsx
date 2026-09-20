@@ -6,7 +6,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { requireAuth, decrypt } from '@/lib/auth/session';
+import { requireAuth } from '@/lib/dal';
+import { decrypt } from '@/lib/auth/session';
 import { generateMfaQrCode } from '@/lib/auth/mfa';
 import { getEffectiveMfaRequirement } from '@/lib/auth/mfa-policy';
 import { prisma } from '@/lib/prisma';

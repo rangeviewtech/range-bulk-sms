@@ -400,6 +400,7 @@ export const ModelName = {
   User: 'User',
   Session: 'Session',
   UserDevice: 'UserDevice',
+  Authenticator: 'Authenticator',
   VerificationToken: 'VerificationToken',
   Role: 'Role',
   Permission: 'Permission',
@@ -465,7 +466,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "userDevice" | "verificationToken" | "role" | "permission" | "userRole" | "rolePermission" | "auditLog" | "job" | "communicationLog" | "providerHealth" | "otpRecord" | "telegramLinkingToken" | "notificationPreference" | "notificationTemplate" | "notification" | "scheduledJob" | "cronExecution" | "organization" | "client" | "agent" | "contact" | "contactGroup" | "contactGroupMember" | "contactTag" | "contactTagAssignment" | "contactImport" | "senderId" | "smsTemplate" | "campaign" | "campaignGroup" | "message" | "messageRecipient" | "smsProvider" | "providerRoute" | "wallet" | "transaction" | "smsPricing" | "commission" | "commissionRule" | "apiKey" | "apiRequest" | "webhook" | "webhookDelivery" | "supportTicket" | "ticketMessage" | "scheduledMessage" | "gateway" | "gatewayDevice" | "gatewayToken" | "gatewayLog" | "messageAttempt"
+    modelProps: "user" | "session" | "userDevice" | "authenticator" | "verificationToken" | "role" | "permission" | "userRole" | "rolePermission" | "auditLog" | "job" | "communicationLog" | "providerHealth" | "otpRecord" | "telegramLinkingToken" | "notificationPreference" | "notificationTemplate" | "notification" | "scheduledJob" | "cronExecution" | "organization" | "client" | "agent" | "contact" | "contactGroup" | "contactGroupMember" | "contactTag" | "contactTagAssignment" | "contactImport" | "senderId" | "smsTemplate" | "campaign" | "campaignGroup" | "message" | "messageRecipient" | "smsProvider" | "providerRoute" | "wallet" | "transaction" | "smsPricing" | "commission" | "commissionRule" | "apiKey" | "apiRequest" | "webhook" | "webhookDelivery" | "supportTicket" | "ticketMessage" | "scheduledMessage" | "gateway" | "gatewayDevice" | "gatewayToken" | "gatewayLog" | "messageAttempt"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -688,6 +689,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserDeviceCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserDeviceCountAggregateOutputType> | number
+        }
+      }
+    }
+    Authenticator: {
+      payload: Prisma.$AuthenticatorPayload<ExtArgs>
+      fields: Prisma.AuthenticatorFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AuthenticatorFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuthenticatorPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AuthenticatorFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuthenticatorPayload>
+        }
+        findFirst: {
+          args: Prisma.AuthenticatorFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuthenticatorPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AuthenticatorFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuthenticatorPayload>
+        }
+        findMany: {
+          args: Prisma.AuthenticatorFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuthenticatorPayload>[]
+        }
+        create: {
+          args: Prisma.AuthenticatorCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuthenticatorPayload>
+        }
+        createMany: {
+          args: Prisma.AuthenticatorCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AuthenticatorCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuthenticatorPayload>[]
+        }
+        delete: {
+          args: Prisma.AuthenticatorDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuthenticatorPayload>
+        }
+        update: {
+          args: Prisma.AuthenticatorUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuthenticatorPayload>
+        }
+        deleteMany: {
+          args: Prisma.AuthenticatorDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AuthenticatorUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AuthenticatorUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuthenticatorPayload>[]
+        }
+        upsert: {
+          args: Prisma.AuthenticatorUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuthenticatorPayload>
+        }
+        aggregate: {
+          args: Prisma.AuthenticatorAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAuthenticator>
+        }
+        groupBy: {
+          args: Prisma.AuthenticatorGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AuthenticatorGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AuthenticatorCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AuthenticatorCountAggregateOutputType> | number
         }
       }
     }
@@ -4486,6 +4561,22 @@ export const UserDeviceScalarFieldEnum = {
 export type UserDeviceScalarFieldEnum = (typeof UserDeviceScalarFieldEnum)[keyof typeof UserDeviceScalarFieldEnum]
 
 
+export const AuthenticatorScalarFieldEnum = {
+  id: 'id',
+  credentialID: 'credentialID',
+  credentialPublicKey: 'credentialPublicKey',
+  counter: 'counter',
+  credentialDeviceType: 'credentialDeviceType',
+  credentialBackedUp: 'credentialBackedUp',
+  transports: 'transports',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  lastUsed: 'lastUsed'
+} as const
+
+export type AuthenticatorScalarFieldEnum = (typeof AuthenticatorScalarFieldEnum)[keyof typeof AuthenticatorScalarFieldEnum]
+
+
 export const VerificationTokenScalarFieldEnum = {
   id: 'id',
   identifier: 'identifier',
@@ -5473,6 +5564,34 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'Bytes'
+ */
+export type BytesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Bytes'>
+    
+
+
+/**
+ * Reference to a field of type 'Bytes[]'
+ */
+export type ListBytesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Bytes[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BigInt'
+ */
+export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
+    
+
+
+/**
+ * Reference to a field of type 'BigInt[]'
+ */
+export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
+    
+
+
+/**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -5947,6 +6066,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   session?: Prisma.SessionOmit
   userDevice?: Prisma.UserDeviceOmit
+  authenticator?: Prisma.AuthenticatorOmit
   verificationToken?: Prisma.VerificationTokenOmit
   role?: Prisma.RoleOmit
   permission?: Prisma.PermissionOmit

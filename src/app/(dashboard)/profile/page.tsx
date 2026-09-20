@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma';
 ﻿/* eslint-disable @typescript-eslint/no-unused-vars */
  
  
-import { requireAuth } from '@/lib/auth/session';
+import { requireAuth } from '@/lib/dal';
 import { User, Mail, Shield, CheckCircle2 } from 'lucide-react';
 
 export default async function ProfilePage() {

@@ -3,7 +3,8 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
-import { requireAuth, encrypt, decrypt, createSession, destroySession } from '@/lib/auth/session';
+import { encrypt, decrypt, createSession, destroySession } from '@/lib/auth/session';
+import { requireAuth } from '@/lib/dal';
 import { hashPassword, verifyPassword } from '@/lib/auth/password';
 import { generateMfaSecret, verifyMfaToken } from '@/lib/auth/mfa';
 import { checkRateLimit } from '@/lib/security/rate-limit';

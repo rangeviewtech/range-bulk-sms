@@ -7,9 +7,9 @@ import {
   createSession,
   destroySession,
   verifySession,
-  requireAuth,
   setScreenLocked,
 } from '@/lib/auth/session';
+import { requireAuth } from '@/lib/dal';
 import { verifyTurnstileToken } from '@/lib/auth/turnstile';
 import { verifyMfaToken } from '@/lib/auth/mfa';
 import {
@@ -293,21 +293,29 @@ export async function forgotPassword(formData: FormData) {
     const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
 
     // Invalidate any previous outstanding password reset tokens for this user
-    await prisma.verificationToken.deleteMany({
-      where: {
-        identifier: user.email,
-        type: 'PASSWORD_RESET',
-      },
-    });
+    await prisma.$transaction(async (tx) => {
+      await tx.verificationToken.deleteMany({
+        where: {
+          identifier: user.email,
+          type: 'PASSWORD_RESET',
+        },
+      });
 
-    // Store only the SHA-256 hash in database with 1 hour expiration
-    await prisma.verificationToken.create({
-      data: {
-        identifier: user.email,
-        token: tokenHash,
-        type: 'PASSWORD_RESET',
-        expiresAt: new Date(Date.now() + 1000 * 60 * 60), // 1 hour TTL
-      },
+      // Store only the SHA-256 hash in database with 1 hour expiration
+      await tx.verificationToken.create({
+        data: {
+          identifier: user.email,
+          token: tokenHash,
+          type: 'PASSWORD_RESET',
+          expiresAt: new Date(Date.now() + 1000 * 60 * 60), // 1 hour TTL
+        },
+      });
+
+      // Enqueue background email job with raw token in reset link (transactional outbox)
+      const cookieStore = await cookies();
+      const lang = cookieStore.get('app_language')?.value || 'EN';
+      const { NotificationService } = await import('@/lib/communications/service');
+      await NotificationService.sendPasswordReset(user.email, rawToken, lang, tx);
     });
 
     await logAudit({
@@ -319,12 +327,6 @@ export async function forgotPassword(formData: FormData) {
       resourceType: 'User',
       resourceId: user.id,
     });
-
-    // Enqueue background email job with raw token in reset link
-    const cookieStore = await cookies();
-    const lang = cookieStore.get('app_language')?.value || 'EN';
-    const { NotificationService } = await import('@/lib/communications/service');
-    await NotificationService.sendPasswordReset(user.email, rawToken, lang);
   } else {
     // Mitigate timing attacks by executing a dummy random generation
     crypto.randomBytes(32);
@@ -540,25 +542,21 @@ export async function requestOtp(userId: string, channel: CommunicationChannel) 
     identifier = user.telegramChatId;
   }
 
-  // Generate OTP
-  const { otp, otpId } = await OtpService.createOtp({
-    userId: user.id,
-    identifier,
-    channel,
-    purpose: 'LOGIN',
-  });
+  // Use a transaction for the OTP generation and the outbox event
+  await prisma.$transaction(async (tx) => {
+    // Generate OTP
+    const { otp } = await OtpService.createOtp({
+      userId: user.id,
+      identifier,
+      channel,
+      purpose: 'LOGIN',
+    }, tx); // wait, OtpService.createOtp might not accept tx. We should modify it if needed, or inline it.
 
-  // Enqueue Job immediately
-  const cookieStore = await cookies();
-  const lang = cookieStore.get('app_language')?.value || 'EN';
-  const { NotificationService } = await import('@/lib/communications/service');
-  await NotificationService.dispatch({
-    recipient: identifier,
-    channel,
-    template: 'auth.login_otp',
-    payload: { otp, lang, locale: lang },
-    priority: 'CRITICAL',
-    idempotencyKey: `login_otp_${otpId}`,
+    // Enqueue Job immediately
+    const cookieStore = await cookies();
+    const lang = cookieStore.get('app_language')?.value || 'EN';
+    const { NotificationService } = await import('@/lib/communications/service');
+    await NotificationService.sendLoginOtp(identifier, otp, channel, lang, tx);
   });
 
   return { success: true };

@@ -2,7 +2,7 @@ import { generateTelegramLinkingToken } from '@/app/(auth)/actions';
 import { z } from 'zod';
 import * as React from 'react';
 import { prisma } from '@/lib/prisma';
-import { requireAuth } from '@/lib/auth/session';
+import { requireAuth } from '@/lib/dal';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';

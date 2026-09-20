@@ -14,7 +14,8 @@ export const NotificationEngine = {
     template: string,
     payload: Prisma.InputJsonObject,
     priority: JobPriority = 'NORMAL',
-    idempotencyKey?: string
+    idempotencyKey?: string,
+    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
   ) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -33,26 +34,26 @@ export const NotificationEngine = {
     const jobs = [];
 
     if (channels.includes('EMAIL') && user.email) {
-      jobs.push(await this.sendEmail(user.email, template, payload, priority, idempotencyKey));
+      jobs.push(await this.sendEmail(user.email, template, payload, priority, idempotencyKey, tx));
     }
     if (channels.includes('SMS') && user.phone) {
-      jobs.push(await this.sendSMS(user.phone, template, payload, priority, idempotencyKey));
+      jobs.push(await this.sendSMS(user.phone, template, payload, priority, idempotencyKey, tx));
     }
     if (channels.includes('IN_APP')) {
       jobs.push(
-        await this.sendInApp(userId, category, template, payload, priority, idempotencyKey)
+        await this.sendInApp(userId, category, template, payload, priority, idempotencyKey, tx)
       );
     }
     // Telegram & WhatsApp require verified associations, which might be in a user profile or separate table.
     // For this example we assume the phone number is used for WhatsApp
 
     if (channels.includes('WHATSAPP') && user.phone && user.whatsappConsent) {
-      jobs.push(await this.sendWhatsApp(user.phone, template, payload, priority, idempotencyKey));
+      jobs.push(await this.sendWhatsApp(user.phone, template, payload, priority, idempotencyKey, tx));
     }
 
     if (channels.includes('TELEGRAM') && user.telegramChatId) {
       jobs.push(
-        await this.sendTelegram(user.telegramChatId, template, payload, priority, idempotencyKey)
+        await this.sendTelegram(user.telegramChatId, template, payload, priority, idempotencyKey, tx)
       );
     }
     return jobs;
@@ -68,18 +69,19 @@ export const NotificationEngine = {
     template: string,
     payload: Prisma.InputJsonObject,
     priority: JobPriority = 'NORMAL',
-    idempotencyKey?: string
+    idempotencyKey?: string,
+    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
   ) {
     if (channel === 'EMAIL') {
-      return this.sendEmail(recipient, template, payload, priority, idempotencyKey);
+      return this.sendEmail(recipient, template, payload, priority, idempotencyKey, tx);
     } else if (channel === 'SMS') {
-      return this.sendSMS(recipient, template, payload, priority, idempotencyKey);
+      return this.sendSMS(recipient, template, payload, priority, idempotencyKey, tx);
     } else if (channel === 'TELEGRAM') {
-      return this.sendTelegram(recipient, template, payload, priority, idempotencyKey);
+      return this.sendTelegram(recipient, template, payload, priority, idempotencyKey, tx);
     } else if (channel === 'WHATSAPP') {
-      return this.sendWhatsApp(recipient, template, payload, priority, idempotencyKey);
+      return this.sendWhatsApp(recipient, template, payload, priority, idempotencyKey, tx);
     } else if (channel === 'IN_APP') {
-      return this.sendInApp(recipient, 'SYSTEM', template, payload, priority, idempotencyKey); // 'recipient' is userId here
+      return this.sendInApp(recipient, 'SYSTEM', template, payload, priority, idempotencyKey, tx);
     }
     throw new Error('Unsupported channel');
   },
@@ -88,7 +90,8 @@ export const NotificationEngine = {
     template: string,
     payload: Prisma.InputJsonObject,
     priority: JobPriority = 'NORMAL',
-    idempotencyKey?: string
+    idempotencyKey?: string,
+    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
   ) {
     return enqueueJob({
       type: 'send-email',
@@ -98,6 +101,7 @@ export const NotificationEngine = {
       idempotencyKey: idempotencyKey
         ? JSON.stringify([idempotencyKey, 'EMAIL', recipient])
         : undefined,
+      tx,
     });
   },
   async sendSMS(
@@ -105,7 +109,8 @@ export const NotificationEngine = {
     template: string,
     payload: Prisma.InputJsonObject,
     priority: JobPriority = 'NORMAL',
-    idempotencyKey?: string
+    idempotencyKey?: string,
+    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
   ) {
     return enqueueJob({
       type: 'send-sms',
@@ -115,6 +120,7 @@ export const NotificationEngine = {
       idempotencyKey: idempotencyKey
         ? JSON.stringify([idempotencyKey, 'SMS', recipient])
         : undefined,
+      tx,
     });
   },
   async sendTelegram(
@@ -122,7 +128,8 @@ export const NotificationEngine = {
     template: string,
     payload: Prisma.InputJsonObject,
     priority: JobPriority = 'NORMAL',
-    idempotencyKey?: string
+    idempotencyKey?: string,
+    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
   ) {
     return enqueueJob({
       type: 'send-telegram',
@@ -132,6 +139,7 @@ export const NotificationEngine = {
       idempotencyKey: idempotencyKey
         ? JSON.stringify([idempotencyKey, 'TELEGRAM', recipient])
         : undefined,
+      tx,
     });
   },
   async sendWhatsApp(
@@ -139,7 +147,8 @@ export const NotificationEngine = {
     template: string,
     payload: Prisma.InputJsonObject,
     priority: JobPriority = 'NORMAL',
-    idempotencyKey?: string
+    idempotencyKey?: string,
+    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
   ) {
     return enqueueJob({
       type: 'send-whatsapp',
@@ -149,6 +158,7 @@ export const NotificationEngine = {
       idempotencyKey: idempotencyKey
         ? JSON.stringify([idempotencyKey, 'WHATSAPP', recipient])
         : undefined,
+      tx,
     });
   },
   async sendInApp(
@@ -157,7 +167,8 @@ export const NotificationEngine = {
     template: string,
     payload: Prisma.InputJsonObject,
     priority: JobPriority = 'NORMAL',
-    idempotencyKey?: string
+    idempotencyKey?: string,
+    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
   ) {
     return enqueueJob({
       type: 'send-in-app',
@@ -167,6 +178,7 @@ export const NotificationEngine = {
       idempotencyKey: idempotencyKey
         ? JSON.stringify([idempotencyKey, 'IN_APP', userId])
         : undefined,
+      tx,
     });
   },
 };

@@ -48,6 +48,13 @@ vi.mock('next/headers', () => ({
 describe('Password Recovery Security & Single-Use Token Architecture', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    prismaMock.$transaction.mockImplementation(async (arg: any) => {
+      if (typeof arg === 'function') {
+        return arg(prismaMock);
+      }
+      return arg;
+    });
   });
 
   describe('Cryptographic Token Security', () => {

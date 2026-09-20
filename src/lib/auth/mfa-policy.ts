@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma';
 
 export type MfaEnforcementType = 'MANDATORY_ROLE' | 'USER_OPTED_IN' | 'NONE';
 
-export type VerificationMethod = 'APP' | 'EMAIL' | 'SMS' | 'WHATSAPP' | 'TELEGRAM';
+export type VerificationMethod = 'WEBAUTHN' | 'APP' | 'EMAIL' | 'SMS' | 'WHATSAPP' | 'TELEGRAM';
 
 export interface MfaRequirementResult {
   required: boolean;
@@ -12,6 +12,7 @@ export interface MfaRequirementResult {
   allowedMethods: VerificationMethod[];
   maskedContact?: string;
   hasConfiguredTotp: boolean;
+  hasConfiguredWebAuthn: boolean;
   canBypassWithRecognizedDevice: boolean; // ALWAYS FALSE for Admin/Agent
 }
 
@@ -68,6 +69,7 @@ export async function getEffectiveMfaRequirement(userId: string): Promise<MfaReq
       roles: {
         include: { role: true },
       },
+      authenticators: true,
     },
   });
 
@@ -79,34 +81,50 @@ export async function getEffectiveMfaRequirement(userId: string): Promise<MfaReq
   const isAdmin = roleNames.includes('ADMIN') || roleNames.includes('ADMINISTRATOR');
   const isAgent = roleNames.includes('AGENT');
 
+  const hasConfiguredWebAuthn = (user.authenticators?.length ?? 0) > 0;
   const hasConfiguredTotp = Boolean(user.mfaSecret && user.mfaEnabled);
 
   // Determine allowed channels
   const allowedMethods: VerificationMethod[] = [];
+  
+  if (hasConfiguredWebAuthn) {
+    allowedMethods.push('WEBAUTHN');
+  }
   if (hasConfiguredTotp) {
     allowedMethods.push('APP');
   }
-  if (user.email) {
-    allowedMethods.push('EMAIL');
-  }
-  if (user.phone) {
-    allowedMethods.push('SMS');
-  }
-  if (user.phone && user.whatsappConsent) {
-    allowedMethods.push('WHATSAPP');
-  }
-  if (user.telegramChatId) {
-    allowedMethods.push('TELEGRAM');
+  
+  // For privileged roles, we DO NOT allow Email or SMS as an MFA fallback, 
+  // because the security blueprint explicitly demands phishing-resistant authenticators
+  // or at least TOTP app for these roles. Email OTP is strictly a low-assurance mechanism.
+  const isPrivileged = isAdmin || isAgent;
+
+  if (!isPrivileged) {
+    if (user.email) {
+      allowedMethods.push('EMAIL');
+    }
+    if (user.phone) {
+      allowedMethods.push('SMS');
+    }
+    if (user.phone && user.whatsappConsent) {
+      allowedMethods.push('WHATSAPP');
+    }
+    if (user.telegramChatId) {
+      allowedMethods.push('TELEGRAM');
+    }
   }
 
   // Priority for default method:
-  // 1. APP (TOTP) if configured
-  // 2. EMAIL (verified, reliable, universal)
-  // 3. TELEGRAM
-  // 4. WHATSAPP
-  // 5. SMS
+  // 1. WEBAUTHN
+  // 2. APP (TOTP)
+  // 3. EMAIL (verified, reliable, universal)
+  // 4. TELEGRAM
+  // 5. WHATSAPP
+  // 6. SMS
   let defaultMethod: VerificationMethod = 'EMAIL';
-  if (hasConfiguredTotp) {
+  if (hasConfiguredWebAuthn) {
+    defaultMethod = 'WEBAUTHN';
+  } else if (hasConfiguredTotp) {
     defaultMethod = 'APP';
   } else if (allowedMethods.includes('EMAIL')) {
     defaultMethod = 'EMAIL';
@@ -129,7 +147,7 @@ export async function getEffectiveMfaRequirement(userId: string): Promise<MfaReq
       : undefined;
   }
 
-  if (isAdmin || isAgent) {
+  if (isPrivileged) {
     // Fail closed if no verification method is available
     if (allowedMethods.length === 0) {
       throw new Error(
@@ -145,12 +163,13 @@ export async function getEffectiveMfaRequirement(userId: string): Promise<MfaReq
       allowedMethods,
       maskedContact,
       hasConfiguredTotp,
+      hasConfiguredWebAuthn,
       canBypassWithRecognizedDevice: false, // MANDATORY: Never bypass for Admin or Agent
     };
   }
 
   // Client or standard user
-  if (user.mfaEnabled || hasConfiguredTotp) {
+  if (user.mfaEnabled || hasConfiguredTotp || hasConfiguredWebAuthn) {
     return {
       required: true,
       type: 'USER_OPTED_IN',
@@ -159,6 +178,7 @@ export async function getEffectiveMfaRequirement(userId: string): Promise<MfaReq
       allowedMethods,
       maskedContact,
       hasConfiguredTotp,
+      hasConfiguredWebAuthn,
       canBypassWithRecognizedDevice: false,
     };
   }
@@ -171,6 +191,7 @@ export async function getEffectiveMfaRequirement(userId: string): Promise<MfaReq
     allowedMethods,
     maskedContact,
     hasConfiguredTotp: false,
+    hasConfiguredWebAuthn: false,
     canBypassWithRecognizedDevice: true,
   };
 }

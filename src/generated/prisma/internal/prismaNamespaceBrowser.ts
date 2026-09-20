@@ -54,6 +54,7 @@ export const ModelName = {
   User: 'User',
   Session: 'Session',
   UserDevice: 'UserDevice',
+  Authenticator: 'Authenticator',
   VerificationToken: 'VerificationToken',
   Role: 'Role',
   Permission: 'Permission',
@@ -176,6 +177,22 @@ export const UserDeviceScalarFieldEnum = {
 } as const
 
 export type UserDeviceScalarFieldEnum = (typeof UserDeviceScalarFieldEnum)[keyof typeof UserDeviceScalarFieldEnum]
+
+
+export const AuthenticatorScalarFieldEnum = {
+  id: 'id',
+  credentialID: 'credentialID',
+  credentialPublicKey: 'credentialPublicKey',
+  counter: 'counter',
+  credentialDeviceType: 'credentialDeviceType',
+  credentialBackedUp: 'credentialBackedUp',
+  transports: 'transports',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  lastUsed: 'lastUsed'
+} as const
+
+export type AuthenticatorScalarFieldEnum = (typeof AuthenticatorScalarFieldEnum)[keyof typeof AuthenticatorScalarFieldEnum]
 
 
 export const VerificationTokenScalarFieldEnum = {

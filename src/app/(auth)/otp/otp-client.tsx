@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { UnifiedVerification } from '@/components/forms/unified-verification';
 

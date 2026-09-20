@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { prisma } from '@/lib/prisma';
-import { requireAuth } from '@/lib/auth/session';
+import { requireAuth } from '@/lib/dal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bell } from 'lucide-react';
 

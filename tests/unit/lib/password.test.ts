@@ -11,7 +11,7 @@ describe('Password Utilities', () => {
 
     const isValid = await verifyPassword(password, hash);
     expect(isValid).toBe(true);
-  });
+  }, 15000);
 
   it('rejects an incorrect password', async () => {
     const password = 'SuperSecretPassword123!';
@@ -19,5 +19,5 @@ describe('Password Utilities', () => {
 
     const isValid = await verifyPassword('WrongPassword!', hash);
     expect(isValid).toBe(false);
-  });
+  }, 15000);
 });

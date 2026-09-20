@@ -1,10 +1,10 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GET, PATCH } from '@/app/api/notifications/route';
-import { requireAuth } from '@/lib/auth/session';
+import { requireAuth } from '@/lib/dal';
 import { AppError } from '@/lib/errors';
 import { prismaMock } from '../../unit/prismaMock';
-vi.mock('@/lib/auth/session', () => ({ requireAuth: vi.fn() }));
+vi.mock('@/lib/dal', () => ({ requireAuth: vi.fn() }));
 beforeEach(() => {
   vi.mocked(requireAuth).mockResolvedValue({ userId: 'owner' } as never);
 });

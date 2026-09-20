@@ -13,4 +13,13 @@ export const prismaMock = prisma as unknown as DeepMockProxy<PrismaClient>;
 
 beforeEach(() => {
   mockReset(prismaMock);
+  
+  // Mock $transaction to immediately execute its callback using prismaMock
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  prismaMock.$transaction.mockImplementation(async (arg: any) => {
+    if (typeof arg === 'function') {
+      return arg(prismaMock);
+    }
+    return arg; // If array of promises, we'd need Promise.all, but typically it's a callback here
+  });
 });

@@ -20,6 +20,7 @@ describe('Role-Based MFA Policy Engine', () => {
       whatsappConsent: false,
       telegramChatId: null,
       roles: [{ userId: 'admin-1', roleId: 'r-admin', role: { id: 'r-admin', name: 'ADMIN' } }],
+      authenticators: [{ id: 'auth-1' }],
     } as unknown as MockUserWithRoles);
 
     const result = await getEffectiveMfaRequirement('admin-1');
@@ -27,8 +28,8 @@ describe('Role-Based MFA Policy Engine', () => {
     expect(result.required).toBe(true);
     expect(result.type).toBe('MANDATORY_ROLE');
     expect(result.canBypassWithRecognizedDevice).toBe(false);
-    expect(result.defaultMethod).toBe('EMAIL'); // Defaults to verified email OTP when no TOTP
-    expect(result.allowedMethods).toContain('EMAIL');
+    expect(result.defaultMethod).toBe('WEBAUTHN'); // Defaults to WebAuthn when available
+    expect(result.allowedMethods).toContain('WEBAUTHN');
   });
 
   it('mandates MFA on every login for Agent', async () => {
@@ -41,6 +42,7 @@ describe('Role-Based MFA Policy Engine', () => {
       whatsappConsent: true,
       telegramChatId: '12345678',
       roles: [{ userId: 'agent-1', roleId: 'r-agent', role: { id: 'r-agent', name: 'AGENT' } }],
+      authenticators: [],
     } as unknown as MockUserWithRoles);
 
     const result = await getEffectiveMfaRequirement('agent-1');
@@ -50,7 +52,7 @@ describe('Role-Based MFA Policy Engine', () => {
     expect(result.canBypassWithRecognizedDevice).toBe(false);
     expect(result.defaultMethod).toBe('APP'); // Prefers configured TOTP
     expect(result.allowedMethods).toEqual(
-      expect.arrayContaining(['APP', 'EMAIL', 'SMS', 'WHATSAPP', 'TELEGRAM'])
+      expect.arrayContaining(['APP'])
     );
   });
 

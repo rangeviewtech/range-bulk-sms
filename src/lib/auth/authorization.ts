@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { requireAuth } from './session';
+import { requireAuth } from '@/lib/dal';
 import { AppError } from '@/lib/errors';
 
 export async function hasPermission(userId: string, action: string): Promise<boolean> {

@@ -1,4 +1,4 @@
-﻿import { createMetadata } from '@/lib/metadata';
+import { createMetadata } from '@/lib/metadata';
 
 export const metadata = createMetadata({
   title: 'Reset Password',

@@ -9,6 +9,7 @@ export interface SendNotificationOptions {
   payload: Prisma.InputJsonObject;
   priority?: JobPriority;
   idempotencyKey?: string;
+  tx?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export const NotificationService = {
@@ -19,7 +20,8 @@ export const NotificationService = {
       options.template,
       options.payload,
       options.priority,
-      options.idempotencyKey
+      options.idempotencyKey,
+      options.tx
     );
 
     // Immediate Worker Trigger for Critical Jobs
@@ -39,7 +41,8 @@ export const NotificationService = {
     recipient: string,
     otp: string,
     channel: CommunicationChannel = 'SMS',
-    lang: string = 'EN'
+    lang: string = 'EN',
+    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
   ) {
     return this.dispatch({
       recipient,
@@ -47,36 +50,55 @@ export const NotificationService = {
       template: 'auth.login_otp',
       payload: { otp, lang, locale: lang },
       priority: 'CRITICAL',
+      tx,
     });
   },
 
-  async sendPasswordReset(email: string, token: string, lang: string = 'EN') {
+  async sendPasswordReset(
+    email: string, 
+    token: string, 
+    lang: string = 'EN',
+    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  ) {
     return this.dispatch({
       recipient: email,
       channel: 'EMAIL',
       template: 'auth.password_reset',
       payload: { token, lang, locale: lang },
       priority: 'CRITICAL',
+      tx,
     });
   },
 
-  async sendWelcome(email: string, name: string, lang: string = 'EN') {
+  async sendWelcome(
+    email: string, 
+    name: string, 
+    lang: string = 'EN',
+    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  ) {
     return this.dispatch({
       recipient: email,
       channel: 'EMAIL',
       template: 'auth.welcome',
       payload: { name, lang, locale: lang },
       priority: 'NORMAL',
+      tx,
     });
   },
 
-  async sendPasswordChanged(email: string, name: string = 'User', lang: string = 'EN') {
+  async sendPasswordChanged(
+    email: string, 
+    name: string = 'User', 
+    lang: string = 'EN',
+    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  ) {
     return this.dispatch({
       recipient: email,
       channel: 'EMAIL',
       template: 'auth.password_changed',
       payload: { name, lang, locale: lang },
       priority: 'CRITICAL',
+      tx,
     });
   },
 };

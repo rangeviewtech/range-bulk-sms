@@ -1,4 +1,4 @@
-﻿import { AuthLayout } from '@/components/layout/auth-layout';
+import { AuthLayout } from '@/components/layout/auth-layout';
 import { UnifiedVerification } from '@/components/forms/unified-verification';
 
 export default async function OtpPage(props: {

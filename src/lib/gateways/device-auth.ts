@@ -1,4 +1,4 @@
-﻿import crypto from 'crypto';
+import crypto from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { NextRequest } from 'next/server';
 

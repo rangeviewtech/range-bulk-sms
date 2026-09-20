@@ -57,6 +57,8 @@ export async function processJobsBatch(batchSize: number = 10) {
     let lastError = null;
 
     try {
+      const { decryptPayload } = await import('@/lib/jobs/db');
+      const decrypted = decryptPayload(job.payload);
       const payload = z
         .object({
           recipient: z.string().min(1),
@@ -66,7 +68,7 @@ export async function processJobsBatch(batchSize: number = 10) {
           messageId: z.string().optional(),
           recipientId: z.string().optional(),
         })
-        .parse(job.payload);
+        .parse(decrypted);
       const { recipient, template, templateData } = payload;
 
       let channelStr: 'EMAIL' | 'SMS' | 'TELEGRAM' | 'WHATSAPP' | 'IN_APP' = 'EMAIL';
@@ -157,7 +159,8 @@ export async function processJobsBatch(batchSize: number = 10) {
 
       // Mark recipient as failed if job reached dead letter
       try {
-        const p = job.payload as Record<string, unknown>;
+        const { decryptPayload } = await import('@/lib/jobs/db');
+        const p = decryptPayload(job.payload) as Record<string, unknown>;
         if (status === 'DEAD_LETTER' && typeof p?.recipientId === 'string') {
           await prisma.messageRecipient.updateMany({
             where: { id: p.recipientId },

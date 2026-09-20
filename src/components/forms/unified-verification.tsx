@@ -7,12 +7,13 @@ import { AuthLink } from '@/components/ui/auth-link';
 import { verifyUnifiedVerification, resendUnifiedVerification } from '@/app/(auth)/actions';
 import { CommunicationChannel } from '@/generated/prisma';
 import { notify, toast } from '@/lib/notifications/toast';
-import { ShieldCheck, Smartphone, MessageSquare, Send, Mail } from 'lucide-react';
+import { ShieldCheck, Smartphone, MessageSquare, Send, Mail, Fingerprint } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
+import { startAuthentication } from '@simplewebauthn/browser';
 
 const FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
-export type VerificationMethod = 'APP' | 'SMS' | 'WHATSAPP' | 'TELEGRAM' | 'EMAIL';
+export type VerificationMethod = 'WEBAUTHN' | 'APP' | 'SMS' | 'WHATSAPP' | 'TELEGRAM' | 'EMAIL';
 
 interface UnifiedVerificationProps {
   userId?: string;
@@ -26,6 +27,8 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
   const { dict } = useLanguage();
   const initialMethod: VerificationMethod = defaultMethod 
     ? defaultMethod 
+    : defaultChannel === 'WEBAUTHN'
+    ? 'WEBAUTHN'
     : defaultChannel === 'WHATSAPP' 
     ? 'WHATSAPP' 
     : defaultChannel === 'TELEGRAM' 
@@ -41,11 +44,12 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
   const [error, setError] = useState('');
-  const [countdown, setCountdown] = useState(method === 'APP' ? 0 : 60);
+  const [countdown, setCountdown] = useState(method === 'APP' || method === 'WEBAUTHN' ? 0 : 60);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileExpired, setTurnstileExpired] = useState(false);
 
   const METHODS: { id: VerificationMethod; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
+    { id: 'WEBAUTHN', label: 'Passkey', icon: Fingerprint },
     { id: 'APP', label: dict.auth.tabAuthApp || 'Auth App', icon: ShieldCheck },
     { id: 'SMS', label: dict.auth.tabSms || 'SMS', icon: Smartphone },
     { id: 'WHATSAPP', label: dict.auth.tabWhatsApp || 'WhatsApp', icon: MessageSquare },
@@ -100,6 +104,48 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
       }
     } catch {
       setError(dict.common.error || 'Verification failed. Please try again.');
+      setLoading(false);
+    }
+  };
+
+  const handleWebAuthn = async () => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      const resp = await fetch('/api/auth/webauthn/generate-authentication-options', { method: 'POST' });
+      const options = await resp.json();
+      
+      if (options.error) {
+        setError(options.error);
+        setLoading(false);
+        return;
+      }
+      
+      let asseResp;
+      try {
+        asseResp = await startAuthentication(options);
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : 'Passkey authentication failed.');
+        setLoading(false);
+        return;
+      }
+      
+      const verificationResp = await fetch('/api/auth/webauthn/verify-authentication', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(asseResp),
+      });
+      
+      const verification = await verificationResp.json();
+      if (verification.verified) {
+        window.location.href = verification.redirect || '/dashboard';
+      } else {
+        setError(verification.error || 'Verification failed');
+      }
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Passkey authentication failed.');
+    } finally {
       setLoading(false);
     }
   };
@@ -209,16 +255,50 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
 
       {/* Verification Form */}
       <form onSubmit={handleVerify} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        {/* 6-Digit PIN Box */}
-        <div className="auth-stagger-2" style={{ padding: '8px 0', width: '100%', display: 'flex', justifyContent: 'center' }}>
-          <PinInput
-            value={code}
-            onChange={(val) => {
-              setCode(val);
-              if (error) setError('');
-            }}
-          />
-        </div>
+        
+        {method === 'WEBAUTHN' ? (
+          <div className="auth-stagger-2" style={{ padding: '24px 0', width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <button
+              type="button"
+              onClick={handleWebAuthn}
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                backgroundColor: 'hsl(var(--primary))',
+                color: 'hsl(var(--primary-foreground))',
+                borderRadius: '8px',
+                border: 'none',
+                fontWeight: 500,
+                fontSize: '13px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                fontFamily: FONT_STACK,
+                transition: 'opacity 0.2s',
+                opacity: loading ? 0.7 : 1
+              }}
+            >
+              <Fingerprint size={16} />
+              {loading ? 'Verifying...' : 'Use Passkey'}
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* 6-Digit PIN Box */}
+            <div className="auth-stagger-2" style={{ padding: '8px 0', width: '100%', display: 'flex', justifyContent: 'center' }}>
+              <PinInput
+                value={code}
+                onChange={(val) => {
+                  setCode(val);
+                  if (error) setError('');
+                }}
+              />
+            </div>
+          </>
+        )}
 
         {error && (
           <p style={{ fontSize: '11px', color: 'hsl(var(--destructive))', marginTop: '4px', textAlign: 'center', fontFamily: FONT_STACK }}>
@@ -250,33 +330,29 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
           )}
         </div>
 
-        {/* Submit Button */}
-        <div className="login-con auth-stagger-4" style={{ width: '100%', marginTop: '10px' }}>
-          <button
-            type="submit"
-            disabled={loading || code.length !== 6 || (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? !turnstileToken || turnstileExpired : false)}
-            className="btn btn-primary btn-main auth-btn-primary"
-            style={{
-              width: '100%',
-              height: '38px',
-              padding: '6px 28px',
-              fontSize: '13.5px',
-              lineHeight: '19.5px',
-              backgroundColor: '#FBCA07',
-              color: '#141B2D',
-              fontWeight: 700,
-              borderRadius: '7px',
-              border: '0',
-              cursor: loading || code.length !== 6 || (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? !turnstileToken || turnstileExpired : false) ? 'not-allowed' : 'pointer',
-              textAlign: 'center',
-              boxSizing: 'border-box',
-              fontFamily: FONT_STACK,
-              opacity: loading || code.length !== 6 || (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? !turnstileToken || turnstileExpired : false) ? 0.7 : 1,
-            }}
-          >
-            {loading ? dict.auth.verifying : dict.auth.verifyAndContinueButton}
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={loading || code.length !== 6 || (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? !turnstileToken || turnstileExpired : false)}
+          className="auth-stagger-4"
+          style={{
+            width: '100%',
+            marginTop: '16px',
+            backgroundColor: 'hsl(var(--primary))',
+            color: 'hsl(var(--primary-foreground))',
+            border: 'none',
+            borderRadius: '6px',
+            padding: '10px 16px',
+            fontSize: '13px',
+            fontWeight: 500,
+            cursor: loading || code.length !== 6 || (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? !turnstileToken || turnstileExpired : false) ? 'not-allowed' : 'pointer',
+            textAlign: 'center',
+            boxSizing: 'border-box',
+            fontFamily: FONT_STACK,
+            opacity: loading || code.length !== 6 || (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? !turnstileToken || turnstileExpired : false) ? 0.7 : 1,
+          }}
+        >
+          {loading ? dict.auth.verifying : dict.auth.verifyAndContinueButton}
+        </button>
 
         {/* Resend Section (for OTP channels) */}
         {method !== 'APP' && (
