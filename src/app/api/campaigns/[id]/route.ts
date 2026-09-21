@@ -56,8 +56,8 @@ export async function PUT(
       return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
     }
 
-    if (campaign.status !== 'DRAFT') {
-      return NextResponse.json({ success: false, error: 'Only DRAFT campaigns can be updated' }, { status: 400 });
+    if (!['DRAFT', 'SCHEDULED'].includes(campaign.status)) {
+      return NextResponse.json({ success: false, error: 'Only DRAFT or SCHEDULED campaigns can be updated' }, { status: 400 });
     }
 
     const { name, senderId, message, variables, scheduledAt } = parsed.data;
@@ -112,14 +112,17 @@ export async function DELETE(
       return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
     }
 
-    const allowedStatuses = ['DRAFT', 'COMPLETED', 'FAILED', 'CANCELLED'];
+    const allowedStatuses = ['DRAFT', 'SCHEDULED', 'COMPLETED', 'FAILED', 'CANCELLED'];
     if (!allowedStatuses.includes(campaign.status)) {
       return NextResponse.json({ success: false, error: 'Cannot delete campaign in current status' }, { status: 400 });
     }
 
     await prisma.campaign.update({
       where: { id },
-      data: { deletedAt: new Date() }
+      data: {
+        deletedAt: new Date(),
+        ...(campaign.status === 'SCHEDULED' ? { status: 'CANCELLED', cancelledAt: new Date() } : {})
+      }
     });
 
     return NextResponse.json({ success: true });
