@@ -28,6 +28,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { ConfirmationDialog } from "@/components/feedback/confirmation-dialog";
+import { NetworkBadge } from "@/components/sms/network-badge";
 import { useFormValidation } from "@/hooks/use-form-validation";
 import { smsPricingSchema } from "@/lib/validations/wallet";
 import { InputError } from "@/components/ui/input-error";
@@ -587,9 +588,7 @@ export default function PricingPage() {
                         </TableCell>
                         <TableCell>
                           {rule.networkName || rule.networkCode ? (
-                            <Badge variant="outline" className="font-medium">
-                              {rule.networkName || rule.networkCode}
-                            </Badge>
+                            <NetworkBadge network={rule.networkName || rule.networkCode} />
                           ) : (
                             <span className="text-muted-foreground italic text-xs">All Networks</span>
                           )}

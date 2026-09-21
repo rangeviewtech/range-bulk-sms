@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { NetworkBadge } from '@/components/sms/network-badge';
 import { Search, ArrowLeft, RefreshCw, Globe, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -182,9 +183,7 @@ export default function PricingPage() {
                           {item.countryCode}
                         </TableCell>
                         <TableCell>
-                          <span className="font-medium text-xs bg-muted/50 px-2 py-1 rounded">
-                            {item.networkName || item.networkCode || 'All Networks'}
-                          </span>
+                          <NetworkBadge network={item.networkName || item.networkCode} />
                         </TableCell>
                         <TableCell className="font-bold text-secondary dark:text-primary">
                           {item.currency} {priceNum.toFixed(2)}

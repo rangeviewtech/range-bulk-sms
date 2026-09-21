@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { NetworkBadge } from '@/components/sms/network-badge';
 
 interface DeliveryRecord {
   id: string;
@@ -282,8 +283,18 @@ export default function DeliveryReportsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ALL">All Networks</SelectItem>
-                  <SelectItem value="MTN Uganda">MTN Uganda</SelectItem>
-                  <SelectItem value="Airtel Uganda">Airtel Uganda</SelectItem>
+                  <SelectItem value="MTN Uganda">
+                    <span className="inline-flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-[#FFCC00] ring-1 ring-black/10 shrink-0" />
+                      <span>MTN Uganda</span>
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="Airtel Uganda">
+                    <span className="inline-flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-[#ED1C24] shrink-0" />
+                      <span>Airtel Uganda</span>
+                    </span>
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
@@ -429,9 +440,7 @@ export default function DeliveryReportsPage() {
                         {item.phone}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="secondary" className="text-xs font-normal">
-                          {item.network}
-                        </Badge>
+                        <NetworkBadge network={item.network} />
                       </TableCell>
                       <TableCell className="text-sm font-medium text-foreground">
                         {item.campaign}
