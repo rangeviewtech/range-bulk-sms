@@ -105,6 +105,47 @@
   --chart-3: 193 30% 55%; /* #67A0AF */
   --chart-4: 196 43% 75%; /* #A6CBD8 */
   --chart-5: 46 95% 78%; /* #FBE392 */
+
+  /* Developer Portal Tokens - Light Theme */
+  --portal-main-bg: #F8FAFC;
+  --portal-header-bg: #FFFFFF;
+  --portal-sidebar-bg: #F1F5F9;
+  --portal-card-bg: #FFFFFF;
+  --portal-elevated-bg: #E2E8F0;
+  --portal-code-bg: #0F172A;
+  --portal-border: #E2E8F0;
+  --portal-border-light: #CBD5E1;
+  --portal-primary-text: #0F172A;
+  --portal-secondary-text: #475569;
+  --portal-muted-text: #64748B;
+  --portal-accent-blue: #0284C7;
+  --portal-active-tab: #0284C7;
+  --portal-primary-yellow: #FBCA07;
+  --portal-primary-yellow-hover: #E5B718;
+  --portal-success-green: #059669;
+  --portal-danger-red: #DC2626;
+  --portal-purple-accent: #7C3AED;
+
+  /* HTTP Method Badges - Light Theme */
+  --method-get-bg: rgba(5, 150, 105, 0.12);
+  --method-get-text: #047857;
+  --method-get-border: rgba(5, 150, 105, 0.3);
+
+  --method-post-bg: rgba(2, 132, 199, 0.12);
+  --method-post-text: #0369A1;
+  --method-post-border: rgba(2, 132, 199, 0.3);
+
+  --method-put-bg: rgba(217, 119, 6, 0.12);
+  --method-put-text: #B45309;
+  --method-put-border: rgba(217, 119, 6, 0.3);
+
+  --method-patch-bg: rgba(124, 58, 237, 0.12);
+  --method-patch-text: #6D28D9;
+  --method-patch-border: rgba(124, 58, 237, 0.3);
+
+  --method-delete-bg: rgba(220, 38, 38, 0.12);
+  --method-delete-text: #B91C1C;
+  --method-delete-border: rgba(220, 38, 38, 0.3);
 }
 
 .dark {
@@ -150,6 +191,47 @@
   --chart-3: 193 30% 65%;
   --chart-4: 196 43% 80%;
   --chart-5: 46 95% 78%;
+
+  /* Developer Portal Tokens - Dark Theme */
+  --portal-main-bg: #0B1729;
+  --portal-header-bg: #0D1B30;
+  --portal-sidebar-bg: #102038;
+  --portal-card-bg: #13243C;
+  --portal-elevated-bg: #182D49;
+  --portal-code-bg: #0D1B30;
+  --portal-border: #2A405E;
+  --portal-border-light: #3B5880;
+  --portal-primary-text: #F5F7FC;
+  --portal-secondary-text: #A9BCD4;
+  --portal-muted-text: #6B82A0;
+  --portal-accent-blue: #35B6FF;
+  --portal-active-tab: #FFCC24;
+  --portal-primary-yellow: #FFCC24;
+  --portal-primary-yellow-hover: #E5B718;
+  --portal-success-green: #20D5A0;
+  --portal-danger-red: #FF4D6D;
+  --portal-purple-accent: #9D6DFF;
+
+  /* HTTP Method Badges - Dark Theme */
+  --method-get-bg: rgba(32, 213, 160, 0.15);
+  --method-get-text: #20D5A0;
+  --method-get-border: rgba(32, 213, 160, 0.3);
+
+  --method-post-bg: rgba(53, 182, 255, 0.15);
+  --method-post-text: #35B6FF;
+  --method-post-border: rgba(53, 182, 255, 0.3);
+
+  --method-put-bg: rgba(255, 204, 36, 0.15);
+  --method-put-text: #FFCC24;
+  --method-put-border: rgba(255, 204, 36, 0.3);
+
+  --method-patch-bg: rgba(157, 109, 255, 0.15);
+  --method-patch-text: #9D6DFF;
+  --method-patch-border: rgba(157, 109, 255, 0.3);
+
+  --method-delete-bg: rgba(255, 77, 109, 0.15);
+  --method-delete-text: #FF4D6D;
+  --method-delete-border: rgba(255, 77, 109, 0.3);
 }
 
 @layer base {

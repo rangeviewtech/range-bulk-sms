@@ -451,7 +451,7 @@ export default function ProvidersPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-destructive/40 dark:text-destructive/50 hover:text-destructive hover:bg-destructive/10"
+                        className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
                         onClick={() => handleDeleteClick(prov.id, prov.displayName)}
                       >
                         <Trash2 className="h-4 w-4" />

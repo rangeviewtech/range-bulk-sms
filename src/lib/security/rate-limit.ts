@@ -18,7 +18,10 @@ export async function checkRateLimit(type: 'auth' | 'api', identifier: string) {
     try {
       return await limiter.limit(identifier);
     } catch {
-      return { success: false, limit, remaining: 0, reset: now + duration };
+      if (process.env.NODE_ENV === 'production') {
+        return { success: false, limit, remaining: 0, reset: now + duration };
+      }
+      // In development fallback to localWindows below
     }
   }
   // Production requires distributed enforcement; never substitute a dummy Redis client.
@@ -37,4 +40,29 @@ export async function checkRateLimit(type: 'auth' | 'api', identifier: string) {
     remaining: Math.max(0, limit - current.count),
     reset: current.reset,
   };
+}
+
+export async function resetRateLimits(identifier?: string) {
+  if (identifier) {
+    localWindows.delete(`auth:${identifier}`);
+    localWindows.delete(`api:${identifier}`);
+  } else {
+    localWindows.clear();
+  }
+
+  if (redis) {
+    try {
+      if (identifier) {
+        await redis.del(`ratelimit:auth:${identifier}`);
+        await redis.del(`ratelimit:api:${identifier}`);
+      } else {
+        const keys = await redis.keys('ratelimit:*');
+        if (keys.length > 0) {
+          await redis.del(...keys);
+        }
+      }
+    } catch {
+      // Ignore redis error in reset
+    }
+  }
 }

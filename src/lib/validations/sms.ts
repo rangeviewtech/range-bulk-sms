@@ -24,7 +24,7 @@ export const createCampaignSchema = z.object({
   senderId: z.string().min(1, 'Sender ID required').max(11),
   message: z.string().min(1, 'Message required').max(3200),
   variables: z.array(z.string()).default([]),
-  groupIds: z.array(z.string().uuid()).min(1, 'Select at least one contact group'),
+  groupIds: z.array(z.string().uuid()).default([]),
   scheduledAt: z.string().datetime().optional().nullable(),
 });
 

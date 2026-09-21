@@ -253,7 +253,7 @@ export default function DeliveryReportsPage() {
             {/* Search Input */}
             <div className="flex flex-1 flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                 <Input
                   placeholder="Search phone, campaign, or network..."
                   className="pl-9 pr-8"

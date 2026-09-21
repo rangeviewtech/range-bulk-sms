@@ -49,7 +49,10 @@ import {
   saveCustomVariables,
   renderTemplateWithVariables,
   extractVariablesFromText,
+  generateVariableKeyFromLabel,
+  checkVariableConflict,
 } from '@/lib/sms/custom-variables';
+import { TemplateHighlighter } from '@/components/sms/template-highlighter';
 import {
   Braces,
   Plus,
@@ -200,6 +203,23 @@ export default function VariablesPage() {
     schema: customVariableSchema,
   });
 
+  // Real-time duplicate & conflict detection for Create Variable form
+  const createConflict = useMemo(() => {
+    if (!createForm.label.trim() && !createForm.key.trim()) return { isDuplicate: false };
+    return checkVariableConflict(createForm.label, createForm.key, combinedVariables);
+  }, [createForm.label, createForm.key, combinedVariables]);
+
+  // Real-time duplicate & conflict detection for Edit Variable form
+  const editConflict = useMemo(() => {
+    if (!editingVariable || !editingVariable.label.trim()) return { isDuplicate: false };
+    return checkVariableConflict(
+      editingVariable.label,
+      editingVariable.key,
+      combinedVariables,
+      editingVariable.id
+    );
+  }, [editingVariable, combinedVariables]);
+
   // Handle Copy Tag to Clipboard
   const handleCopyTag = (key: string) => {
     const tag = `{{${key}}}`;
@@ -231,16 +251,14 @@ export default function VariablesPage() {
 
     if (!validateCreateAll()) return;
 
-    // Check duplicate key
-    const rawKey = createForm.key.trim();
-    const isConflict = combinedVariables.some(
-      (v) => v.key.toLowerCase() === rawKey.toLowerCase()
-    );
-    if (isConflict) {
-      toast.error(`A variable with key "{{${rawKey}}}" already exists.`);
+    // Check duplicate label or key across all variables (system + custom)
+    const conflict = checkVariableConflict(createForm.label, createForm.key, combinedVariables);
+    if (conflict.isDuplicate) {
+      toast.error(conflict.errorMessage || 'This variable already exists in the system.');
       return;
     }
 
+    const rawKey = createForm.key.trim();
     const newVar: SmsVariable = {
       id: `custom-${Date.now()}`,
       key: rawKey,
@@ -286,6 +304,18 @@ export default function VariablesPage() {
     }
     if (!editingVariable.sampleValue.trim()) {
       toast.error('Sample value is required');
+      return;
+    }
+
+    // Check duplicate label or key across all variables (excluding current variable ID)
+    const conflict = checkVariableConflict(
+      editingVariable.label,
+      editingVariable.key,
+      combinedVariables,
+      editingVariable.id
+    );
+    if (conflict.isDuplicate) {
+      toast.error(conflict.errorMessage || 'This display label already exists in the system.');
       return;
     }
 
@@ -637,7 +667,7 @@ export default function VariablesPage() {
                                 className={cn(
                                   'inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-semibold font-mono transition-all border group cursor-pointer',
                                   isCopied
-                                    ? 'bg-emerald-600 text-white border-emerald-600'
+                                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white border-emerald-600 hover:border-emerald-700'
                                     : 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 hover:text-amber-950 border-amber-500/30 dark:bg-primary/15 dark:hover:bg-primary/25 dark:text-primary dark:border-primary/30'
                                 )}
                               >
@@ -719,7 +749,7 @@ export default function VariablesPage() {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 text-destructive/40 dark:text-destructive/50 hover:text-destructive hover:bg-destructive/10"
+                                    className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
                                     onClick={() => handleDeleteClick(v)}
                                     aria-label={`Delete ${v.label}`}
                                   >
@@ -881,7 +911,11 @@ export default function VariablesPage() {
 
                 <div className="p-4 rounded-xl border bg-muted/30 dark:bg-slate-950/40 flex flex-col items-start">
                   <div className="max-w-[95%] p-3.5 rounded-2xl rounded-bl-xs bg-primary text-primary-foreground shadow-sm text-xs sm:text-sm whitespace-pre-wrap leading-relaxed">
-                    {simulatorRendered || 'Your rendered message will appear here...'}
+                    {simulatorRendered ? (
+                      <TemplateHighlighter text={simulatorRendered} variant="on-primary" />
+                    ) : (
+                      <span className="italic opacity-80">Your rendered message will appear here...</span>
+                    )}
                   </div>
                   <span className="text-[10px] text-muted-foreground mt-1.5 pl-1">
                     Delivered via Range Bulk SMS • Just now
@@ -919,7 +953,7 @@ export default function VariablesPage() {
                 <div>
                   <span className="text-xs font-semibold text-muted-foreground block">Tag Syntax Preview</span>
                   <span className="font-mono text-sm font-bold text-amber-900 dark:text-primary">
-                    {createForm.key ? `{{${createForm.key}}}` : '{{variableName}}'}
+                    {createForm.key ? `{{${createForm.key}}}` : '{{variableKey}}'}
                   </span>
                 </div>
                 <Badge variant="outline" className="text-xs">
@@ -927,51 +961,99 @@ export default function VariablesPage() {
                 </Badge>
               </div>
 
-              {/* Variable Key */}
-              <div className="space-y-1">
-                <Label htmlFor="create-var-key" required>
-                  Variable Key (Tag Identifier)
-                </Label>
-                <Input
-                  id="create-var-key"
-                  placeholder="e.g. orderId, accountNumber, invoiceNum"
-                  value={createForm.key}
-                  onChange={(e) => {
-                    // Normalize to alphanumeric / underscore
-                    const cleaned = e.target.value.replace(/[^a-zA-Z0-9_]/g, '');
-                    setCreateField('key', cleaned);
-                  }}
-                  onBlur={() => handleCreateBlur('key')}
-                  error={createTouched.key && !!createErrors.key}
-                  aria-describedby={createErrors.key ? 'create-var-key-error' : undefined}
-                  required
-                />
-                <p className="text-[11px] text-muted-foreground">
-                  Alphanumeric &amp; underscores only, no spaces. Will be referenced as {'{{key}}'}.
-                </p>
-                {createTouched.key && createErrors.key && (
-                  <InputError id="create-var-key-error" message={createErrors.key} />
-                )}
-              </div>
-
-              {/* Variable Label */}
+              {/* Display Label (Entered by user, drives auto-generation) */}
               <div className="space-y-1">
                 <Label htmlFor="create-var-label" required>
                   Display Label
                 </Label>
                 <Input
                   id="create-var-label"
-                  placeholder="e.g. Purchase Order ID"
+                  placeholder="e.g. Purchase Order ID, Appointment Date"
                   value={createForm.label}
-                  onChange={(e) => setCreateField('label', e.target.value)}
+                  onChange={(e) => {
+                    const newLabel = e.target.value;
+                    setCreateField('label', newLabel);
+                    const autoKey = generateVariableKeyFromLabel(newLabel);
+                    setCreateField('key', autoKey);
+                  }}
                   onBlur={() => handleCreateBlur('label')}
-                  error={createTouched.label && !!createErrors.label}
-                  aria-describedby={createErrors.label ? 'create-var-label-error' : undefined}
+                  error={
+                    (createTouched.label && !!createErrors.label) ||
+                    (!!createForm.label && createConflict.isDuplicate && createConflict.duplicateField === 'label')
+                  }
+                  aria-describedby={
+                    createConflict.isDuplicate && createConflict.duplicateField === 'label'
+                      ? 'create-var-label-conflict'
+                      : createErrors.label
+                      ? 'create-var-label-error'
+                      : undefined
+                  }
                   required
+                  autoFocus
                 />
-                {createTouched.label && createErrors.label && (
-                  <InputError id="create-var-label-error" message={createErrors.label} />
+                <p className="text-[11px] text-muted-foreground">
+                  Human-friendly label shown in variable pickers and menus.
+                </p>
+                {createConflict.isDuplicate && createConflict.duplicateField === 'label' && (
+                  <InputError
+                    id="create-var-label-conflict"
+                    message={createConflict.errorMessage || 'This display label is already in use.'}
+                  />
                 )}
+                {(!createConflict.isDuplicate || createConflict.duplicateField !== 'label') &&
+                  createTouched.label &&
+                  createErrors.label && (
+                    <InputError id="create-var-label-error" message={createErrors.label} />
+                  )}
+              </div>
+
+              {/* Variable Key (Tag Identifier) - Auto-generated, not editable by user */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="create-var-key" required>
+                    Variable Key (Tag Identifier)
+                  </Label>
+                  <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-amber-500" />
+                    Auto-generated from Display Label
+                  </span>
+                </div>
+                <Input
+                  id="create-var-key"
+                  placeholder="Auto-generated e.g. purchaseOrderId"
+                  value={createForm.key}
+                  readOnly
+                  tabIndex={-1}
+                  className="font-mono bg-muted/50 dark:bg-muted/30 border-dashed text-foreground/90 select-all cursor-default"
+                  error={
+                    (createTouched.key && !!createErrors.key) ||
+                    (!!createForm.key && createConflict.isDuplicate && createConflict.duplicateField === 'key')
+                  }
+                  aria-describedby={
+                    createConflict.isDuplicate && createConflict.duplicateField === 'key'
+                      ? 'create-var-key-conflict'
+                      : createErrors.key
+                      ? 'create-var-key-error'
+                      : undefined
+                  }
+                />
+                <p className="text-[11px] text-muted-foreground">
+                  Generated in camelCase. Will be referenced in SMS templates as{' '}
+                  <code className="font-mono text-foreground font-semibold">
+                    {createForm.key ? `{{${createForm.key}}}` : '{{variableKey}}'}
+                  </code>.
+                </p>
+                {createConflict.isDuplicate && createConflict.duplicateField === 'key' && (
+                  <InputError
+                    id="create-var-key-conflict"
+                    message={createConflict.errorMessage || 'This variable key is already in use.'}
+                  />
+                )}
+                {(!createConflict.isDuplicate || createConflict.duplicateField !== 'key') &&
+                  createTouched.key &&
+                  createErrors.key && (
+                    <InputError id="create-var-key-error" message={createErrors.key} />
+                  )}
               </div>
 
               {/* Data Type */}
@@ -1050,7 +1132,11 @@ export default function VariablesPage() {
               >
                 Cancel
               </Button>
-              <Button type="submit" className="w-full sm:w-auto min-w-[130px] px-4 font-semibold">
+              <Button
+                type="submit"
+                disabled={createConflict.isDuplicate}
+                className="w-full sm:w-auto min-w-[130px] px-4 font-semibold"
+              >
                 Save Variable
               </Button>
             </DialogFooter>
@@ -1104,8 +1190,16 @@ export default function VariablesPage() {
                     onChange={(e) =>
                       setEditingVariable({ ...editingVariable, label: e.target.value })
                     }
+                    error={editConflict.isDuplicate}
+                    aria-describedby={editConflict.isDuplicate ? 'edit-var-label-conflict' : undefined}
                     required
                   />
+                  {editConflict.isDuplicate && (
+                    <InputError
+                      id="edit-var-label-conflict"
+                      message={editConflict.errorMessage || 'This display label is already in use.'}
+                    />
+                  )}
                 </div>
 
                 {/* Data Type */}
@@ -1183,7 +1277,11 @@ export default function VariablesPage() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className="w-full sm:w-auto min-w-[130px] px-4 font-semibold">
+                <Button
+                  type="submit"
+                  disabled={editConflict.isDuplicate}
+                  className="w-full sm:w-auto min-w-[130px] px-4 font-semibold"
+                >
                   Save Changes
                 </Button>
               </DialogFooter>

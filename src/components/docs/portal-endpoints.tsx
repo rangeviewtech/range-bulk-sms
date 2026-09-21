@@ -339,7 +339,7 @@ export function PortalEndpoints({
                     onClick={() => handleCopy(selectedEndpoint.requestSample)}
                     className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded transition-all duration-200 ${
                       copied
-                        ? 'bg-emerald-600 hover:bg-emerald-600 text-white font-medium border border-emerald-600 shadow-sm'
+                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white font-medium border border-emerald-600 hover:border-emerald-700 shadow-sm'
                         : 'hover:opacity-80'
                     }`}
                     style={
@@ -363,7 +363,11 @@ export function PortalEndpoints({
                 </div>
                 <div
                   className="p-3.5 rounded-xl border font-mono text-xs overflow-x-auto"
-                  style={{ backgroundColor: PORTAL_COLORS.mainBg, borderColor: PORTAL_COLORS.border }}
+                  style={{
+                    backgroundColor: PORTAL_COLORS.mainBg,
+                    borderColor: PORTAL_COLORS.border,
+                    color: PORTAL_COLORS.primaryText,
+                  }}
                 >
                   <pre className="whitespace-pre">{selectedEndpoint.requestSample}</pre>
                 </div>
@@ -377,7 +381,11 @@ export function PortalEndpoints({
                   </span>
                   <div
                     className="p-3.5 rounded-xl border font-mono text-xs overflow-x-auto"
-                    style={{ backgroundColor: PORTAL_COLORS.mainBg, borderColor: PORTAL_COLORS.border }}
+                    style={{
+                      backgroundColor: PORTAL_COLORS.mainBg,
+                      borderColor: PORTAL_COLORS.border,
+                      color: PORTAL_COLORS.primaryText,
+                    }}
                   >
                     <pre className="whitespace-pre">{selectedEndpoint.responseSample}</pre>
                   </div>

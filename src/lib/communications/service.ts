@@ -1,5 +1,6 @@
 import { after } from 'next/server';
 import { JobPriority, CommunicationChannel, Prisma } from '@/generated/prisma';
+import { PrismaTransactionClient } from '@/lib/prisma';
 import { NotificationEngine } from '@/lib/notifications';
 
 export interface SendNotificationOptions {
@@ -9,7 +10,7 @@ export interface SendNotificationOptions {
   payload: Prisma.InputJsonObject;
   priority?: JobPriority;
   idempotencyKey?: string;
-  tx?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  tx?: PrismaTransactionClient | Prisma.TransactionClient;
 }
 
 export const NotificationService = {
@@ -42,7 +43,7 @@ export const NotificationService = {
     otp: string,
     channel: CommunicationChannel = 'SMS',
     lang: string = 'EN',
-    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    tx?: PrismaTransactionClient | Prisma.TransactionClient
   ) {
     return this.dispatch({
       recipient,
@@ -58,7 +59,7 @@ export const NotificationService = {
     email: string, 
     token: string, 
     lang: string = 'EN',
-    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    tx?: PrismaTransactionClient | Prisma.TransactionClient
   ) {
     return this.dispatch({
       recipient: email,
@@ -74,7 +75,7 @@ export const NotificationService = {
     email: string, 
     name: string, 
     lang: string = 'EN',
-    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    tx?: PrismaTransactionClient | Prisma.TransactionClient
   ) {
     return this.dispatch({
       recipient: email,
@@ -90,7 +91,7 @@ export const NotificationService = {
     email: string, 
     name: string = 'User', 
     lang: string = 'EN',
-    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    tx?: PrismaTransactionClient | Prisma.TransactionClient
   ) {
     return this.dispatch({
       recipient: email,

@@ -162,7 +162,7 @@ export function PortalInfoSidebar({
       <div
         className="flex items-center justify-between px-2.5 py-2 rounded-xl border font-mono text-[10.5px]"
         style={{
-          backgroundColor: PORTAL_COLORS.codeBg,
+          backgroundColor: PORTAL_COLORS.elevatedBg,
           borderColor: PORTAL_COLORS.border,
           color: PORTAL_COLORS.primaryText,
         }}

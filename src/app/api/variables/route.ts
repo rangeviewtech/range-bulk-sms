@@ -4,6 +4,7 @@ import {
   DEFAULT_CUSTOM_VARIABLES,
   MAX_CUSTOM_VARIABLES,
   SmsVariable,
+  checkVariableConflict,
 } from '@/lib/sms/custom-variables';
 import { customVariableSchema } from '@/lib/validations/sms';
 
@@ -42,29 +43,17 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const validated = customVariableSchema.parse(body);
 
-    // 2. Check for duplicate key in system variables
-    const isSystemConflict = SYSTEM_VARIABLES.some(
-      (v) => v.key.toLowerCase() === validated.key.toLowerCase()
+    // 2. Check for duplicate label or key across system and custom variables
+    const conflict = checkVariableConflict(
+      validated.label,
+      validated.key,
+      [...SYSTEM_VARIABLES, ...inMemoryCustomVariables]
     );
-    if (isSystemConflict) {
+    if (conflict.isDuplicate) {
       return NextResponse.json(
         {
           success: false,
-          error: `The variable key "{{${validated.key}}}" is reserved by system built-in variables. Please choose another key.`,
-        },
-        { status: 400 }
-      );
-    }
-
-    // 3. Check for duplicate key in existing custom variables
-    const isCustomConflict = inMemoryCustomVariables.some(
-      (v) => v.key.toLowerCase() === validated.key.toLowerCase()
-    );
-    if (isCustomConflict) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: `A custom variable with key "{{${validated.key}}}" already exists.`,
+          error: conflict.errorMessage || 'Variable conflicts with an existing variable.',
         },
         { status: 400 }
       );
@@ -121,9 +110,29 @@ export async function PUT(req: NextRequest) {
     }
 
     const current = inMemoryCustomVariables[index];
+
+    // Check for duplicate label or key if changed
+    const targetLabel = data.label ?? current.label;
+    const targetKey = data.key ?? current.key;
+    const conflict = checkVariableConflict(
+      targetLabel,
+      targetKey,
+      [...SYSTEM_VARIABLES, ...inMemoryCustomVariables],
+      id
+    );
+    if (conflict.isDuplicate) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: conflict.errorMessage || 'Variable conflicts with an existing variable.',
+        },
+        { status: 400 }
+      );
+    }
+
     const updated: SmsVariable = {
       ...current,
-      label: data.label ?? current.label,
+      label: targetLabel,
       description: data.description ?? current.description,
       fallbackValue: data.fallbackValue ?? current.fallbackValue,
       sampleValue: data.sampleValue ?? current.sampleValue,

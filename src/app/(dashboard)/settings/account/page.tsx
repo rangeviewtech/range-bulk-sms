@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +24,26 @@ export default function AccountSettingsPage() {
       },
     });
 
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const res = await fetch('/api/user/profile');
+        if (res.ok) {
+          const json = await res.json();
+          const data = json.data;
+          if (data) {
+            if (data.fullName) setFieldValue('fullName', data.fullName);
+            if (data.emailAddress) setFieldValue('emailAddress', data.emailAddress);
+            if (data.companyName) setFieldValue('companyName', data.companyName);
+          }
+        }
+      } catch {
+        // Retain fallback defaults
+      }
+    }
+    loadProfile();
+  }, [setFieldValue]);
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     const { isValid } = validateAll();
@@ -31,11 +51,25 @@ export default function AccountSettingsPage() {
 
     setSaving(true);
     try {
-      // Simulate save delay
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      const res = await fetch('/api/user/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: values.fullName,
+          emailAddress: values.emailAddress,
+          companyName: values.companyName || undefined,
+        }),
+      });
+
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast.error(json.error || 'Failed to update account settings');
+        return;
+      }
+
       toast.success('Account profile updated successfully');
-    } catch {
-      toast.error('Failed to update account settings');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to update account settings');
     } finally {
       setSaving(false);
     }

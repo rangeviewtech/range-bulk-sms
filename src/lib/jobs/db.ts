@@ -1,4 +1,4 @@
-import { prisma as db } from '@/lib/prisma';
+import { prisma as db, PrismaTransactionClient } from '@/lib/prisma';
 import { Job, JobPriority, Prisma } from '@/generated/prisma';
 
 import crypto from 'crypto';
@@ -30,27 +30,29 @@ function encryptPayload(payload: unknown): unknown {
   }
 }
 
-export function decryptPayload(payload: any): any { // eslint-disable-line @typescript-eslint/no-explicit-any
-  if (!payload || typeof payload !== 'object' || !payload._encrypted) return payload;
+export function decryptPayload<T = unknown>(payload: unknown): T {
+  if (!payload || typeof payload !== 'object' || !('_encrypted' in payload)) return payload as T;
+  const enc = payload as { _encrypted: boolean; iv: string; tag: string; data: string };
+  if (!enc._encrypted) return payload as T;
   
   const secretKey = process.env.PAYLOAD_ENCRYPTION_KEY || process.env.AUTH_SECRET;
-  if (!secretKey) return payload;
+  if (!secretKey) return payload as T;
 
   try {
     const key = crypto.createHash('sha256').update(secretKey).digest();
-    const iv = Buffer.from(payload.iv, 'base64');
-    const authTag = Buffer.from(payload.tag, 'base64');
+    const iv = Buffer.from(enc.iv, 'base64');
+    const authTag = Buffer.from(enc.tag, 'base64');
     
     const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
     decipher.setAuthTag(authTag);
     
-    let decrypted = decipher.update(payload.data, 'base64', 'utf8');
+    let decrypted = decipher.update(enc.data, 'base64', 'utf8');
     decrypted += decipher.final('utf8');
     
-    return JSON.parse(decrypted);
+    return JSON.parse(decrypted) as T;
   } catch (err) {
     console.error('Payload decryption failed', err);
-    return payload;
+    return payload as T;
   }
 }
 
@@ -62,7 +64,7 @@ export interface EnqueueJobParams {
   availableAt?: Date;
   idempotencyKey?: string;
   maxAttempts?: number;
-  tx?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  tx?: PrismaTransactionClient | Prisma.TransactionClient;
 }
 
 export async function enqueueJob(data: EnqueueJobParams) {
@@ -72,7 +74,7 @@ export async function enqueueJob(data: EnqueueJobParams) {
     type: data.type,
     queue: data.queue ?? 'default',
     priority: data.priority ?? 'NORMAL',
-    payload: encryptPayload(data.payload),
+    payload: (encryptPayload(data.payload) ?? {}) as Prisma.InputJsonValue,
     availableAt: data.availableAt ?? new Date(),
     idempotencyKey: data.idempotencyKey,
     maxAttempts: data.maxAttempts ?? 3,

@@ -555,7 +555,7 @@ $response | Format-List`;
             onClick={handleCopy}
             className={`flex items-center gap-1.5 px-3 py-1 rounded-md transition-all duration-200 ${
               copied
-                ? 'bg-emerald-600 hover:bg-emerald-600 text-white font-medium border border-emerald-600 shadow-sm'
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white font-medium border border-emerald-600 hover:border-emerald-700 shadow-sm'
                 : 'bg-white/10 hover:bg-white/20 text-white border border-transparent'
             }`}
             aria-label="Copy code snippet to clipboard"

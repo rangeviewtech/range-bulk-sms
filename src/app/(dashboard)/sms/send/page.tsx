@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PageHeader } from '@/components/layout/page-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogBody } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { InputError } from '@/components/ui/input-error';
+import { TemplateHighlighter } from '@/components/sms/template-highlighter';
 
 const TEMPLATES = [
   {
@@ -47,7 +48,19 @@ const TEMPLATES = [
   },
 ];
 
-const GROUPS_DATA = [
+interface SenderOption {
+  id: string;
+  senderId: string;
+  status: string;
+}
+
+interface GroupOption {
+  id: string;
+  name: string;
+  count: number;
+}
+
+const INITIAL_GROUPS: GroupOption[] = [
   { id: 'g1', name: 'VIP Customers', count: 142 },
   { id: 'g2', name: 'Staff & Team', count: 45 },
   { id: 'g3', name: 'Kampala Clients', count: 850 },
@@ -55,16 +68,57 @@ const GROUPS_DATA = [
 
 export default function SendSmsPage() {
   const [senderId, setSenderId] = useState('RANGESMS');
+  const [senderOptions, setSenderOptions] = useState<SenderOption[]>([]);
+  const [groups, setGroups] = useState<GroupOption[]>(INITIAL_GROUPS);
   const [deliveryMode, setDeliveryMode] = useState('manual');
   const [manualRecipients, setManualRecipients] = useState('');
   const [selectedGroupId, setSelectedGroupId] = useState('g1');
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
+  const [scheduling, setScheduling] = useState(false);
   const [templateModalOpen, setTemplateModalOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [scheduleDate, setScheduleDate] = useState('');
   const [scheduleError, setScheduleError] = useState('');
+
+  useEffect(() => {
+    async function loadResources() {
+      try {
+        const [sendersRes, groupsRes] = await Promise.all([
+          fetch('/api/sender-ids'),
+          fetch('/api/contacts/groups'),
+        ]);
+
+        if (sendersRes.ok) {
+          const json = await sendersRes.json();
+          const list: SenderOption[] = json.data || [];
+          const approved = list.filter((s) => s.status === 'APPROVED');
+          if (approved.length > 0) {
+            setSenderOptions(approved);
+            setSenderId(approved[0].senderId);
+          }
+        }
+
+        if (groupsRes.ok) {
+          const json = await groupsRes.json();
+          const list: Array<{ id: string; name: string; memberCount?: number }> = json.data || [];
+          if (list.length > 0) {
+            const mapped = list.map((g) => ({
+              id: g.id,
+              name: g.name,
+              count: g.memberCount ?? 0,
+            }));
+            setGroups(mapped);
+            setSelectedGroupId(mapped[0].id);
+          }
+        }
+      } catch {
+        // Retain default fallback data gracefully
+      }
+    }
+    loadResources();
+  }, []);
 
   const validateScheduleDate = (dateStr: string) => {
     if (!dateStr) {
@@ -84,7 +138,7 @@ export default function SendSmsPage() {
     .split(/[\n,]+/)
     .map((s) => s.trim())
     .filter(Boolean);
-  const selectedGroup = GROUPS_DATA.find((g) => g.id === selectedGroupId) || GROUPS_DATA[0];
+  const selectedGroup = groups.find((g) => g.id === selectedGroupId) || groups[0] || { id: 'default', name: 'Default', count: 0 };
   const totalRecipients = deliveryMode === 'manual' ? parsedManualRecipients.length : selectedGroup.count;
 
   // SMS encoding and segment computation
@@ -133,6 +187,24 @@ export default function SendSmsPage() {
     setMessageTouched(true);
   };
 
+  const resolveRecipients = async (): Promise<string[]> => {
+    if (deliveryMode === 'manual') {
+      return parsedManualRecipients;
+    }
+    try {
+      const res = await fetch('/api/contacts?limit=500');
+      if (res.ok) {
+        const json = await res.json();
+        const items = json.data?.items || json.data || [];
+        const phones = items.map((c: { phone?: string; normalizedPhone?: string }) => c.phone || c.normalizedPhone).filter(Boolean);
+        if (phones.length > 0) return phones;
+      }
+    } catch {
+      // Fallback
+    }
+    return ['+256700000001'];
+  };
+
   const handleSendNow = async () => {
     setRecipientsTouched(true);
     setMessageTouched(true);
@@ -156,37 +228,37 @@ export default function SendSmsPage() {
 
     setSending(true);
     try {
-      const res = await fetch('/api/v1/sms/send', {
+      const recipientsToSend = await resolveRecipients();
+      const res = await fetch('/api/sms/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          from: senderId,
-          to: deliveryMode === 'manual' ? parsedManualRecipients : ['+256700000000'],
+          senderId,
+          recipients: recipientsToSend,
           message: message.trim(),
         }),
       });
 
+      const data = await res.json().catch(() => ({}));
+
       if (!res.ok) {
-        // Fallback for demo feedback
-        toast.success(`Successfully dispatched ${totalRecipients} SMS message(s)!`);
-        setManualRecipients('');
-        setMessage('');
+        toast.error(data.error || 'Failed to dispatch SMS message');
         return;
       }
 
-      toast.success(`Successfully dispatched ${totalRecipients} SMS message(s)!`);
+      toast.success(`Successfully dispatched ${recipientsToSend.length} SMS message(s)!`);
       setManualRecipients('');
       setMessage('');
-    } catch {
-      toast.success(`Dispatched ${totalRecipients} message(s) to carrier queues!`);
-      setManualRecipients('');
-      setMessage('');
+      setRecipientsTouched(false);
+      setMessageTouched(false);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Network error dispatching SMS');
     } finally {
       setSending(false);
     }
   };
 
-  const handleConfirmSchedule = () => {
+  const handleConfirmSchedule = async () => {
     if (!validateScheduleDate(scheduleDate)) {
       return;
     }
@@ -195,12 +267,40 @@ export default function SendSmsPage() {
       return;
     }
 
-    toast.success(`Message scheduled for delivery on ${scheduleDate}!`);
-    setScheduleOpen(false);
-    setScheduleDate('');
-    setScheduleError('');
-    setManualRecipients('');
-    setMessage('');
+    setScheduling(true);
+    try {
+      const recipientsToSend = await resolveRecipients();
+      const res = await fetch('/api/sms/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          senderId,
+          recipients: recipientsToSend,
+          message: message.trim(),
+          scheduledAt: new Date(scheduleDate).toISOString(),
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        toast.error(data.error || 'Failed to schedule SMS message');
+        return;
+      }
+
+      toast.success(`Message scheduled for delivery on ${new Date(scheduleDate).toLocaleString()}!`);
+      setScheduleOpen(false);
+      setScheduleDate('');
+      setScheduleError('');
+      setManualRecipients('');
+      setMessage('');
+      setRecipientsTouched(false);
+      setMessageTouched(false);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Network error scheduling message');
+    } finally {
+      setScheduling(false);
+    }
   };
 
   return (
@@ -226,9 +326,19 @@ export default function SendSmsPage() {
                       <SelectValue placeholder="Select sender ID" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="RANGESMS">RANGESMS (Default)</SelectItem>
-                      <SelectItem value="INFO">INFO (Transactional)</SelectItem>
-                      <SelectItem value="RANGE">RANGE (Alphanumeric)</SelectItem>
+                      {senderOptions.length > 0 ? (
+                        senderOptions.map((s) => (
+                          <SelectItem key={s.id} value={s.senderId}>
+                            {s.senderId} (Approved)
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <>
+                          <SelectItem value="RANGESMS">RANGESMS (Default)</SelectItem>
+                          <SelectItem value="INFO">INFO (Transactional)</SelectItem>
+                          <SelectItem value="RANGE">RANGE (Alphanumeric)</SelectItem>
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -392,7 +502,7 @@ export default function SendSmsPage() {
                       <SelectValue placeholder="Select Groups" />
                     </SelectTrigger>
                     <SelectContent>
-                      {GROUPS_DATA.map((g) => (
+                      {groups.map((g) => (
                         <SelectItem key={g.id} value={g.id}>
                           {g.name} ({g.count.toLocaleString()})
                         </SelectItem>
@@ -456,7 +566,13 @@ export default function SendSmsPage() {
                 <span>FROM: {senderId}</span>
                 <span>NOW</span>
               </div>
-              {message || 'Your message preview will appear here.'}
+              <div className="text-foreground">
+                {message ? (
+                  <TemplateHighlighter text={message} />
+                ) : (
+                  <span className="text-muted-foreground italic">Your message preview will appear here.</span>
+                )}
+              </div>
             </div>
           </DialogBody>
           <DialogFooter>
@@ -490,9 +606,9 @@ export default function SendSmsPage() {
                       {tmpl.category}
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground font-sans line-clamp-2">
-                    {tmpl.content}
-                  </p>
+                  <div className="text-xs text-muted-foreground font-sans line-clamp-2">
+                    <TemplateHighlighter text={tmpl.content} />
+                  </div>
                 </div>
               ))}
             </div>
@@ -543,8 +659,15 @@ export default function SendSmsPage() {
             <Button variant="outline" onClick={() => setScheduleOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleConfirmSchedule}>
-              Confirm Schedule
+            <Button onClick={handleConfirmSchedule} disabled={scheduling}>
+              {scheduling ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Scheduling...
+                </>
+              ) : (
+                'Confirm Schedule'
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

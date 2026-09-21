@@ -84,7 +84,8 @@ const createPrismaClient = () => {
   });
 };
 
-type ExtendedPrismaClient = ReturnType<typeof createPrismaClient>;
+export type ExtendedPrismaClient = ReturnType<typeof createPrismaClient>;
+export type PrismaTransactionClient = Parameters<Parameters<ExtendedPrismaClient['$transaction']>[0]>[0];
 
 const globalForPrisma = globalThis as unknown as {
   prisma: ExtendedPrismaClient | undefined;

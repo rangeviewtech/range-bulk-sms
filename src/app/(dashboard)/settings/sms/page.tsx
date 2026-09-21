@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,10 +18,29 @@ export default function SmsSettingsPage() {
     useFormValidation<SmsPreferencesInput>({
       schema: smsPreferencesSchema,
       initialValues: {
-        defaultSenderId: 'ACME',
+        defaultSenderId: 'RANGESMS',
         webhookUrl: '',
       },
     });
+
+  useEffect(() => {
+    async function loadPreferences() {
+      try {
+        const res = await fetch('/api/user/profile');
+        if (res.ok) {
+          const json = await res.json();
+          const data = json.data;
+          if (data) {
+            if (data.defaultSenderId) setFieldValue('defaultSenderId', data.defaultSenderId);
+            if (data.webhookUrl) setFieldValue('webhookUrl', data.webhookUrl);
+          }
+        }
+      } catch {
+        // Retain fallback defaults
+      }
+    }
+    loadPreferences();
+  }, [setFieldValue]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,10 +49,24 @@ export default function SmsSettingsPage() {
 
     setSaving(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      const res = await fetch('/api/user/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          defaultSenderId: values.defaultSenderId,
+          webhookUrl: values.webhookUrl || '',
+        }),
+      });
+
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast.error(json.error || 'Failed to save SMS preferences');
+        return;
+      }
+
       toast.success('SMS preferences saved successfully');
-    } catch {
-      toast.error('Failed to save SMS preferences');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to save SMS preferences');
     } finally {
       setSaving(false);
     }

@@ -56,6 +56,7 @@ import {
   SmsVariable,
 } from '@/lib/sms/custom-variables';
 import { QuickAddVariable } from '@/components/sms/quick-add-variable';
+import { TemplateHighlighter } from '@/components/sms/template-highlighter';
 
 const templateFormSchema = z.object({
   name: z
@@ -449,7 +450,9 @@ export default function TemplatesPage() {
   };
 
   const handleCopy = (t: TemplateItem) => {
-    navigator.clipboard.writeText(t.message);
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(t.message).catch(() => {});
+    }
     setCopiedId(t.id);
     toast.success(`Copied "${t.name}" to clipboard`);
     setTimeout(() => setCopiedId(null), 3000);
@@ -578,7 +581,7 @@ export default function TemplatesPage() {
       <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3 bg-card p-3 sm:p-4 rounded-xl border border-border shadow-xs">
         <div className="flex flex-1 flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <Input
               placeholder="Search templates by name, category, or content..."
               className="pl-9 pr-8"
@@ -698,7 +701,7 @@ export default function TemplatesPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-destructive/40 dark:text-destructive/50 hover:text-destructive hover:bg-destructive/10"
+                        className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
                         onClick={() => handleDeleteClick(template.id, template.name)}
                         title="Delete template"
                         aria-label={`Delete ${template.name}`}
@@ -714,74 +717,55 @@ export default function TemplatesPage() {
                     className="p-3 bg-muted/60 dark:bg-muted/30 rounded-lg text-sm font-sans whitespace-pre-wrap flex-1 mb-4 border border-border/50 text-foreground cursor-pointer hover:border-primary/40 transition-colors"
                     title="Click to view full preview"
                   >
-                    {template.message}
+                    <TemplateHighlighter text={template.message} />
                   </div>
 
-                  {/* Card Footer with Variables & Action Buttons */}
-                  <div className="mt-auto pt-3 border-t border-border flex flex-col gap-3">
-                    {/* Variables */}
-                    <div className="flex flex-wrap items-center gap-1 min-h-[22px]">
-                      {template.variables.length > 0 ? (
-                        template.variables.map((v) => (
-                          <span
-                            key={v}
-                            className="text-[11px] font-mono font-semibold text-amber-900 bg-amber-500/10 border-amber-500/25 dark:text-primary dark:bg-primary/20 dark:border-primary/30 px-1.5 py-0.5 rounded border"
-                          >
-                            {`{{${v}}}`}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-[11px] text-muted-foreground italic">Static message (no variables)</span>
+                  {/* Card Footer with Action Buttons */}
+                  <div className="mt-auto pt-3 border-t border-border flex items-center gap-2 w-full">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-9 text-xs font-medium gap-1.5 flex-1 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
+                      onClick={() => handleView(template)}
+                      aria-label={`View details of ${template.name}`}
+                    >
+                      <Eye className="w-4 h-4" />
+                      View
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-9 text-xs font-medium gap-1.5 flex-1 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
+                      onClick={() => handleEdit(template)}
+                      aria-label={`Edit ${template.name}`}
+                    >
+                      <Pencil className="w-4 h-4" />
+                      Edit
+                    </Button>
+                    <Button
+                      variant={copiedId === template.id ? 'success' : 'outline'}
+                      size="sm"
+                      className={cn(
+                        'h-9 text-xs font-medium gap-1.5 flex-1 shrink-0 transition-all duration-150',
+                        copiedId === template.id
+                          ? 'bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white border-emerald-600 hover:border-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:text-white dark:hover:text-white dark:border-emerald-600 shadow-sm'
+                          : 'hover:bg-primary hover:text-primary-foreground hover:border-primary'
                       )}
-                    </div>
-
-                    {/* Prominent Action Buttons: View, Edit, Copy */}
-                    <div className="flex items-center gap-2 w-full">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-9 text-xs font-medium gap-1.5 flex-1 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
-                        onClick={() => handleView(template)}
-                        aria-label={`View details of ${template.name}`}
-                      >
-                        <Eye className="w-4 h-4" />
-                        View
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-9 text-xs font-medium gap-1.5 flex-1 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
-                        onClick={() => handleEdit(template)}
-                        aria-label={`Edit ${template.name}`}
-                      >
-                        <Pencil className="w-4 h-4" />
-                        Edit
-                      </Button>
-                      <Button
-                        variant={copiedId === template.id ? 'success' : 'outline'}
-                        size="sm"
-                        className={cn(
-                          'h-9 text-xs font-medium gap-1.5 flex-1 shrink-0 transition-all duration-150',
-                          copiedId === template.id
-                            ? 'transition-none bg-emerald-600 hover:bg-emerald-600 text-white border-emerald-600 dark:bg-emerald-600 dark:text-white dark:border-emerald-600 shadow-sm'
-                            : 'hover:bg-muted'
-                        )}
-                        onClick={() => handleCopy(template)}
-                        aria-label={`Copy text of ${template.name}`}
-                      >
-                        {copiedId === template.id ? (
-                          <>
-                            <Check className="w-4 h-4 stroke-[2.5] text-white" />
-                            <span className="font-semibold text-white">Copied</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-4 h-4" />
-                            Copy
-                          </>
-                        )}
-                      </Button>
-                    </div>
+                      onClick={() => handleCopy(template)}
+                      aria-label={`Copy content of ${template.name}`}
+                    >
+                      {copiedId === template.id ? (
+                        <>
+                          <Check className="w-4 h-4 stroke-[2.5] text-white shrink-0" />
+                          <span className="font-semibold text-white">Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4 shrink-0" />
+                          <span>Copy</span>
+                        </>
+                      )}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -853,7 +837,7 @@ export default function TemplatesPage() {
                     className={cn(
                       'h-7 text-xs gap-1 px-2.5 transition-all duration-150',
                       copiedRaw &&
-                        'transition-none bg-emerald-600 hover:bg-emerald-600 text-white border-emerald-600 dark:bg-emerald-600 dark:text-white dark:border-emerald-600 shadow-sm'
+                        'bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white border-emerald-600 hover:border-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:text-white dark:border-emerald-600 shadow-sm'
                     )}
                     onClick={() => {
                       navigator.clipboard.writeText(viewingTemplate.message);
@@ -864,8 +848,8 @@ export default function TemplatesPage() {
                   >
                     {copiedRaw ? (
                       <>
-                        <Check className="w-3.5 h-3.5" />
-                        <span>Copied</span>
+                        <Check className="w-3.5 h-3.5 stroke-[2.5] text-white" />
+                        <span className="font-semibold text-white">Copied</span>
                       </>
                     ) : (
                       <>
@@ -876,7 +860,7 @@ export default function TemplatesPage() {
                   </Button>
                 </div>
                 <div className="p-3.5 rounded-xl border bg-muted/40 font-mono text-xs text-foreground select-all break-words leading-relaxed">
-                  {viewingTemplate.message}
+                  <TemplateHighlighter text={viewingTemplate.message} />
                 </div>
               </div>
 
@@ -930,7 +914,10 @@ export default function TemplatesPage() {
 
                 <div className="p-4 rounded-xl border bg-muted/30 dark:bg-slate-950/40 flex flex-col items-start">
                   <div className="max-w-[90%] p-3.5 rounded-2xl rounded-bl-xs bg-primary text-primary-foreground shadow-sm text-sm whitespace-pre-wrap leading-relaxed">
-                    {renderedPreview || viewingTemplate.message}
+                    <TemplateHighlighter
+                      text={renderedPreview || viewingTemplate.message}
+                      variant="on-primary"
+                    />
                   </div>
                   <span className="text-[10px] text-muted-foreground mt-1.5 pl-1">
                     Delivered via Range Bulk SMS • Just now
@@ -956,13 +943,13 @@ export default function TemplatesPage() {
               className={cn(
                 'w-full sm:w-auto gap-2 px-4 transition-all duration-150 whitespace-nowrap',
                 copiedPreview &&
-                  'transition-none bg-emerald-600 hover:bg-emerald-600 text-white border-emerald-600 dark:bg-emerald-600 dark:text-white dark:border-emerald-600 shadow-sm'
+                  'bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white border-emerald-600 hover:border-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:text-white dark:border-emerald-600 shadow-sm'
               )}
             >
               {copiedPreview ? (
                 <>
                   <Check className="w-4 h-4 stroke-[2.5] text-white" />
-                  <span className="font-medium text-white">Copied Preview</span>
+                  <span className="font-semibold text-white">Copied Preview</span>
                 </>
               ) : (
                 <>

@@ -31,9 +31,14 @@ export async function POST(req: Request) {
     }
 
     // Validate senderId ownership and approval status
+    let validSenderIdId: string | null = null;
     if (senderId) {
       const validSender = await prisma.senderId.findFirst({
-        where: { id: senderId, userId: session.userId, status: 'APPROVED' },
+        where: {
+          OR: [{ id: senderId }, { senderId }],
+          userId: session.userId,
+          status: 'APPROVED',
+        },
       });
       if (!validSender) {
         return NextResponse.json(
@@ -41,6 +46,7 @@ export async function POST(req: Request) {
           { status: 400 }
         );
       }
+      validSenderIdId = validSender.id;
     }
 
     // Cost calculation (10 units/currency per recipient)
@@ -60,7 +66,7 @@ export async function POST(req: Request) {
     const msg = await prisma.message.create({
       data: {
         userId: session.userId,
-        senderIdId: senderId || null,
+        senderIdId: validSenderIdId,
         message,
         recipientCount: recipients.length,
         totalUnits: units,

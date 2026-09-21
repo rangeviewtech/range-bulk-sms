@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { appConfig } from '@/config/app';
 import { appAssets } from '@/config/assets';
-import { ThemeToggle } from '@/components/navigation/theme-toggle';
+import { MarketingHeaderAuth } from '@/components/navigation/marketing-header-auth';
 import { LanguageToggle } from '@/components/navigation/language-toggle';
 import { useLanguage } from '@/hooks/use-language';
 import { ShieldCheck, FileText, Cookie, ArrowLeft, ArrowUpRight, CheckCircle2 } from 'lucide-react';
@@ -89,26 +89,9 @@ export function LegalLayout({
             </nav>
           </div>
 
-          <div className="flex items-center gap-2.5">
-            <ThemeToggle />
+          <MarketingHeaderAuth showThemeToggle={true}>
             <LanguageToggle />
-            <div className="hidden sm:flex items-center gap-2 ml-1">
-              <Link
-                href="/login"
-                className="btn btn-secondary auth-btn-secondary px-3 py-1.5 text-xs font-semibold rounded-md"
-                style={{ height: '34px' }}
-              >
-                {dict.auth?.signInButton || 'Sign In'}
-              </Link>
-              <Link
-                href="/register"
-                className="btn btn-primary auth-btn-primary px-3 py-1.5 text-xs font-bold rounded-md bg-[#FBCA07] text-[#141B2D]"
-                style={{ height: '34px' }}
-              >
-                {dict.auth?.createAccountButton || 'Register'}
-              </Link>
-            </div>
-          </div>
+          </MarketingHeaderAuth>
         </div>
       </header>
 

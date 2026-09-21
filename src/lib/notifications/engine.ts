@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { prisma, PrismaTransactionClient } from '@/lib/prisma';
 import { JobPriority, CommunicationChannel, Prisma } from '@/generated/prisma';
 import { NotificationPreferencesService } from './preferences';
 import { enqueueJob } from '@/lib/jobs/db';
@@ -15,7 +15,7 @@ export const NotificationEngine = {
     payload: Prisma.InputJsonObject,
     priority: JobPriority = 'NORMAL',
     idempotencyKey?: string,
-    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    tx?: PrismaTransactionClient | Prisma.TransactionClient
   ) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -70,7 +70,7 @@ export const NotificationEngine = {
     payload: Prisma.InputJsonObject,
     priority: JobPriority = 'NORMAL',
     idempotencyKey?: string,
-    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    tx?: PrismaTransactionClient | Prisma.TransactionClient
   ) {
     if (channel === 'EMAIL') {
       return this.sendEmail(recipient, template, payload, priority, idempotencyKey, tx);
@@ -91,7 +91,7 @@ export const NotificationEngine = {
     payload: Prisma.InputJsonObject,
     priority: JobPriority = 'NORMAL',
     idempotencyKey?: string,
-    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    tx?: PrismaTransactionClient | Prisma.TransactionClient
   ) {
     return enqueueJob({
       type: 'send-email',
@@ -110,7 +110,7 @@ export const NotificationEngine = {
     payload: Prisma.InputJsonObject,
     priority: JobPriority = 'NORMAL',
     idempotencyKey?: string,
-    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    tx?: PrismaTransactionClient | Prisma.TransactionClient
   ) {
     return enqueueJob({
       type: 'send-sms',
@@ -129,7 +129,7 @@ export const NotificationEngine = {
     payload: Prisma.InputJsonObject,
     priority: JobPriority = 'NORMAL',
     idempotencyKey?: string,
-    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    tx?: PrismaTransactionClient | Prisma.TransactionClient
   ) {
     return enqueueJob({
       type: 'send-telegram',
@@ -148,7 +148,7 @@ export const NotificationEngine = {
     payload: Prisma.InputJsonObject,
     priority: JobPriority = 'NORMAL',
     idempotencyKey?: string,
-    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    tx?: PrismaTransactionClient | Prisma.TransactionClient
   ) {
     return enqueueJob({
       type: 'send-whatsapp',
@@ -168,7 +168,7 @@ export const NotificationEngine = {
     payload: Prisma.InputJsonObject,
     priority: JobPriority = 'NORMAL',
     idempotencyKey?: string,
-    tx?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    tx?: PrismaTransactionClient | Prisma.TransactionClient
   ) {
     return enqueueJob({
       type: 'send-in-app',

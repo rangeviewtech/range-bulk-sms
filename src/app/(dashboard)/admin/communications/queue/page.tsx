@@ -1,13 +1,11 @@
 import { requirePermission } from '@/lib/auth/authorization';
-﻿/* eslint-disable @typescript-eslint/no-unused-vars */
- 
- 
 import { prisma as db } from '@/lib/prisma';
+import { Job } from '@/generated/prisma';
 import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Activity, AlertCircle, CheckCircle, Clock, XCircle } from 'lucide-react';
+import { Activity, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 export const dynamic = 'force-dynamic';
@@ -97,8 +95,7 @@ export default async function QueuePage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  jobs.map((job: any) => (
+                  jobs.map((job: Job) => (
                     <TableRow key={job.id}>
                       <TableCell className="font-medium">{job.type}</TableCell>
                       <TableCell>{job.queue}</TableCell>

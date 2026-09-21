@@ -59,10 +59,14 @@ export async function POST(req: Request) {
     
     const { name, senderId, message, variables, groupIds, scheduledAt } = parsed.data;
 
-    // Validate senderId ownership and approval status
+    let validSenderIdId: string | null = null;
     if (senderId) {
       const validSender = await prisma.senderId.findFirst({
-        where: { id: senderId, userId: session.userId, status: 'APPROVED' },
+        where: {
+          OR: [{ id: senderId }, { senderId }],
+          userId: session.userId,
+          status: 'APPROVED',
+        },
       });
       if (!validSender) {
         return NextResponse.json(
@@ -70,6 +74,7 @@ export async function POST(req: Request) {
           { status: 400 }
         );
       }
+      validSenderIdId = validSender.id;
     }
 
     // Validate groupIds ownership
@@ -91,7 +96,7 @@ export async function POST(req: Request) {
         data: {
           userId: session.userId,
           name,
-          senderIdId: senderId || null,
+          senderIdId: validSenderIdId,
           message,
           variables,
           status: scheduledAt ? 'SCHEDULED' : 'DRAFT',

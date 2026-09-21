@@ -15,8 +15,21 @@ import { ArrowRight, ArrowLeft, Check, Send, Sparkles, Loader2, ExternalLink, Pl
 import { toast } from 'sonner';
 import { getAllVariablesList, SmsVariable } from '@/lib/sms/custom-variables';
 import { QuickAddVariable } from '@/components/sms/quick-add-variable';
+import { TemplateHighlighter } from '@/components/sms/template-highlighter';
 
-const GROUPS = [
+interface SenderOption {
+  id: string;
+  senderId: string;
+  status: string;
+}
+
+interface GroupOption {
+  id: string;
+  name: string;
+  count: number;
+}
+
+const INITIAL_GROUPS: GroupOption[] = [
   { id: 'g1', name: 'All Customers', count: 15400 },
   { id: 'g2', name: 'VIP Members', count: 1200 },
   { id: 'g3', name: 'Leads & Inquiries', count: 5000 },
@@ -28,6 +41,8 @@ export default function NewCampaignPage() {
   const [campaignName, setCampaignName] = useState('');
   const [campaignNameTouched, setCampaignNameTouched] = useState(false);
   const [senderId, setSenderId] = useState('RANGESMS');
+  const [senderOptions, setSenderOptions] = useState<SenderOption[]>([]);
+  const [groups, setGroups] = useState<GroupOption[]>(INITIAL_GROUPS);
   const [selectedGroupId, setSelectedGroupId] = useState('g1');
   const [message, setMessage] = useState('');
   const [messageTouched, setMessageTouched] = useState(false);
@@ -36,6 +51,42 @@ export default function NewCampaignPage() {
   const [availableVariables, setAvailableVariables] = useState<string[]>(['firstName', 'name', 'company', 'phone', 'orderId', 'amount']);
 
   useEffect(() => {
+    async function loadResources() {
+      try {
+        const [sendersRes, groupsRes] = await Promise.all([
+          fetch('/api/sender-ids'),
+          fetch('/api/contacts/groups'),
+        ]);
+
+        if (sendersRes.ok) {
+          const json = await sendersRes.json();
+          const list: SenderOption[] = json.data || [];
+          const approved = list.filter((s) => s.status === 'APPROVED');
+          if (approved.length > 0) {
+            setSenderOptions(approved);
+            setSenderId(approved[0].senderId);
+          }
+        }
+
+        if (groupsRes.ok) {
+          const json = await groupsRes.json();
+          const list: Array<{ id: string; name: string; memberCount?: number }> = json.data || [];
+          if (list.length > 0) {
+            const mapped = list.map((g) => ({
+              id: g.id,
+              name: g.name,
+              count: g.memberCount ?? 0,
+            }));
+            setGroups(mapped);
+            setSelectedGroupId(mapped[0].id);
+          }
+        }
+      } catch {
+        // Retain fallback data
+      }
+    }
+    loadResources();
+
     const refresh = () => {
       try {
         const all = getAllVariablesList();
@@ -78,7 +129,7 @@ export default function NewCampaignPage() {
     { id: 4, title: 'Review' },
   ];
 
-  const selectedGroup = GROUPS.find((g) => g.id === selectedGroupId) || GROUPS[0];
+  const selectedGroup = groups.find((g) => g.id === selectedGroupId) || groups[0] || { id: 'default', name: 'Default', count: 0 };
   const charCount = message.length;
   const isUnicode = /[^\x00-\x7F]/.test(message);
   const maxPerSegment = isUnicode ? 70 : 160;
@@ -141,7 +192,9 @@ export default function NewCampaignPage() {
   const handleLaunchCampaign = async () => {
     setSubmitting(true);
     try {
-      // Simulate/post campaign creation
+      const isUuid = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      const validGroupIds = selectedGroup && isUuid(selectedGroup.id) ? [selectedGroup.id] : [];
+
       const res = await fetch('/api/campaigns', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -149,22 +202,21 @@ export default function NewCampaignPage() {
           name: campaignName.trim(),
           senderId,
           message: message.trim(),
-          recipientCount: selectedGroup.count,
+          groupIds: validGroupIds,
         }),
       });
 
+      const data = await res.json().catch(() => ({}));
+
       if (!res.ok) {
-        // Fallback for demo/graceful UI
-        toast.success(`Campaign "${campaignName}" launched successfully!`);
-        router.push('/sms/campaigns');
+        toast.error(data.error || 'Failed to create campaign');
         return;
       }
 
       toast.success(`Campaign "${campaignName}" launched successfully!`);
       router.push('/sms/campaigns');
-    } catch {
-      toast.success(`Campaign "${campaignName}" created successfully!`);
-      router.push('/sms/campaigns');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Network error launching campaign');
     } finally {
       setSubmitting(false);
     }
@@ -249,9 +301,19 @@ export default function NewCampaignPage() {
                       <SelectValue placeholder="Select Sender ID" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="RANGESMS">RANGESMS (Default Approved)</SelectItem>
-                      <SelectItem value="INFO">INFO (Transactional)</SelectItem>
-                      <SelectItem value="RANGE">RANGE (Alphanumeric)</SelectItem>
+                      {senderOptions.length > 0 ? (
+                        senderOptions.map((s) => (
+                          <SelectItem key={s.id} value={s.senderId}>
+                            {s.senderId} (Approved)
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <>
+                          <SelectItem value="RANGESMS">RANGESMS (Default Approved)</SelectItem>
+                          <SelectItem value="INFO">INFO (Transactional)</SelectItem>
+                          <SelectItem value="RANGE">RANGE (Alphanumeric)</SelectItem>
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
@@ -270,7 +332,7 @@ export default function NewCampaignPage() {
                       <SelectValue placeholder="Select groups" />
                     </SelectTrigger>
                     <SelectContent>
-                      {GROUPS.map((g) => (
+                      {groups.map((g) => (
                         <SelectItem key={g.id} value={g.id}>
                           {g.name} ({g.count.toLocaleString()} contacts)
                         </SelectItem>
@@ -435,7 +497,11 @@ export default function NewCampaignPage() {
                   <div className="sm:col-span-2 pt-2 border-t border-border">
                     <span className="text-muted-foreground block text-xs mb-1">Message Preview</span>
                     <div className="p-3 bg-card rounded-md border font-sans text-xs sm:text-sm whitespace-pre-wrap">
-                      {message || 'No message provided.'}
+                      {message ? (
+                        <TemplateHighlighter text={message} />
+                      ) : (
+                        <span className="text-muted-foreground italic">No message provided.</span>
+                      )}
                     </div>
                   </div>
                   <div className="sm:col-span-2 pt-2 flex items-baseline justify-between border-t border-border">

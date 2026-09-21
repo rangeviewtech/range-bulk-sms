@@ -1,4 +1,4 @@
-import { prisma as db } from '@/lib/prisma';
+import { prisma as db, Prisma, PrismaTransactionClient } from '@/lib/prisma';
 import { CommunicationChannel } from '@/generated/prisma';
 import crypto from 'crypto';
 
@@ -15,7 +15,7 @@ export const OtpService = {
   /**
    * Generates a random numeric OTP and stores its hash securely.
    */
-  async createOtp(opts: GenerateOtpOptions, tx?: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+  async createOtp(opts: GenerateOtpOptions, tx?: PrismaTransactionClient | Prisma.TransactionClient) {
     const client = tx ?? db;
     // 1. Invalidate any existing active OTPs for this exact purpose and identifier
     await client.otpRecord.updateMany({

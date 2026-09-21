@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { InputError } from '@/components/ui/input-error';
+import { TemplateHighlighter } from '@/components/sms/template-highlighter';
 
 interface SenderIdItem {
   id: string;
@@ -121,6 +123,7 @@ function parseCSV(text: string): { headers: string[]; rows: Record<string, strin
 }
 
 export default function CustomSmsPage() {
+  const router = useRouter();
   const [fileName, setFileName] = useState<string>('');
   const [headers, setHeaders] = useState<string[]>([]);
   const [rows, setRows] = useState<Record<string, string>[]>([]);
@@ -159,8 +162,9 @@ export default function CustomSmsPage() {
     try {
       const res = await fetch('/api/sender-ids');
       if (res.ok) {
-        const data = await res.json();
-        const approved = (data.senderIds || []).filter((s: SenderIdItem) => s.status === 'APPROVED');
+        const json = await res.json();
+        const list = json.data || json.senderIds || [];
+        const approved = list.filter((s: SenderIdItem) => s.status === 'APPROVED');
         if (approved.length > 0) {
           setSenderIds(approved);
           setSelectedSenderId(approved[0].senderId);
@@ -328,24 +332,25 @@ export default function CustomSmsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: payload.name,
+          senderId: payload.senderId,
           message: payload.message,
           variables: headers,
           groupIds: [],
         }),
       });
 
+      const resData = await res.json().catch(() => ({}));
+
       if (!res.ok) {
-        // Even if validation error happens, handle gracefully with success toast for personalized queue
-        toast.success(`Personalized Campaign dispatched to ${rows.length} recipients via ${selectedSenderId}!`);
-        setIsReviewOpen(false);
+        toast.error(resData.error || 'Failed to dispatch personalized campaign');
         return;
       }
 
       toast.success(`Campaign "${payload.name}" launched successfully for ${rows.length} recipients!`);
       setIsReviewOpen(false);
-    } catch {
-      toast.success(`Dispatched personalized broadcast to ${rows.length} phone numbers!`);
-      setIsReviewOpen(false);
+      router.push('/sms/campaigns');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Network error launching campaign');
     } finally {
       setSending(false);
     }
@@ -655,7 +660,7 @@ export default function CustomSmsPage() {
                 </div>
 
                 <div className="my-3 p-3.5 bg-primary/10 dark:bg-primary/20 border border-primary/20 rounded-xl rounded-tl-none font-sans text-xs sm:text-sm leading-relaxed text-foreground whitespace-pre-wrap">
-                  {interpolatedPreview}
+                  <TemplateHighlighter text={interpolatedPreview} />
                 </div>
 
                 <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-2 border-t border-border/40 font-mono">
@@ -763,7 +768,7 @@ export default function CustomSmsPage() {
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Sample Message (Row 1):</Label>
               <div className="p-3 bg-muted rounded-lg text-xs leading-relaxed font-sans text-foreground whitespace-pre-wrap border">
-                {interpolatedPreview}
+                <TemplateHighlighter text={interpolatedPreview} />
               </div>
             </div>
           </DialogBody>

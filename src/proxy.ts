@@ -45,7 +45,7 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/api/') &&
     !['/api/health', '/api/cron/process-jobs', '/api/webhooks/telegram'].includes(pathname)
   ) {
-    const isAuth = pathname.startsWith('/api/auth');
+    const isAuth = pathname.startsWith('/api/auth') && pathname !== '/api/auth/session';
     const limitResult = await checkRateLimit(isAuth ? 'auth' : 'api', ip);
 
     if (!limitResult.success) {
@@ -62,7 +62,13 @@ export async function proxy(request: NextRequest) {
   }
 
   // 3. CSRF Protection for state-changing requests
-  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {
+  // Exempt machine-to-machine, signature, or token authenticated endpoints (webhooks, public APIs, cron)
+  const isCsrfExempt =
+    pathname.startsWith('/api/webhooks/') ||
+    pathname.startsWith('/api/v1/') ||
+    pathname.startsWith('/api/cron/');
+
+  if (!isCsrfExempt && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {
     const origin = request.headers.get('origin');
     const host = request.headers.get('host');
 

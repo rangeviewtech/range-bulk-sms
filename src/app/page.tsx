@@ -19,7 +19,8 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { RangeLogo } from '@/components/brand/range-logo';
-import { ThemeToggle } from '@/components/navigation/theme-toggle';
+import { MarketingHeaderAuth } from '@/components/navigation/marketing-header-auth';
+import { verifySession } from '@/lib/auth/session';
 
 export const metadata = createMetadata({
   title: 'Enterprise Bulk SMS Platform | Range View Technology',
@@ -147,7 +148,22 @@ const pricingPlans = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await verifySession().catch(() => null);
+  const initialUser = session?.isAuth && session.user
+    ? {
+        id: session.user.id,
+        name: session.user.name,
+        email: session.user.email,
+        roles: Array.isArray(session.user.roles)
+          ? session.user.roles.map((r: { role?: { name: string } | string }) =>
+              typeof r.role === 'object' && r.role !== null ? r.role.name : String(r.role || '')
+            ).filter(Boolean)
+          : [],
+        status: session.user.status,
+      }
+    : null;
+
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground selection:bg-primary/20 selection:text-primary">
       {/* Sticky Enterprise Header */}
@@ -183,17 +199,7 @@ export default function HomePage() {
             </nav>
           </div>
 
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
-              <Link href="/login">Sign In</Link>
-            </Button>
-            <Button size="sm" asChild className="bg-primary text-primary-foreground font-semibold hover:bg-primary/90">
-              <Link href="/register">
-                Get Started <ArrowRight className="w-3.5 h-3.5 ml-1" />
-              </Link>
-            </Button>
-          </div>
+          <MarketingHeaderAuth initialUser={initialUser} />
         </div>
       </header>
 

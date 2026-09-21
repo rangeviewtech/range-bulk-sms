@@ -577,7 +577,9 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
           >
             {allowedNavigation.map((mod, modIdx) => {
               const isHovered = hoveredModule?.title === mod.title;
-              const isActive = mod.href ? pathname === mod.href : pathname.startsWith(`/${mod.title.toLowerCase()}`);
+              const isActive = mod.href 
+                ? (pathname === mod.href || pathname.startsWith(`${mod.href}/`))
+                : pathname.startsWith(`/${mod.title.toLowerCase()}`);
               const isLast = modIdx === allowedNavigation.length - 1;
               const isExpanded = expandedMobileModule === mod.title;
 
@@ -590,11 +592,18 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                         data-module={mod.title}
                         id={`nav-module-${mod.title.toLowerCase().replace(/\s+/g, '-')}`}
                         className="hidden md:flex w-full aspect-square shrink-0 relative flex-col items-center justify-center cursor-pointer group"
+                        onMouseEnter={() => {
+                          if (typeof window !== "undefined" && window.innerWidth < 768) return;
+                          cancelCloseTimer();
+                          setHoveredModule(mod);
+                          setHoveredCategory(null);
+                        }}
                       >
                         <Link
                           href={mod.href}
+                          onClick={closeAllFlyouts}
                           className={cn(
-                            "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group",
+                            "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group transition-colors duration-150",
                             (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
                           )}
                         >
@@ -661,20 +670,39 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                           setHoveredCategory(null);
                         }}
                       >
-                        <div
-                          className={cn(
-                            "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group",
-                            (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
-                          )}
-                        >
-                          {isActive && (
-                            <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#FBCA07] shadow-[0_0_10px_#FBCA07] animate-indicator-slide" />
-                          )}
-                          {mod.icon}
-                          <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px] group-hover:font-semibold transition-all">
-                            {mod.title}
-                          </span>
-                        </div>
+                        {mod.href ? (
+                          <Link
+                            href={mod.href}
+                            onClick={closeAllFlyouts}
+                            className={cn(
+                              "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group",
+                              (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
+                            )}
+                          >
+                            {isActive && (
+                              <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#FBCA07] shadow-[0_0_10px_#FBCA07] animate-indicator-slide" />
+                            )}
+                            {mod.icon}
+                            <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px] group-hover:font-semibold transition-all">
+                              {mod.title}
+                            </span>
+                          </Link>
+                        ) : (
+                          <div
+                            className={cn(
+                              "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group",
+                              (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
+                            )}
+                          >
+                            {isActive && (
+                              <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#FBCA07] shadow-[0_0_10px_#FBCA07] animate-indicator-slide" />
+                            )}
+                            {mod.icon}
+                            <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px] group-hover:font-semibold transition-all">
+                              {mod.title}
+                            </span>
+                          </div>
+                        )}
                       </div>
 
                       {/* Mobile Accordion Module */}

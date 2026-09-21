@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ExternalLink, Braces, Plus, X, Loader2 } from 'lucide-react';
+import { ExternalLink, Braces, Plus, X, Loader2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -24,6 +24,8 @@ import {
   getAllVariablesList,
   getSavedCustomVariables,
   saveCustomVariables,
+  generateVariableKeyFromLabel,
+  checkVariableConflict,
 } from '@/lib/sms/custom-variables';
 import { customVariableSchema } from '@/lib/validations/sms';
 import { cn } from '@/lib/utils';
@@ -54,32 +56,47 @@ export function QuickAddVariable({
   const currentCount = currentSaved.length;
   const remainingSlots = Math.max(0, MAX_CUSTOM_VARIABLES - currentCount);
 
-  // Auto-suggest label from key
-  const handleKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/[^a-zA-Z0-9_]/g, '');
-    setKey(raw);
+  // Auto-generate key from label and check duplicate conflict in real time
+  const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawLabel = e.target.value;
+    setLabel(rawLabel);
+    const autoKey = generateVariableKeyFromLabel(rawLabel);
+    setKey(autoKey);
 
-    // If label was not customized manually or is empty, suggest human-readable title
-    if (!label || label === suggestLabel(key)) {
-      setLabel(suggestLabel(raw));
-    }
-
-    if (errors.key) {
+    if (!rawLabel.trim()) {
       setErrors((prev) => {
         const next = { ...prev };
+        delete next.label;
+        delete next.key;
+        return next;
+      });
+      return;
+    }
+
+    const allVars = getAllVariablesList();
+    const conflict = checkVariableConflict(rawLabel, autoKey, allVars);
+    if (conflict.isDuplicate) {
+      if (conflict.duplicateField === 'label') {
+        setErrors((prev) => ({
+          ...prev,
+          label: conflict.errorMessage || 'This display title already exists.',
+          key: '',
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          key: conflict.errorMessage || 'This variable key already exists.',
+          label: '',
+        }));
+      }
+    } else {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next.label;
         delete next.key;
         return next;
       });
     }
-  };
-
-  const suggestLabel = (rawKey: string): string => {
-    if (!rawKey) return '';
-    return rawKey
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/[_-]/g, ' ')
-      .replace(/^./, (s) => s.toUpperCase())
-      .trim();
   };
 
   const handleDataTypeChange = (val: VariableDataType) => {
@@ -144,16 +161,22 @@ export function QuickAddVariable({
       return;
     }
 
-    // Check conflict with existing variables
+    // Check conflict with existing variables (both system and custom)
     const allVars = getAllVariablesList();
-    const isConflict = allVars.some(
-      (v) => v.key.toLowerCase() === payload.key.toLowerCase()
-    );
-    if (isConflict) {
-      setErrors((prev) => ({
-        ...prev,
-        key: `A variable with tag "{{${payload.key}}}" already exists.`,
-      }));
+    const conflict = checkVariableConflict(payload.label, payload.key, allVars);
+    if (conflict.isDuplicate) {
+      if (conflict.duplicateField === 'label') {
+        setErrors((prev) => ({
+          ...prev,
+          label: conflict.errorMessage || 'A variable with this display title already exists.',
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          key: conflict.errorMessage || `A variable with key "{{${payload.key}}}" already exists.`,
+        }));
+      }
+      toast.error(conflict.errorMessage || 'This variable already exists in the system.');
       return;
     }
 
@@ -243,55 +266,47 @@ export function QuickAddVariable({
         }}
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {/* Key */}
-          <div className="space-y-1">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="inline-var-key" className="text-xs font-semibold text-foreground" required>
-                Variable Tag Identifier
-              </Label>
-              <span className="text-[10px] text-muted-foreground font-mono">
-                {`{{key}}`}
-              </span>
-            </div>
-            <Input
-              id="inline-var-key"
-              placeholder="e.g. orderId, discountCode"
-              value={key}
-              onChange={handleKeyChange}
-              className="h-8 text-xs font-mono"
-              autoFocus={autoFocus}
-              error={!!errors.key}
-              aria-describedby={errors.key ? 'inline-var-key-err' : undefined}
-              required
-            />
-            {errors.key && <InputError id="inline-var-key-err" message={errors.key} />}
-          </div>
-
-          {/* Label */}
+          {/* Label (Primary Input, drives auto-generation) */}
           <div className="space-y-1">
             <Label htmlFor="inline-var-label" className="text-xs font-semibold text-foreground" required>
               Display Title
             </Label>
             <Input
               id="inline-var-label"
-              placeholder="e.g. Discount Code"
+              placeholder="e.g. Discount Code, Order Number"
               value={label}
-              onChange={(e) => {
-                setLabel(e.target.value);
-                if (errors.label) {
-                  setErrors((prev) => {
-                    const next = { ...prev };
-                    delete next.label;
-                    return next;
-                  });
-                }
-              }}
+              onChange={handleLabelChange}
               className="h-8 text-xs font-sans"
+              autoFocus={autoFocus}
               error={!!errors.label}
               aria-describedby={errors.label ? 'inline-var-label-err' : undefined}
               required
             />
             {errors.label && <InputError id="inline-var-label-err" message={errors.label} />}
+          </div>
+
+          {/* Key (Auto-generated from Display Title) */}
+          <div className="space-y-1">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="inline-var-key" className="text-xs font-semibold text-foreground" required>
+                Variable Tag Identifier
+              </Label>
+              <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-mono">
+                <Sparkles className="w-3 h-3 text-amber-500" />
+                Auto-generated
+              </span>
+            </div>
+            <Input
+              id="inline-var-key"
+              placeholder="Auto-generated e.g. discountCode"
+              value={key}
+              readOnly
+              tabIndex={-1}
+              className="h-8 text-xs font-mono bg-muted/50 dark:bg-muted/30 border-dashed text-foreground/90 select-all cursor-default"
+              error={!!errors.key}
+              aria-describedby={errors.key ? 'inline-var-key-err' : undefined}
+            />
+            {errors.key && <InputError id="inline-var-key-err" message={errors.key} />}
           </div>
 
           {/* Data Type */}
@@ -397,7 +412,7 @@ export function QuickAddVariable({
             <Button
               type="button"
               size="sm"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !!errors.label || !!errors.key || !label.trim()}
               onClick={handleSubmit}
               className="h-8 text-xs px-3 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5"
             >

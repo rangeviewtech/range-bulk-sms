@@ -263,3 +263,105 @@ export function renderTemplateWithVariables(
     return match;
   });
 }
+
+/**
+ * Convert a human-readable display label into a valid camelCase variable key.
+ * e.g. "Purchase Order ID" -> "purchaseOrderId"
+ *      "Delivery Date & Time" -> "deliveryDateTime"
+ *      "Account #" -> "account"
+ *      "2026 Promo Code" -> "var2026PromoCode"
+ */
+export function generateVariableKeyFromLabel(label: string): string {
+  if (!label) return '';
+
+  // 1. Remove all special punctuation/symbols except spaces, hyphens, underscores, and alphanumerics
+  const cleaned = label
+    .trim()
+    .replace(/[^a-zA-Z0-9\s_-]/g, ' ')
+    .trim();
+
+  if (!cleaned) return '';
+
+  // 2. Split into distinct word tokens by whitespace, underscores, hyphens
+  const words = cleaned
+    .split(/[\s_-]+/)
+    .filter(Boolean);
+
+  if (words.length === 0) return '';
+
+  // 3. Process into camelCase
+  let result = '';
+  words.forEach((word, idx) => {
+    if (idx === 0) {
+      result += word.toLowerCase();
+    } else {
+      if (word.length <= 3 && word === word.toUpperCase()) {
+        result += word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      } else {
+        result += word.charAt(0).toUpperCase() + word.slice(1);
+      }
+    }
+  });
+
+  // 4. Ensure it starts with an alphabetical letter (a-z, A-Z)
+  if (!/^[a-zA-Z]/.test(result)) {
+    result = `var${result.charAt(0).toUpperCase() + result.slice(1)}`;
+  }
+
+  // 5. Enforce length cap (max 30 chars per schema)
+  return result.slice(0, 30);
+}
+
+export interface VariableConflictCheck {
+  isDuplicate: boolean;
+  duplicateField?: 'label' | 'key';
+  conflictingVariable?: SmsVariable;
+  errorMessage?: string;
+}
+
+/**
+ * Check if a given label and/or key conflicts with any existing variable in the system
+ * (both system built-in variables and custom variables).
+ * Exclude ID is supported for editing an existing custom variable.
+ */
+export function checkVariableConflict(
+  label: string,
+  key: string,
+  existingVariables: SmsVariable[] = getAllVariablesList(),
+  excludeId?: string
+): VariableConflictCheck {
+  const normLabel = label.trim().toLowerCase();
+  const normKey = key.trim().toLowerCase();
+
+  // 1. Check duplicate label
+  if (normLabel) {
+    const labelMatch = existingVariables.find(
+      (v) => (excludeId ? v.id !== excludeId : true) && v.label.trim().toLowerCase() === normLabel
+    );
+    if (labelMatch) {
+      return {
+        isDuplicate: true,
+        duplicateField: 'label',
+        conflictingVariable: labelMatch,
+        errorMessage: `A ${labelMatch.isSystem ? 'system built-in' : 'custom'} variable with display label "${labelMatch.label}" already exists.`,
+      };
+    }
+  }
+
+  // 2. Check duplicate key
+  if (normKey) {
+    const keyMatch = existingVariables.find(
+      (v) => (excludeId ? v.id !== excludeId : true) && v.key.trim().toLowerCase() === normKey
+    );
+    if (keyMatch) {
+      return {
+        isDuplicate: true,
+        duplicateField: 'key',
+        conflictingVariable: keyMatch,
+        errorMessage: `The variable key "{{${keyMatch.key}}}" is already in use by ${keyMatch.isSystem ? 'a system built-in' : 'another'} variable (${keyMatch.label}).`,
+      };
+    }
+  }
+
+  return { isDuplicate: false };
+}

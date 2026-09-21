@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -41,7 +41,45 @@ const INITIAL_CAMPAIGNS: CampaignItem[] = [
 ];
 
 export default function CampaignsPage() {
-  const [campaigns] = useState<CampaignItem[]>(INITIAL_CAMPAIGNS);
+  const [campaigns, setCampaigns] = useState<CampaignItem[]>(INITIAL_CAMPAIGNS);
+
+  useEffect(() => {
+    async function loadCampaigns() {
+      try {
+        const res = await fetch('/api/campaigns?limit=50');
+        if (res.ok) {
+          const json = await res.json();
+          const items: Array<{
+            id: string;
+            name: string;
+            status: string;
+            totalRecipients?: number;
+            sentCount?: number;
+            failedCount?: number;
+            createdAt?: string;
+          }> = json.data || [];
+
+          if (items.length > 0) {
+            const mapped: CampaignItem[] = items.map((c) => ({
+              id: c.id,
+              name: c.name,
+              status: (c.status as CampaignItem['status']) || 'DRAFT',
+              recipients: c.totalRecipients || 0,
+              sent: c.sentCount || 0,
+              failed: c.failedCount || 0,
+              progress: c.totalRecipients ? Math.round(((c.sentCount || 0) / c.totalRecipients) * 100) : 0,
+              date: c.createdAt ? new Date(c.createdAt).toISOString().split('T')[0] : '-',
+            }));
+
+            setCampaigns([...mapped, ...INITIAL_CAMPAIGNS.filter((ic) => !mapped.some((m) => m.id === ic.id))]);
+          }
+        }
+      } catch {
+        // Fallback gracefully
+      }
+    }
+    loadCampaigns();
+  }, []);
 
   const {
     search,
@@ -142,10 +180,10 @@ export default function CampaignsPage() {
 
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           <div className="relative flex-1 md:w-72">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <Input
               placeholder="Search campaigns..."
-              className="pl-8 pr-8"
+              className="pl-9 pr-8"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               aria-label="Search campaigns"
@@ -154,10 +192,10 @@ export default function CampaignsPage() {
               <button
                 type="button"
                 onClick={clearSearch}
-                className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
                 aria-label="Clear search"
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>

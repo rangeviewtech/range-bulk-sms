@@ -72,12 +72,20 @@ export function DocsHeader({
           >
             <div className="relative h-7 sm:h-9 w-24 sm:w-40 flex items-center shrink-0">
               <Image
+                src="/images/brand/range-logo-light.svg"
+                alt="Range Bulk SMS Platform"
+                width={160}
+                height={40}
+                priority
+                className="dark:hidden object-contain"
+              />
+              <Image
                 src="/images/brand/range-logo-dark.svg"
                 alt="Range Bulk SMS Platform"
                 width={160}
                 height={40}
                 priority
-                className="object-contain"
+                className="hidden dark:block object-contain"
               />
             </div>
           </Link>
@@ -105,14 +113,14 @@ export function DocsHeader({
                   onClick={() => onSelectTab?.(item.id)}
                   className="px-3.5 h-16 flex items-center text-xs font-semibold transition-all relative shrink-0 whitespace-nowrap"
                   style={{
-                    color: isActive ? PORTAL_COLORS.primaryYellow : PORTAL_COLORS.secondaryText,
+                    color: isActive ? PORTAL_COLORS.activeTab : PORTAL_COLORS.secondaryText,
                   }}
                 >
                   <span>{item.label}</span>
                   {isActive && (
                     <span
                       className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
-                      style={{ backgroundColor: PORTAL_COLORS.primaryYellow }}
+                      style={{ backgroundColor: PORTAL_COLORS.activeTab }}
                     />
                   )}
                 </button>
@@ -369,7 +377,7 @@ export function DocsHeader({
                     }`}
                     style={{
                       backgroundColor: isActive ? PORTAL_COLORS.elevatedBg : 'transparent',
-                      color: isActive ? PORTAL_COLORS.primaryYellow : PORTAL_COLORS.secondaryText,
+                      color: isActive ? PORTAL_COLORS.activeTab : PORTAL_COLORS.secondaryText,
                       border: isActive ? `1px solid ${PORTAL_COLORS.borderLight}` : '1px solid transparent',
                     }}
                   >

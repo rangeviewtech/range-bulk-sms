@@ -25,7 +25,7 @@ const buttonVariants = cva(
         "brand-blue":
           "bg-[#04648C] text-white font-semibold shadow-sm hover:bg-[#04648C]/90",
         success:
-          "bg-emerald-600 hover:bg-emerald-600 text-white dark:text-white font-medium border border-emerald-600 dark:border-emerald-600 shadow-sm active:bg-emerald-700",
+          "bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white dark:text-white dark:hover:text-white font-medium border border-emerald-600 hover:border-emerald-700 dark:border-emerald-600 shadow-sm active:bg-emerald-800 transition-all duration-150",
       },
       size: {
         default: "h-9 px-4 py-2",

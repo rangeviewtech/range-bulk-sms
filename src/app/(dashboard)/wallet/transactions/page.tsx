@@ -214,7 +214,7 @@ export default function TransactionsPage() {
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pt-2">
             {/* Multi-field search */}
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <Input
                 placeholder="Search reference, description, amount, status..."
                 className="pl-9 pr-9"

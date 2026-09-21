@@ -39,10 +39,10 @@ const features = {
   rowSelectionFeature,
 } as const;
 
+type AppFeatures = typeof features;
 
 interface DataTableProps<TData extends RowData> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  columns: ColumnDef<any, TData>[];
+  columns: ColumnDef<AppFeatures, TData, unknown>[];
   data: TData[];
   searchable?: boolean;
   searchKey?: string;
@@ -63,10 +63,9 @@ export function DataTable<TData extends RowData>({
   loading = false,
 }: DataTableProps<TData>) {
   const table = useTable({
-    features: features,
+    features,
     data,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    columns: columns as any,
+    columns,
   });
 
   return (

@@ -142,9 +142,9 @@ export function DocsQuickStart({
           <button
             onClick={() => copyToClipboard(sampleCurl, 'curl')}
             className={`flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md transition-all duration-200 ${
-              copiedKey === 'curl'
-                ? 'bg-emerald-600 hover:bg-emerald-600 text-white font-medium border border-emerald-600 shadow-sm'
-                : 'bg-muted hover:bg-muted/80 text-foreground border border-transparent'
+                copiedKey === 'curl'
+                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white font-medium border border-emerald-600 hover:border-emerald-700 shadow-sm'
+                  : 'bg-muted hover:bg-muted/80 text-foreground border border-transparent'
             }`}
           >
             {copiedKey === 'curl' ? (

@@ -79,9 +79,13 @@ export function PortalGuidesModal({ topic, onClose }: PortalGuidesModalProps) {
 
               <div
                 className="p-4 rounded-xl border relative font-mono text-xs"
-                style={{ backgroundColor: PORTAL_COLORS.codeBg, borderColor: PORTAL_COLORS.border }}
+                style={{
+                  backgroundColor: PORTAL_COLORS.elevatedBg,
+                  borderColor: PORTAL_COLORS.border,
+                  color: PORTAL_COLORS.primaryText,
+                }}
               >
-                <span className="text-[#35B6FF]">Authorization</span>: Bearer rsms_live_9b83f0...
+                <span className="text-[#0284C7] dark:text-[#35B6FF] font-semibold">Authorization</span>: Bearer rsms_live_9b83f0...
                 <button
                   onClick={() => copyToClipboard('Authorization: Bearer YOUR_API_KEY')}
                   className={`absolute right-3 top-3 p-1.5 rounded transition-all duration-200 ${
@@ -118,8 +122,8 @@ export function PortalGuidesModal({ topic, onClose }: PortalGuidesModalProps) {
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <div
-                className="h-10 w-10 rounded-xl flex items-center justify-center"
-                style={{ backgroundColor: PORTAL_COLORS.elevatedBg, color: PORTAL_COLORS.primaryYellow }}
+                className="h-10 w-10 rounded-xl flex items-center justify-center text-amber-600 dark:text-[#FFCC24]"
+                style={{ backgroundColor: PORTAL_COLORS.elevatedBg }}
               >
                 <AlertTriangle className="h-5 w-5" />
               </div>
@@ -135,8 +139,7 @@ export function PortalGuidesModal({ topic, onClose }: PortalGuidesModalProps) {
 
             <div className="space-y-4 text-sm" style={{ color: PORTAL_COLORS.secondaryText }}>
               <div
-                className="p-4 rounded-xl border font-mono text-xs overflow-x-auto"
-                style={{ backgroundColor: PORTAL_COLORS.codeBg, borderColor: PORTAL_COLORS.border }}
+                className="p-4 rounded-xl border border-border/60 bg-[#07163D] text-slate-100 font-mono text-xs overflow-x-auto"
               >
                 <pre>{`{
   "type": "https://docs.rangesms.com/errors/invalid-recipient",
@@ -151,16 +154,16 @@ export function PortalGuidesModal({ topic, onClose }: PortalGuidesModalProps) {
 
               <div className="space-y-3">
                 <div className="p-3 rounded-lg border" style={{ borderColor: PORTAL_COLORS.border, backgroundColor: PORTAL_COLORS.elevatedBg }}>
-                  <span className="font-mono font-bold text-amber-400">400 Bad Request:</span> Malformed payload or validation failure (e.g. missing E.164 phone formatting).
+                  <span className="font-mono font-bold text-amber-600 dark:text-amber-400">400 Bad Request:</span> Malformed payload or validation failure (e.g. missing E.164 phone formatting).
                 </div>
                 <div className="p-3 rounded-lg border" style={{ borderColor: PORTAL_COLORS.border, backgroundColor: PORTAL_COLORS.elevatedBg }}>
-                  <span className="font-mono font-bold text-rose-400">401 Unauthorized:</span> Missing or invalid API key in the Authorization header.
+                  <span className="font-mono font-bold text-rose-600 dark:text-rose-400">401 Unauthorized:</span> Missing or invalid API key in the Authorization header.
                 </div>
                 <div className="p-3 rounded-lg border" style={{ borderColor: PORTAL_COLORS.border, backgroundColor: PORTAL_COLORS.elevatedBg }}>
-                  <span className="font-mono font-bold text-rose-400">403 Forbidden:</span> Key lacks required permissions, is expired, revoked, or client IP is not in whitelist.
+                  <span className="font-mono font-bold text-rose-600 dark:text-rose-400">403 Forbidden:</span> Key lacks required permissions, is expired, revoked, or client IP is not in whitelist.
                 </div>
                 <div className="p-3 rounded-lg border" style={{ borderColor: PORTAL_COLORS.border, backgroundColor: PORTAL_COLORS.elevatedBg }}>
-                  <span className="font-mono font-bold text-purple-400">429 Too Many Requests:</span> Distributed rate limit threshold exceeded. Check <code>Retry-After</code> header.
+                  <span className="font-mono font-bold text-purple-600 dark:text-purple-400">429 Too Many Requests:</span> Distributed rate limit threshold exceeded. Check <code>Retry-After</code> header.
                 </div>
               </div>
             </div>

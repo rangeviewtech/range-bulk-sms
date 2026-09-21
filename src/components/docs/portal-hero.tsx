@@ -164,7 +164,7 @@ export function PortalHero({ environment: _environment }: PortalHeroProps) {
                 aria-label="Copy code sample"
                 className={`p-1.5 rounded-lg transition-all duration-200 ${
                   copied
-                    ? 'bg-emerald-600 hover:bg-emerald-600 text-white border border-emerald-600 shadow-sm'
+                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white border border-emerald-600 hover:border-emerald-700 shadow-sm'
                     : 'hover:opacity-80'
                 }`}
                 style={
@@ -183,38 +183,34 @@ export function PortalHero({ environment: _environment }: PortalHeroProps) {
 
             {/* Code Body with line numbers */}
             <div
-              className="p-4 sm:p-5 font-mono text-xs overflow-x-auto"
-              style={{
-                backgroundColor: PORTAL_COLORS.mainBg,
-                color: PORTAL_COLORS.primaryText,
-              }}
+              className="p-4 sm:p-5 font-mono text-xs overflow-x-auto bg-[#07163D] text-slate-100"
             >
               {activeLang === 'curl' ? (
                 <div className="space-y-1 font-mono leading-relaxed">
                   <div className="flex gap-4">
-                    <span className="select-none text-right w-4 shrink-0" style={{ color: PORTAL_COLORS.mutedText }}>1</span>
+                    <span className="select-none text-right w-4 shrink-0 text-slate-500">1</span>
                     <span>
-                      <span style={{ color: PORTAL_COLORS.accentBlue }}>curl</span>{' '}
-                      <span style={{ color: PORTAL_COLORS.primaryText }}>-X</span>{' '}
-                      <span style={{ color: PORTAL_COLORS.successGreen }}>GET</span>{' '}
-                      <span style={{ color: PORTAL_COLORS.primaryText }}>\</span>
+                      <span className="text-sky-400">curl</span>{' '}
+                      <span className="text-slate-300">-X</span>{' '}
+                      <span className="text-emerald-400 font-bold">GET</span>{' '}
+                      <span className="text-slate-300">\</span>
                     </span>
                   </div>
                   <div className="flex gap-4">
-                    <span className="select-none text-right w-4 shrink-0" style={{ color: PORTAL_COLORS.mutedText }}>2</span>
+                    <span className="select-none text-right w-4 shrink-0 text-slate-500">2</span>
                     <span>
                       {'  '}
-                      <span style={{ color: PORTAL_COLORS.primaryText }}>https://api.range.co.ug/v1/wallet/balance</span>{' '}
-                      <span style={{ color: PORTAL_COLORS.primaryText }}>\</span>
+                      <span className="text-slate-100">https://api.range.co.ug/v1/wallet/balance</span>{' '}
+                      <span className="text-slate-300">\</span>
                     </span>
                   </div>
                   <div className="flex gap-4">
-                    <span className="select-none text-right w-4 shrink-0" style={{ color: PORTAL_COLORS.mutedText }}>3</span>
+                    <span className="select-none text-right w-4 shrink-0 text-slate-500">3</span>
                     <span>
                       {'  '}
-                      <span style={{ color: PORTAL_COLORS.primaryText }}>-H</span>{' '}
-                      <span style={{ color: PORTAL_COLORS.successGreen }}>&quot;Authorization:</span>{' '}
-                      <span style={{ color: PORTAL_COLORS.primaryYellow }}>Bearer YOUR_API_KEY&quot;</span>
+                      <span className="text-slate-300">-H</span>{' '}
+                      <span className="text-emerald-400">&quot;Authorization:</span>{' '}
+                      <span className="text-amber-300">Bearer YOUR_API_KEY&quot;</span>
                     </span>
                   </div>
                 </div>
@@ -222,12 +218,11 @@ export function PortalHero({ environment: _environment }: PortalHeroProps) {
                 snippets[activeLang].lines.map((line, idx) => (
                   <div key={idx} className="flex gap-4 leading-relaxed font-mono">
                     <span
-                      className="select-none text-right w-4 shrink-0 font-mono"
-                      style={{ color: PORTAL_COLORS.mutedText }}
+                      className="select-none text-right w-4 shrink-0 font-mono text-slate-500"
                     >
                       {idx + 1}
                     </span>
-                    <span className="whitespace-pre" style={{ color: PORTAL_COLORS.primaryText }}>
+                    <span className="whitespace-pre text-slate-200">
                       {line}
                     </span>
                   </div>
@@ -254,15 +249,14 @@ export function PortalHero({ environment: _environment }: PortalHeroProps) {
             <div
               className="flex items-center gap-2.5 px-3.5 py-2 rounded-2xl border shadow-2xl backdrop-blur-md"
               style={{
-                backgroundColor: 'rgba(16, 32, 56, 0.95)',
+                backgroundColor: PORTAL_COLORS.cardBg,
                 borderColor: PORTAL_COLORS.borderLight,
               }}
             >
               <div
-                className="h-8 w-8 rounded-xl flex items-center justify-center shadow-xs"
+                className="h-8 w-8 rounded-xl flex items-center justify-center shadow-xs text-white dark:text-[#0B1729]"
                 style={{
                   backgroundColor: PORTAL_COLORS.accentBlue,
-                  color: '#0B1729',
                 }}
               >
                 <Send className="h-4 w-4" />
@@ -280,20 +274,19 @@ export function PortalHero({ environment: _environment }: PortalHeroProps) {
             {/* Handwritten cursive text with curved underline swoosh */}
             <div className="relative -rotate-2 select-none">
               <span
-                className="font-serif italic text-xs font-semibold tracking-wide block"
-                style={{ color: PORTAL_COLORS.primaryYellow }}
+                className="font-serif italic text-xs font-semibold tracking-wide block text-amber-600 dark:text-[#FFCC24]"
               >
                 Messages Move Business Forward
               </span>
               <svg
-                className="w-full h-2 mt-0.5"
+                className="w-full h-2 mt-0.5 text-amber-600 dark:text-[#FFCC24]"
                 viewBox="0 0 160 8"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
                   d="M2 5C40 1.5 95 1.5 158 6"
-                  stroke={PORTAL_COLORS.primaryYellow}
+                  stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
                 />
