@@ -1,16 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { InputError } from '@/components/ui/input-error';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowRight, ArrowLeft, Check, Send, Sparkles, Loader2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, Send, Sparkles, Loader2, ExternalLink, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { getAllVariablesList, SmsVariable } from '@/lib/sms/custom-variables';
+import { QuickAddVariable } from '@/components/sms/quick-add-variable';
 
 const GROUPS = [
   { id: 'g1', name: 'All Customers', count: 15400 },
@@ -22,10 +26,50 @@ export default function NewCampaignPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [campaignName, setCampaignName] = useState('');
+  const [campaignNameTouched, setCampaignNameTouched] = useState(false);
   const [senderId, setSenderId] = useState('RANGESMS');
   const [selectedGroupId, setSelectedGroupId] = useState('g1');
   const [message, setMessage] = useState('');
+  const [messageTouched, setMessageTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showAddVar, setShowAddVar] = useState(false);
+  const [availableVariables, setAvailableVariables] = useState<string[]>(['firstName', 'name', 'company', 'phone', 'orderId', 'amount']);
+
+  useEffect(() => {
+    const refresh = () => {
+      try {
+        const all = getAllVariablesList();
+        const keys = all.map((v) => v.key);
+        setAvailableVariables(Array.from(new Set([...keys, 'firstName', 'name', 'company'])));
+      } catch {
+        // fallback
+      }
+    };
+    refresh();
+
+    window.addEventListener('range_custom_variables_updated', refresh);
+    return () => {
+      window.removeEventListener('range_custom_variables_updated', refresh);
+    };
+  }, []);
+
+  const campaignNameError = campaignNameTouched
+    ? !campaignName.trim()
+      ? 'Campaign name is required.'
+      : campaignName.trim().length < 2
+      ? 'Campaign name must be at least 2 characters.'
+      : campaignName.length > 100
+      ? 'Campaign name cannot exceed 100 characters.'
+      : ''
+    : '';
+
+  const messageError = messageTouched
+    ? !message.trim()
+      ? 'SMS message content is required.'
+      : message.length > 3200
+      ? 'Message is too long (maximum 3,200 characters).'
+      : ''
+    : '';
 
   const steps = [
     { id: 1, title: 'Details' },
@@ -43,18 +87,50 @@ export default function NewCampaignPage() {
   const estimatedCost = selectedGroup.count * segments * ratePerSms;
 
   const handleInsertVariable = (variableName: string) => {
-    setMessage((prev) => `${prev}{{${variableName}}}`);
+    const textarea = document.getElementById('message-body') as HTMLTextAreaElement | null;
+    if (!textarea) {
+      setMessage((prev) => `${prev} {{${variableName}}}`);
+      if (!messageTouched) setMessageTouched(true);
+      return;
+    }
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const before = message.substring(0, start);
+    const after = message.substring(end);
+    const insertion = `{{${variableName}}}`;
+    const newText = `${before}${insertion}${after}`;
+
+    setMessage(newText);
+    if (!messageTouched) setMessageTouched(true);
+
+    setTimeout(() => {
+      textarea.focus();
+      const newPos = start + insertion.length;
+      textarea.setSelectionRange(newPos, newPos);
+    }, 0);
+  };
+
+  const handleVariableCreated = (newVar: SmsVariable) => {
+    setAvailableVariables((prev) => {
+      if (prev.includes(newVar.key)) return prev;
+      return [newVar.key, ...prev];
+    });
+    handleInsertVariable(newVar.key);
+    setShowAddVar(false);
   };
 
   const handleNext = () => {
     if (step === 1) {
-      if (!campaignName.trim()) {
-        toast.error('Please enter a campaign name to continue.');
+      setCampaignNameTouched(true);
+      if (!campaignName.trim() || campaignName.trim().length < 2 || campaignName.length > 100) {
+        toast.error('Please enter a valid campaign name to continue.');
         return;
       }
     }
     if (step === 3) {
-      if (!message.trim()) {
+      setMessageTouched(true);
+      if (!message.trim() || message.length > 3200) {
         toast.error('Please enter your SMS message content.');
         return;
       }
@@ -118,7 +194,7 @@ export default function NewCampaignPage() {
                     step > s.id
                       ? 'bg-primary border-primary text-primary-foreground'
                       : step === s.id
-                        ? 'bg-background border-primary text-primary'
+                        ? 'bg-background border-secondary text-secondary dark:border-primary dark:text-primary font-bold'
                         : 'bg-background border-muted text-muted-foreground'
                   }`}
                 >
@@ -143,20 +219,30 @@ export default function NewCampaignPage() {
           <CardContent className="space-y-6 min-h-[300px]">
             {step === 1 && (
               <div className="space-y-4">
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <Label htmlFor="campaign-name" required>Campaign Name</Label>
                   <Input
                     id="campaign-name"
                     placeholder="e.g. Summer Promo 2026"
                     value={campaignName}
-                    onChange={(e) => setCampaignName(e.target.value)}
+                    onChange={(e) => {
+                      setCampaignName(e.target.value);
+                      if (!campaignNameTouched) setCampaignNameTouched(true);
+                    }}
+                    onBlur={() => setCampaignNameTouched(true)}
+                    error={!!campaignNameError}
+                    aria-describedby={campaignNameError ? 'campaign-name-error' : undefined}
                     autoFocus
                   />
-                  <p className="text-xs text-muted-foreground">
-                    An internal label to identify this campaign in your delivery reports.
-                  </p>
+                  {campaignNameError ? (
+                    <InputError id="campaign-name-error" message={campaignNameError} />
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      An internal label to identify this campaign in your delivery reports.
+                    </p>
+                  )}
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <Label htmlFor="sender-id-select" required>Sender ID</Label>
                   <Select value={senderId} onValueChange={setSenderId}>
                     <SelectTrigger id="sender-id-select">
@@ -177,7 +263,7 @@ export default function NewCampaignPage() {
 
             {step === 2 && (
               <div className="space-y-4">
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <Label htmlFor="contact-group-select" required>Select Contact Group</Label>
                   <Select value={selectedGroupId} onValueChange={setSelectedGroupId}>
                     <SelectTrigger id="contact-group-select">
@@ -217,35 +303,84 @@ export default function NewCampaignPage() {
             {step === 3 && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <Label htmlFor="message-body" required>Message Content</Label>
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Sparkles className="w-3.5 h-3.5 text-primary" />
-                      <span>Click to insert:</span>
+                    <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => handleInsertVariable('name')}
-                        className="font-mono text-primary bg-primary/10 hover:bg-primary/20 px-1.5 py-0.5 rounded transition-colors"
+                        onClick={() => setShowAddVar((prev) => !prev)}
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-secondary hover:text-secondary/80 dark:text-primary dark:hover:text-primary/80 transition-colors cursor-pointer"
+                        title="Create a new custom variable without going to the Variables page"
                       >
-                        {`{{name}}`}
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add Variable</span>
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => handleInsertVariable('company')}
-                        className="font-mono text-primary bg-primary/10 hover:bg-primary/20 px-1.5 py-0.5 rounded transition-colors"
+                      <span className="text-muted-foreground/30">•</span>
+                      <Link
+                        href="/sms/variables"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+                        title="Open SMS Variables management in a new tab"
                       >
-                        {`{{company}}`}
-                      </button>
+                        <span>Manage all</span>
+                        <ExternalLink className="w-2.5 h-2.5" />
+                      </Link>
                     </div>
                   </div>
+
+                  {/* Inline Quick Add Form */}
+                  {showAddVar && (
+                    <QuickAddVariable
+                      onSuccess={handleVariableCreated}
+                      onCancel={() => setShowAddVar(false)}
+                    />
+                  )}
+
                   <Textarea
                     id="message-body"
                     rows={6}
                     placeholder="Type your campaign message here..."
                     value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    onChange={(e) => {
+                      setMessage(e.target.value);
+                      if (!messageTouched) setMessageTouched(true);
+                    }}
+                    onBlur={() => setMessageTouched(true)}
+                    error={!!messageError}
+                    aria-describedby={messageError ? 'message-body-error' : undefined}
                     autoFocus
                   />
+                  {messageError && <InputError id="message-body-error" message={messageError} />}
+
+                  {/* Variable Insertion Chips */}
+                  <div className="pt-1 space-y-1.5">
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Sparkles className="w-3.5 h-3.5 text-secondary dark:text-primary" />
+                      <span>Click to insert variable into cursor position:</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {availableVariables.map((v) => (
+                        <button
+                          key={v}
+                          type="button"
+                          onClick={() => handleInsertVariable(v)}
+                          className="inline-flex items-center text-xs font-mono px-2 py-0.5 rounded bg-muted hover:bg-amber-500/15 hover:text-amber-900 dark:hover:bg-primary/20 dark:hover:text-primary text-foreground border border-border/80 transition-colors cursor-pointer"
+                        >
+                          + {`{{${v}}}`}
+                        </button>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => setShowAddVar(true)}
+                        className="inline-flex items-center gap-1 text-xs font-sans px-2.5 py-0.5 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 border-amber-500/30 dark:bg-primary/10 dark:hover:bg-primary/20 dark:text-primary dark:border-primary/40 border border-dashed font-medium transition-colors cursor-pointer"
+                        title="Create a new custom variable without leaving this page"
+                      >
+                        <Plus className="w-3 h-3" />
+                        <span>New Variable</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 bg-muted/30 rounded-lg border text-xs">
@@ -283,7 +418,7 @@ export default function NewCampaignPage() {
                   </div>
                   <div>
                     <span className="text-muted-foreground block text-xs">Sender ID</span>
-                    <span className="font-mono font-bold text-primary">{senderId}</span>
+                    <span className="font-mono font-bold text-secondary dark:text-primary">{senderId}</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground block text-xs">Recipient Group</span>

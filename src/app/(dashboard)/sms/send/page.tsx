@@ -12,6 +12,7 @@ import { Send, Clock, BookTemplate, Eye, FileText, Activity, Loader2 } from 'luc
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogBody } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { InputError } from '@/components/ui/input-error';
 
 const TEMPLATES = [
   {
@@ -38,6 +39,12 @@ const TEMPLATES = [
     content: 'Payment Received: UGX {{amount}} received for account {{account}}. Thank you for choosing us!',
     category: 'Billing',
   },
+  {
+    id: 't5',
+    name: 'General Customer Notice',
+    content: 'Important update for {{customer}}: We are upgrading our platform on {{date}}. Contact {{support}} with any questions.',
+    category: 'Others',
+  },
 ];
 
 const GROUPS_DATA = [
@@ -57,6 +64,20 @@ export default function SendSmsPage() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [scheduleDate, setScheduleDate] = useState('');
+  const [scheduleError, setScheduleError] = useState('');
+
+  const validateScheduleDate = (dateStr: string) => {
+    if (!dateStr) {
+      setScheduleError('Please select a delivery date and time.');
+      return false;
+    }
+    if (new Date(dateStr).getTime() <= Date.now()) {
+      setScheduleError('Delivery date and time must be set in the future.');
+      return false;
+    }
+    setScheduleError('');
+    return true;
+  };
 
   // Calculate recipients
   const parsedManualRecipients = manualRecipients
@@ -75,23 +96,61 @@ export default function SendSmsPage() {
   const ratePerSms = 35; // UGX
   const cost = totalRecipients * segments * ratePerSms;
 
+  // Validation state
+  const [recipientsTouched, setRecipientsTouched] = useState(false);
+  const [messageTouched, setMessageTouched] = useState(false);
+
+  // Validate recipients in real-time
+  let recipientsError = '';
+  if (deliveryMode === 'manual') {
+    if (recipientsTouched && parsedManualRecipients.length === 0) {
+      recipientsError = 'At least one recipient phone number is required';
+    } else if (recipientsTouched) {
+      const invalidNumber = parsedManualRecipients.find((p) => !/^\+?[0-9]{9,15}$/.test(p));
+      if (invalidNumber) {
+        recipientsError = `Invalid phone format: "${invalidNumber}" (use e.g. +256700123456)`;
+      }
+    }
+  }
+
+  // Validate message in real-time
+  let messageError = '';
+  if (messageTouched && !message.trim()) {
+    messageError = 'Message content is required';
+  } else if (message.length > 3200) {
+    messageError = 'Message cannot exceed 3,200 characters';
+  }
+
   const handleSelectTemplate = (templateContent: string) => {
     setMessage(templateContent);
+    setMessageTouched(true);
     setTemplateModalOpen(false);
     toast.success('Template applied to message body');
   };
 
   const handleInsertVariable = (variableName: string) => {
     setMessage((prev) => `${prev}{{${variableName}}}`);
+    setMessageTouched(true);
   };
 
   const handleSendNow = async () => {
+    setRecipientsTouched(true);
+    setMessageTouched(true);
+
     if (totalRecipients === 0) {
       toast.error('Please enter at least one recipient phone number.');
       return;
     }
+    if (recipientsError) {
+      toast.error(recipientsError);
+      return;
+    }
     if (!message.trim()) {
       toast.error('Please enter your SMS message content.');
+      return;
+    }
+    if (messageError) {
+      toast.error(messageError);
       return;
     }
 
@@ -128,8 +187,7 @@ export default function SendSmsPage() {
   };
 
   const handleConfirmSchedule = () => {
-    if (!scheduleDate) {
-      toast.error('Please pick a date and time for delivery.');
+    if (!validateScheduleDate(scheduleDate)) {
       return;
     }
     if (totalRecipients === 0 || !message.trim()) {
@@ -139,6 +197,8 @@ export default function SendSmsPage() {
 
     toast.success(`Message scheduled for delivery on ${scheduleDate}!`);
     setScheduleOpen(false);
+    setScheduleDate('');
+    setScheduleError('');
     setManualRecipients('');
     setMessage('');
   };
@@ -159,7 +219,7 @@ export default function SendSmsPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <Label htmlFor="sender" required>Sender ID</Label>
                   <Select value={senderId} onValueChange={setSenderId}>
                     <SelectTrigger id="sender">
@@ -173,7 +233,7 @@ export default function SendSmsPage() {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <div className="flex justify-between items-center">
                     <Label htmlFor="recipients" required>Recipients</Label>
                     <span className="text-xs text-muted-foreground font-medium">
@@ -184,13 +244,20 @@ export default function SendSmsPage() {
                     id="recipients"
                     placeholder="e.g. +256700123456, +256772123456"
                     value={manualRecipients}
-                    onChange={(e) => setManualRecipients(e.target.value)}
+                    onChange={(e) => {
+                      setManualRecipients(e.target.value);
+                      setRecipientsTouched(true);
+                    }}
+                    onBlur={() => setRecipientsTouched(true)}
                     disabled={deliveryMode !== 'manual'}
+                    error={!!recipientsError}
+                    aria-describedby={recipientsError ? 'recipients-error' : undefined}
                   />
+                  {recipientsError && <InputError id="recipients-error" message={recipientsError} />}
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <Label htmlFor="message" required>Message Content</Label>
                   <div className="flex flex-wrap items-center gap-2">
@@ -219,8 +286,15 @@ export default function SendSmsPage() {
                   rows={6}
                   placeholder="Type your message here..."
                   value={message}
-                  onChange={(e) => setMessage(e.target.value)}
+                  onChange={(e) => {
+                    setMessage(e.target.value);
+                    setMessageTouched(true);
+                  }}
+                  onBlur={() => setMessageTouched(true)}
+                  error={!!messageError}
+                  aria-describedby={messageError ? 'message-error' : undefined}
                 />
+                {messageError && <InputError id="message-error" message={messageError} />}
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-muted/30 rounded-lg border text-xs">
@@ -358,7 +432,7 @@ export default function SendSmsPage() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Active Carrier Route</span>
-                <span className="text-xs font-semibold px-2 py-0.5 rounded bg-primary/10 text-primary">
+                <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-500/15 text-amber-900 border border-amber-500/30 dark:bg-primary/20 dark:text-primary dark:border-primary/30">
                   MTN / Airtel Direct
                 </span>
               </div>
@@ -442,14 +516,23 @@ export default function SendSmsPage() {
           </DialogHeader>
           <DialogBody>
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="schedule-time">Delivery Date &amp; Time</Label>
+              <div className="space-y-1">
+                <Label htmlFor="schedule-time" required>Delivery Date &amp; Time</Label>
                 <Input
                   id="schedule-time"
                   type="datetime-local"
                   value={scheduleDate}
-                  onChange={(e) => setScheduleDate(e.target.value)}
+                  onChange={(e) => {
+                    setScheduleDate(e.target.value);
+                    validateScheduleDate(e.target.value);
+                  }}
+                  onBlur={() => {
+                    validateScheduleDate(scheduleDate);
+                  }}
+                  error={!!scheduleError}
+                  aria-describedby={scheduleError ? 'schedule-time-error' : undefined}
                 />
+                {scheduleError && <InputError id="schedule-time-error" message={scheduleError} />}
               </div>
               <p className="text-xs text-muted-foreground">
                 Scheduled broadcasts will queue in the background and deduct wallet credits at dispatch time.

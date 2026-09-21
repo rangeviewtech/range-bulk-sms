@@ -46,3 +46,40 @@ export type ScheduleSmsInput = z.infer<typeof scheduleSmsSchema>;
 export type CreateCampaignInput = z.infer<typeof createCampaignSchema>;
 export type UpdateCampaignInput = z.infer<typeof updateCampaignSchema>;
 export type SmsTemplateInput = z.infer<typeof smsTemplateSchema>;
+
+// Custom SMS variable schema (up to 20 custom variables per user)
+export const customVariableSchema = z.object({
+  key: z
+    .string()
+    .trim()
+    .min(2, 'Variable key must be at least 2 characters')
+    .max(30, 'Variable key cannot exceed 30 characters')
+    .regex(/^[a-zA-Z][a-zA-Z0-9_]*$/, 'Key must start with a letter and contain only letters, numbers, or underscores'),
+  label: z
+    .string()
+    .trim()
+    .min(2, 'Label must be at least 2 characters')
+    .max(60, 'Label cannot exceed 60 characters'),
+  description: z
+    .string()
+    .trim()
+    .max(200, 'Description cannot exceed 200 characters')
+    .optional()
+    .default(''),
+  fallbackValue: z
+    .string()
+    .trim()
+    .max(100, 'Fallback value cannot exceed 100 characters')
+    .optional()
+    .default(''),
+  sampleValue: z
+    .string()
+    .trim()
+    .min(1, 'Sample value is required for testing and live simulation')
+    .max(100, 'Sample value cannot exceed 100 characters'),
+  dataType: z
+    .enum(['TEXT', 'NUMBER', 'CURRENCY', 'DATE', 'URL', 'PHONE'])
+    .default('TEXT'),
+});
+
+export type CustomVariableInput = z.infer<typeof customVariableSchema>;

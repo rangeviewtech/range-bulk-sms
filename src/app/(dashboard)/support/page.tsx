@@ -36,6 +36,9 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useFormValidation } from '@/hooks/use-form-validation';
+import { createTicketSchema } from '@/lib/validations/sender-id';
+import { InputError } from '@/components/ui/input-error';
 
 interface TicketMessage {
   id: string;
@@ -64,16 +67,38 @@ export default function SupportPage() {
 
   // New Ticket Modal State
   const [isNewOpen, setIsNewOpen] = useState(false);
-  const [newSubject, setNewSubject] = useState('');
-  const [newCategory, setNewCategory] = useState('Sender ID');
-  const [newPriority, setNewPriority] = useState('MEDIUM');
-  const [newMessage, setNewMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  const {
+    values: ticketForm,
+    errors: ticketErrors,
+    touched: ticketTouched,
+    setFieldValue: setTicketField,
+    handleBlur: handleTicketBlur,
+    validateAll: validateTicketAll,
+    reset: resetTicketForm,
+    setServerErrors: setTicketServerErrors,
+  } = useFormValidation({
+    initialValues: {
+      subject: '',
+      category: 'Sender ID',
+      priority: 'MEDIUM' as 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT',
+      message: '',
+    },
+    schema: createTicketSchema,
+  });
 
   // Active View/Thread Modal State
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null);
   const [replyText, setReplyText] = useState('');
+  const [replyTouched, setReplyTouched] = useState(false);
   const [submittingReply, setSubmittingReply] = useState(false);
+
+  const replyError = replyTouched && !replyText.trim()
+    ? 'Reply message cannot be empty'
+    : replyText.length > 2000
+    ? 'Reply message cannot exceed 2000 characters'
+    : '';
 
   const fetchTickets = useCallback(async () => {
     try {
@@ -106,10 +131,8 @@ export default function SupportPage() {
 
   const handleCreateTicket = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newSubject.trim() || !newMessage.trim()) {
-      toast.error('Please enter both a subject and details');
-      return;
-    }
+    const { isValid } = validateTicketAll();
+    if (!isValid) return;
 
     try {
       setSubmitting(true);
@@ -117,20 +140,24 @@ export default function SupportPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          subject: newSubject.trim(),
-          category: newCategory,
-          priority: newPriority,
-          message: newMessage.trim(),
+          subject: ticketForm.subject.trim(),
+          category: ticketForm.category,
+          priority: ticketForm.priority,
+          message: ticketForm.message.trim(),
         }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to submit ticket');
+      if (!res.ok) {
+        if (data.details) {
+          setTicketServerErrors(data.details);
+        }
+        throw new Error(data.error || 'Failed to submit ticket');
+      }
 
       toast.success('Support ticket created successfully');
       setIsNewOpen(false);
-      setNewSubject('');
-      setNewMessage('');
+      resetTicketForm();
       fetchTickets();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Error creating ticket';
@@ -140,9 +167,11 @@ export default function SupportPage() {
     }
   };
 
+
   const handleSendReply = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!activeTicket || !replyText.trim()) return;
+    setReplyTouched(true);
+    if (!activeTicket || !replyText.trim() || replyText.length > 2000) return;
 
     try {
       setSubmittingReply(true);
@@ -157,6 +186,7 @@ export default function SupportPage() {
 
       toast.success('Reply posted');
       setReplyText('');
+      setReplyTouched(false);
       fetchTickets();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Error sending reply';
@@ -236,23 +266,29 @@ export default function SupportPage() {
                 </DialogDescription>
               </DialogHeader>
 
-              <form onSubmit={handleCreateTicket} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+              <form onSubmit={handleCreateTicket} noValidate className="flex flex-col flex-1 min-h-0 overflow-hidden">
                 <DialogBody>
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <Label htmlFor="subject" required>Subject</Label>
                     <Input
                       id="subject"
-                      value={newSubject}
-                      onChange={(e) => setNewSubject(e.target.value)}
+                      value={ticketForm.subject}
+                      onChange={(e) => setTicketField('subject', e.target.value)}
+                      onBlur={() => handleTicketBlur('subject')}
+                      error={ticketTouched.subject && Boolean(ticketErrors.subject)}
                       placeholder="e.g. Sender ID approval for RANGEBRAND"
                       required
                     />
+                    <InputError message={ticketTouched.subject ? ticketErrors.subject : undefined} />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="category" required>Category</Label>
-                      <Select value={newCategory} onValueChange={setNewCategory}>
+                      <Select
+                        value={ticketForm.category}
+                        onValueChange={(val) => setTicketField('category', val)}
+                      >
                         <SelectTrigger id="category">
                           <SelectValue placeholder="Select Category" />
                         </SelectTrigger>
@@ -265,11 +301,15 @@ export default function SupportPage() {
                           <SelectItem value="General">General Inquiry</SelectItem>
                         </SelectContent>
                       </Select>
+                      <InputError message={ticketTouched.category ? ticketErrors.category : undefined} />
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="priority" required>Priority</Label>
-                      <Select value={newPriority} onValueChange={setNewPriority}>
+                      <Select
+                        value={ticketForm.priority}
+                        onValueChange={(val) => setTicketField('priority', val as 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT')}
+                      >
                         <SelectTrigger id="priority">
                           <SelectValue placeholder="Select Priority" />
                         </SelectTrigger>
@@ -280,19 +320,23 @@ export default function SupportPage() {
                           <SelectItem value="URGENT">Urgent (Service Outage)</SelectItem>
                         </SelectContent>
                       </Select>
+                      <InputError message={ticketTouched.priority ? ticketErrors.priority : undefined} />
                     </div>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <Label htmlFor="message" required>Description / Details</Label>
                     <Textarea
                       id="message"
                       rows={4}
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
+                      value={ticketForm.message}
+                      onChange={(e) => setTicketField('message', e.target.value)}
+                      onBlur={() => handleTicketBlur('message')}
+                      error={ticketTouched.message && Boolean(ticketErrors.message)}
                       placeholder="Provide details, campaign IDs, or error codes..."
                       required
                     />
+                    <InputError message={ticketTouched.message ? ticketErrors.message : undefined} />
                   </div>
                 </DialogBody>
 
@@ -538,14 +582,23 @@ export default function SupportPage() {
               {/* Reply Form */}
               <form onSubmit={handleSendReply} className="p-4 bg-muted/30 border-t border-border space-y-2 shrink-0">
                 <div className="flex gap-2">
-                  <Textarea
-                    rows={2}
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Type your response to support..."
-                    className="text-sm resize-none"
-                    disabled={submittingReply || activeTicket.status === 'CLOSED'}
-                  />
+                  <div className="flex-1">
+                    <Textarea
+                      rows={2}
+                      value={replyText}
+                      onChange={(e) => {
+                        setReplyText(e.target.value);
+                        if (!replyTouched) setReplyTouched(true);
+                      }}
+                      onBlur={() => setReplyTouched(true)}
+                      placeholder="Type your response to support..."
+                      className="text-sm resize-none"
+                      disabled={submittingReply || activeTicket.status === 'CLOSED'}
+                      error={!!replyError}
+                      aria-describedby={replyError ? 'reply-text-error' : undefined}
+                    />
+                    {replyError && <InputError id="reply-text-error" message={replyError} className="mt-1" />}
+                  </div>
                   <Button
                     type="submit"
                     disabled={submittingReply || !replyText.trim() || activeTicket.status === 'CLOSED'}

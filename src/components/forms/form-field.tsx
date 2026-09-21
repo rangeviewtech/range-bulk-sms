@@ -23,13 +23,22 @@ export function FormField({ name, label, description, children, className, requi
       control={control}
       name={name}
       render={({ field }) => (
-        <div className={cn("space-y-2", className)}>
+        <div className={cn("space-y-1 pointer-events-auto", className)}>
           {label && (
-            <Label required={required} className={cn(error && "text-destructive")}>
+            <Label htmlFor={name} required={required} className={cn(error && "text-destructive", "cursor-pointer")}>
               {label}
             </Label>
           )}
-          {React.cloneElement(children as React.ReactElement, { ...field })}
+          {React.isValidElement(children) ? (
+            React.cloneElement(children as React.ReactElement<{ id?: string; error?: boolean; "aria-invalid"?: string }>, {
+              id: (children.props as { id?: string }).id || name,
+              ...field,
+              error: !!error,
+              "aria-invalid": error ? "true" : undefined,
+            })
+          ) : (
+            children
+          )}
           {description && !error && (
             <p className="text-[0.8rem] text-muted-foreground">{description}</p>
           )}

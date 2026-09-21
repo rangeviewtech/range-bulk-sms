@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -15,8 +15,21 @@ import {
   XCircle,
   PhoneCall,
   Smartphone,
+  ArrowUp,
+  ArrowDown,
+  X,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Pagination } from '@/components/ui/pagination';
+import { SortableHeader } from '@/components/ui/sortable-header';
+import { useTableState } from '@/hooks/use-table-state';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface DeliveryRecord {
   id: string;
@@ -45,29 +58,60 @@ const INITIAL_RECORDS: DeliveryRecord[] = [
 ];
 
 export default function DeliveryReportsPage() {
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'ALL' | 'DELIVERED' | 'PENDING' | 'FAILED'>('ALL');
-  const [page, setPage] = useState(1);
-  const pageSize = 8;
-
-  // Filtered dataset
-  const filteredRecords = useMemo(() => {
-    return INITIAL_RECORDS.filter((r) => {
-      const matchSearch =
-        r.phone.toLowerCase().includes(search.toLowerCase()) ||
-        r.campaign.toLowerCase().includes(search.toLowerCase()) ||
-        r.network.toLowerCase().includes(search.toLowerCase());
-
-      const matchStatus = statusFilter === 'ALL' || r.status === statusFilter;
-      return matchSearch && matchStatus;
-    });
-  }, [search, statusFilter]);
-
-  const totalPages = Math.max(1, Math.ceil(filteredRecords.length / pageSize));
-  const paginatedRecords = useMemo(() => {
-    const start = (page - 1) * pageSize;
-    return filteredRecords.slice(start, start + pageSize);
-  }, [filteredRecords, page]);
+  const {
+    search,
+    setSearch,
+    clearSearch,
+    sortKey,
+    sortOrder,
+    toggleSort,
+    filters,
+    setFilter,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    totalPages,
+    totalItems,
+    paginatedData,
+    filteredData,
+  } = useTableState<DeliveryRecord>({
+    data: INITIAL_RECORDS,
+    searchFields: ['phone', 'network', 'campaign', 'status', 'id'],
+    initialSortKey: 'time',
+    initialSortOrder: 'desc',
+    initialPageSize: 8,
+    filterFn: (item, currentFilters) => {
+      const st = currentFilters.status;
+      if (st && st !== 'ALL') {
+        if (item.status !== st) return false;
+      }
+      const net = currentFilters.network;
+      if (net && net !== 'ALL') {
+        if (item.network !== net) return false;
+      }
+      return true;
+    },
+    customSortFn: (a, b, key, order) => {
+      let comp = 0;
+      if (key === 'time') {
+        comp = new Date(a.time).getTime() - new Date(b.time).getTime();
+      } else if (key === 'cost') {
+        comp = a.cost - b.cost;
+      } else if (key === 'segments') {
+        comp = a.segments - b.segments;
+      } else if (key === 'phone') {
+        comp = a.phone.localeCompare(b.phone);
+      } else if (key === 'network') {
+        comp = a.network.localeCompare(b.network);
+      } else if (key === 'campaign') {
+        comp = a.campaign.localeCompare(b.campaign);
+      } else if (key === 'status') {
+        comp = a.status.localeCompare(b.status);
+      }
+      return order === 'asc' ? comp : -comp;
+    },
+  });
 
   const deliveredCount = useMemo(
     () => INITIAL_RECORDS.filter((r) => r.status === 'DELIVERED').length,
@@ -89,7 +133,7 @@ export default function DeliveryReportsPage() {
   const handleExportCSV = () => {
     const csvRows = [
       ['Report ID', 'Phone Number', 'Network', 'Campaign', 'Status', 'Segments', 'Cost (UGX)', 'Timestamp'],
-      ...filteredRecords.map((r) => [
+      ...filteredData.map((r) => [
         r.id,
         r.phone,
         r.network,
@@ -110,7 +154,7 @@ export default function DeliveryReportsPage() {
     link.click();
     document.body.removeChild(link);
 
-    toast.success(`Exported ${filteredRecords.length} delivery records to CSV!`);
+    toast.success(`Exported ${filteredData.length} delivery records to CSV!`);
   };
 
   const getStatusBadge = (status: DeliveryRecord['status']) => {
@@ -146,7 +190,7 @@ export default function DeliveryReportsPage() {
         action={
           <Button variant="outline" onClick={handleExportCSV} className="w-full sm:w-auto">
             <FileDown className="w-4 h-4 mr-2" />
-            Export CSV ({filteredRecords.length})
+            Export CSV ({filteredData.length})
           </Button>
         }
       />
@@ -205,68 +249,97 @@ export default function DeliveryReportsPage() {
       {/* Main Table Card */}
       <Card>
         <CardContent className="p-0">
-          <div className="p-4 border-b border-border flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between items-stretch sm:items-center">
+          <div className="p-3 sm:p-4 border-b border-border flex flex-col md:flex-row gap-3 sm:gap-4 justify-between items-stretch md:items-center">
             {/* Search Input */}
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search phone number or campaign..."
-                className="pl-9"
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-              />
+            <div className="flex flex-1 flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search phone, campaign, or network..."
+                  className="pl-9 pr-8"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                {search && (
+                  <button
+                    type="button"
+                    onClick={clearSearch}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    aria-label="Clear search"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {/* Network Filter */}
+              <Select
+                value={filters.network || 'ALL'}
+                onValueChange={(val) => setFilter('network', val)}
+              >
+                <SelectTrigger className="w-full sm:w-[150px] h-9 text-xs">
+                  <SelectValue placeholder="All Networks" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">All Networks</SelectItem>
+                  <SelectItem value="MTN Uganda">MTN Uganda</SelectItem>
+                  <SelectItem value="Airtel Uganda">Airtel Uganda</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {/* Sort Order Toggle */}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-9 px-3 gap-1.5 shrink-0"
+                onClick={() => toggleSort(sortKey || 'time')}
+                title={`Sort Order: ${sortOrder === 'asc' ? 'Ascending' : 'Descending'}`}
+              >
+                {sortOrder === 'asc' ? (
+                  <ArrowUp className="w-3.5 h-3.5 text-primary" />
+                ) : (
+                  <ArrowDown className="w-3.5 h-3.5 text-primary" />
+                )}
+                <span className="text-xs uppercase font-medium">{sortOrder}</span>
+              </Button>
             </div>
 
             {/* Filter Tabs */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
               <Button
                 type="button"
-                variant={statusFilter === 'ALL' ? 'default' : 'outline'}
+                variant={(!filters.status || filters.status === 'ALL') ? 'default' : 'outline'}
                 size="sm"
                 className="text-xs h-8"
-                onClick={() => {
-                  setStatusFilter('ALL');
-                  setPage(1);
-                }}
+                onClick={() => setFilter('status', 'ALL')}
               >
                 All ({INITIAL_RECORDS.length})
               </Button>
               <Button
                 type="button"
-                variant={statusFilter === 'DELIVERED' ? 'default' : 'outline'}
+                variant={filters.status === 'DELIVERED' ? 'default' : 'outline'}
                 size="sm"
                 className="text-xs h-8"
-                onClick={() => {
-                  setStatusFilter('DELIVERED');
-                  setPage(1);
-                }}
+                onClick={() => setFilter('status', 'DELIVERED')}
               >
                 Delivered ({deliveredCount})
               </Button>
               <Button
                 type="button"
-                variant={statusFilter === 'PENDING' ? 'default' : 'outline'}
+                variant={filters.status === 'PENDING' ? 'default' : 'outline'}
                 size="sm"
                 className="text-xs h-8"
-                onClick={() => {
-                  setStatusFilter('PENDING');
-                  setPage(1);
-                }}
+                onClick={() => setFilter('status', 'PENDING')}
               >
                 Pending ({pendingCount})
               </Button>
               <Button
                 type="button"
-                variant={statusFilter === 'FAILED' ? 'default' : 'outline'}
+                variant={filters.status === 'FAILED' ? 'default' : 'outline'}
                 size="sm"
                 className="text-xs h-8"
-                onClick={() => {
-                  setStatusFilter('FAILED');
-                  setPage(1);
-                }}
+                onClick={() => setFilter('status', 'FAILED')}
               >
                 Failed ({failedCount})
               </Button>
@@ -277,24 +350,80 @@ export default function DeliveryReportsPage() {
             <Table className="min-w-[700px]">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Recipient MSISDN</TableHead>
-                  <TableHead>Network Carrier</TableHead>
-                  <TableHead>Campaign Name</TableHead>
-                  <TableHead>Delivery State</TableHead>
-                  <TableHead>Segments</TableHead>
-                  <TableHead>Charged Rate</TableHead>
-                  <TableHead>Handset Timestamp (EAT)</TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      column="phone"
+                      label="Recipient MSISDN"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      column="network"
+                      label="Network Carrier"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      column="campaign"
+                      label="Campaign Name"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      column="status"
+                      label="Delivery State"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      column="segments"
+                      label="Segments"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      column="cost"
+                      label="Charged Rate"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      column="time"
+                      label="Handset Timestamp (EAT)"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                    />
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedRecords.length === 0 ? (
+                {paginatedData.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
                       No delivery reports matching filter criteria.
                     </TableCell>
                   </TableRow>
                 ) : (
-                  paginatedRecords.map((item) => (
+                  paginatedData.map((item) => (
                     <TableRow key={item.id} className="hover:bg-muted/30 transition-colors">
                       <TableCell className="font-mono text-xs font-semibold text-foreground">
                         {item.phone}
@@ -324,35 +453,15 @@ export default function DeliveryReportsPage() {
             </Table>
           </div>
 
-          <div className="p-4 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-3 text-sm text-muted-foreground">
-            <div>
-              Showing {filteredRecords.length > 0 ? (page - 1) * pageSize + 1 : 0} to{' '}
-              {Math.min(page * pageSize, filteredRecords.length)} of {filteredRecords.length} entries
-            </div>
-            <div className="flex gap-2 w-full sm:w-auto justify-end">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page <= 1}
-                onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-                className="flex-1 sm:flex-initial"
-              >
-                Previous
-              </Button>
-              <span className="flex items-center px-2 text-xs font-mono">
-                {page} / {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page >= totalPages}
-                onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
-                className="flex-1 sm:flex-initial"
-              >
-                Next
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalItems={totalItems}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+            pageSizeOptions={[5, 8, 15, 30]}
+          />
         </CardContent>
       </Card>
     </div>

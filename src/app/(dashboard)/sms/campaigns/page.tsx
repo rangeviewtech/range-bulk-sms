@@ -8,8 +8,11 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, BarChart2, Eye, Search } from 'lucide-react';
+import { Plus, BarChart2, Eye, Search, X, ArrowDownUp } from 'lucide-react';
 import Link from 'next/link';
+import { useTableState } from '@/hooks/use-table-state';
+import { SortableHeader } from '@/components/ui/sortable-header';
+import { Pagination } from '@/components/ui/pagination';
 
 interface CampaignItem {
   id: string;
@@ -26,12 +29,72 @@ const INITIAL_CAMPAIGNS: CampaignItem[] = [
   { id: '1', name: 'Summer Sale 2026', status: 'COMPLETED', recipients: 15420, sent: 15400, failed: 20, progress: 100, date: '2026-06-15' },
   { id: '2', name: 'VIP Customer Update', status: 'PROCESSING', recipients: 5000, sent: 2500, failed: 0, progress: 50, date: '2026-09-16' },
   { id: '3', name: 'Flash Deal Alert', status: 'SCHEDULED', recipients: 45000, sent: 0, failed: 0, progress: 0, date: '2026-09-20' },
-  { id: '4', name: 'New Product Launch', status: 'DRAFT', recipients: 12000, sent: 0, failed: 0, progress: 0, date: '-' },
+  { id: '4', name: 'New Product Launch', status: 'DRAFT', recipients: 12000, sent: 0, failed: 0, progress: 0, date: '2026-09-25' },
+  { id: '5', name: 'Back to School Promo', status: 'COMPLETED', recipients: 28000, sent: 27950, failed: 50, progress: 100, date: '2026-08-30' },
+  { id: '6', name: 'Weekend Discount Blast', status: 'COMPLETED', recipients: 8200, sent: 8180, failed: 20, progress: 100, date: '2026-07-22' },
+  { id: '7', name: 'Maintenance Notification', status: 'COMPLETED', recipients: 1950, sent: 1950, failed: 0, progress: 100, date: '2026-08-10' },
+  { id: '8', name: 'Loyalty Reward Points', status: 'PROCESSING', recipients: 14000, sent: 9800, failed: 12, progress: 70, date: '2026-09-18' },
+  { id: '9', name: 'Holiday Early Bird', status: 'SCHEDULED', recipients: 35000, sent: 0, failed: 0, progress: 0, date: '2026-10-01' },
+  { id: '10', name: 'End of Month Statement Alert', status: 'DRAFT', recipients: 6400, sent: 0, failed: 0, progress: 0, date: '2026-09-30' },
+  { id: '11', name: 'Regional Network Survey', status: 'COMPLETED', recipients: 3200, sent: 3190, failed: 10, progress: 100, date: '2026-07-04' },
+  { id: '12', name: 'Uganda Independence Day Wishes', status: 'SCHEDULED', recipients: 52000, sent: 0, failed: 0, progress: 0, date: '2026-10-09' },
 ];
 
 export default function CampaignsPage() {
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [campaigns] = useState<CampaignItem[]>(INITIAL_CAMPAIGNS);
+
+  const {
+    search,
+    setSearch,
+    clearSearch,
+    sortKey,
+    sortOrder,
+    toggleSort,
+    filters,
+    setFilter,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    totalPages,
+    totalItems,
+    paginatedData: displayedCampaigns,
+  } = useTableState<CampaignItem>({
+    data: campaigns,
+    searchFields: [
+      'name',
+      'status',
+      (c) => String(c.recipients),
+      (c) => String(c.sent),
+      (c) => String(c.failed),
+      'date',
+    ],
+    initialSortKey: 'date',
+    initialSortOrder: 'desc',
+    initialPageSize: 5,
+    initialFilters: { status: 'ALL' },
+    filterFn: (item, currentFilters) => {
+      if (currentFilters.status && currentFilters.status !== 'ALL' && item.status !== currentFilters.status) {
+        return false;
+      }
+      return true;
+    },
+    customSortFn: (a, b, key, order) => {
+      let comp = 0;
+      if (key === 'name') {
+        comp = a.name.localeCompare(b.name);
+      } else if (key === 'status') {
+        comp = a.status.localeCompare(b.status);
+      } else if (key === 'progress') {
+        comp = a.progress - b.progress;
+      } else if (key === 'recipients') {
+        comp = a.recipients - b.recipients;
+      } else if (key === 'date') {
+        comp = (a.date === '-' ? '' : a.date).localeCompare(b.date === '-' ? '' : b.date);
+      }
+      return order === 'asc' ? comp : -comp;
+    },
+  });
 
   const getStatusColor = (status: CampaignItem['status']) => {
     switch (status) {
@@ -45,12 +108,6 @@ export default function CampaignsPage() {
         return 'bg-muted text-muted-foreground border-border';
     }
   };
-
-  const filteredCampaigns = INITIAL_CAMPAIGNS.filter((camp) => {
-    const matchesSearch = camp.name.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = statusFilter === 'ALL' || camp.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
@@ -67,10 +124,15 @@ export default function CampaignsPage() {
         }
       />
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full sm:w-auto">
-          <TabsList className="w-full sm:w-auto h-auto flex-wrap">
-            <TabsTrigger value="ALL">All</TabsTrigger>
+      {/* Filter Tabs & Search / Order Toolbar */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <Tabs
+          value={filters.status || 'ALL'}
+          onValueChange={(val) => setFilter('status', val)}
+          className="w-full md:w-auto"
+        >
+          <TabsList className="w-full md:w-auto h-auto flex-wrap">
+            <TabsTrigger value="ALL">All ({campaigns.length})</TabsTrigger>
             <TabsTrigger value="COMPLETED">Completed</TabsTrigger>
             <TabsTrigger value="PROCESSING">Processing</TabsTrigger>
             <TabsTrigger value="SCHEDULED">Scheduled</TabsTrigger>
@@ -78,41 +140,119 @@ export default function CampaignsPage() {
           </TabsList>
         </Tabs>
 
-        <div className="relative w-full sm:w-72">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search campaigns..."
-            className="pl-8"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          <div className="relative flex-1 md:w-72">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search campaigns..."
+              className="pl-8 pr-8"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              aria-label="Search campaigns"
+            />
+            {search && (
+              <button
+                type="button"
+                onClick={clearSearch}
+                className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
+                aria-label="Clear search"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 gap-1 text-xs"
+            onClick={() => toggleSort(sortKey || 'date')}
+            title={`Order: ${sortOrder === 'asc' ? 'Ascending' : 'Descending'}`}
+            aria-label="Toggle sort order"
+          >
+            <ArrowDownUp className="h-3.5 w-3.5 mr-1" />
+            <span className="hidden sm:inline">Order:</span> {sortOrder.toUpperCase()}
+          </Button>
         </div>
       </div>
 
       <Card>
         <CardContent className="p-0">
-          <div className="w-full">
+          <div className="w-full overflow-x-auto">
             <Table className="min-w-[650px]">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Campaign Name</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Progress</TableHead>
-                  <TableHead>Date</TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      column="name"
+                      label="Campaign Name"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      column="status"
+                      label="Status"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      column="progress"
+                      label="Progress"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      column="date"
+                      label="Date"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                    />
+                  </TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredCampaigns.length === 0 ? (
+                {displayedCampaigns.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="py-12 text-center text-muted-foreground">
-                      No campaigns match your search criteria.
+                      <p className="font-medium text-foreground">No campaigns match your criteria.</p>
+                      <p className="text-xs mt-1">Try adjusting your search query or status filter.</p>
+                      {(search || filters.status !== 'ALL') && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mt-3"
+                          onClick={() => {
+                            clearSearch();
+                            setFilter('status', 'ALL');
+                          }}
+                        >
+                          Reset Filters
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredCampaigns.map((camp) => (
+                  displayedCampaigns.map((camp) => (
                     <TableRow key={camp.id} className="hover:bg-muted/30 transition-colors">
-                      <TableCell className="font-medium text-foreground">{camp.name}</TableCell>
+                      <TableCell className="font-medium text-foreground">
+                        <div>
+                          <span>{camp.name}</span>
+                          <p className="text-xs text-muted-foreground">
+                            {camp.recipients.toLocaleString()} total recipients
+                          </p>
+                        </div>
+                      </TableCell>
                       <TableCell>
                         <Badge variant="outline" className={`font-medium text-xs ${getStatusColor(camp.status)}`}>
                           {camp.status}
@@ -154,9 +294,20 @@ export default function CampaignsPage() {
               </TableBody>
             </Table>
           </div>
+
+          {campaigns.length > 0 && (
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              pageSize={pageSize}
+              totalItems={totalItems}
+              onPageChange={setPage}
+              onPageSizeChange={setPageSize}
+              pageSizeOptions={[5, 10, 20, 50]}
+            />
+          )}
         </CardContent>
       </Card>
     </div>
   );
 }
-

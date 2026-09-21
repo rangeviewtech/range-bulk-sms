@@ -1,10 +1,7 @@
 import { cookies } from 'next/headers';
-import Image from 'next/image';
 import { PageHeader } from '@/components/layout/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { requireAuth } from '@/lib/dal';
 import { decrypt } from '@/lib/auth/session';
@@ -21,6 +18,7 @@ import {
   revokeDevice,
   revokeAllOtherDevices,
 } from '@/app/(dashboard)/settings/security/actions';
+import { MfaSetupForm, MfaActionForm, ScreenLockPinForm } from '@/components/forms/security-forms';
 import { ShieldCheck, Smartphone, Laptop, AlertTriangle } from 'lucide-react';
 
 const messages: Record<string, string> = {
@@ -143,76 +141,13 @@ export default async function SecuritySettingsPage({
           </CardHeader>
           <CardContent>
             {qrCode ? (
-              <form action={enableMfa} className="space-y-4">
-                <div className="flex justify-center p-2 bg-white rounded-lg inline-block border">
-                  <Image
-                    src={qrCode}
-                    width={180}
-                    height={180}
-                    alt="Scan setup QR code"
-                    unoptimized
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="setup-token" required>Enter 6-digit authenticator code</Label>
-                  <Input
-                    id="setup-token"
-                    name="token"
-                    inputMode="numeric"
-                    pattern="[0-9]{6}"
-                    minLength={6}
-                    maxLength={6}
-                    autoComplete="one-time-code"
-                    required
-                    className="mt-1"
-                  />
-                </div>
-                <Button type="submit" className="w-full">
-                  Verify and Activate Authenticator
-                </Button>
-              </form>
+              <MfaSetupForm qrCode={qrCode} action={enableMfa} />
             ) : (
-              <form action={user.mfaEnabled ? disableMfa : beginMfaSetup} className="space-y-4">
-                <div>
-                  <Label htmlFor="mfa-password" required>Current Password</Label>
-                  <Input
-                    id="mfa-password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    className="mt-1"
-                  />
-                </div>
-                {user.mfaEnabled && (
-                  <div>
-                    <Label htmlFor="disable-token" required>Authenticator Code</Label>
-                    <Input
-                      id="disable-token"
-                      name="token"
-                      inputMode="numeric"
-                      pattern="[0-9]{6}"
-                      maxLength={6}
-                      autoComplete="one-time-code"
-                      required
-                      className="mt-1"
-                    />
-                  </div>
-                )}
-                {mfaPolicy.type === 'MANDATORY_ROLE' && user.mfaEnabled ? (
-                  <Button type="button" disabled variant="outline" className="w-full">
-                    MFA Required by Role Policy
-                  </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    variant={user.mfaEnabled ? 'destructive' : 'default'}
-                    className="w-full"
-                  >
-                    {user.mfaEnabled ? 'Disable Authenticator' : 'Set Up Authenticator App'}
-                  </Button>
-                )}
-              </form>
+              <MfaActionForm
+                mfaEnabled={user.mfaEnabled}
+                isMandatoryRole={mfaPolicy.type === 'MANDATORY_ROLE'}
+                action={user.mfaEnabled ? disableMfa : beginMfaSetup}
+              />
             )}
           </CardContent>
         </Card>
@@ -237,37 +172,7 @@ export default async function SecuritySettingsPage({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form action={savePin} className="space-y-4">
-              <div>
-                <Label htmlFor="pin-password" required>Current Password</Label>
-                <Input
-                  id="pin-password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-pin" required>New 6-Digit PIN</Label>
-                <Input
-                  id="new-pin"
-                  name="pin"
-                  type="password"
-                  inputMode="numeric"
-                  pattern="[0-9]{6}"
-                  minLength={6}
-                  maxLength={6}
-                  autoComplete="new-password"
-                  required
-                  className="mt-1"
-                />
-              </div>
-              <Button type="submit" className="w-full">
-                Save Screen Lock PIN
-              </Button>
-            </form>
+            <ScreenLockPinForm action={savePin} />
           </CardContent>
         </Card>
       </div>

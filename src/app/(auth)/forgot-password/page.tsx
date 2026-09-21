@@ -27,7 +27,7 @@ export default function ForgotPasswordPage() {
   const [emailTouched, setEmailTouched] = useState(false);
   const [submitAttempted, setSubmitAttempted] = useState(false);
 
-  const { register, handleSubmit, formState: { errors }, setValue, control, trigger } = useForm<ForgotPasswordValues>({
+  const { register, handleSubmit, formState: { errors }, setValue, control, trigger, setError } = useForm<ForgotPasswordValues>({
     resolver: zodResolver(forgotPasswordSchema),
     mode: 'all',
     reValidateMode: 'onChange',
@@ -64,6 +64,13 @@ export default function ForgotPasswordPage() {
     
     if (res?.error) {
       notify.error(res.error);
+      if (res.errors) {
+        Object.entries(res.errors).forEach(([field, msgs]) => {
+          if (msgs && msgs[0]) {
+            setError(field as keyof ForgotPasswordValues, { message: msgs[0] });
+          }
+        });
+      }
       setLoading(false);
     } else {
       notify.success(toastCatalog.passwordReset.forgotPasswordSent);
@@ -74,7 +81,7 @@ export default function ForgotPasswordPage() {
   if (submitted) {
     return (
       <AuthLayout>
-        <div className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
+        <div className="auth-fade-in" style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
           <div className="auth-stagger-1">
             <h3 style={{ fontSize: '26px', fontWeight: 600, color: 'hsl(var(--foreground))', marginBottom: '6px', lineHeight: '32px', fontFamily: FONT_STACK }}>
               {dict.auth.checkInboxTitle}
@@ -116,7 +123,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <AuthLayout>
-      <form id="fgpwd_main" onSubmit={handleSubmit(onSubmit)} className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
+      <form id="fgpwd_main" onSubmit={handleSubmit(onSubmit)} className="auth-fade-in" style={{ width: '100%', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 10 }}>
         <div className="auth-stagger-1">
           <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
             {dict.auth.forgotPasswordTitle}
@@ -127,8 +134,20 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Email Field */}
-        <div className="form-group auth-stagger-2" style={{ position: 'relative', marginBottom: '1.25rem' }}>
-          <label htmlFor="forgot-email" style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK }}>
+        <div 
+          className="form-group auth-stagger-2" 
+          style={{ position: 'relative', zIndex: 10, marginBottom: '1.25rem', pointerEvents: 'auto' }}
+          onClick={(e) => {
+            const target = e.target as HTMLElement;
+            if (target.tagName !== 'INPUT') {
+              document.getElementById('forgot-email')?.focus();
+            }
+          }}
+        >
+          <label 
+            htmlFor="forgot-email" 
+            style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK, cursor: 'pointer', pointerEvents: 'auto', userSelect: 'none' }}
+          >
             {dict.auth.emailPlaceholder || 'Email Address'} <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span>
           </label>
           <input
@@ -146,6 +165,12 @@ export default function ForgotPasswordPage() {
             }}
             aria-invalid={showEmailError ? "true" : undefined}
             style={{
+              position: 'relative',
+              zIndex: 10,
+              pointerEvents: 'auto',
+              cursor: 'text',
+              userSelect: 'text',
+              WebkitUserSelect: 'text',
               width: '100%',
               height: '38px',
               padding: '6px 12px',
@@ -220,7 +245,7 @@ export default function ForgotPasswordPage() {
           <div className="login-con" style={{ flex: 1 }}>
             <button
               type="submit"
-              disabled={loading || !isForgotValid}
+              disabled={loading}
               className="btn btn-primary btn-main auth-btn-primary"
               style={{
                 width: '100%',
@@ -233,11 +258,11 @@ export default function ForgotPasswordPage() {
                 fontWeight: 700,
                 borderRadius: '7px',
                 border: '0',
-                cursor: loading || !isForgotValid ? 'not-allowed' : 'pointer',
+                cursor: loading ? 'not-allowed' : 'pointer',
                 textAlign: 'center',
                 boxSizing: 'border-box',
                 fontFamily: FONT_STACK,
-                opacity: loading || !isForgotValid ? 0.7 : 1,
+                opacity: loading ? 0.7 : 1,
               }}
             >
               {loading ? dict.auth.sendingResetLink : dict.auth.sendResetLinkButton}

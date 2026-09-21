@@ -33,7 +33,7 @@ export function PortalGuidesModal({ topic, onClose }: PortalGuidesModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md duration-200 animate-in fade-in">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 duration-200 animate-in fade-in">
       <div
         className="relative w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-xl border shadow-[0_24px_64px_rgba(0,0,0,0.4)] p-6 sm:p-8 animate-in zoom-in-95 duration-200"
         style={{
@@ -84,10 +84,14 @@ export function PortalGuidesModal({ topic, onClose }: PortalGuidesModalProps) {
                 <span className="text-[#35B6FF]">Authorization</span>: Bearer rsms_live_9b83f0...
                 <button
                   onClick={() => copyToClipboard('Authorization: Bearer YOUR_API_KEY')}
-                  className="absolute right-3 top-3 p-1.5 rounded hover:opacity-80"
-                  style={{ color: PORTAL_COLORS.secondaryText }}
+                  className={`absolute right-3 top-3 p-1.5 rounded transition-all duration-200 ${
+                    copied
+                      ? 'bg-emerald-600 hover:bg-emerald-600 text-white border border-emerald-600 shadow-sm'
+                      : 'hover:opacity-80'
+                  }`}
+                  style={copied ? undefined : { color: PORTAL_COLORS.secondaryText }}
                 >
-                  {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copied ? <Check className="h-3.5 w-3.5 text-white stroke-[2.5]" /> : <Copy className="h-3.5 w-3.5" />}
                 </button>
               </div>
 

@@ -29,6 +29,23 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { z } from 'zod';
+import { useFormValidation } from '@/hooks/use-form-validation';
+import { InputError } from '@/components/ui/input-error';
+
+const depositFormSchema = z.object({
+  amount: z
+    .string()
+    .trim()
+    .min(1, 'Amount is required')
+    .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 1000, {
+      message: 'Minimum deposit amount is 1,000 UGX',
+    })
+    .refine((val) => parseFloat(val) <= 100000000, {
+      message: 'Deposit amount cannot exceed 100,000,000 UGX',
+    }),
+  description: z.string().max(500, 'Note cannot exceed 500 characters').optional(),
+});
 
 interface Transaction {
   id: string;
@@ -52,11 +69,23 @@ export default function WalletPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Deposit Modal State
+  // Deposit Modal State with Real-Time Validation
   const [isDepositOpen, setIsDepositOpen] = useState(false);
-  const [depositAmount, setDepositAmount] = useState<string>('50000');
-  const [depositDescription, setDepositDescription] = useState<string>('Wallet Top-up');
   const [submittingDeposit, setSubmittingDeposit] = useState(false);
+
+  const {
+    values: depositValues,
+    errors: depositErrors,
+    touched: depositTouched,
+    setFieldValue: setDepositFieldValue,
+    handleBlur: handleDepositBlur,
+    validateAll: validateDepositAll,
+    setServerErrors: setDepositServerErrors,
+    reset: resetDepositForm,
+  } = useFormValidation({
+    initialValues: { amount: '50000', description: 'Wallet Top-up' },
+    schema: depositFormSchema,
+  });
 
   const fetchWalletData = useCallback(async () => {
     try {
@@ -96,11 +125,9 @@ export default function WalletPage() {
 
   const handleDepositSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const amountNum = parseFloat(depositAmount);
-    if (isNaN(amountNum) || amountNum <= 0) {
-      toast.error('Please enter a valid deposit amount');
-      return;
-    }
+    const { isValid, data } = validateDepositAll();
+    if (!isValid || !data) return;
+    const amountNum = parseFloat(data.amount);
 
     try {
       setSubmittingDeposit(true);
@@ -109,19 +136,22 @@ export default function WalletPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           amount: amountNum,
-          description: depositDescription || 'Manual deposit',
+          description: data.description || 'Manual deposit',
           idempotencyKey: `dep-${Date.now()}-${Math.random().toString(36).substring(7)}`,
         }),
       });
 
       const resData = await res.json();
       if (!res.ok) {
+        if (resData?.details) {
+          setDepositServerErrors(resData.details);
+        }
         throw new Error(resData.error || 'Deposit failed');
       }
 
       toast.success(`Successfully deposited ${currency} ${amountNum.toLocaleString()}`);
       setIsDepositOpen(false);
-      setDepositAmount('50000');
+      resetDepositForm();
       fetchWalletData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to process deposit';
@@ -169,23 +199,23 @@ export default function WalletPage() {
                 </DialogDescription>
               </DialogHeader>
 
-              <form onSubmit={handleDepositSubmit} className="flex flex-col flex-1 overflow-hidden">
+              <form onSubmit={handleDepositSubmit} noValidate className="flex flex-col flex-1 overflow-hidden">
                 <DialogBody>
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <Label htmlFor="quick-amount">Quick Select ({currency})</Label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {PRESET_AMOUNTS.map((amt) => (
                         <Button
                           key={amt}
                           type="button"
-                          variant={depositAmount === amt.toString() ? 'default' : 'outline'}
+                          variant={depositValues.amount === amt.toString() ? 'default' : 'outline'}
                           size="sm"
                           className={
-                            depositAmount === amt.toString()
+                            depositValues.amount === amt.toString()
                               ? 'bg-primary text-primary-foreground font-bold'
                               : ''
                           }
-                          onClick={() => setDepositAmount(amt.toString())}
+                          onClick={() => setDepositFieldValue('amount', amt.toString())}
                         >
                           {amt.toLocaleString()}
                         </Button>
@@ -193,28 +223,40 @@ export default function WalletPage() {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <Label htmlFor="amount" required>Custom Amount ({currency})</Label>
                     <Input
                       id="amount"
                       type="number"
                       min="1000"
                       step="1000"
-                      value={depositAmount}
-                      onChange={(e) => setDepositAmount(e.target.value)}
+                      value={depositValues.amount}
+                      onChange={(e) => setDepositFieldValue('amount', e.target.value)}
+                      onBlur={() => handleDepositBlur('amount')}
+                      error={depositTouched.amount && !!depositErrors.amount}
+                      aria-describedby={depositErrors.amount ? 'amount-error' : undefined}
                       placeholder="Enter amount"
                       required
                     />
+                    {depositTouched.amount && depositErrors.amount && (
+                      <InputError id="amount-error" message={depositErrors.amount} />
+                    )}
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <Label htmlFor="description">Payment Reference / Note</Label>
                     <Input
                       id="description"
-                      value={depositDescription}
-                      onChange={(e) => setDepositDescription(e.target.value)}
+                      value={depositValues.description}
+                      onChange={(e) => setDepositFieldValue('description', e.target.value)}
+                      onBlur={() => handleDepositBlur('description')}
+                      error={depositTouched.description && !!depositErrors.description}
+                      aria-describedby={depositErrors.description ? 'description-error' : undefined}
                       placeholder="e.g. MTN Mobile Money deposit"
                     />
+                    {depositTouched.description && depositErrors.description && (
+                      <InputError id="description-error" message={depositErrors.description} />
+                    )}
                   </div>
 
                   <div className="rounded-md bg-secondary/10 p-3 text-xs text-secondary-foreground space-y-1">

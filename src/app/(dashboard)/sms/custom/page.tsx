@@ -32,6 +32,7 @@ import {
   Send,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { InputError } from '@/components/ui/input-error';
 
 interface SenderIdItem {
   id: string;
@@ -134,6 +135,22 @@ export default function CustomSmsPage() {
   const [currentTime, setCurrentTime] = useState<string>('12:00 PM');
   const [isReviewOpen, setIsReviewOpen] = useState<boolean>(false);
   const [sending, setSending] = useState<boolean>(false);
+  const [messageTouched, setMessageTouched] = useState<boolean>(false);
+  const [campaignNameTouched, setCampaignNameTouched] = useState<boolean>(false);
+
+  const messageError = useMemo(() => {
+    if (!messageTouched) return '';
+    if (!message.trim()) return 'Message template is required.';
+    if (message.length > 1600) return 'Message cannot exceed 1600 characters.';
+    return '';
+  }, [message, messageTouched]);
+
+  const campaignNameError = useMemo(() => {
+    if (!campaignNameTouched) return '';
+    if (!campaignName.trim()) return 'Campaign name is required.';
+    if (campaignName.trim().length < 3) return 'Campaign name must be at least 3 characters.';
+    return '';
+  }, [campaignName, campaignNameTouched]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -273,6 +290,7 @@ export default function CustomSmsPage() {
   const totalCostUGX = rows.length * costPerMsgUGX;
 
   const handleProceedToReview = () => {
+    setMessageTouched(true);
     if (rows.length === 0) {
       toast.error('Please upload or load a spreadsheet dataset first.');
       return;
@@ -281,19 +299,24 @@ export default function CustomSmsPage() {
       toast.error('Please select the column containing recipient phone numbers.');
       return;
     }
-    if (!message.trim()) {
-      toast.error('Please write a message template before reviewing.');
+    if (!message.trim() || message.length > 1600) {
+      toast.error('Please write a valid message template before reviewing.');
       return;
     }
     setIsReviewOpen(true);
   };
 
   const handleDispatchCampaign = async () => {
+    setCampaignNameTouched(true);
+    if (!campaignName.trim() || campaignName.trim().length < 3) {
+      toast.error('Please provide a valid campaign name (at least 3 characters).');
+      return;
+    }
     setSending(true);
     try {
       // Simulate real dispatch API call with realistic payload
       const payload = {
-        name: campaignName.trim() || 'Spreadsheet Personalized Campaign',
+        name: campaignName.trim(),
         senderId: selectedSenderId,
         message: message.trim(),
         totalRecipients: rows.length,
@@ -468,7 +491,7 @@ export default function CustomSmsPage() {
             </CardHeader>
             <CardContent className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <Label htmlFor="phoneCol" required className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Phone Number Column
                   </Label>
@@ -489,7 +512,7 @@ export default function CustomSmsPage() {
                   </p>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <Label htmlFor="senderIdSelect" required className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Sender ID
                   </Label>
@@ -557,9 +580,15 @@ export default function CustomSmsPage() {
                 rows={5}
                 placeholder="Dear {{Parent Name}}, your child {{Student Name}} has a balance of {{Balance}}..."
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) => {
+                  setMessage(e.target.value);
+                  if (!messageTouched) setMessageTouched(true);
+                }}
+                onBlur={() => setMessageTouched(true)}
+                error={Boolean(messageError)}
                 className="font-sans resize-y"
               />
+              <InputError message={messageError} />
 
               <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground bg-muted/30 p-2.5 rounded-lg border border-border/50">
                 <div className="flex items-center gap-2">
@@ -694,14 +723,20 @@ export default function CustomSmsPage() {
           </DialogHeader>
 
           <DialogBody>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="campName" required>Campaign Name</Label>
               <Input
                 id="campName"
                 value={campaignName}
-                onChange={(e) => setCampaignName(e.target.value)}
+                onChange={(e) => {
+                  setCampaignName(e.target.value);
+                  if (!campaignNameTouched) setCampaignNameTouched(true);
+                }}
+                onBlur={() => setCampaignNameTouched(true)}
+                error={Boolean(campaignNameError)}
                 placeholder="e.g. Tuition Reminder - Term 3"
               />
+              <InputError message={campaignNameError} />
             </div>
 
             <div className="grid grid-cols-2 gap-3 text-xs bg-muted/40 p-3.5 rounded-lg border">
@@ -725,7 +760,7 @@ export default function CustomSmsPage() {
               </div>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Sample Message (Row 1):</Label>
               <div className="p-3 bg-muted rounded-lg text-xs leading-relaxed font-sans text-foreground whitespace-pre-wrap border">
                 {interpolatedPreview}

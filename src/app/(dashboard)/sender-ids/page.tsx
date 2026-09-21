@@ -4,10 +4,21 @@ import { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Info, RefreshCw, AtSign } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Plus, Info, RefreshCw, AtSign, Search, X, ArrowDownUp } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { TableSkeletonRows } from '@/components/blocks/ui/skeleton-layouts';
+import { useTableState } from '@/hooks/use-table-state';
+import { SortableHeader } from '@/components/ui/sortable-header';
+import { Pagination } from '@/components/ui/pagination';
 
 interface UserSenderId {
   id: string;
@@ -47,6 +58,60 @@ export default function SenderIdsPage() {
     setRefreshing(true);
     fetchSenderIds();
   };
+
+  const {
+    search,
+    setSearch,
+    clearSearch,
+    sortKey,
+    sortOrder,
+    toggleSort,
+    filters,
+    setFilter,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    totalPages,
+    totalItems,
+    paginatedData: displayedSenderIds,
+  } = useTableState<UserSenderId>({
+    data: senderIds,
+    searchFields: [
+      'senderId',
+      (s) => s.purpose || '',
+      'status',
+      'createdAt',
+      (s) => s.approvedAt || '',
+    ],
+    initialSortKey: 'createdAt',
+    initialSortOrder: 'desc',
+    initialPageSize: 10,
+    initialFilters: { status: 'ALL' },
+    filterFn: (item, currentFilters) => {
+      if (currentFilters.status && currentFilters.status !== 'ALL' && item.status !== currentFilters.status) {
+        return false;
+      }
+      return true;
+    },
+    customSortFn: (a, b, key, order) => {
+      let comp = 0;
+      if (key === 'senderId') {
+        comp = a.senderId.localeCompare(b.senderId);
+      } else if (key === 'purpose') {
+        comp = (a.purpose || '').localeCompare(b.purpose || '');
+      } else if (key === 'status') {
+        comp = a.status.localeCompare(b.status);
+      } else if (key === 'createdAt') {
+        comp = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      } else if (key === 'approvedAt') {
+        const aTime = a.approvedAt ? new Date(a.approvedAt).getTime() : 0;
+        const bTime = b.approvedAt ? new Date(b.approvedAt).getTime() : 0;
+        comp = aTime - bTime;
+      }
+      return order === 'asc' ? comp : -comp;
+    },
+  });
 
   const getStatusBadge = (status: UserSenderId['status']) => {
     switch (status) {
@@ -107,35 +172,150 @@ export default function SenderIdsPage() {
       </div>
 
       <div className="bg-card rounded-lg border shadow-sm overflow-hidden mt-2">
-        <div className="w-full">
+        {/* Toolbar: Search, Status Filter & Sort Order */}
+        <div className="p-4 border-b flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search sender ID or purpose..."
+              className="pl-8 pr-8"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              aria-label="Search sender IDs"
+            />
+            {search && (
+              <button
+                type="button"
+                onClick={clearSearch}
+                className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
+                aria-label="Clear search"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="w-36">
+              <Select
+                value={filters.status || 'ALL'}
+                onValueChange={(val) => setFilter('status', val)}
+              >
+                <SelectTrigger className="h-9 text-xs" aria-label="Filter by status">
+                  <SelectValue placeholder="All Statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">All Statuses</SelectItem>
+                  <SelectItem value="APPROVED">Approved</SelectItem>
+                  <SelectItem value="PENDING">Pending Review</SelectItem>
+                  <SelectItem value="REJECTED">Rejected</SelectItem>
+                  <SelectItem value="SUSPENDED">Suspended</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9 gap-1 text-xs"
+              onClick={() => toggleSort(sortKey || 'createdAt')}
+              title={`Order: ${sortOrder === 'asc' ? 'Ascending' : 'Descending'}`}
+              aria-label="Toggle sort order"
+            >
+              <ArrowDownUp className="h-3.5 w-3.5 mr-1" />
+              <span className="hidden sm:inline">Order:</span> {sortOrder.toUpperCase()}
+            </Button>
+          </div>
+        </div>
+
+        <div className="w-full overflow-x-auto">
           <Table className="min-w-[600px]">
             <TableHeader>
               <TableRow>
-                <TableHead>Sender ID</TableHead>
-                <TableHead>Purpose</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Requested On</TableHead>
-                <TableHead>Approved On</TableHead>
+                <TableHead>
+                  <SortableHeader
+                    column="senderId"
+                    label="Sender ID"
+                    currentSort={sortKey}
+                    currentOrder={sortOrder}
+                    onSort={toggleSort}
+                  />
+                </TableHead>
+                <TableHead>
+                  <SortableHeader
+                    column="purpose"
+                    label="Purpose"
+                    currentSort={sortKey}
+                    currentOrder={sortOrder}
+                    onSort={toggleSort}
+                  />
+                </TableHead>
+                <TableHead>
+                  <SortableHeader
+                    column="status"
+                    label="Status"
+                    currentSort={sortKey}
+                    currentOrder={sortOrder}
+                    onSort={toggleSort}
+                  />
+                </TableHead>
+                <TableHead>
+                  <SortableHeader
+                    column="createdAt"
+                    label="Requested On"
+                    currentSort={sortKey}
+                    currentOrder={sortOrder}
+                    onSort={toggleSort}
+                  />
+                </TableHead>
+                <TableHead>
+                  <SortableHeader
+                    column="approvedAt"
+                    label="Approved On"
+                    currentSort={sortKey}
+                    currentOrder={sortOrder}
+                    onSort={toggleSort}
+                  />
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableSkeletonRows columns={5} rows={5} />
-              ) : senderIds.length === 0 ? (
+              ) : displayedSenderIds.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
                     <AtSign className="h-8 w-8 text-muted-foreground/50 mx-auto mb-2" />
-                    <p className="font-medium text-foreground">No Sender IDs requested yet</p>
-                    <p className="text-xs text-muted-foreground mt-1 mb-4">
-                      Submit an alphanumeric sender mask (e.g. your brand name) for approval.
+                    <p className="font-medium text-foreground">
+                      {senderIds.length === 0 ? 'No Sender IDs requested yet' : 'No matching Sender IDs found'}
                     </p>
-                    <Link href="/sender-ids/apply">
-                      <Button size="sm" variant="outline">Request Sender ID</Button>
-                    </Link>
+                    <p className="text-xs text-muted-foreground mt-1 mb-4">
+                      {senderIds.length === 0
+                        ? 'Submit an alphanumeric sender mask (e.g. your brand name) for approval.'
+                        : 'Try adjusting your search query or status filter.'}
+                    </p>
+                    {senderIds.length === 0 ? (
+                      <Link href="/sender-ids/apply">
+                        <Button size="sm" variant="outline">Request Sender ID</Button>
+                      </Link>
+                    ) : (
+                      (search || filters.status !== 'ALL') && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            clearSearch();
+                            setFilter('status', 'ALL');
+                          }}
+                        >
+                          Reset Filters
+                        </Button>
+                      )
+                    )}
                   </TableCell>
                 </TableRow>
               ) : (
-                senderIds.map((item) => (
+                displayedSenderIds.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell className="font-mono font-bold text-base tracking-wider text-foreground">
                       {item.senderId}
@@ -166,8 +346,20 @@ export default function SenderIdsPage() {
             </TableBody>
           </Table>
         </div>
+
+        {/* Pagination Controls */}
+        {senderIds.length > 0 && (
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalItems={totalItems}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+            pageSizeOptions={[5, 10, 20, 50]}
+          />
+        )}
       </div>
     </div>
   );
 }
-

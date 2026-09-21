@@ -2,6 +2,7 @@ import { AppError } from '@/lib/errors';
 import { ApiResponse, PaginatedResponse } from '@/types/api';
 import { NextResponse } from 'next/server';
 import { HTTP_STATUS } from '@/constants/http-status';
+import { ZodError } from 'zod';
 
 export const successResponse = <T>(
   data: T,
@@ -46,6 +47,21 @@ export const errorResponse = (
   error: unknown,
   status: number = HTTP_STATUS.INTERNAL_SERVER_ERROR
 ): NextResponse<ApiResponse<null>> => {
+  if (error instanceof ZodError) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: error.errors[0]?.message || 'Validation failed',
+          details: error.flatten().fieldErrors,
+        },
+        timestamp: new Date().toISOString(),
+      },
+      { status: HTTP_STATUS.BAD_REQUEST }
+    );
+  }
+
   let errCode = 'INTERNAL_ERROR';
   let errMessage = 'Something went wrong. Please try again later.';
 

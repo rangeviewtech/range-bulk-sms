@@ -53,7 +53,7 @@ export default function ScreenLockPage() {
   
   return (
     <AuthLayout>
-      <div className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
+      <div className="auth-fade-in" style={{ width: '100%', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 10 }}>
         <div className="auth-stagger-1">
           <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
             {dict.auth.sessionLockedTitle}
@@ -70,6 +70,7 @@ export default function ScreenLockPage() {
             </label>
             <PinInput 
               value={pinValue || ''}
+              error={!!errors.pin}
               onChange={(val) => setValue('pin', val, { shouldValidate: true })}
             />
           </div>

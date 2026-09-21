@@ -103,16 +103,15 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors, touchedFields, dirtyFields, isValid },
     control,
     trigger,
+    setError,
+    formState: { errors, touchedFields, dirtyFields },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     mode: 'all',
     reValidateMode: 'onChange',
   });
-
-  const isRegisterValid = isValid && (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || (turnstileToken && !turnstileExpired));
 
   const passwordValue = useWatch({ control, name: 'password' }) || '';
   const confirmPasswordValue = useWatch({ control, name: 'confirmPassword' }) || '';
@@ -175,6 +174,12 @@ export default function RegisterPage() {
       
       if (res?.error) {
         notify.error(res.error);
+        if (res.errors) {
+          for (const [k, v] of Object.entries(res.errors)) {
+            const msg = Array.isArray(v) ? v[0] : v;
+            if (msg) setError(k as keyof RegisterFormValues, { type: 'server', message: msg });
+          }
+        }
         setLoading(false);
       } else {
         notify.success('Account created successfully');
@@ -234,6 +239,8 @@ export default function RegisterPage() {
           height: '100vh',
           zIndex: 0,
           overflow: 'hidden',
+          pointerEvents: 'none',
+          userSelect: 'none',
         }}
       >
         {slides.map((src, index) => {
@@ -253,6 +260,7 @@ export default function RegisterPage() {
                   opacity: isActive ? 0.8 : 0,
                   transition: 'opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1)',
                   zIndex: isActive ? 1 : 0,
+                  pointerEvents: 'none',
                 }}
               >
                 <Image
@@ -264,6 +272,7 @@ export default function RegisterPage() {
                   style={{
                     objectFit: 'cover',
                     objectPosition: 'center',
+                    pointerEvents: 'none',
                   }}
                 />
               </div>
@@ -278,6 +287,7 @@ export default function RegisterPage() {
                   opacity: isActive ? 1 : 0,
                   transition: 'opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1)',
                   zIndex: isActive ? 3 : 2,
+                  pointerEvents: 'none',
                 }}
               />
             </Fragment>
@@ -300,7 +310,9 @@ export default function RegisterPage() {
           flexDirection: 'column',
           padding: '20px 24px',
           boxSizing: 'border-box',
-          zIndex: 20,
+          zIndex: 50,
+          isolation: 'isolate',
+          pointerEvents: 'auto',
           boxShadow: '0 0 30px rgba(0,0,0,0.14)',
           overflowY: 'auto',
           overflowX: 'hidden',
@@ -375,7 +387,7 @@ export default function RegisterPage() {
             }}
           >
             {/* ================= REGISTER FORM ================= */}
-            <form id="register_form" onSubmit={handleSubmit(onSubmit)} className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
+            <form id="register_form" onSubmit={handleSubmit(onSubmit)} className="auth-fade-in" style={{ width: '100%', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 10 }}>
               <div className="auth-stagger-1">
                 <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
                   {dict.auth.createAccountTitle}
@@ -387,8 +399,20 @@ export default function RegisterPage() {
               </div>
 
               {/* Name Field */}
-              <div className="form-group auth-stagger-2" style={{ position: 'relative', marginBottom: '0.9rem' }}>
-                <label htmlFor="name" style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK }}>
+              <div 
+                className="form-group auth-stagger-2" 
+                style={{ position: 'relative', zIndex: 10, marginBottom: '0.9rem', pointerEvents: 'auto' }}
+                onClick={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (target.tagName !== 'INPUT') {
+                    document.getElementById('name')?.focus();
+                  }
+                }}
+              >
+                <label 
+                  htmlFor="name" 
+                  style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK, cursor: 'pointer', pointerEvents: 'auto', userSelect: 'none' }}
+                >
                   {dict.auth.fullNamePlaceholder || 'Full Name'} <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span>
                 </label>
                 <input
@@ -401,6 +425,12 @@ export default function RegisterPage() {
                   disabled={loading || !!socialLoading}
                   aria-invalid={errors.name ? "true" : undefined}
                   style={{
+                    position: 'relative',
+                    zIndex: 10,
+                    pointerEvents: 'auto',
+                    cursor: 'text',
+                    userSelect: 'text',
+                    WebkitUserSelect: 'text',
                     width: '100%',
                     height: '38px',
                     padding: '6px 12px',
@@ -423,8 +453,20 @@ export default function RegisterPage() {
               </div>
 
               {/* Email Field */}
-              <div className="form-group usernamefd auth-stagger-2" style={{ position: 'relative', marginBottom: '0.9rem' }}>
-                <label htmlFor="email" style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK }}>
+              <div 
+                className="form-group usernamefd auth-stagger-2" 
+                style={{ position: 'relative', zIndex: 10, marginBottom: '0.9rem', pointerEvents: 'auto' }}
+                onClick={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (target.tagName !== 'INPUT') {
+                    document.getElementById('email')?.focus();
+                  }
+                }}
+              >
+                <label 
+                  htmlFor="email" 
+                  style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK, cursor: 'pointer', pointerEvents: 'auto', userSelect: 'none' }}
+                >
                   {dict.auth.emailPlaceholder || 'Email Address'} <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span>
                 </label>
                 <input
@@ -437,6 +479,12 @@ export default function RegisterPage() {
                   disabled={loading || !!socialLoading}
                   aria-invalid={errors.email ? "true" : undefined}
                   style={{
+                    position: 'relative',
+                    zIndex: 10,
+                    pointerEvents: 'auto',
+                    cursor: 'text',
+                    userSelect: 'text',
+                    WebkitUserSelect: 'text',
                     width: '100%',
                     height: '38px',
                     padding: '6px 12px',
@@ -459,11 +507,23 @@ export default function RegisterPage() {
               </div>
 
               {/* Password Field */}
-              <div className="form-group passwordfd auth-stagger-3" style={{ position: 'relative', marginBottom: '0.9rem' }}>
-                <label htmlFor="password" style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK }}>
+              <div 
+                className="form-group passwordfd auth-stagger-3" 
+                style={{ position: 'relative', zIndex: 10, marginBottom: '0.9rem', pointerEvents: 'auto' }}
+                onClick={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (target.tagName !== 'INPUT' && !target.closest('.field-icon')) {
+                    document.getElementById('password')?.focus();
+                  }
+                }}
+              >
+                <label 
+                  htmlFor="password" 
+                  style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK, cursor: 'pointer', pointerEvents: 'auto', userSelect: 'none' }}
+                >
                   {dict.auth.registerPasswordPlaceholder || 'Password'} <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span>
                 </label>
-                <div style={{ position: 'relative' }}>
+                <div style={{ position: 'relative', width: '100%' }}>
                   <input
                     {...register('password')}
                     type={showPassword ? 'text' : 'password'}
@@ -474,6 +534,12 @@ export default function RegisterPage() {
                     disabled={loading || !!socialLoading}
                     aria-invalid={errors.password ? "true" : undefined}
                     style={{
+                      position: 'relative',
+                      zIndex: 10,
+                      pointerEvents: 'auto',
+                      cursor: 'text',
+                      userSelect: 'text',
+                      WebkitUserSelect: 'text',
                       width: '100%',
                       height: '38px',
                       padding: isRtl ? '6px 12px 6px 36px' : '6px 36px 6px 12px',
@@ -494,11 +560,16 @@ export default function RegisterPage() {
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowPassword(!showPassword);
+                    }}
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                     className="field-icon"
                     style={{
                       position: 'absolute',
+                      zIndex: 20,
+                      pointerEvents: 'auto',
                       top: '50%',
                       right: isRtl ? 'auto' : '12px',
                       left: isRtl ? '12px' : 'auto',
@@ -534,11 +605,23 @@ export default function RegisterPage() {
               </div>
 
               {/* Confirm Password Field */}
-              <div className="form-group auth-stagger-4" style={{ position: 'relative', marginBottom: '0.9rem' }}>
-                <label htmlFor="confirmPassword" style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK }}>
+              <div 
+                className="form-group auth-stagger-4" 
+                style={{ position: 'relative', zIndex: 10, marginBottom: '0.9rem', pointerEvents: 'auto' }}
+                onClick={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (target.tagName !== 'INPUT' && !target.closest('.field-icon')) {
+                    document.getElementById('confirmPassword')?.focus();
+                  }
+                }}
+              >
+                <label 
+                  htmlFor="confirmPassword" 
+                  style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK, cursor: 'pointer', pointerEvents: 'auto', userSelect: 'none' }}
+                >
                   {dict.auth.confirmPasswordPlaceholder || 'Confirm Password'} <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span>
                 </label>
-                <div style={{ position: 'relative' }}>
+                <div style={{ position: 'relative', width: '100%' }}>
                   <input
                     {...register('confirmPassword')}
                     type={showConfirmPassword ? 'text' : 'password'}
@@ -549,6 +632,12 @@ export default function RegisterPage() {
                     disabled={loading || !!socialLoading}
                     aria-invalid={errors.confirmPassword || (touchedFields.confirmPassword && passwordValue !== confirmPasswordValue) ? "true" : undefined}
                     style={{
+                      position: 'relative',
+                      zIndex: 10,
+                      pointerEvents: 'auto',
+                      cursor: 'text',
+                      userSelect: 'text',
+                      WebkitUserSelect: 'text',
                       width: '100%',
                       height: '38px',
                       padding: isRtl ? '6px 12px 6px 36px' : '6px 36px 6px 12px',
@@ -569,11 +658,16 @@ export default function RegisterPage() {
                   />
                   <button
                     type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowConfirmPassword(!showConfirmPassword);
+                    }}
                     aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
                     className="field-icon"
                     style={{
                       position: 'absolute',
+                      zIndex: 20,
+                      pointerEvents: 'auto',
                       top: '50%',
                       right: isRtl ? 'auto' : '12px',
                       left: isRtl ? '12px' : 'auto',
@@ -661,7 +755,7 @@ export default function RegisterPage() {
                   type="submit"
                   id="submit_button"
                   className="btn btn-primary btn-main auth-btn-primary"
-                  disabled={loading || !!socialLoading || !isRegisterValid}
+                  disabled={loading || !!socialLoading}
                   style={{
                     width: '100%',
                     height: '38px',
@@ -673,14 +767,14 @@ export default function RegisterPage() {
                     fontWeight: 700,
                     borderRadius: '7px',
                     border: '0',
-                    cursor: loading || !!socialLoading || !isRegisterValid ? 'not-allowed' : 'pointer',
+                    cursor: loading || !!socialLoading ? 'not-allowed' : 'pointer',
                     textAlign: 'center',
                     boxSizing: 'border-box',
                     fontFamily: FONT_STACK,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    opacity: loading || !isRegisterValid ? 0.7 : 1,
+                    opacity: loading ? 0.7 : 1,
                   }}
                 >
                   {loading ? dict.auth.creatingAccount : dict.auth.createAccountButton}

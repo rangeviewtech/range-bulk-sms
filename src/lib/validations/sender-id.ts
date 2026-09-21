@@ -18,20 +18,20 @@ export const senderIdActionSchema = z.object({
 
 // Admin provider config schema
 export const smsProviderSchema = z.object({
-  name: z.string().min(1).max(50),
-  displayName: z.string().min(1).max(100),
+  name: z.string().trim().min(2, 'Provider identifier must be at least 2 characters').max(50),
+  displayName: z.string().trim().min(2, 'Display name must be at least 2 characters').max(100),
   type: z.enum(['HTTP', 'SMPP', 'SDK']).default('HTTP'),
-  baseUrl: z.string().url().optional(),
-  apiKey: z.string().optional(),
-  apiSecret: z.string().optional(),
-  username: z.string().optional(),
-  password: z.string().optional(),
-  senderId: z.string().max(11).optional(),
-  costPerSms: z.number().nonnegative().default(0),
-  priority: z.number().int().min(0).default(0),
+  baseUrl: z.string().trim().url('Must be a valid URL (e.g. https://api.gateway.com/v1)').optional().or(z.literal('')),
+  apiKey: z.string().trim().optional(),
+  apiSecret: z.string().trim().optional(),
+  username: z.string().trim().optional(),
+  password: z.string().trim().optional(),
+  senderId: z.string().trim().max(11).optional(),
+  costPerSms: z.coerce.number().min(0, 'Cost must be zero or positive').default(0),
+  priority: z.coerce.number().int().min(1, 'Priority must be at least 1').default(1),
   isActive: z.boolean().default(true),
   isFallback: z.boolean().default(false),
-  maxThroughput: z.number().int().positive().optional(),
+  maxThroughput: z.coerce.number().int().positive('Max throughput must be positive').default(500),
   supportsDlr: z.boolean().default(false),
 });
 
@@ -55,10 +55,10 @@ export const updateUserSchema = z.object({
 
 // Support ticket schema
 export const createTicketSchema = z.object({
-  subject: z.string().min(5, 'Subject required').max(200),
-  category: z.enum(['billing', 'technical', 'sms_delivery', 'api', 'account', 'other']),
+  subject: z.string().trim().min(5, 'Subject must be at least 5 characters').max(200),
+  category: z.string().trim().min(1, 'Category is required').max(100),
   priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).default('MEDIUM'),
-  message: z.string().min(10, 'Please describe your issue').max(5000),
+  message: z.string().trim().min(10, 'Please provide at least 10 characters describing your issue').max(5000),
 });
 
 export const ticketMessageSchema = z.object({

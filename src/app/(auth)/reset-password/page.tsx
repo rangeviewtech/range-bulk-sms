@@ -54,7 +54,7 @@ function ResetPasswordForm() {
     });
   }, [token]);
 
-  const { register, handleSubmit, formState: { errors }, setValue, control, trigger } = useForm<ResetPasswordValues>({
+  const { register, handleSubmit, formState: { errors }, setValue, setError, control, trigger } = useForm<ResetPasswordValues>({
     resolver: zodResolver(resetPasswordSchema),
     mode: 'all',
     reValidateMode: 'onChange',
@@ -136,6 +136,12 @@ function ResetPasswordForm() {
 
     if (res?.error) {
       notify.error(res.error);
+      if (res.errors) {
+        for (const [k, v] of Object.entries(res.errors)) {
+          const msg = Array.isArray(v) ? v[0] : v;
+          if (msg) setError(k as keyof ResetPasswordValues, { type: 'server', message: msg });
+        }
+      }
       setValue('turnstileToken', '');
       setLoading(false);
     } else {
@@ -148,7 +154,7 @@ function ResetPasswordForm() {
   if (isTokenValidating) {
     return (
       <AuthLayout>
-        <div className="auth-fade-in" style={{ width: '100%', float: 'left', textAlign: 'center', padding: '40px 0' }}>
+        <div className="auth-fade-in" style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 0' }}>
           <div style={{ display: 'inline-block', width: '24px', height: '24px', border: '3px solid rgba(251, 202, 7, 0.3)', borderTopColor: '#FBCA07', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
         </div>
       </AuthLayout>
@@ -158,7 +164,7 @@ function ResetPasswordForm() {
   if (!token || !isTokenValid) {
     return (
       <AuthLayout>
-        <div className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
+        <div className="auth-fade-in" style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
           <div className="auth-stagger-1">
             <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--destructive))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
               {dict.auth.invalidOrExpiredTitle}
@@ -201,7 +207,7 @@ function ResetPasswordForm() {
   if (success) {
     return (
       <AuthLayout>
-        <div className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
+        <div className="auth-fade-in" style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
           <div className="auth-stagger-1">
             <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
               {dict.auth.passwordUpdatedTitle}
@@ -243,7 +249,7 @@ function ResetPasswordForm() {
 
   return (
     <AuthLayout>
-      <form id="resetpwd_main" onSubmit={handleSubmit(onSubmit)} className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
+      <form id="resetpwd_main" onSubmit={handleSubmit(onSubmit)} className="auth-fade-in" style={{ width: '100%', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 10 }}>
         <div className="auth-stagger-1">
           <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
             {dict.auth.resetPasswordTitle}
@@ -256,11 +262,23 @@ function ResetPasswordForm() {
         <input type="hidden" {...register('token')} />
 
         {/* Password Field */}
-        <div className="form-group passwordfd auth-stagger-2" style={{ position: 'relative', marginBottom: '0.9rem' }}>
-          <label htmlFor="password" style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK }}>
+        <div 
+          className="form-group passwordfd auth-stagger-2" 
+          style={{ position: 'relative', zIndex: 10, marginBottom: '0.9rem', pointerEvents: 'auto' }}
+          onClick={(e) => {
+            const target = e.target as HTMLElement;
+            if (target.tagName !== 'INPUT' && !target.closest('.field-icon')) {
+              document.getElementById('password')?.focus();
+            }
+          }}
+        >
+          <label 
+            htmlFor="password" 
+            style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK, cursor: 'pointer', pointerEvents: 'auto', userSelect: 'none' }}
+          >
             {dict.auth.newPasswordPlaceholder || 'New Password'} <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span>
           </label>
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', width: '100%' }}>
             <input
               {...passwordRegister}
               type={showPassword ? 'text' : 'password'}
@@ -276,6 +294,12 @@ function ResetPasswordForm() {
               }}
               aria-invalid={showPasswordError ? "true" : undefined}
               style={{
+                position: 'relative',
+                zIndex: 10,
+                pointerEvents: 'auto',
+                cursor: 'text',
+                userSelect: 'text',
+                WebkitUserSelect: 'text',
                 width: '100%',
                 height: '38px',
                 padding: isRtl ? '6px 12px 6px 36px' : '6px 36px 6px 12px',
@@ -297,11 +321,16 @@ function ResetPasswordForm() {
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowPassword(!showPassword);
+              }}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
               className="field-icon"
               style={{
                 position: 'absolute',
+                zIndex: 20,
+                pointerEvents: 'auto',
                 top: '50%',
                 right: isRtl ? 'auto' : '12px',
                 left: isRtl ? '12px' : 'auto',
@@ -342,11 +371,23 @@ function ResetPasswordForm() {
         </div>
 
         {/* Confirm Password Field */}
-        <div className="form-group auth-stagger-3" style={{ position: 'relative', marginBottom: '0.9rem' }}>
-          <label htmlFor="confirmPassword" style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK }}>
+        <div 
+          className="form-group auth-stagger-3" 
+          style={{ position: 'relative', zIndex: 10, marginBottom: '0.9rem', pointerEvents: 'auto' }}
+          onClick={(e) => {
+            const target = e.target as HTMLElement;
+            if (target.tagName !== 'INPUT' && !target.closest('.field-icon')) {
+              document.getElementById('confirmPassword')?.focus();
+            }
+          }}
+        >
+          <label 
+            htmlFor="confirmPassword" 
+            style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '4px', fontFamily: FONT_STACK, cursor: 'pointer', pointerEvents: 'auto', userSelect: 'none' }}
+          >
             {dict.auth.confirmPasswordPlaceholder || 'Confirm Password'} <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span>
           </label>
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', width: '100%' }}>
             <input
               {...confirmPasswordRegister}
               type={showConfirmPassword ? 'text' : 'password'}
@@ -362,6 +403,12 @@ function ResetPasswordForm() {
               }}
               aria-invalid={showConfirmPasswordError ? "true" : undefined}
               style={{
+                position: 'relative',
+                zIndex: 10,
+                pointerEvents: 'auto',
+                cursor: 'text',
+                userSelect: 'text',
+                WebkitUserSelect: 'text',
                 width: '100%',
                 height: '38px',
                 padding: isRtl ? '6px 12px 6px 36px' : '6px 36px 6px 12px',
@@ -383,11 +430,16 @@ function ResetPasswordForm() {
             />
             <button
               type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowConfirmPassword(!showConfirmPassword);
+              }}
               aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
               className="field-icon"
               style={{
                 position: 'absolute',
+                zIndex: 20,
+                pointerEvents: 'auto',
                 top: '50%',
                 right: isRtl ? 'auto' : '12px',
                 left: isRtl ? '12px' : 'auto',
@@ -465,7 +517,7 @@ function ResetPasswordForm() {
           <div className="login-con" style={{ flex: 1 }}>
             <button
               type="submit"
-              disabled={loading || !isResetValid}
+              disabled={loading}
               className="btn btn-primary btn-main auth-btn-primary"
               style={{
                 width: '100%',
@@ -478,11 +530,11 @@ function ResetPasswordForm() {
                 fontWeight: 700,
                 borderRadius: '7px',
                 border: '0',
-                cursor: loading || !isResetValid ? 'not-allowed' : 'pointer',
+                cursor: loading ? 'not-allowed' : 'pointer',
                 textAlign: 'center',
                 boxSizing: 'border-box',
                 fontFamily: FONT_STACK,
-                opacity: loading || !isResetValid ? 0.65 : 1,
+                opacity: loading ? 0.7 : 1,
               }}
             >
               {loading ? dict.auth.updatingPassword : dict.auth.updatePasswordButton}

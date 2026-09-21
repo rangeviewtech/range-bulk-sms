@@ -100,7 +100,7 @@ export function WebhookSimulator() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Controls Card */}
         <div className="p-5 rounded-2xl border border-border bg-card shadow-xs space-y-4">
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="text-xs font-semibold text-foreground">Delivery Event Type</label>
             <select
               value={eventType}
@@ -114,7 +114,7 @@ export function WebhookSimulator() {
             </select>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="text-xs font-semibold text-foreground">Destination Webhook URL</label>
             <input
               type="url"
@@ -128,7 +128,7 @@ export function WebhookSimulator() {
             </p>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
               <Key className="h-3.5 w-3.5 text-[#FBCA07]" /> Webhook HMAC Secret
             </label>
@@ -140,7 +140,7 @@ export function WebhookSimulator() {
             />
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="text-xs font-semibold text-foreground">Recipient Phone Number</label>
             <input
               type="text"

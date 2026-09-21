@@ -51,7 +51,7 @@ export function CookieBanner() {
   return (
     <div
       dir={isRtl ? 'rtl' : 'ltr'}
-      className="fixed bottom-6 right-6 z-50 border border-border shadow-2xl p-4 rounded-lg flex flex-col gap-3.5 max-w-xs transition-all duration-300 animate-in fade-in slide-in-from-bottom-5"
+      className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 md:left-24 z-40 border border-border shadow-2xl p-4 rounded-lg flex flex-col gap-3.5 max-w-xs transition-all duration-300 animate-in fade-in slide-in-from-bottom-5 pointer-events-auto"
       style={{
         fontFamily: FONT_STACK,
         width: '300px',

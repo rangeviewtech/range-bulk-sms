@@ -553,13 +553,17 @@ $response | Format-List`;
           </div>
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md transition-all duration-200 ${
+              copied
+                ? 'bg-emerald-600 hover:bg-emerald-600 text-white font-medium border border-emerald-600 shadow-sm'
+                : 'bg-white/10 hover:bg-white/20 text-white border border-transparent'
+            }`}
             aria-label="Copy code snippet to clipboard"
           >
             {copied ? (
               <>
-                <Check className="h-3.5 w-3.5 text-emerald-400" />
-                <span className="text-emerald-400 font-semibold">Copied!</span>
+                <Check className="h-3.5 w-3.5 text-white stroke-[2.5]" />
+                <span className="text-white font-semibold">Copied!</span>
               </>
             ) : (
               <>

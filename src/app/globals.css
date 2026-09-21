@@ -479,30 +479,74 @@ input:-webkit-autofill:active {
   animation: authSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both;
 }
 
-/* Modern Input Focus & Hover Transitions */
-.auth-input {
+/* Universal Form Control Clickability, Focus & Interaction Rules */
+input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="range"]):not([type="color"]):not([type="file"]),
+textarea {
+  pointer-events: auto !important;
+  cursor: text !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+select {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled {
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+label {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.auth-input,
+input.auth-input {
+  position: relative !important;
+  z-index: 10 !important;
+  pointer-events: auto !important;
+  cursor: text !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
   transition: border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
               background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .auth-input:hover:not(:disabled):not(:focus) {
-  border-color: hsl(var(--foreground) / 0.28) !important;
+  border-color: hsl(var(--foreground) / 0.35) !important;
 }
 
 .auth-input:focus,
 .auth-input:focus-visible,
 .auth-input:active {
   border-color: #04648C !important;
-  box-shadow: 0 0 0 1px #04648C !important;
-  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(4, 100, 140, 0.25), 0 0 0 1px #04648C !important;
+  outline: 2px solid transparent !important;
+  outline-offset: 2px !important;
 }
 
 .dark .auth-input:focus,
 .dark .auth-input:focus-visible,
 .dark .auth-input:active {
   border-color: #38bdf8 !important;
-  box-shadow: 0 0 0 1px #38bdf8 !important;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.28), 0 0 0 1px #38bdf8 !important;
+}
+
+/* Hide Microsoft Edge native clear / reveal buttons to prevent overlay clashes */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
 }
 
 .auth-link,

@@ -174,7 +174,7 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
   };
 
   return (
-    <div className="auth-fade-in" style={{ width: '100%', float: 'left' }}>
+    <div className="auth-fade-in" style={{ width: '100%', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 10 }}>
       {/* Title & Description */}
       <div className="auth-stagger-1">
         <h3 style={{ fontSize: '28px', fontWeight: 500, color: 'hsl(var(--foreground))', marginBottom: '8px', lineHeight: '33.6px', fontFamily: FONT_STACK }}>
@@ -294,6 +294,7 @@ export function UnifiedVerification({ userId, defaultChannel, defaultMethod, all
               </label>
               <PinInput
                 value={code}
+                error={!!error}
                 onChange={(val) => {
                   setCode(val);
                   if (error) setError('');

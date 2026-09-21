@@ -52,9 +52,13 @@ export default function ErrorPage({
             <span>Stack Trace & Diagnostics</span>
             <button 
               onClick={copyDiagnosticLog}
-              className="flex items-center gap-1 text-slate-300 hover:text-white px-2 py-0.5 bg-slate-800 rounded text-[10px]"
+              className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] transition-all duration-200 ${
+                copied
+                  ? 'bg-emerald-600 hover:bg-emerald-600 text-white font-medium border border-emerald-600 shadow-sm'
+                  : 'text-slate-300 hover:text-white bg-slate-800'
+              }`}
             >
-              {copied ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3" />}
+              {copied ? <Check className="w-3 h-3 text-white stroke-[2.5]" /> : <Copy className="w-3 h-3" />}
               <span>{copied ? 'Copied Log' : 'Copy Log'}</span>
             </button>
           </div>

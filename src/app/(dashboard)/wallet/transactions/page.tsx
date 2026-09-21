@@ -6,8 +6,21 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, RefreshCw, ArrowLeft, ArrowUpRight, ArrowDownRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import {
+  Download,
+  RefreshCw,
+  ArrowLeft,
+  ArrowUpRight,
+  ArrowDownRight,
+  Search,
+  X,
+  ArrowDownUp,
+} from 'lucide-react';
 import { toast } from 'sonner';
+import { useTableState } from '@/hooks/use-table-state';
+import { SortableHeader } from '@/components/ui/sortable-header';
+import { Pagination } from '@/components/ui/pagination';
 
 interface Transaction {
   id: string;
@@ -25,30 +38,15 @@ export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [filterType, setFilterType] = useState<string>('ALL');
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
 
-  const fetchTransactions = useCallback(async (targetPage = page, type = filterType) => {
+  const fetchTransactions = useCallback(async () => {
     try {
       setLoading(true);
-      const queryParams = new URLSearchParams({
-        page: targetPage.toString(),
-        limit: '15',
-      });
-      if (type !== 'ALL') {
-        queryParams.append('type', type);
-      }
-
-      const res = await fetch(`/api/wallet/transactions?${queryParams.toString()}`);
+      const res = await fetch('/api/wallet/transactions?limit=250');
       if (!res.ok) throw new Error('Failed to fetch transactions');
       const json = await res.json();
       const data = json.data;
-
       setTransactions(data.transactions || []);
-      setTotalRecords(data.total || 0);
-      setTotalPages(Math.ceil((data.total || 0) / (data.limit || 15)) || 1);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Error loading transactions';
       toast.error(msg);
@@ -56,30 +54,84 @@ export default function TransactionsPage() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [filterType, page]);
+  }, []);
 
   useEffect(() => {
-    fetchTransactions(page, filterType);
-  }, [fetchTransactions, page, filterType]);
+    fetchTransactions();
+  }, [fetchTransactions]);
 
   const handleRefresh = () => {
     setRefreshing(true);
-    fetchTransactions(page, filterType);
+    fetchTransactions();
   };
 
-  const handleTypeChange = (type: string) => {
-    setFilterType(type);
-    setPage(1);
-  };
+  const {
+    search,
+    setSearch,
+    clearSearch,
+    sortKey,
+    sortOrder,
+    toggleSort,
+    filters,
+    setFilter,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    totalPages,
+    totalItems,
+    paginatedData: displayedTransactions,
+    filteredData,
+  } = useTableState<Transaction>({
+    data: transactions,
+    searchFields: [
+      'reference',
+      (t) => t.description || '',
+      'type',
+      (t) => String(t.amount || ''),
+      (t) => String(t.balanceAfter || ''),
+      (t) => t.status || 'COMPLETED',
+      (t) => t.createdAt,
+    ],
+    initialSortKey: 'createdAt',
+    initialSortOrder: 'desc',
+    initialPageSize: 10,
+    initialFilters: { type: 'ALL' },
+    filterFn: (item, currentFilters) => {
+      if (currentFilters.type && currentFilters.type !== 'ALL' && item.type !== currentFilters.type) {
+        return false;
+      }
+      return true;
+    },
+    customSortFn: (a, b, key, order) => {
+      let comp = 0;
+      if (key === 'amount') {
+        comp = Number(a.amount || 0) - Number(b.amount || 0);
+      } else if (key === 'balanceAfter') {
+        comp = Number(a.balanceAfter || 0) - Number(b.balanceAfter || 0);
+      } else if (key === 'createdAt') {
+        comp = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      } else if (key === 'type') {
+        comp = a.type.localeCompare(b.type);
+      } else if (key === 'status') {
+        comp = (a.status || 'COMPLETED').localeCompare(b.status || 'COMPLETED');
+      } else if (key === 'description') {
+        comp = (a.description || '').localeCompare(b.description || '');
+      } else if (key === 'reference') {
+        comp = a.reference.localeCompare(b.reference);
+      }
+      return order === 'asc' ? comp : -comp;
+    },
+  });
 
   const handleExportCSV = () => {
-    if (transactions.length === 0) {
+    if (filteredData.length === 0) {
       toast.error('No transactions to export');
       return;
     }
 
     const headers = ['ID', 'Reference', 'Type', 'Amount', 'Balance After', 'Description', 'Date', 'Status'];
-    const rows = transactions.map((t) => [
+    const rows = filteredData.map((t) => [
       t.id,
       t.reference,
       t.type,
@@ -99,7 +151,7 @@ export default function TransactionsPage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    toast.success('Exported transactions to CSV');
+    toast.success(`Exported ${filteredData.length} transactions to CSV`);
   };
 
   return (
@@ -127,6 +179,7 @@ export default function TransactionsPage() {
             onClick={handleRefresh}
             disabled={refreshing || loading}
             className="flex-1 sm:flex-initial"
+            aria-label="Refresh transactions"
           >
             <RefreshCw className={`h-4 w-4 mr-1.5 ${refreshing ? 'animate-spin' : ''}`} />
             Refresh
@@ -135,8 +188,9 @@ export default function TransactionsPage() {
             variant="outline"
             size="sm"
             onClick={handleExportCSV}
-            disabled={transactions.length === 0}
+            disabled={filteredData.length === 0}
             className="flex-1 sm:flex-initial"
+            aria-label="Export transactions to CSV"
           >
             <Download className="mr-1.5 h-4 w-4" /> Export CSV
           </Button>
@@ -145,58 +199,174 @@ export default function TransactionsPage() {
 
       {/* Main Table Card */}
       <Card className="border-secondary/20 shadow-sm">
-        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4">
-          <div>
-            <CardTitle>All Transactions ({totalRecords})</CardTitle>
-            <CardDescription>Filtered by transaction category.</CardDescription>
+        <CardHeader className="flex flex-col space-y-4 p-4 sm:p-6 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <CardTitle className="text-lg">All Transactions ({transactions.length})</CardTitle>
+              <CardDescription>Search, filter, and inspect detailed ledger transactions.</CardDescription>
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Filtered: <span className="font-semibold text-foreground">{totalItems}</span> results
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 bg-muted/40 p-1 rounded-lg border w-full sm:w-auto">
-            {['ALL', 'DEPOSIT', 'DEDUCTION', 'REFUND'].map((type) => (
+          {/* Controls: Search, Type Filters & Sort Direction */}
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pt-2">
+            {/* Multi-field search */}
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search reference, description, amount, status..."
+                className="pl-9 pr-9"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                aria-label="Search transactions"
+              />
+              {search && (
+                <button
+                  type="button"
+                  onClick={clearSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
+                  aria-label="Clear search"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Type Category Filter Buttons */}
+              <div className="flex flex-wrap items-center gap-1 bg-muted/40 p-1 rounded-lg border">
+                {(['ALL', 'DEPOSIT', 'DEDUCTION', 'REFUND'] as const).map((t) => (
+                  <Button
+                    key={t}
+                    variant={filters.type === t ? 'default' : 'ghost'}
+                    size="sm"
+                    className={`text-xs px-2.5 py-1 h-7 ${
+                      filters.type === t ? 'bg-primary text-primary-foreground font-bold shadow-none' : ''
+                    }`}
+                    onClick={() => setFilter('type', t)}
+                  >
+                    {t}
+                  </Button>
+                ))}
+              </div>
+
+              {/* Sort Order Toggle */}
               <Button
-                key={type}
-                variant={filterType === type ? 'default' : 'ghost'}
+                variant="outline"
                 size="sm"
-                className={`text-xs px-3 py-1 h-7 flex-1 sm:flex-initial ${
-                  filterType === type ? 'bg-primary text-primary-foreground font-bold shadow-none' : ''
-                }`}
-                onClick={() => handleTypeChange(type)}
+                className="h-8 gap-1.5 text-xs"
+                onClick={() => toggleSort(sortKey || 'createdAt')}
+                title={`Sorting ${sortOrder === 'asc' ? 'Ascending' : 'Descending'}`}
+                aria-label="Toggle sort order"
               >
-                {type}
+                <ArrowDownUp className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Order:</span> {sortOrder.toUpperCase()}
               </Button>
-            ))}
+            </div>
           </div>
         </CardHeader>
-        <CardContent className="p-0 sm:p-6">
+
+        <CardContent className="p-0">
           {loading ? (
-            <div className="space-y-3 py-6">
+            <div className="space-y-3 p-6">
               {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="h-10 w-full bg-muted/40 animate-pulse rounded" />
               ))}
             </div>
-          ) : transactions.length === 0 ? (
-            <div className="text-center py-12 border border-dashed rounded-lg">
-              <p className="text-sm font-medium text-foreground">No transactions matching your filter</p>
+          ) : displayedTransactions.length === 0 ? (
+            <div className="text-center py-12 px-4 border-t border-dashed">
+              <p className="text-sm font-medium text-foreground">No transactions matching your criteria</p>
               <p className="text-xs text-muted-foreground mt-1">
-                Try selecting a different filter or depositing funds.
+                Try refining your search query or selecting a different transaction filter.
               </p>
+              {(search || filters.type !== 'ALL') && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-3"
+                  onClick={() => {
+                    clearSearch();
+                    setFilter('type', 'ALL');
+                  }}
+                >
+                  Reset Filters
+                </Button>
+              )}
             </div>
           ) : (
-            <div className="w-full">
+            <div className="w-full overflow-x-auto">
               <Table className="min-w-[700px]">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Reference</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Balance After</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>
+                      <SortableHeader
+                        column="reference"
+                        label="Reference"
+                        currentSort={sortKey}
+                        currentOrder={sortOrder}
+                        onSort={toggleSort}
+                      />
+                    </TableHead>
+                    <TableHead>
+                      <SortableHeader
+                        column="type"
+                        label="Type"
+                        currentSort={sortKey}
+                        currentOrder={sortOrder}
+                        onSort={toggleSort}
+                      />
+                    </TableHead>
+                    <TableHead>
+                      <SortableHeader
+                        column="description"
+                        label="Description"
+                        currentSort={sortKey}
+                        currentOrder={sortOrder}
+                        onSort={toggleSort}
+                      />
+                    </TableHead>
+                    <TableHead>
+                      <SortableHeader
+                        column="amount"
+                        label="Amount"
+                        currentSort={sortKey}
+                        currentOrder={sortOrder}
+                        onSort={toggleSort}
+                      />
+                    </TableHead>
+                    <TableHead>
+                      <SortableHeader
+                        column="balanceAfter"
+                        label="Balance After"
+                        currentSort={sortKey}
+                        currentOrder={sortOrder}
+                        onSort={toggleSort}
+                      />
+                    </TableHead>
+                    <TableHead>
+                      <SortableHeader
+                        column="createdAt"
+                        label="Date"
+                        currentSort={sortKey}
+                        currentOrder={sortOrder}
+                        onSort={toggleSort}
+                      />
+                    </TableHead>
+                    <TableHead>
+                      <SortableHeader
+                        column="status"
+                        label="Status"
+                        currentSort={sortKey}
+                        currentOrder={sortOrder}
+                        onSort={toggleSort}
+                      />
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {transactions.map((tx) => {
+                  {displayedTransactions.map((tx) => {
                     const isDeposit = tx.type === 'DEPOSIT';
                     const isRefund = tx.type === 'REFUND';
                     const amountVal = Number(tx.amount || 0);
@@ -273,32 +443,16 @@ export default function TransactionsPage() {
           )}
 
           {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t p-4 sm:p-0 sm:pt-4 mt-4">
-              <p className="text-xs text-muted-foreground">
-                Page {page} of {totalPages} ({totalRecords} total transactions)
-              </p>
-              <div className="flex items-center justify-between w-full sm:w-auto gap-1.5">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page <= 1 || loading}
-                  className="flex-1 sm:flex-initial"
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Previous
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page >= totalPages || loading}
-                  className="flex-1 sm:flex-initial"
-                >
-                  Next <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
-            </div>
+          {transactions.length > 0 && (
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              pageSize={pageSize}
+              totalItems={totalItems}
+              onPageChange={setPage}
+              onPageSizeChange={setPageSize}
+              pageSizeOptions={[5, 10, 20, 50, 100]}
+            />
           )}
         </CardContent>
       </Card>

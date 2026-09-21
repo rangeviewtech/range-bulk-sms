@@ -36,10 +36,14 @@ export function FormSelect({ name, label, description, options, placeholder = "S
       control={control}
       name={name}
       render={({ field: { value, onChange, ...field } }) => (
-        <div className={cn("space-y-2", className)}>
-          {label && <Label required={required} className={cn(error && "text-destructive")}>{label}</Label>}
+        <div className={cn("space-y-1 pointer-events-auto", className)}>
+          {label && (
+            <Label htmlFor={name} required={required} className={cn(error && "text-destructive", "cursor-pointer")}>
+              {label}
+            </Label>
+          )}
           <Select onValueChange={onChange} value={value}>
-            <SelectTrigger {...field}>
+            <SelectTrigger id={name} {...field}>
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>

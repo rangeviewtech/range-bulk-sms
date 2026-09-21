@@ -28,6 +28,9 @@ import {
 import { ArrowLeft, RefreshCw, DollarSign, Wallet, CheckCircle, ArrowUpRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { TableSkeletonRows } from '@/components/blocks/ui/skeleton-layouts';
+import { useFormValidation } from '@/hooks/use-form-validation';
+import { agentPayoutSchema } from '@/lib/validations/admin';
+import { InputError } from '@/components/ui/input-error';
 
 interface PaidRecord {
   id: string;
@@ -52,10 +55,25 @@ export default function EarningsPage() {
 
   // Modal state
   const [isPayoutOpen, setIsPayoutOpen] = useState(false);
-  const [payoutAmount, setPayoutAmount] = useState('');
-  const [payoutMethod, setPayoutMethod] = useState('Mobile Money');
-  const [payoutDetails, setPayoutDetails] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  const {
+    values: payoutForm,
+    errors: payoutErrors,
+    touched: payoutTouched,
+    setFieldValue: setPayoutField,
+    handleBlur: handlePayoutBlur,
+    validateAll: validatePayoutAll,
+    reset: resetPayoutForm,
+    setServerErrors: setPayoutServerErrors,
+  } = useFormValidation({
+    initialValues: {
+      amount: '' as unknown as number,
+      method: 'Mobile Money - MTN',
+      details: '',
+    },
+    schema: agentPayoutSchema,
+  });
 
   const fetchEarningsData = useCallback(async () => {
     try {
@@ -93,11 +111,10 @@ export default function EarningsPage() {
 
   const handleRequestPayout = async (e: React.FormEvent) => {
     e.preventDefault();
-    const amountNum = parseFloat(payoutAmount);
-    if (isNaN(amountNum) || amountNum <= 0) {
-      toast.error('Please enter a valid payout amount');
-      return;
-    }
+    const { isValid } = validatePayoutAll();
+    if (!isValid) return;
+
+    const amountNum = Number(payoutForm.amount);
     if (amountNum > availableForPayout && availableForPayout > 0) {
       toast.error(`Amount cannot exceed available balance of UGX ${availableForPayout.toLocaleString()}`);
       return;
@@ -110,18 +127,22 @@ export default function EarningsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           amount: amountNum,
-          method: payoutMethod,
-          details: payoutDetails,
+          method: payoutForm.method,
+          details: payoutForm.details.trim(),
         }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to submit payout request');
+      if (!res.ok) {
+        if (data.details) {
+          setPayoutServerErrors(data.details);
+        }
+        throw new Error(data.error || 'Failed to submit payout request');
+      }
 
       toast.success('Payout request processed successfully');
       setIsPayoutOpen(false);
-      setPayoutAmount('');
-      setPayoutDetails('');
+      resetPayoutForm();
       fetchEarningsData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Error submitting payout';
@@ -178,9 +199,9 @@ export default function EarningsPage() {
                 </DialogDescription>
               </DialogHeader>
 
-              <form onSubmit={handleRequestPayout} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+              <form onSubmit={handleRequestPayout} noValidate className="flex flex-col flex-1 min-h-0 overflow-hidden">
                 <DialogBody>
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <div className="flex justify-between items-center">
                       <Label htmlFor="amount" required>Payout Amount (UGX)</Label>
                       <span className="text-xs text-muted-foreground">
@@ -192,16 +213,22 @@ export default function EarningsPage() {
                       type="number"
                       min="10000"
                       step="5000"
-                      value={payoutAmount}
-                      onChange={(e) => setPayoutAmount(e.target.value)}
+                      value={payoutForm.amount || ''}
+                      onChange={(e) => setPayoutField('amount', e.target.value)}
+                      onBlur={() => handlePayoutBlur('amount')}
+                      error={payoutTouched.amount && Boolean(payoutErrors.amount)}
                       placeholder={`e.g. ${availableForPayout}`}
                       required
                     />
+                    <InputError message={payoutTouched.amount ? payoutErrors.amount : undefined} />
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <Label htmlFor="method" required>Payout Method</Label>
-                    <Select value={payoutMethod} onValueChange={setPayoutMethod}>
+                    <Select
+                      value={payoutForm.method}
+                      onValueChange={(val) => setPayoutField('method', val)}
+                    >
                       <SelectTrigger id="method">
                         <SelectValue placeholder="Select Method" />
                       </SelectTrigger>
@@ -211,17 +238,21 @@ export default function EarningsPage() {
                         <SelectItem value="Bank Wire">Standard Bank Transfer</SelectItem>
                       </SelectContent>
                     </Select>
+                    <InputError message={payoutTouched.method ? payoutErrors.method : undefined} />
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <Label htmlFor="details" required>Account / Mobile Number</Label>
                     <Input
                       id="details"
-                      value={payoutDetails}
-                      onChange={(e) => setPayoutDetails(e.target.value)}
+                      value={payoutForm.details}
+                      onChange={(e) => setPayoutField('details', e.target.value)}
+                      onBlur={() => handlePayoutBlur('details')}
+                      error={payoutTouched.details && Boolean(payoutErrors.details)}
                       placeholder="e.g. 256770123456 or Bank Account details"
                       required
                     />
+                    <InputError message={payoutTouched.details ? payoutErrors.details : undefined} />
                   </div>
                 </DialogBody>
 

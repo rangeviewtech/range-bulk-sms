@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NotificationPhoneInput } from '@/components/forms/notification-phone-input';
 import { redirect } from 'next/navigation';
 
 export const metadata = {
@@ -106,8 +107,8 @@ export default async function NotificationSettingsPage({ searchParams }: { searc
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-1">
-                <Label htmlFor="phone">Phone Number (For SMS & WhatsApp)</Label>
-                <Input id="phone" name="phone" defaultValue={user?.phone || ''} placeholder="+1234567890" pattern="\+[1-9][0-9]{6,14}" title="Use international format, for example +256700123456" />
+                <Label htmlFor="phone">Phone Number (For SMS &amp; WhatsApp)</Label>
+                <NotificationPhoneInput defaultValue={user?.phone || ''} />
               </div>
               <div className="space-y-1">
                 <Label htmlFor="telegramChatId">Telegram Chat ID</Label>

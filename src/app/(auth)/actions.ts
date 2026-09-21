@@ -42,6 +42,7 @@ export async function login(formData: FormData) {
   if (!parsed.success) {
     return {
       error: parsed.error.errors[0]?.message || 'Please check your information and try again.',
+      errors: parsed.error.flatten().fieldErrors,
     };
   }
 
@@ -176,6 +177,7 @@ export async function register(formData: FormData) {
   if (!parsed.success) {
     return {
       error: parsed.error.errors[0]?.message || 'Please check your information and try again.',
+      errors: parsed.error.flatten().fieldErrors,
     };
   }
 
@@ -251,7 +253,10 @@ export async function unlockScreen(formData: FormData) {
     turnstileToken: formData.get('turnstileToken') || undefined,
   });
   if (!parsed.success)
-    return { error: parsed.error.errors[0]?.message || 'Please enter your 6-digit PIN.' };
+    return {
+      error: parsed.error.errors[0]?.message || 'Please enter your 6-digit PIN.',
+      errors: parsed.error.flatten().fieldErrors,
+    };
 
   if (
     parsed.data.turnstileToken ||
@@ -277,7 +282,7 @@ export async function forgotPassword(formData: FormData) {
   if (!(await allowAuthAttempt('forgotPassword')))
     return { error: 'Too many requests. Please try again later.' };
   const parsed = forgotPasswordSchema.safeParse(Object.fromEntries(formData.entries()));
-  if (!parsed.success) return { error: 'Invalid input' };
+  if (!parsed.success) return { error: 'Please enter a valid email address', errors: parsed.error.flatten().fieldErrors };
 
   const isBotFree = await verifyTurnstileToken(parsed.data.turnstileToken || '');
   if (!isBotFree) return { error: 'Security check failed.' };
@@ -376,7 +381,10 @@ export async function resetPassword(formData: FormData) {
       status: 'FAILURE',
       reason: parsed.error.errors[0]?.message || 'Invalid input parameters on password reset',
     });
-    return { error: parsed.error.errors[0]?.message || 'Invalid input' };
+    return {
+      error: parsed.error.errors[0]?.message || 'Invalid input',
+      errors: parsed.error.flatten().fieldErrors,
+    };
   }
 
   // Verify Turnstile

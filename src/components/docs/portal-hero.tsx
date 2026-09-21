@@ -162,11 +162,19 @@ export function PortalHero({ environment: _environment }: PortalHeroProps) {
               <button
                 onClick={handleCopy}
                 aria-label="Copy code sample"
-                className="p-1.5 rounded-lg transition-colors hover:opacity-80"
-                style={{ color: PORTAL_COLORS.secondaryText }}
+                className={`p-1.5 rounded-lg transition-all duration-200 ${
+                  copied
+                    ? 'bg-emerald-600 hover:bg-emerald-600 text-white border border-emerald-600 shadow-sm'
+                    : 'hover:opacity-80'
+                }`}
+                style={
+                  copied
+                    ? undefined
+                    : { color: PORTAL_COLORS.secondaryText }
+                }
               >
                 {copied ? (
-                  <Check className="h-4 w-4" style={{ color: PORTAL_COLORS.successGreen }} />
+                  <Check className="h-4 w-4 text-white stroke-[2.5]" />
                 ) : (
                   <Copy className="h-4 w-4" />
                 )}

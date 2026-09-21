@@ -41,6 +41,8 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
           height: '100vh',
           zIndex: 0,
           overflow: 'hidden',
+          pointerEvents: 'none',
+          userSelect: 'none',
         }}
       >
         {slides.map((src, index) => {
@@ -65,6 +67,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
                   opacity: isActive ? 0.8 : 0,
                   transition: 'opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1)',
                   zIndex: isActive ? 1 : 0,
+                  pointerEvents: 'none',
                 }}
               />
               {/* Razor-sharp Foreground Hero Slide */}
@@ -82,6 +85,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
                   opacity: isActive ? 1 : 0,
                   transition: 'opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1)',
                   zIndex: isActive ? 3 : 2,
+                  pointerEvents: 'none',
                 }}
               />
             </React.Fragment>
@@ -104,7 +108,9 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
           flexDirection: 'column',
           padding: '20px 24px',
           boxSizing: 'border-box',
-          zIndex: 20,
+          zIndex: 50,
+          isolation: 'isolate',
+          pointerEvents: 'auto',
           boxShadow: '0 0 30px rgba(0,0,0,0.14)',
           overflowY: 'auto',
           overflowX: 'hidden',

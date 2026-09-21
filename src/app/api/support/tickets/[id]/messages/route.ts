@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifySession } from '@/lib/auth/session';
+import { ticketReplySchema } from '@/lib/validations/settings';
 
 export async function POST(
   req: Request,
@@ -13,12 +14,21 @@ export async function POST(
     }
 
     const { id } = await props.params;
-    const body = await req.json();
-    const { message } = body;
+    const body = await req.json().catch(() => ({}));
+    const parsed = ticketReplySchema.safeParse(body);
 
-    if (!message?.trim()) {
-      return NextResponse.json({ error: 'Message content is required' }, { status: 400 });
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: parsed.error.errors[0]?.message || 'Invalid reply message',
+          details: parsed.error.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
     }
+
+    const { message } = parsed.data;
 
     const ticket = await prisma.supportTicket.findUnique({
       where: { id },

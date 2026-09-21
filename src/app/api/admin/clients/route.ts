@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifySession } from '@/lib/auth/session';
 import { hasPermission } from '@/lib/auth/authorization';
+import { createClientSchema } from '@/lib/validations/admin';
 import bcrypt from 'bcryptjs';
 
 export async function GET(req: Request) {
@@ -46,12 +47,15 @@ export async function POST(req: Request) {
   }
 
   try {
-    const body = await req.json();
-    const { name, email, password, companyName, industry, agentId, initialBalance = 0 } = body;
-
-    if (!email || !name) {
-      return NextResponse.json({ error: 'Name and email are required' }, { status: 400 });
+    const body = await req.json().catch(() => ({}));
+    const parsed = createClientSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.errors[0]?.message || 'Validation failed', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
     }
+    const { name, email, password, companyName, industry, agentId, initialBalance } = parsed.data;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {

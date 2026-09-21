@@ -141,10 +141,23 @@ export function DocsQuickStart({
           </h3>
           <button
             onClick={() => copyToClipboard(sampleCurl, 'curl')}
-            className="flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md bg-muted hover:bg-muted/80 text-foreground transition-colors"
+            className={`flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md transition-all duration-200 ${
+              copiedKey === 'curl'
+                ? 'bg-emerald-600 hover:bg-emerald-600 text-white font-medium border border-emerald-600 shadow-sm'
+                : 'bg-muted hover:bg-muted/80 text-foreground border border-transparent'
+            }`}
           >
-            {copiedKey === 'curl' ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
-            <span>{copiedKey === 'curl' ? 'Copied!' : 'Copy cURL'}</span>
+            {copiedKey === 'curl' ? (
+              <>
+                <Check className="h-3.5 w-3.5 text-white stroke-[2.5]" />
+                <span className="text-white font-medium">Copied!</span>
+              </>
+            ) : (
+              <>
+                <Copy className="h-3.5 w-3.5" />
+                <span>Copy cURL</span>
+              </>
+            )}
           </button>
         </div>
 

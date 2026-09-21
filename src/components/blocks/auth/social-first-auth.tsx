@@ -4,6 +4,10 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { InputError } from '@/components/ui/input-error';
+import { useFormValidation } from '@/hooks/use-form-validation';
+import { z } from 'zod';
+import { toast } from '@/lib/notifications/toast';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -36,7 +40,21 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
+const socialAuthSchema = z.object({
+  email: z.string().trim().email('Please enter a valid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+});
+
 export function SocialFirstAuth() {
+  const { values, errors, touched, setFieldValue, handleBlur, handleSubmit, isSubmitting } =
+    useFormValidation({
+      initialValues: { email: '', password: '' },
+      schema: socialAuthSchema,
+      onSubmit: async (data) => {
+        toast.success(`Account created for ${data.email}`);
+      },
+    });
+
   return (
     <div className="flex min-h-[600px] h-full w-full items-center justify-center bg-muted/30 p-4 rounded-xl border shadow-inner">
       <div className="w-full max-w-md bg-card p-8 rounded-xl border shadow-sm space-y-6">
@@ -46,7 +64,7 @@ export function SocialFirstAuth() {
             Welcome! Get started by logging in with your favorite provider.
           </p>
         </div>
-        
+
         <div className="space-y-3">
           <Button variant="outline" className="w-full font-normal flex items-center justify-center gap-2">
             <GoogleIcon className="w-4 h-4" />
@@ -66,22 +84,50 @@ export function SocialFirstAuth() {
             <span className="bg-card px-2 text-muted-foreground">Or continue with email</span>
           </div>
         </div>
-        
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-          <div className="space-y-2">
-            <Label htmlFor="social-email" required>Email</Label>
-            <Input id="social-email" type="email" placeholder="m@example.com" required />
+
+        <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+          <div className="space-y-1">
+            <Label htmlFor="social-email" required>
+              Email
+            </Label>
+            <Input
+              id="social-email"
+              type="email"
+              placeholder="m@example.com"
+              value={values.email}
+              onChange={(e) => setFieldValue('email', e.target.value)}
+              onBlur={() => handleBlur('email')}
+              error={touched.email && !!errors.email}
+              aria-describedby={errors.email ? 'social-email-error' : undefined}
+            />
+            {touched.email && errors.email && (
+              <InputError id="social-email-error" message={errors.email} />
+            )}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="social-password" required>Password</Label>
-            <Input id="social-password" type="password" required />
+          <div className="space-y-1">
+            <Label htmlFor="social-password" required>
+              Password
+            </Label>
+            <Input
+              id="social-password"
+              type="password"
+              placeholder="••••••••"
+              value={values.password}
+              onChange={(e) => setFieldValue('password', e.target.value)}
+              onBlur={() => handleBlur('password')}
+              error={touched.password && !!errors.password}
+              aria-describedby={errors.password ? 'social-password-error' : undefined}
+            />
+            {touched.password && errors.password && (
+              <InputError id="social-password-error" message={errors.password} />
+            )}
           </div>
-          
-          <Button type="submit" className="w-full">
-            Sign Up
+
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? 'Signing Up...' : 'Sign Up'}
           </Button>
         </form>
-        
+
         <div className="text-center text-sm text-muted-foreground">
           By clicking continue, you agree to our{' '}
           <Link href="#" className="underline hover:text-foreground">

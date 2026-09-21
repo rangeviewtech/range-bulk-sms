@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifySession } from '@/lib/auth/session';
 import { TicketPriority, TicketStatus } from '@/generated/prisma/client';
+import { createTicketSchema } from '@/lib/validations/sender-id';
 
 export async function GET(req: Request) {
   try {
@@ -58,22 +59,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await req.json();
-    const { subject, category, priority = 'MEDIUM', message } = body;
-
-    if (!subject?.trim()) {
-      return NextResponse.json({ error: 'Subject is required' }, { status: 400 });
-    }
-    if (!category?.trim()) {
-      return NextResponse.json({ error: 'Category is required' }, { status: 400 });
-    }
-    if (!message?.trim()) {
-      return NextResponse.json({ error: 'Message description is required' }, { status: 400 });
+    const body = await req.json().catch(() => ({}));
+    const parsed = createTicketSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.errors[0]?.message || 'Validation failed', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
     }
 
-    const validPriority = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'].includes(priority)
-      ? (priority as TicketPriority)
-      : TicketPriority.MEDIUM;
+    const { subject, category, priority, message } = parsed.data;
+    const validPriority = priority as TicketPriority;
 
     const ticket = await prisma.$transaction(async (tx) => {
       const newTicket = await tx.supportTicket.create({

@@ -10,29 +10,40 @@ import { Label } from '@/components/ui/label';
 import { ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { useFormValidation } from '@/hooks/use-form-validation';
+import { senderIdApplicationSchema } from '@/lib/validations/sender-id';
+import { InputError } from '@/components/ui/input-error';
 
 export default function SenderIdApplyPage() {
   const router = useRouter();
-  const [senderId, setSenderId] = useState('');
-  const [purpose, setPurpose] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const {
+    values: formValues,
+    errors: formErrors,
+    touched: formTouched,
+    setFieldValue,
+    handleBlur,
+    validateAll,
+    setServerErrors,
+  } = useFormValidation({
+    initialValues: {
+      senderId: '',
+      purpose: '',
+    },
+    schema: senderIdApplicationSchema,
+  });
 
   const handleSenderIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Only allow alphanumeric characters and force uppercase
     const cleaned = e.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 11);
-    setSenderId(cleaned);
+    setFieldValue('senderId', cleaned);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (senderId.length < 3) {
-      toast.error('Sender ID must be at least 3 characters.');
-      return;
-    }
-    if (purpose.trim().length < 10) {
-      toast.error('Please provide a descriptive purpose (at least 10 characters).');
-      return;
-    }
+    const { isValid } = validateAll();
+    if (!isValid) return;
 
     setLoading(true);
     try {
@@ -40,17 +51,20 @@ export default function SenderIdApplyPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          senderId: senderId.trim(),
-          purpose: purpose.trim(),
+          senderId: formValues.senderId.trim(),
+          purpose: formValues.purpose.trim(),
         }),
       });
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to submit Sender ID request');
+        if (data.details) {
+          setServerErrors(data.details);
+        }
+        throw new Error(data.error?.message || data.error || 'Failed to submit Sender ID request');
       }
 
-      toast.success(`Sender ID "${senderId}" submitted for approval!`);
+      toast.success(`Sender ID "${formValues.senderId}" submitted for approval!`);
       router.push('/sender-ids');
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Error submitting request';
@@ -83,36 +97,42 @@ export default function SenderIdApplyPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="space-y-2">
+            <div className="space-y-1">
               <div className="flex justify-between items-center">
                 <Label htmlFor="senderId" required>Desired Sender ID</Label>
-                <span className="text-xs text-muted-foreground font-mono">{senderId.length}/11 chars</span>
+                <span className="text-xs text-muted-foreground font-mono">{formValues.senderId.length}/11 chars</span>
               </div>
               <Input
                 id="senderId"
                 placeholder="e.g. MYCOMPANY"
-                value={senderId}
+                value={formValues.senderId}
                 onChange={handleSenderIdChange}
+                onBlur={() => handleBlur('senderId')}
+                error={formTouched.senderId && Boolean(formErrors.senderId)}
                 maxLength={11}
                 className="font-mono uppercase text-lg tracking-wider"
                 autoFocus
                 required
               />
+              <InputError message={formTouched.senderId ? formErrors.senderId : undefined} />
               <p className="text-xs text-muted-foreground">
                 Maximum 11 characters. No spaces or special characters allowed.
               </p>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="purpose" required>Purpose of Usage</Label>
               <Textarea
                 id="purpose"
                 placeholder="Please explain what kind of messages you will send using this Sender ID (e.g. transactional alerts, OTPs, customer updates)."
                 rows={4}
-                value={purpose}
-                onChange={(e) => setPurpose(e.target.value)}
+                value={formValues.purpose}
+                onChange={(e) => setFieldValue('purpose', e.target.value)}
+                onBlur={() => handleBlur('purpose')}
+                error={formTouched.purpose && Boolean(formErrors.purpose)}
                 required
               />
+              <InputError message={formTouched.purpose ? formErrors.purpose : undefined} />
               <p className="text-xs text-muted-foreground">
                 Minimum 10 characters explaining your business use case.
               </p>
@@ -135,7 +155,7 @@ export default function SenderIdApplyPage() {
             </Button>
             <Button
               type="submit"
-              disabled={loading || senderId.length < 3 || purpose.trim().length < 10}
+              disabled={loading}
               className="w-full sm:w-auto bg-primary text-primary-foreground font-semibold"
             >
               {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}

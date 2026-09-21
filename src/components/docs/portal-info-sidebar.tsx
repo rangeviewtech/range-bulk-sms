@@ -171,11 +171,15 @@ export function PortalInfoSidebar({
         <button
           onClick={() => handleCopy(baseUrl)}
           aria-label="Copy API Base URL"
-          className="p-1 rounded hover:opacity-80 transition-opacity shrink-0"
-          style={{ color: PORTAL_COLORS.secondaryText }}
+          className={`p-1 rounded transition-all duration-200 shrink-0 ${
+            copiedUrl
+              ? 'bg-emerald-600 hover:bg-emerald-600 text-white border border-emerald-600 shadow-sm'
+              : 'hover:opacity-80 transition-opacity'
+          }`}
+          style={copiedUrl ? undefined : { color: PORTAL_COLORS.secondaryText }}
         >
           {copiedUrl ? (
-            <Check className="h-3.5 w-3.5" style={{ color: PORTAL_COLORS.successGreen }} />
+            <Check className="h-3.5 w-3.5 text-white stroke-[2.5]" />
           ) : (
             <Copy className="h-3.5 w-3.5" />
           )}

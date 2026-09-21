@@ -8,11 +8,20 @@ export async function GET(req: NextRequest) {
     if (!session || !session.userId) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const url = new URL(req.url);
-    const page = parseInt(url.searchParams.get('page') || '1');
-    const limit = parseInt(url.searchParams.get('limit') || '10');
+    const page = parseInt(url.searchParams.get('page') || '1', 10);
+    const limit = Math.min(Math.max(1, parseInt(url.searchParams.get('limit') || '100', 10)), 500);
+    const typeParam = url.searchParams.get('type');
+    const validTypes = ['DEPOSIT', 'DEDUCTION', 'REFUND'] as const;
+    const type = validTypes.includes(typeParam as (typeof validTypes)[number])
+      ? (typeParam as (typeof validTypes)[number])
+      : undefined;
 
     const wallet = await WalletService.getOrCreateWallet({ userId: session.userId });
-    const transactions = await WalletService.getTransactions(wallet.id, { page, limit });
+    const transactions = await WalletService.getTransactions(wallet.id, {
+      page,
+      limit,
+      type,
+    });
 
     return Response.json({ data: transactions });
   } catch (error: unknown) {

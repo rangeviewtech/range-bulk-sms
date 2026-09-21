@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifySession } from '@/lib/auth/session';
 import { hasPermission } from '@/lib/auth/authorization';
+import { smsProviderSchema } from '@/lib/validations/sender-id';
 
 export async function GET(_req: Request) {
   const session = await verifySession();
@@ -20,12 +21,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
   }
   try {
-    const body = await req.json();
-    const { name, displayName, type = 'HTTP', baseUrl, apiKey, apiSecret, priority = 1, costPerSms = 35.0, supportsDlr = true, maxThroughput = 500 } = body;
-
-    if (!name || !displayName) {
-      return NextResponse.json({ error: 'Provider name and display name are required' }, { status: 400 });
+    const body = await req.json().catch(() => ({}));
+    const parsed = smsProviderSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.errors[0]?.message || 'Validation failed', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
     }
+    const { name, displayName, type, baseUrl, apiKey, apiSecret, priority, costPerSms, supportsDlr, maxThroughput } = parsed.data;
 
     const provider = await prisma.smsProvider.create({
       data: {

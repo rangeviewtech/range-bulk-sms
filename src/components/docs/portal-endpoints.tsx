@@ -275,7 +275,7 @@ export function PortalEndpoints({
 
       {/* Endpoint Detail Slide-Over / Modal */}
       {selectedEndpoint && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md duration-200 animate-in fade-in">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 duration-200 animate-in fade-in">
           <div
             className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-xl border shadow-[0_24px_64px_rgba(0,0,0,0.4)] p-6 animate-in zoom-in-95 duration-200"
             style={{
@@ -337,11 +337,28 @@ export function PortalEndpoints({
                   </span>
                   <button
                     onClick={() => handleCopy(selectedEndpoint.requestSample)}
-                    className="flex items-center gap-1 text-xs px-2 py-1 rounded hover:opacity-80"
-                    style={{ color: PORTAL_COLORS.accentBlue, backgroundColor: PORTAL_COLORS.elevatedBg }}
+                    className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded transition-all duration-200 ${
+                      copied
+                        ? 'bg-emerald-600 hover:bg-emerald-600 text-white font-medium border border-emerald-600 shadow-sm'
+                        : 'hover:opacity-80'
+                    }`}
+                    style={
+                      copied
+                        ? undefined
+                        : { color: PORTAL_COLORS.accentBlue, backgroundColor: PORTAL_COLORS.elevatedBg }
+                    }
                   >
-                    {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
-                    <span>{copied ? 'Copied' : 'Copy'}</span>
+                    {copied ? (
+                      <>
+                        <Check className="h-3 w-3 text-white stroke-[2.5]" />
+                        <span className="text-white font-medium">Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3 w-3" />
+                        <span>Copy</span>
+                      </>
+                    )}
                   </button>
                 </div>
                 <div

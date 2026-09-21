@@ -21,6 +21,10 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { ConfirmationDialog } from "@/components/feedback/confirmation-dialog";
+import { useFormValidation } from "@/hooks/use-form-validation";
+import { smsProviderSchema } from "@/lib/validations/sender-id";
+import { InputError } from "@/components/ui/input-error";
 
 interface ProviderRecord {
   id: string;
@@ -44,16 +48,35 @@ export default function ProvidersPage() {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // Form fields
-  const [name, setName] = useState("");
-  const [displayName, setDisplayName] = useState("");
-  const [type, setType] = useState("HTTP");
-  const [baseUrl, setBaseUrl] = useState("https://api.gateway.com/v1");
-  const [apiKey, setApiKey] = useState("");
-  const [apiSecret, setApiSecret] = useState("");
-  const [priority, setPriority] = useState("1");
-  const [costPerSms, setCostPerSms] = useState("30.0");
-  const [maxThroughput, setMaxThroughput] = useState("500");
+  const {
+    values: providerForm,
+    errors: providerErrors,
+    touched: providerTouched,
+    setFieldValue: setProviderField,
+    handleBlur: handleProviderBlur,
+    validateAll: validateProviderAll,
+    reset: resetProviderForm,
+    setServerErrors: setProviderServerErrors,
+  } = useFormValidation({
+    initialValues: {
+      name: "",
+      displayName: "",
+      type: "HTTP" as "HTTP" | "SMPP" | "SDK",
+      baseUrl: "https://api.gateway.com/v1",
+      apiKey: "",
+      apiSecret: "",
+      username: "",
+      password: "",
+      senderId: "",
+      priority: 1,
+      costPerSms: 30.0,
+      isActive: true,
+      isFallback: false,
+      maxThroughput: 500,
+      supportsDlr: true,
+    },
+    schema: smsProviderSchema,
+  });
 
   const fetchProviders = useCallback(async () => {
     try {
@@ -95,10 +118,8 @@ export default function ProvidersPage() {
 
   const handleAddProvider = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !displayName.trim()) {
-      toast.error("Name and Display Name are required");
-      return;
-    }
+    const { isValid } = validateProviderAll();
+    if (!isValid) return;
 
     try {
       setSubmitting(true);
@@ -106,28 +127,30 @@ export default function ProvidersPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: name.trim(),
-          displayName: displayName.trim(),
-          type,
-          baseUrl: baseUrl.trim(),
-          apiKey: apiKey.trim() || undefined,
-          apiSecret: apiSecret.trim() || undefined,
-          priority: Number(priority),
-          costPerSms: Number(costPerSms),
-          maxThroughput: Number(maxThroughput),
-          supportsDlr: true,
+          name: providerForm.name.trim(),
+          displayName: providerForm.displayName.trim(),
+          type: providerForm.type,
+          baseUrl: providerForm.baseUrl.trim(),
+          apiKey: providerForm.apiKey?.trim() || undefined,
+          apiSecret: providerForm.apiSecret?.trim() || undefined,
+          priority: Number(providerForm.priority),
+          costPerSms: Number(providerForm.costPerSms),
+          maxThroughput: Number(providerForm.maxThroughput),
+          supportsDlr: providerForm.supportsDlr,
         }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to create provider");
+      if (!res.ok) {
+        if (data.details) {
+          setProviderServerErrors(data.details);
+        }
+        throw new Error(data.error || "Failed to create provider");
+      }
 
-      toast.success(`Gateway ${displayName} added successfully!`);
+      toast.success(`Gateway ${providerForm.displayName} added successfully!`);
       setIsAddOpen(false);
-      setName("");
-      setDisplayName("");
-      setApiKey("");
-      setApiSecret("");
+      resetProviderForm();
       fetchProviders();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to create provider";
@@ -137,17 +160,32 @@ export default function ProvidersPage() {
     }
   };
 
-  const handleDelete = async (id: string, label: string) => {
-    if (!confirm(`Are you sure you want to remove SMS provider ${label}?`)) return;
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    open: boolean;
+    id: string;
+    label: string;
+  } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteClick = (id: string, label: string) => {
+    setDeleteConfirm({ open: true, id, label });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteConfirm) return;
+    setIsDeleting(true);
 
     try {
-      const res = await fetch(`/api/admin/providers/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/providers/${deleteConfirm.id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete");
-      toast.success(`Provider ${label} deleted`);
-      setProviders((prev) => prev.filter((p) => p.id !== id));
+      toast.success(`Provider "${deleteConfirm.label}" deleted`);
+      setProviders((prev) => prev.filter((p) => p.id !== deleteConfirm.id));
+      setDeleteConfirm(null);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Error deleting provider";
       toast.error(msg);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -179,106 +217,133 @@ export default function ProvidersPage() {
                 </DialogDescription>
               </DialogHeader>
 
-              <form onSubmit={handleAddProvider} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+              <form onSubmit={handleAddProvider} noValidate className="flex flex-col flex-1 min-h-0 overflow-hidden">
                 <DialogBody>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="provName" required>Provider Slug</Label>
                       <Input
                         id="provName"
                         placeholder="e.g. infobip"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        value={providerForm.name}
+                        onChange={(e) => setProviderField("name", e.target.value)}
+                        onBlur={() => handleProviderBlur("name")}
+                        error={providerTouched.name && Boolean(providerErrors.name)}
                         required
                       />
+                      <InputError message={providerTouched.name ? providerErrors.name : undefined} />
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="provDisplay" required>Display Name</Label>
                       <Input
                         id="provDisplay"
                         placeholder="e.g. InfoBip Global"
-                        value={displayName}
-                        onChange={(e) => setDisplayName(e.target.value)}
+                        value={providerForm.displayName}
+                        onChange={(e) => setProviderField("displayName", e.target.value)}
+                        onBlur={() => handleProviderBlur("displayName")}
+                        error={providerTouched.displayName && Boolean(providerErrors.displayName)}
                         required
                       />
+                      <InputError message={providerTouched.displayName ? providerErrors.displayName : undefined} />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="provType" required>Protocol / Type</Label>
                       <Input
                         id="provType"
-                        value={type}
-                        onChange={(e) => setType(e.target.value.toUpperCase())}
+                        value={providerForm.type}
+                        onChange={(e) => setProviderField("type", e.target.value.toUpperCase() as "HTTP" | "SMPP" | "SDK")}
+                        onBlur={() => handleProviderBlur("type")}
+                        error={providerTouched.type && Boolean(providerErrors.type)}
                         required
                       />
+                      <InputError message={providerTouched.type ? providerErrors.type : undefined} />
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="provPriority" required>Priority Order (1 = Primary)</Label>
                       <Input
                         id="provPriority"
                         type="number"
                         min="1"
-                        value={priority}
-                        onChange={(e) => setPriority(e.target.value)}
+                        value={providerForm.priority}
+                        onChange={(e) => setProviderField("priority", Number(e.target.value))}
+                        onBlur={() => handleProviderBlur("priority")}
+                        error={providerTouched.priority && Boolean(providerErrors.priority)}
                         required
                       />
+                      <InputError message={providerTouched.priority ? providerErrors.priority : undefined} />
                     </div>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <Label htmlFor="provUrl" required>API Endpoint / Base URL</Label>
                     <Input
                       id="provUrl"
                       placeholder="https://api.infobip.com"
-                      value={baseUrl}
-                      onChange={(e) => setBaseUrl(e.target.value)}
+                      value={providerForm.baseUrl || ""}
+                      onChange={(e) => setProviderField("baseUrl", e.target.value)}
+                      onBlur={() => handleProviderBlur("baseUrl")}
+                      error={providerTouched.baseUrl && Boolean(providerErrors.baseUrl)}
                       required
                     />
+                    <InputError message={providerTouched.baseUrl ? providerErrors.baseUrl : undefined} />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="provKey">API Key / Username</Label>
                       <Input
                         id="provKey"
                         placeholder="Key or User"
-                        value={apiKey}
-                        onChange={(e) => setApiKey(e.target.value)}
+                        value={providerForm.apiKey || ""}
+                        onChange={(e) => setProviderField("apiKey", e.target.value)}
+                        onBlur={() => handleProviderBlur("apiKey")}
+                        error={providerTouched.apiKey && Boolean(providerErrors.apiKey)}
                       />
+                      <InputError message={providerTouched.apiKey ? providerErrors.apiKey : undefined} />
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="provSecret">API Secret / Password</Label>
                       <Input
                         id="provSecret"
                         type="password"
                         placeholder="Secret"
-                        value={apiSecret}
-                        onChange={(e) => setApiSecret(e.target.value)}
+                        value={providerForm.apiSecret || ""}
+                        onChange={(e) => setProviderField("apiSecret", e.target.value)}
+                        onBlur={() => handleProviderBlur("apiSecret")}
+                        error={providerTouched.apiSecret && Boolean(providerErrors.apiSecret)}
                       />
+                      <InputError message={providerTouched.apiSecret ? providerErrors.apiSecret : undefined} />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="provCost">Cost / SMS (UGX)</Label>
                       <Input
                         id="provCost"
                         type="number"
                         step="0.1"
-                        value={costPerSms}
-                        onChange={(e) => setCostPerSms(e.target.value)}
+                        value={providerForm.costPerSms}
+                        onChange={(e) => setProviderField("costPerSms", Number(e.target.value))}
+                        onBlur={() => handleProviderBlur("costPerSms")}
+                        error={providerTouched.costPerSms && Boolean(providerErrors.costPerSms)}
                       />
+                      <InputError message={providerTouched.costPerSms ? providerErrors.costPerSms : undefined} />
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="provThroughput">Max Throughput (msg/s)</Label>
                       <Input
                         id="provThroughput"
                         type="number"
-                        value={maxThroughput}
-                        onChange={(e) => setMaxThroughput(e.target.value)}
+                        value={providerForm.maxThroughput}
+                        onChange={(e) => setProviderField("maxThroughput", Number(e.target.value))}
+                        onBlur={() => handleProviderBlur("maxThroughput")}
+                        error={providerTouched.maxThroughput && Boolean(providerErrors.maxThroughput)}
                       />
+                      <InputError message={providerTouched.maxThroughput ? providerErrors.maxThroughput : undefined} />
                     </div>
                   </div>
                 </DialogBody>
@@ -386,8 +451,8 @@ export default function ProvidersPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                        onClick={() => handleDelete(prov.id, prov.displayName)}
+                        className="h-8 w-8 text-destructive/40 dark:text-destructive/50 hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => handleDeleteClick(prov.id, prov.displayName)}
                       >
                         <Trash2 className="h-4 w-4" />
                         <span className="sr-only">Delete</span>
@@ -401,6 +466,19 @@ export default function ProvidersPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Confirmation Dialog for Provider Removal */}
+      <ConfirmationDialog
+        open={Boolean(deleteConfirm?.open)}
+        onOpenChange={(open) => !open && setDeleteConfirm(null)}
+        title="Remove SMS Provider"
+        description={`Are you sure you want to remove SMS provider "${deleteConfirm?.label}"? Routing rules or gateways linked to this provider may be disrupted.`}
+        confirmLabel="Remove Provider"
+        cancelLabel="Cancel"
+        variant="destructive"
+        loading={isDeleting}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }

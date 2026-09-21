@@ -1,15 +1,25 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Search, RefreshCw, User, Globe } from "lucide-react";
+import { Search, RefreshCw, User, Globe, X, ArrowDownUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { TableSkeletonRows } from "@/components/blocks/ui/skeleton-layouts";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { useTableState } from "@/hooks/use-table-state";
+import { SortableHeader } from "@/components/ui/sortable-header";
+import { Pagination } from "@/components/ui/pagination";
 
 interface AuditLogRecord {
   id: string;
@@ -33,13 +43,11 @@ interface AuditLogRecord {
 export default function AuditLogsPage() {
   const [logs, setLogs] = useState<AuditLogRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
 
-  const fetchLogs = useCallback(async (query = "") => {
+  const fetchLogs = useCallback(async () => {
     try {
       setLoading(true);
-      const url = query ? `/api/admin/audit-logs?q=${encodeURIComponent(query)}` : "/api/admin/audit-logs";
-      const res = await fetch(url);
+      const res = await fetch("/api/admin/audit-logs");
       if (!res.ok) throw new Error("Failed to load audit logs");
       const data = await res.json();
       setLogs(data.logs || []);
@@ -55,10 +63,80 @@ export default function AuditLogsPage() {
     fetchLogs();
   }, [fetchLogs]);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    fetchLogs(search);
-  };
+  const {
+    search,
+    setSearch,
+    clearSearch,
+    sortKey,
+    sortOrder,
+    toggleSort,
+    filters,
+    setFilter,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    totalPages,
+    totalItems,
+    paginatedData: displayedLogs,
+  } = useTableState<AuditLogRecord>({
+    data: logs,
+    searchFields: [
+      "eventName",
+      "category",
+      "severity",
+      "outcome",
+      (l) => l.resourceType || "",
+      (l) => l.resourceId || "",
+      (l) => l.sourceIp || "",
+      (l) => l.user?.email || "",
+      (l) => l.user?.name || "",
+      "recordedAt",
+    ],
+    initialSortKey: "recordedAt",
+    initialSortOrder: "desc",
+    initialPageSize: 10,
+    initialFilters: { outcome: "ALL", category: "ALL" },
+    filterFn: (log, currentFilters) => {
+      if (currentFilters.outcome && currentFilters.outcome !== "ALL") {
+        if (log.outcome.toUpperCase() !== currentFilters.outcome.toUpperCase()) return false;
+      }
+      if (currentFilters.category && currentFilters.category !== "ALL") {
+        if (log.category.toUpperCase() !== currentFilters.category.toUpperCase()) return false;
+      }
+      return true;
+    },
+    customSortFn: (a, b, key, order) => {
+      let comp = 0;
+      if (key === "recordedAt") {
+        comp = new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime();
+      } else if (key === "user") {
+        const userA = a.user?.email || "System";
+        const userB = b.user?.email || "System";
+        comp = userA.localeCompare(userB);
+      } else if (key === "action") {
+        comp = a.eventName.localeCompare(b.eventName);
+      } else if (key === "category") {
+        comp = a.category.localeCompare(b.category);
+      } else if (key === "outcome") {
+        comp = a.outcome.localeCompare(b.outcome);
+      } else if (key === "resource") {
+        const resA = a.resourceType || "";
+        const resB = b.resourceType || "";
+        comp = resA.localeCompare(resB);
+      }
+      return order === "asc" ? comp : -comp;
+    },
+  });
+
+  // Extract unique categories dynamically
+  const uniqueCategories = useMemo(() => {
+    const set = new Set<string>();
+    logs.forEach((l) => {
+      if (l.category) set.add(l.category.toUpperCase());
+    });
+    return Array.from(set).sort();
+  }, [logs]);
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
@@ -66,9 +144,18 @@ export default function AuditLogsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Audit Logs</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Immutable compliance audit trail tracking security, authentication, and system configuration modifications.</p>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Immutable compliance audit trail tracking security, authentication, and system configuration modifications.
+          </p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => fetchLogs(search)} disabled={loading} className="w-full sm:w-auto">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => fetchLogs()}
+          disabled={loading}
+          className="w-full sm:w-auto"
+          aria-label="Refresh audit trail"
+        >
           <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           Refresh
         </Button>
@@ -76,111 +163,258 @@ export default function AuditLogsPage() {
 
       {/* Main Table Card */}
       <Card>
-        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4 space-y-0 p-4 sm:p-6">
-          <form onSubmit={handleSearch} className="relative flex-1 w-full max-w-sm flex gap-2">
-            <div className="relative flex-1">
+        <CardHeader className="flex flex-col space-y-4 p-4 sm:p-6 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h2 className="text-lg font-semibold tracking-tight">System Events ({logs.length})</h2>
+              <p className="text-xs text-muted-foreground">Detailed historical logs of all privileged operations.</p>
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Filtered: <span className="font-semibold text-foreground">{totalItems}</span> events
+            </div>
+          </div>
+
+          {/* Search, Filter & Order Toolbar */}
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pt-2">
+            <div className="relative flex-1 max-w-md">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search action, user, resource..."
-                className="pl-8"
+                placeholder="Search action, user, resource, IP..."
+                className="pl-8 pr-8"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                aria-label="Search audit events"
               />
+              {search && (
+                <button
+                  type="button"
+                  onClick={clearSearch}
+                  className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
+                  aria-label="Clear search"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
             </div>
-            <Button type="submit" variant="secondary" size="sm">
-              Search
-            </Button>
-          </form>
-          <div className="text-sm text-muted-foreground sm:ml-auto">
-            Showing <span className="font-semibold text-foreground">{logs.length}</span> audit events
+
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Category filter */}
+              {uniqueCategories.length > 0 && (
+                <div className="w-36">
+                  <Select
+                    value={filters.category || "ALL"}
+                    onValueChange={(val) => setFilter("category", val)}
+                  >
+                    <SelectTrigger className="h-9 text-xs" aria-label="Filter by category">
+                      <SelectValue placeholder="All Categories" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALL">All Categories</SelectItem>
+                      {uniqueCategories.map((cat) => (
+                        <SelectItem key={cat} value={cat}>
+                          {cat}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Outcome filter */}
+              <div className="w-36">
+                <Select
+                  value={filters.outcome || "ALL"}
+                  onValueChange={(val) => setFilter("outcome", val)}
+                >
+                  <SelectTrigger className="h-9 text-xs" aria-label="Filter by outcome">
+                    <SelectValue placeholder="All Outcomes" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">All Outcomes</SelectItem>
+                    <SelectItem value="SUCCESS">Success</SelectItem>
+                    <SelectItem value="FAILURE">Failure</SelectItem>
+                    <SelectItem value="ERROR">Error</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Sort Order Toggle */}
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 gap-1 text-xs"
+                onClick={() => toggleSort(sortKey || "recordedAt")}
+                title={`Order: ${sortOrder === "asc" ? "Ascending" : "Descending"}`}
+                aria-label="Toggle sort order"
+              >
+                <ArrowDownUp className="h-3.5 w-3.5 mr-1" />
+                <span className="hidden sm:inline">Order:</span> {sortOrder.toUpperCase()}
+              </Button>
+            </div>
           </div>
         </CardHeader>
+
         <CardContent className="p-0 sm:p-6 pt-0">
-          <div className="w-full">
+          <div className="w-full overflow-x-auto">
             <Table className="min-w-[800px]">
-            <TableHeader>
-              <TableRow>
-                <TableHead>Timestamp</TableHead>
-                <TableHead>Actor / User</TableHead>
-                <TableHead>Action</TableHead>
-                <TableHead>Resource</TableHead>
-                <TableHead>Client IP & Context</TableHead>
-                <TableHead className="text-right">Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableSkeletonRows columns={6} rows={6} />
-              ) : logs.length === 0 ? (
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
-                    No audit records found.
-                  </TableCell>
+                  <TableHead>
+                    <SortableHeader
+                      column="recordedAt"
+                      label="Timestamp"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      column="user"
+                      label="Actor / User"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      column="action"
+                      label="Action"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      column="resource"
+                      label="Resource"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                    />
+                  </TableHead>
+                  <TableHead>Client IP & Context</TableHead>
+                  <TableHead className="text-right">
+                    <SortableHeader
+                      column="outcome"
+                      label="Status"
+                      currentSort={sortKey}
+                      currentOrder={sortOrder}
+                      onSort={toggleSort}
+                      align="right"
+                    />
+                  </TableHead>
                 </TableRow>
-              ) : (
-                logs.map((log) => (
-                  <TableRow key={log.id}>
-                    <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">
-                      {format(new Date(log.recordedAt), "yyyy-MM-dd HH:mm:ss")}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <div className="p-1 rounded bg-muted text-muted-foreground">
-                          <User className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-xs text-foreground">
-                            {log.user?.email || "System Service"}
-                          </p>
-                          {log.user?.name && (
-                            <p className="text-[11px] text-muted-foreground">{log.user.name}</p>
-                          )}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col space-y-1">
-                         <Badge variant="outline" className="font-mono text-[10px] uppercase font-semibold">
-                           {log.category}
-                         </Badge>
-                         <span className="font-mono text-xs">{log.eventName}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">
-                      <span className="font-medium text-foreground">{log.resourceType || "General"}</span>
-                      {log.resourceId && (
-                        <span className="font-mono text-[11px] text-muted-foreground ml-1.5 truncate max-w-[120px] inline-block align-bottom">
-                          #{log.resourceId.slice(0, 8)}
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-xs text-muted-foreground font-mono">
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1">
-                          <Globe className="w-3 h-3 text-muted-foreground" />
-                          <span>{log.sourceIp || "127.0.0.1"}</span>
-                        </div>
-                        {log.hash && (
-                          <span className="text-[10px] truncate max-w-[120px]" title={log.hash}>
-                            {log.hash.slice(0, 16)}...
-                          </span>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableSkeletonRows columns={6} rows={6} />
+                ) : displayedLogs.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <p className="font-medium text-foreground">No audit records found.</p>
+                        <p className="text-xs">Try adjusting your search criteria or outcome filter.</p>
+                        {(search || filters.outcome !== "ALL" || filters.category !== "ALL") && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-2"
+                            onClick={() => {
+                              clearSearch();
+                              setFilter("outcome", "ALL");
+                              setFilter("category", "ALL");
+                            }}
+                          >
+                            Reset Filters
+                          </Button>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="text-right">
-                      <Badge
-                        variant={log.outcome === "SUCCESS" ? "outline" : "destructive"}
-                        className={log.outcome === "SUCCESS" ? "text-emerald-600 border-emerald-600/30 bg-emerald-500/10 text-xs" : "text-xs"}
-                      >
-                        {log.outcome}
-                      </Badge>
-                    </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ) : (
+                  displayedLogs.map((log) => (
+                    <TableRow key={log.id}>
+                      <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">
+                        {format(new Date(log.recordedAt), "yyyy-MM-dd HH:mm:ss")}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <div className="p-1 rounded bg-muted text-muted-foreground">
+                            <User className="w-3.5 h-3.5" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-xs text-foreground">
+                              {log.user?.email || "System Service"}
+                            </p>
+                            {log.user?.name && (
+                              <p className="text-[11px] text-muted-foreground">{log.user.name}</p>
+                            )}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col space-y-1">
+                          <Badge variant="outline" className="font-mono text-[10px] uppercase font-semibold">
+                            {log.category}
+                          </Badge>
+                          <span className="font-mono text-xs">{log.eventName}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        <span className="font-medium text-foreground">{log.resourceType || "General"}</span>
+                        {log.resourceId && (
+                          <span className="font-mono text-[11px] text-muted-foreground ml-1.5 truncate max-w-[120px] inline-block align-bottom">
+                            #{log.resourceId.slice(0, 8)}
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground font-mono">
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1">
+                            <Globe className="w-3 h-3 text-muted-foreground" />
+                            <span>{log.sourceIp || "127.0.0.1"}</span>
+                          </div>
+                          {log.hash && (
+                            <span className="text-[10px] truncate max-w-[120px]" title={log.hash}>
+                              {log.hash.slice(0, 16)}...
+                            </span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Badge
+                          variant={log.outcome === "SUCCESS" ? "outline" : "destructive"}
+                          className={
+                            log.outcome === "SUCCESS"
+                              ? "text-emerald-600 border-emerald-600/30 bg-emerald-500/10 text-xs"
+                              : "text-xs"
+                          }
+                        >
+                          {log.outcome}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </div>
+
+          {/* Pagination Controls */}
+          {logs.length > 0 && (
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              pageSize={pageSize}
+              totalItems={totalItems}
+              onPageChange={setPage}
+              onPageSizeChange={setPageSize}
+              pageSizeOptions={[10, 20, 50, 100]}
+            />
+          )}
         </CardContent>
       </Card>
     </div>

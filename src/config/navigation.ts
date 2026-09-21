@@ -40,6 +40,11 @@ export const navConfig: NavGroup[] = [
         icon: 'FileText',
       },
       {
+        title: 'Variables',
+        href: '/sms/variables',
+        icon: 'Braces',
+      },
+      {
         title: 'Delivery Reports',
         href: '/sms/delivery-reports',
         icon: 'BarChart3',

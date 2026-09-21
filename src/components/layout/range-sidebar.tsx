@@ -84,6 +84,7 @@ export const RANGE_NAVIGATION: NavModule[] = [
         title: "Assets",
         items: [
           { title: "Templates", href: "/sms/templates" },
+          { title: "Variables", href: "/sms/variables" },
           { title: "Delivery Reports", href: "/sms/delivery-reports" },
         ],
       },
@@ -259,7 +260,6 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
   // Flyout State
   const [hoveredModule, setHoveredModule] = React.useState<NavModule | null>(null);
   const [hoveredCategory, setHoveredCategory] = React.useState<NavCategory | null>(null);
-  const [categoryIndex, setCategoryIndex] = React.useState<number>(0);
   const [flyoutPosition, setFlyoutPosition] = React.useState<{ top: number; left: number; maxHeight: number }>({
     top: 0,
     left: 90,
@@ -284,7 +284,6 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
     cancelCloseTimer();
     setHoveredModule(null);
     setHoveredCategory(null);
-    setCategoryIndex(0);
   }, [cancelCloseTimer]);
 
   const scheduleClose = React.useCallback((delay = 180) => {
@@ -312,7 +311,6 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
     setExpandedMobileModule(null);
     setHoveredModule(null);
     setHoveredCategory(null);
-    setCategoryIndex(0);
   }
 
   const userRole = user?.role || "CLIENT";
@@ -355,7 +353,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
       left: pos.left,
       maxHeight: pos.maxHeight,
     });
-  }, [hoveredModule, hoveredCategory, categoryIndex, allowedNavigation]);
+  }, [hoveredModule, allowedNavigation]);
 
   // Recalculate positioning when submenu opens, page or sidebar scrolls, window resizes, or content changes
   React.useEffect(() => {
@@ -661,7 +659,6 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                           });
                           setHoveredModule(mod);
                           setHoveredCategory(null);
-                          setCategoryIndex(0);
                         }}
                       >
                         <div
@@ -777,7 +774,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                 {hoveredModule.title}
               </div>
               <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5" role="menu">
-                {hoveredModule.categories.map((cat, idx) => {
+                {hoveredModule.categories.map((cat) => {
                   const isCatHovered = hoveredCategory?.title === cat.title;
                   return (
                     <li
@@ -787,13 +784,11 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === "ArrowRight") {
                           setHoveredCategory(cat);
-                          setCategoryIndex(idx);
                         }
                       }}
                       onMouseEnter={() => {
                         cancelCloseTimer();
                         setHoveredCategory(cat);
-                        setCategoryIndex(idx);
                       }}
                       className={cn(
                         "h-[38px] px-3 flex items-center justify-between text-[12px] font-medium text-white/90 hover:text-white trakzee-menu-item cursor-pointer transition-all duration-150 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FBCA07] focus-visible:ring-inset",
@@ -1085,7 +1080,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
 
       {isSearchOpen && (
         <div 
-          className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-md flex items-start justify-center pt-20 p-4 animate-in fade-in duration-200 pointer-events-auto"
+          className="fixed inset-0 z-[100] bg-black/70 flex items-start justify-center pt-20 p-4 animate-in fade-in duration-200 pointer-events-auto"
           onClick={() => setIsSearchOpen(false)}
         >
           <div

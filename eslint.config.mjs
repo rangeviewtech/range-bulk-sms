@@ -14,6 +14,7 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "generate-*.js",
     "src/generated/**",
+    ".agents/**",
   ]),
   {
     rules: {

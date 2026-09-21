@@ -29,13 +29,13 @@ export const transactionFilterSchema = z.object({
 
 // SMS pricing schema (admin)
 export const smsPricingSchema = z.object({
-  countryCode: z.string().min(1).max(5),
-  countryName: z.string().min(1).max(100),
-  networkCode: z.string().max(10).optional(),
-  networkName: z.string().max(100).optional(),
-  costPerSms: z.number().positive('Cost must be positive'),
-  sellingPrice: z.number().positive('Selling price must be positive'),
-  currency: z.string().default('UGX'),
+  countryCode: z.string().trim().min(1, 'Country code is required').max(5, 'Max 5 chars'),
+  countryName: z.string().trim().min(2, 'Country name is required').max(100),
+  networkCode: z.string().trim().max(10).optional().or(z.literal('')),
+  networkName: z.string().trim().max(100).optional().or(z.literal('')),
+  costPerSms: z.coerce.number().positive('Cost per SMS must be positive'),
+  sellingPrice: z.coerce.number().positive('Selling price must be positive'),
+  currency: z.string().trim().min(1, 'Currency is required').default('UGX'),
 });
 
 export type DepositInput = z.infer<typeof depositSchema>;

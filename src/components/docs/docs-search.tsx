@@ -223,7 +223,7 @@ export function DocsSearchModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/70 animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div

@@ -5,24 +5,37 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { InputError } from '@/components/ui/input-error';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import { useFormValidation } from '@/hooks/use-form-validation';
+import { createGatewaySchema, type CreateGatewayInput } from '@/lib/validations/gateway';
 
 export default function AddGatewayPage() {
   const router = useRouter();
-  const [name, setName] = useState('');
-  const [type, setType] = useState('ANDROID');
-  const [throughput, setThroughput] = useState('');
+  const { values, errors, touched, setFieldValue, handleBlur, validateAll, setServerErrors } =
+    useFormValidation<CreateGatewayInput>({
+      schema: createGatewaySchema,
+      initialValues: {
+        name: '',
+        type: 'ANDROID',
+        maxThroughput: null,
+      },
+    });
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
   const [pairingCode, setPairingCode] = useState('');
 
   const handleCreateAndPair = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (!validateAll().isValid) {
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -31,15 +44,18 @@ export default function AddGatewayPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name,
-          type,
-          maxThroughput: throughput ? parseInt(throughput) : undefined
+          name: values.name.trim(),
+          type: values.type,
+          maxThroughput: values.maxThroughput || undefined,
         })
       });
       
       const createData = await createRes.json();
       
       if (!createRes.ok || !createData.success) {
+        if (createData.details) {
+          setServerErrors(createData.details);
+        }
         throw new Error(createData.error || 'Failed to create gateway');
       }
 
@@ -83,7 +99,7 @@ export default function AddGatewayPage() {
 
       {!pairingCode ? (
         <Card>
-          <form onSubmit={handleCreateAndPair}>
+          <form onSubmit={handleCreateAndPair} noValidate>
             <CardHeader>
               <CardTitle>Gateway Details</CardTitle>
               <CardDescription>Enter the details for your new hardware gateway.</CardDescription>
@@ -95,19 +111,28 @@ export default function AddGatewayPage() {
                 </div>
               )}
               
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <label className="text-sm font-medium">Gateway Name <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span></label>
                 <Input 
                   placeholder="e.g., MTN Uganda Primary Phone" 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
+                  value={values.name} 
+                  onChange={(e) => setFieldValue('name', e.target.value)} 
+                  onBlur={() => handleBlur('name')}
+                  error={touched.name && !!errors.name}
+                  aria-describedby={touched.name && errors.name ? 'gateway-name-error' : undefined}
                   required 
                 />
+                {touched.name && errors.name && (
+                  <InputError id="gateway-name-error" message={errors.name} />
+                )}
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <label className="text-sm font-medium">Hardware Type <span className="text-destructive font-semibold ml-0.5" aria-hidden="true">*</span></label>
-                <Select value={type} onValueChange={setType}>
+                <Select
+                  value={values.type}
+                  onValueChange={(val) => setFieldValue('type', val as CreateGatewayInput['type'])}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
@@ -116,21 +141,30 @@ export default function AddGatewayPage() {
                     <SelectItem value="ESP32_GSM">ESP32 + GSM/LTE Module</SelectItem>
                   </SelectContent>
                 </Select>
+                {touched.type && errors.type && (
+                  <InputError message={errors.type} />
+                )}
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <label className="text-sm font-medium">Rate Limit (SMS / min) - Optional</label>
                 <Input 
                   type="number" 
                   placeholder="Leave empty for unlimited" 
-                  value={throughput} 
-                  onChange={(e) => setThroughput(e.target.value)} 
+                  value={values.maxThroughput ?? ''} 
+                  onChange={(e) => setFieldValue('maxThroughput', e.target.value ? parseInt(e.target.value) : null)} 
+                  onBlur={() => handleBlur('maxThroughput')}
+                  error={touched.maxThroughput && !!errors.maxThroughput}
+                  aria-describedby={touched.maxThroughput && errors.maxThroughput ? 'gateway-throughput-error' : undefined}
                 />
+                {touched.maxThroughput && errors.maxThroughput && (
+                  <InputError id="gateway-throughput-error" message={errors.maxThroughput} />
+                )}
                 <p className="text-xs text-muted-foreground">Useful to prevent network operator bans.</p>
               </div>
             </CardContent>
             <CardFooter className="bg-muted/30 pt-4 flex justify-end">
-              <Button type="submit" disabled={loading || !name}>
+              <Button type="submit" disabled={loading}>
                 {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 Generate Pairing Code
               </Button>
@@ -165,7 +199,7 @@ export default function AddGatewayPage() {
             <div className="space-y-3">
               <h4 className="text-sm font-semibold">How to connect:</h4>
               <ol className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
-                <li>Open the Range SMS {type === 'ANDROID' ? 'Android App' : 'ESP32 Config Portal'}.</li>
+                <li>Open the Range SMS {values.type === 'ANDROID' ? 'Android App' : 'ESP32 Config Portal'}.</li>
                 <li>Select &quot;Pair new Gateway&quot;.</li>
                 <li>Enter the 6-digit code shown above.</li>
                 <li>Wait for the device to show as <strong>Online</strong> in your dashboard.</li>
