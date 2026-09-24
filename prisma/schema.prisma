@@ -68,6 +68,7 @@ model User {
   supportTickets    SupportTicket[]
   scheduledMessages ScheduledMessage[]
   smsDrafts         SmsDraft[]
+  customVariables   CustomVariable[]
 
   gateways Gateway[]
 }
@@ -804,7 +805,7 @@ model ContactSegment {
   userId      String
   name        String
   description String?
-  rules       Json     // Stores the DSL logic
+  rules       Json // Stores the DSL logic
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -890,33 +891,33 @@ model SmsTemplate {
 
 // ── CAMPAIGN ──────────────────────────────────────────────
 model Campaign {
-  id              String         @id @default(uuid())
-  userId          String
-  clientId        String?
-  senderIdId      String?
-  name            String
-  message         String         @db.Text
-  variables       String[]       @default([])
-  status          CampaignStatus @default(DRAFT)
-  type            CampaignType   @default(BROADCAST)
-  cronExpression  String?
-  maxOccurrences  Int?
-  currentOccurrence Int          @default(0)
-  scheduledAt     DateTime?
-  startedAt       DateTime?
-  completedAt     DateTime?
-  cancelledAt     DateTime?
-  totalRecipients Int            @default(0)
-  totalSmsUnits   Int            @default(0)
-  totalCost       Decimal        @default(0) @db.Decimal(15, 4)
-  sentCount       Int            @default(0)
-  deliveredCount  Int            @default(0)
-  failedCount     Int            @default(0)
-  pendingCount    Int            @default(0)
-  metadata        Json?
-  deletedAt       DateTime?
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id                String         @id @default(uuid())
+  userId            String
+  clientId          String?
+  senderIdId        String?
+  name              String
+  message           String         @db.Text
+  variables         String[]       @default([])
+  status            CampaignStatus @default(DRAFT)
+  type              CampaignType   @default(BROADCAST)
+  cronExpression    String?
+  maxOccurrences    Int?
+  currentOccurrence Int            @default(0)
+  scheduledAt       DateTime?
+  startedAt         DateTime?
+  completedAt       DateTime?
+  cancelledAt       DateTime?
+  totalRecipients   Int            @default(0)
+  totalSmsUnits     Int            @default(0)
+  totalCost         Decimal        @default(0) @db.Decimal(15, 4)
+  sentCount         Int            @default(0)
+  deliveredCount    Int            @default(0)
+  failedCount       Int            @default(0)
+  pendingCount      Int            @default(0)
+  metadata          Json?
+  deletedAt         DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 
   user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   client   Client?         @relation(fields: [clientId], references: [id], onDelete: SetNull)
@@ -1576,29 +1577,29 @@ model ConsentLog {
 
 // ── SMS DRAFT ──────────────────────────────────────────────
 model SmsDraft {
-  id               String        @id @default(uuid())
+  id               String    @id @default(uuid())
   userId           String
   organizationId   String?
   title            String?
   senderId         String?
-  deliveryMode     String        @default("manual") // "manual" | "groups" | "import"
-  message          String        @default("") @db.Text
-  manualRecipients String        @default("") @db.Text
-  recipientCount   Int           @default(0)
+  deliveryMode     String    @default("manual") // "manual" | "groups" | "import"
+  message          String    @default("") @db.Text
+  manualRecipients String    @default("") @db.Text
+  recipientCount   Int       @default(0)
   selectedGroupId  String?
   importFilename   String?
   importRowCount   Int?
   templateId       String?
   metadata         Json?
-  version          Int           @default(1)
-  isShared         Boolean       @default(false)
+  version          Int       @default(1)
+  isShared         Boolean   @default(false)
   lastEditedById   String?
   lastAutosavedAt  DateTime?
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
-  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organization     Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
 
   @@index([userId, updatedAt])
   @@index([organizationId, updatedAt])
@@ -1641,9 +1642,9 @@ model Region {
 
 model CallingCodeAssignment {
   id              String    @id @default(uuid())
-  callingCode     String    // e.g. "+1", "+256", "+7"
+  callingCode     String // e.g. "+1", "+256", "+7"
   regionId        String
-  leadingDigits   String?   // Leading digits / area code distinctions
+  leadingDigits   String? // Leading digits / area code distinctions
   isNonGeographic Boolean   @default(false)
   source          String?
   asOf            DateTime?
@@ -1659,9 +1660,9 @@ model CallingCodeAssignment {
 
 model NumberingMetadataVersion {
   id           String    @id @default(uuid())
-  libraryName  String    // e.g. "libphonenumber"
-  exactVersion String    // e.g. "v9.0.39"
-  cldrVersion  String?   // e.g. "v45"
+  libraryName  String // e.g. "libphonenumber"
+  exactVersion String // e.g. "v9.0.39"
+  cldrVersion  String? // e.g. "v45"
   checksum     String?
   builtAt      DateTime?
   reviewedAt   DateTime?
@@ -1703,9 +1704,9 @@ model Allocation {
   regionId         String
   callingCode      String
   nsnLength        Int
-  prefix           String?   // Exact prefix, e.g. "70", "790"
-  nsnStart         String?   // Inclusive range boundary
-  nsnEnd           String?   // Inclusive range boundary
+  prefix           String? // Exact prefix, e.g. "70", "790"
+  nsnStart         String? // Inclusive range boundary
+  nsnEnd           String? // Inclusive range boundary
   operatorId       String?
   brand            String?
   serviceType      String    @default("MOBILE") // MOBILE, FIXED_LINE, TOLL_FREE, etc.
@@ -1732,22 +1733,22 @@ model Allocation {
 }
 
 model ProviderObservation {
-  id                   String   @id @default(uuid())
-  phoneHash            String   // Hashed phone number for PII privacy
-  e164Redacted         String   // Redacted format e.g. "+256770****56"
-  providerName         String   // Provider name as returned
-  packageName          String?  // e.g. "line_type_intelligence"
-  requestedAt          DateTime @default(now())
-  returnedAt           DateTime @default(now())
-  carrierSemantics     String   @default("provider_defined") // current, original, provider_defined, unknown
+  id                   String    @id @default(uuid())
+  phoneHash            String // Hashed phone number for PII privacy
+  e164Redacted         String // Redacted format e.g. "+256770****56"
+  providerName         String // Provider name as returned
+  packageName          String? // e.g. "line_type_intelligence"
+  requestedAt          DateTime  @default(now())
+  returnedAt           DateTime  @default(now())
+  carrierSemantics     String    @default("provider_defined") // current, original, provider_defined, unknown
   lineType             String?
   mcc                  String?
   mnc                  String?
-  portabilitySupported Boolean  @default(false)
+  portabilitySupported Boolean   @default(false)
   isPorted             Boolean?
   ttlExpiresAt         DateTime?
-  costIncurred         Float    @default(0)
-  createdAt            DateTime @default(now())
+  costIncurred         Float     @default(0)
+  createdAt            DateTime  @default(now())
 
   @@index([phoneHash])
   @@index([ttlExpiresAt])
@@ -1756,8 +1757,8 @@ model ProviderObservation {
 model CoverageAudit {
   id             String    @id @default(uuid())
   regionId       String
-  feature        String    // validation, carrier_metadata, official_allocations, ported_current_lookup, fixtures
-  coverageStatus String    // verified, partial, unknown, unsupported
+  feature        String // validation, carrier_metadata, official_allocations, ported_current_lookup, fixtures
+  coverageStatus String // verified, partial, unknown, unsupported
   recordCount    Int       @default(0)
   source         String
   lastCheckedAt  DateTime  @default(now())
@@ -1770,4 +1771,22 @@ model CoverageAudit {
 
   @@index([regionId, feature])
   @@index([coverageStatus])
+}
+
+model CustomVariable {
+  id            String   @id @default(uuid())
+  userId        String
+  key           String
+  label         String
+  description   String?
+  fallbackValue String?
+  sampleValue   String?
+  dataType      String   @default("text")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, key])
+  @@index([userId])
 }

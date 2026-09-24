@@ -114,7 +114,8 @@ export const ModelName = {
   Operator: 'Operator',
   Allocation: 'Allocation',
   ProviderObservation: 'ProviderObservation',
-  CoverageAudit: 'CoverageAudit'
+  CoverageAudit: 'CoverageAudit',
+  CustomVariable: 'CustomVariable'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1292,6 +1293,22 @@ export const CoverageAuditScalarFieldEnum = {
 } as const
 
 export type CoverageAuditScalarFieldEnum = (typeof CoverageAuditScalarFieldEnum)[keyof typeof CoverageAuditScalarFieldEnum]
+
+
+export const CustomVariableScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  key: 'key',
+  label: 'label',
+  description: 'description',
+  fallbackValue: 'fallbackValue',
+  sampleValue: 'sampleValue',
+  dataType: 'dataType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CustomVariableScalarFieldEnum = (typeof CustomVariableScalarFieldEnum)[keyof typeof CustomVariableScalarFieldEnum]
 
 
 export const SortOrder = {

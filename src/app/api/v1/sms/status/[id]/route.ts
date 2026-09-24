@@ -27,8 +27,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         if (client) targetUserId = client.userId;
       }
 
-      const message = await prisma.message.findUnique({
-        where: { id },
+      if (!targetUserId) {
+        return Response.json({ error: 'Unauthorized: Unable to resolve account context' }, { status: 401 });
+      }
+
+      const message = await prisma.message.findFirst({
+        where: { id, userId: targetUserId },
         include: {
           recipients: {
             select: {
@@ -42,7 +46,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         },
       });
 
-      if (!message || (targetUserId && message.userId !== targetUserId)) {
+      if (!message) {
         return Response.json(
           {
             type: 'https://docs.rangesms.com/errors/message-not-found',

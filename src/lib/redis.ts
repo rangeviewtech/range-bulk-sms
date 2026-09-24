@@ -1,5 +1,4 @@
 import { Redis } from '@upstash/redis';
-import crypto from 'crypto';
 
 export const redis =
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
@@ -181,7 +180,7 @@ export const redisLock = {
     lockKey: string,
     ttlSeconds: number = 30
   ): Promise<{ acquired: boolean; token: string }> {
-    const token = crypto.randomUUID();
+    const token = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2) + Date.now().toString(36);
     const fullKey = `lock:${lockKey}`;
 
     if (redis) {

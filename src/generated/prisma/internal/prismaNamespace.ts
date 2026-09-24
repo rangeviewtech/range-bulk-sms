@@ -460,7 +460,8 @@ export const ModelName = {
   Operator: 'Operator',
   Allocation: 'Allocation',
   ProviderObservation: 'ProviderObservation',
-  CoverageAudit: 'CoverageAudit'
+  CoverageAudit: 'CoverageAudit',
+  CustomVariable: 'CustomVariable'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -476,7 +477,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "userDevice" | "authenticator" | "verificationToken" | "role" | "permission" | "userRole" | "rolePermission" | "auditLog" | "job" | "communicationLog" | "providerHealth" | "otpRecord" | "telegramLinkingToken" | "notificationPreference" | "notificationTemplate" | "notification" | "scheduledJob" | "cronExecution" | "organization" | "client" | "agent" | "contact" | "contactGroup" | "contactGroupMember" | "contactTag" | "contactTagAssignment" | "contactSegment" | "contactImport" | "senderId" | "smsTemplate" | "campaign" | "campaignGroup" | "message" | "messageRecipient" | "smsProvider" | "providerRoute" | "wallet" | "transaction" | "smsPricing" | "commission" | "commissionRule" | "apiKey" | "apiRequest" | "webhook" | "webhookDelivery" | "supportTicket" | "ticketMessage" | "scheduledMessage" | "gateway" | "gatewayDevice" | "gatewayToken" | "gatewayLog" | "messageAttempt" | "consentLog" | "smsDraft" | "region" | "callingCodeAssignment" | "numberingMetadataVersion" | "operator" | "allocation" | "providerObservation" | "coverageAudit"
+    modelProps: "user" | "session" | "userDevice" | "authenticator" | "verificationToken" | "role" | "permission" | "userRole" | "rolePermission" | "auditLog" | "job" | "communicationLog" | "providerHealth" | "otpRecord" | "telegramLinkingToken" | "notificationPreference" | "notificationTemplate" | "notification" | "scheduledJob" | "cronExecution" | "organization" | "client" | "agent" | "contact" | "contactGroup" | "contactGroupMember" | "contactTag" | "contactTagAssignment" | "contactSegment" | "contactImport" | "senderId" | "smsTemplate" | "campaign" | "campaignGroup" | "message" | "messageRecipient" | "smsProvider" | "providerRoute" | "wallet" | "transaction" | "smsPricing" | "commission" | "commissionRule" | "apiKey" | "apiRequest" | "webhook" | "webhookDelivery" | "supportTicket" | "ticketMessage" | "scheduledMessage" | "gateway" | "gatewayDevice" | "gatewayToken" | "gatewayLog" | "messageAttempt" | "consentLog" | "smsDraft" | "region" | "callingCodeAssignment" | "numberingMetadataVersion" | "operator" | "allocation" | "providerObservation" | "coverageAudit" | "customVariable"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -5216,6 +5217,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CustomVariable: {
+      payload: Prisma.$CustomVariablePayload<ExtArgs>
+      fields: Prisma.CustomVariableFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CustomVariableFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomVariablePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CustomVariableFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomVariablePayload>
+        }
+        findFirst: {
+          args: Prisma.CustomVariableFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomVariablePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CustomVariableFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomVariablePayload>
+        }
+        findMany: {
+          args: Prisma.CustomVariableFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomVariablePayload>[]
+        }
+        create: {
+          args: Prisma.CustomVariableCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomVariablePayload>
+        }
+        createMany: {
+          args: Prisma.CustomVariableCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CustomVariableCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomVariablePayload>[]
+        }
+        delete: {
+          args: Prisma.CustomVariableDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomVariablePayload>
+        }
+        update: {
+          args: Prisma.CustomVariableUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomVariablePayload>
+        }
+        deleteMany: {
+          args: Prisma.CustomVariableDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CustomVariableUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CustomVariableUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomVariablePayload>[]
+        }
+        upsert: {
+          args: Prisma.CustomVariableUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomVariablePayload>
+        }
+        aggregate: {
+          args: Prisma.CustomVariableAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCustomVariable>
+        }
+        groupBy: {
+          args: Prisma.CustomVariableGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomVariableGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CustomVariableCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomVariableCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -6416,6 +6491,22 @@ export const CoverageAuditScalarFieldEnum = {
 export type CoverageAuditScalarFieldEnum = (typeof CoverageAuditScalarFieldEnum)[keyof typeof CoverageAuditScalarFieldEnum]
 
 
+export const CustomVariableScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  key: 'key',
+  label: 'label',
+  description: 'description',
+  fallbackValue: 'fallbackValue',
+  sampleValue: 'sampleValue',
+  dataType: 'dataType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CustomVariableScalarFieldEnum = (typeof CustomVariableScalarFieldEnum)[keyof typeof CustomVariableScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -7125,6 +7216,7 @@ export type GlobalOmitConfig = {
   allocation?: Prisma.AllocationOmit
   providerObservation?: Prisma.ProviderObservationOmit
   coverageAudit?: Prisma.CoverageAuditOmit
+  customVariable?: Prisma.CustomVariableOmit
 }
 
 /* Types for Logging */

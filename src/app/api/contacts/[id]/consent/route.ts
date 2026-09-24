@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { ConsentService } from "@/lib/sms/consent-service";
 import { prisma, ConsentAction, ConsentPurpose, CommunicationChannel } from "@/lib/prisma";
+import { requirePermission } from "@/lib/auth/authorization";
 import { z } from "zod";
 
 const recordConsentSchema = z.object({
@@ -17,11 +18,12 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await requirePermission('contacts.manage');
     const { id: contactId } = await params;
 
-    // Verify contact exists
-    const contact = await prisma.contact.findUnique({
-      where: { id: contactId },
+    // Verify contact exists and belongs to the authenticated user
+    const contact = await prisma.contact.findFirst({
+      where: { id: contactId, userId: session.userId },
     });
 
     if (!contact) {
@@ -69,7 +71,20 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await requirePermission('contacts.view');
     const { id: contactId } = await params;
+
+    // Verify contact exists and belongs to the authenticated user
+    const contact = await prisma.contact.findFirst({
+      where: { id: contactId, userId: session.userId },
+    });
+
+    if (!contact) {
+      return NextResponse.json(
+        { success: false, error: "Contact not found" },
+        { status: 404 }
+      );
+    }
 
     const logs = await prisma.consentLog.findMany({
       where: { contactId },

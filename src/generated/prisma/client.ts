@@ -361,3 +361,8 @@ export type ProviderObservation = Prisma.ProviderObservationModel
  * 
  */
 export type CoverageAudit = Prisma.CoverageAuditModel
+/**
+ * Model CustomVariable
+ * 
+ */
+export type CustomVariable = Prisma.CustomVariableModel

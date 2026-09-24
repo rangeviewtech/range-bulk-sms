@@ -189,7 +189,7 @@ export const ContactImportService = {
           where: { userId, normalizedPhone: { in: validImportData.map(d => d.normalizedPhone) } },
           select: { id: true }
         });
-        await ContactService.addToGroup(imported.map(c => c.id), groupId);
+        await ContactService.addToGroup(userId, imported.map(c => c.id), groupId);
       }
     }
 

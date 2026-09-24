@@ -288,6 +288,7 @@ export type UserWhereInput = {
   supportTickets?: Prisma.SupportTicketListRelationFilter
   scheduledMessages?: Prisma.ScheduledMessageListRelationFilter
   smsDrafts?: Prisma.SmsDraftListRelationFilter
+  customVariables?: Prisma.CustomVariableListRelationFilter
   gateways?: Prisma.GatewayListRelationFilter
 }
 
@@ -333,6 +334,7 @@ export type UserOrderByWithRelationInput = {
   supportTickets?: Prisma.SupportTicketOrderByRelationAggregateInput
   scheduledMessages?: Prisma.ScheduledMessageOrderByRelationAggregateInput
   smsDrafts?: Prisma.SmsDraftOrderByRelationAggregateInput
+  customVariables?: Prisma.CustomVariableOrderByRelationAggregateInput
   gateways?: Prisma.GatewayOrderByRelationAggregateInput
 }
 
@@ -381,6 +383,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   supportTickets?: Prisma.SupportTicketListRelationFilter
   scheduledMessages?: Prisma.ScheduledMessageListRelationFilter
   smsDrafts?: Prisma.SmsDraftListRelationFilter
+  customVariables?: Prisma.CustomVariableListRelationFilter
   gateways?: Prisma.GatewayListRelationFilter
 }, "id" | "email" | "telegramChatId" | "phone">
 
@@ -468,6 +471,7 @@ export type UserCreateInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -513,6 +517,7 @@ export type UserUncheckedCreateInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -558,6 +563,7 @@ export type UserUpdateInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -603,6 +609,7 @@ export type UserUncheckedUpdateInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1132,6 +1139,20 @@ export type UserUpdateOneRequiredWithoutSmsDraftsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSmsDraftsInput, Prisma.UserUpdateWithoutSmsDraftsInput>, Prisma.UserUncheckedUpdateWithoutSmsDraftsInput>
 }
 
+export type UserCreateNestedOneWithoutCustomVariablesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCustomVariablesInput, Prisma.UserUncheckedCreateWithoutCustomVariablesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCustomVariablesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCustomVariablesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCustomVariablesInput, Prisma.UserUncheckedCreateWithoutCustomVariablesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCustomVariablesInput
+  upsert?: Prisma.UserUpsertWithoutCustomVariablesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCustomVariablesInput, Prisma.UserUpdateWithoutCustomVariablesInput>, Prisma.UserUncheckedUpdateWithoutCustomVariablesInput>
+}
+
 export type UserCreateWithoutSessionsInput = {
   id?: string
   email: string
@@ -1173,6 +1194,7 @@ export type UserCreateWithoutSessionsInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -1217,6 +1239,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1277,6 +1300,7 @@ export type UserUpdateWithoutSessionsInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -1321,6 +1345,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1365,6 +1390,7 @@ export type UserCreateWithoutDevicesInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -1409,6 +1435,7 @@ export type UserUncheckedCreateWithoutDevicesInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1469,6 +1496,7 @@ export type UserUpdateWithoutDevicesInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -1513,6 +1541,7 @@ export type UserUncheckedUpdateWithoutDevicesInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1557,6 +1586,7 @@ export type UserCreateWithoutAuthenticatorsInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -1601,6 +1631,7 @@ export type UserUncheckedCreateWithoutAuthenticatorsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1661,6 +1692,7 @@ export type UserUpdateWithoutAuthenticatorsInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -1705,6 +1737,7 @@ export type UserUncheckedUpdateWithoutAuthenticatorsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1749,6 +1782,7 @@ export type UserCreateWithoutRolesInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -1793,6 +1827,7 @@ export type UserUncheckedCreateWithoutRolesInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1853,6 +1888,7 @@ export type UserUpdateWithoutRolesInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -1897,6 +1933,7 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1941,6 +1978,7 @@ export type UserCreateWithoutAuditLogsInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -1985,6 +2023,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -2045,6 +2084,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -2089,6 +2129,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -2133,6 +2174,7 @@ export type UserCreateWithoutTelegramLinkingTokensInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -2177,6 +2219,7 @@ export type UserUncheckedCreateWithoutTelegramLinkingTokensInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -2237,6 +2280,7 @@ export type UserUpdateWithoutTelegramLinkingTokensInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -2281,6 +2325,7 @@ export type UserUncheckedUpdateWithoutTelegramLinkingTokensInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -2325,6 +2370,7 @@ export type UserCreateWithoutNotificationPreferencesInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -2369,6 +2415,7 @@ export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -2429,6 +2476,7 @@ export type UserUpdateWithoutNotificationPreferencesInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -2473,6 +2521,7 @@ export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -2517,6 +2566,7 @@ export type UserCreateWithoutNotificationsInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -2561,6 +2611,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -2621,6 +2672,7 @@ export type UserUpdateWithoutNotificationsInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -2665,6 +2717,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -2709,6 +2762,7 @@ export type UserCreateWithoutClientInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -2753,6 +2807,7 @@ export type UserUncheckedCreateWithoutClientInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -2813,6 +2868,7 @@ export type UserUpdateWithoutClientInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -2857,6 +2913,7 @@ export type UserUncheckedUpdateWithoutClientInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -2901,6 +2958,7 @@ export type UserCreateWithoutAgentInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -2945,6 +3003,7 @@ export type UserUncheckedCreateWithoutAgentInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -3005,6 +3064,7 @@ export type UserUpdateWithoutAgentInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -3049,6 +3109,7 @@ export type UserUncheckedUpdateWithoutAgentInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -3093,6 +3154,7 @@ export type UserCreateWithoutContactsInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -3137,6 +3199,7 @@ export type UserUncheckedCreateWithoutContactsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -3197,6 +3260,7 @@ export type UserUpdateWithoutContactsInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -3241,6 +3305,7 @@ export type UserUncheckedUpdateWithoutContactsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -3285,6 +3350,7 @@ export type UserCreateWithoutContactGroupsInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -3329,6 +3395,7 @@ export type UserUncheckedCreateWithoutContactGroupsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -3389,6 +3456,7 @@ export type UserUpdateWithoutContactGroupsInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -3433,6 +3501,7 @@ export type UserUncheckedUpdateWithoutContactGroupsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -3477,6 +3546,7 @@ export type UserCreateWithoutContactTagsInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -3521,6 +3591,7 @@ export type UserUncheckedCreateWithoutContactTagsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -3581,6 +3652,7 @@ export type UserUpdateWithoutContactTagsInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -3625,6 +3697,7 @@ export type UserUncheckedUpdateWithoutContactTagsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -3669,6 +3742,7 @@ export type UserCreateWithoutContactSegmentsInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -3713,6 +3787,7 @@ export type UserUncheckedCreateWithoutContactSegmentsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -3773,6 +3848,7 @@ export type UserUpdateWithoutContactSegmentsInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -3817,6 +3893,7 @@ export type UserUncheckedUpdateWithoutContactSegmentsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -3861,6 +3938,7 @@ export type UserCreateWithoutContactImportsInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -3905,6 +3983,7 @@ export type UserUncheckedCreateWithoutContactImportsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -3965,6 +4044,7 @@ export type UserUpdateWithoutContactImportsInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -4009,6 +4089,7 @@ export type UserUncheckedUpdateWithoutContactImportsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -4053,6 +4134,7 @@ export type UserCreateWithoutSenderIdsInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -4097,6 +4179,7 @@ export type UserUncheckedCreateWithoutSenderIdsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -4157,6 +4240,7 @@ export type UserUpdateWithoutSenderIdsInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -4201,6 +4285,7 @@ export type UserUncheckedUpdateWithoutSenderIdsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -4245,6 +4330,7 @@ export type UserCreateWithoutSmsTemplatesInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -4289,6 +4375,7 @@ export type UserUncheckedCreateWithoutSmsTemplatesInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -4349,6 +4436,7 @@ export type UserUpdateWithoutSmsTemplatesInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -4393,6 +4481,7 @@ export type UserUncheckedUpdateWithoutSmsTemplatesInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -4437,6 +4526,7 @@ export type UserCreateWithoutCampaignsInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -4481,6 +4571,7 @@ export type UserUncheckedCreateWithoutCampaignsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -4541,6 +4632,7 @@ export type UserUpdateWithoutCampaignsInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -4585,6 +4677,7 @@ export type UserUncheckedUpdateWithoutCampaignsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -4629,6 +4722,7 @@ export type UserCreateWithoutMessagesInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -4673,6 +4767,7 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -4733,6 +4828,7 @@ export type UserUpdateWithoutMessagesInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -4777,6 +4873,7 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -4821,6 +4918,7 @@ export type UserCreateWithoutWalletsInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -4865,6 +4963,7 @@ export type UserUncheckedCreateWithoutWalletsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -4925,6 +5024,7 @@ export type UserUpdateWithoutWalletsInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -4969,6 +5069,7 @@ export type UserUncheckedUpdateWithoutWalletsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -5013,6 +5114,7 @@ export type UserCreateWithoutTransactionsInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -5057,6 +5159,7 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -5117,6 +5220,7 @@ export type UserUpdateWithoutTransactionsInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -5161,6 +5265,7 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -5205,6 +5310,7 @@ export type UserCreateWithoutApiKeysInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -5249,6 +5355,7 @@ export type UserUncheckedCreateWithoutApiKeysInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -5309,6 +5416,7 @@ export type UserUpdateWithoutApiKeysInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -5353,6 +5461,7 @@ export type UserUncheckedUpdateWithoutApiKeysInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -5397,6 +5506,7 @@ export type UserCreateWithoutWebhooksInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -5441,6 +5551,7 @@ export type UserUncheckedCreateWithoutWebhooksInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -5501,6 +5612,7 @@ export type UserUpdateWithoutWebhooksInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -5545,6 +5657,7 @@ export type UserUncheckedUpdateWithoutWebhooksInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -5589,6 +5702,7 @@ export type UserCreateWithoutSupportTicketsInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -5633,6 +5747,7 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -5693,6 +5808,7 @@ export type UserUpdateWithoutSupportTicketsInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -5737,6 +5853,7 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -5781,6 +5898,7 @@ export type UserCreateWithoutScheduledMessagesInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -5825,6 +5943,7 @@ export type UserUncheckedCreateWithoutScheduledMessagesInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -5885,6 +6004,7 @@ export type UserUpdateWithoutScheduledMessagesInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -5929,6 +6049,7 @@ export type UserUncheckedUpdateWithoutScheduledMessagesInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -5974,6 +6095,7 @@ export type UserCreateWithoutGatewaysInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGatewaysInput = {
@@ -6018,6 +6140,7 @@ export type UserUncheckedCreateWithoutGatewaysInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
   smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGatewaysInput = {
@@ -6078,6 +6201,7 @@ export type UserUpdateWithoutGatewaysInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGatewaysInput = {
@@ -6122,6 +6246,7 @@ export type UserUncheckedUpdateWithoutGatewaysInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
   smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSmsDraftsInput = {
@@ -6165,6 +6290,7 @@ export type UserCreateWithoutSmsDraftsInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -6209,6 +6335,7 @@ export type UserUncheckedCreateWithoutSmsDraftsInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  customVariables?: Prisma.CustomVariableUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -6269,6 +6396,7 @@ export type UserUpdateWithoutSmsDraftsInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -6313,6 +6441,203 @@ export type UserUncheckedUpdateWithoutSmsDraftsInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  customVariables?: Prisma.CustomVariableUncheckedUpdateManyWithoutUserNestedInput
+  gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCustomVariablesInput = {
+  id?: string
+  email: string
+  name?: string | null
+  passwordHash?: string | null
+  status?: $Enums.UserStatus
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  mfaEnabled?: boolean
+  mfaSecret?: string | null
+  screenLockPin?: string | null
+  telegramChatId?: string | null
+  whatsappConsent?: boolean
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
+  authenticators?: Prisma.AuthenticatorCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  client?: Prisma.ClientCreateNestedOneWithoutUserInput
+  agent?: Prisma.AgentCreateNestedOneWithoutUserInput
+  contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
+  contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
+  contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
+  contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
+  senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
+  smsTemplates?: Prisma.SmsTemplateCreateNestedManyWithoutUserInput
+  campaigns?: Prisma.CampaignCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutUserInput
+  wallets?: Prisma.WalletCreateNestedOneWithoutUserInput
+  transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
+  webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCustomVariablesInput = {
+  id?: string
+  email: string
+  name?: string | null
+  passwordHash?: string | null
+  status?: $Enums.UserStatus
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  mfaEnabled?: boolean
+  mfaSecret?: string | null
+  screenLockPin?: string | null
+  telegramChatId?: string | null
+  whatsappConsent?: boolean
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
+  authenticators?: Prisma.AuthenticatorUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  client?: Prisma.ClientUncheckedCreateNestedOneWithoutUserInput
+  agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
+  contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
+  contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
+  contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
+  contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
+  senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
+  smsTemplates?: Prisma.SmsTemplateUncheckedCreateNestedManyWithoutUserInput
+  campaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutUserInput
+  wallets?: Prisma.WalletUncheckedCreateNestedOneWithoutUserInput
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
+  webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCustomVariablesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCustomVariablesInput, Prisma.UserUncheckedCreateWithoutCustomVariablesInput>
+}
+
+export type UserUpsertWithoutCustomVariablesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCustomVariablesInput, Prisma.UserUncheckedUpdateWithoutCustomVariablesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCustomVariablesInput, Prisma.UserUncheckedCreateWithoutCustomVariablesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCustomVariablesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCustomVariablesInput, Prisma.UserUncheckedUpdateWithoutCustomVariablesInput>
+}
+
+export type UserUpdateWithoutCustomVariablesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
+  authenticators?: Prisma.AuthenticatorUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  client?: Prisma.ClientUpdateOneWithoutUserNestedInput
+  agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
+  contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
+  contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
+  contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
+  contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
+  senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
+  smsTemplates?: Prisma.SmsTemplateUpdateManyWithoutUserNestedInput
+  campaigns?: Prisma.CampaignUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutUserNestedInput
+  wallets?: Prisma.WalletUpdateOneWithoutUserNestedInput
+  transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
+  webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCustomVariablesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
+  authenticators?: Prisma.AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  client?: Prisma.ClientUncheckedUpdateOneWithoutUserNestedInput
+  agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
+  contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
+  contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
+  contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
+  contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
+  senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
+  smsTemplates?: Prisma.SmsTemplateUncheckedUpdateManyWithoutUserNestedInput
+  campaigns?: Prisma.CampaignUncheckedUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutUserNestedInput
+  wallets?: Prisma.WalletUncheckedUpdateOneWithoutUserNestedInput
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
+  webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -6345,6 +6670,7 @@ export type UserCountOutputType = {
   supportTickets: number
   scheduledMessages: number
   smsDrafts: number
+  customVariables: number
   gateways: number
 }
 
@@ -6372,6 +6698,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   supportTickets?: boolean | UserCountOutputTypeCountSupportTicketsArgs
   scheduledMessages?: boolean | UserCountOutputTypeCountScheduledMessagesArgs
   smsDrafts?: boolean | UserCountOutputTypeCountSmsDraftsArgs
+  customVariables?: boolean | UserCountOutputTypeCountCustomVariablesArgs
   gateways?: boolean | UserCountOutputTypeCountGatewaysArgs
 }
 
@@ -6549,6 +6876,13 @@ export type UserCountOutputTypeCountSmsDraftsArgs<ExtArgs extends runtime.Types.
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountCustomVariablesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CustomVariableWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountGatewaysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.GatewayWhereInput
 }
@@ -6596,6 +6930,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   supportTickets?: boolean | Prisma.User$supportTicketsArgs<ExtArgs>
   scheduledMessages?: boolean | Prisma.User$scheduledMessagesArgs<ExtArgs>
   smsDrafts?: boolean | Prisma.User$smsDraftsArgs<ExtArgs>
+  customVariables?: boolean | Prisma.User$customVariablesArgs<ExtArgs>
   gateways?: boolean | Prisma.User$gatewaysArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -6682,6 +7017,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   supportTickets?: boolean | Prisma.User$supportTicketsArgs<ExtArgs>
   scheduledMessages?: boolean | Prisma.User$scheduledMessagesArgs<ExtArgs>
   smsDrafts?: boolean | Prisma.User$smsDraftsArgs<ExtArgs>
+  customVariables?: boolean | Prisma.User$customVariablesArgs<ExtArgs>
   gateways?: boolean | Prisma.User$gatewaysArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -6717,6 +7053,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     supportTickets: Prisma.$SupportTicketPayload<ExtArgs>[]
     scheduledMessages: Prisma.$ScheduledMessagePayload<ExtArgs>[]
     smsDrafts: Prisma.$SmsDraftPayload<ExtArgs>[]
+    customVariables: Prisma.$CustomVariablePayload<ExtArgs>[]
     gateways: Prisma.$GatewayPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -7155,6 +7492,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   supportTickets<T extends Prisma.User$supportTicketsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$supportTicketsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   scheduledMessages<T extends Prisma.User$scheduledMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$scheduledMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScheduledMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   smsDrafts<T extends Prisma.User$smsDraftsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$smsDraftsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SmsDraftPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  customVariables<T extends Prisma.User$customVariablesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$customVariablesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomVariablePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   gateways<T extends Prisma.User$gatewaysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$gatewaysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GatewayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -8199,6 +8537,30 @@ export type User$smsDraftsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.SmsDraftScalarFieldEnum | Prisma.SmsDraftScalarFieldEnum[]
+}
+
+/**
+ * User.customVariables
+ */
+export type User$customVariablesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CustomVariable
+   */
+  select?: Prisma.CustomVariableSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CustomVariable
+   */
+  omit?: Prisma.CustomVariableOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomVariableInclude<ExtArgs> | null
+  where?: Prisma.CustomVariableWhereInput
+  orderBy?: Prisma.CustomVariableOrderByWithRelationInput | Prisma.CustomVariableOrderByWithRelationInput[]
+  cursor?: Prisma.CustomVariableWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CustomVariableScalarFieldEnum | Prisma.CustomVariableScalarFieldEnum[]
 }
 
 /**

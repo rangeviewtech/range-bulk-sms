@@ -91,7 +91,12 @@ export const ContactService = {
     return result.count;
   },
   
-  async addToGroup(contactIds: string[], groupId: string) {
+  async addToGroup(userId: string, contactIds: string[], groupId: string) {
+    const group = await prisma.contactGroup.findUnique({
+      where: { id: groupId, userId }
+    });
+    if (!group) throw new Error('Group not found or unauthorized');
+
     await prisma.contactGroup.update({
       where: { id: groupId },
       data: {
@@ -103,7 +108,12 @@ export const ContactService = {
     return contactIds.length;
   },
   
-  async removeFromGroup(contactIds: string[], groupId: string) {
+  async removeFromGroup(userId: string, contactIds: string[], groupId: string) {
+    const group = await prisma.contactGroup.findUnique({
+      where: { id: groupId, userId }
+    });
+    if (!group) throw new Error('Group not found or unauthorized');
+
     await prisma.contactGroup.update({
       where: { id: groupId },
       data: {
