@@ -14,6 +14,21 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   AlertTriangle,
   Send,
   Sparkles,
@@ -22,14 +37,10 @@ import {
   Search,
   CheckCircle2,
   Copy,
-  ChevronLeft,
-  ChevronRight,
-  RefreshCw,
-  FileSpreadsheet,
   X,
-  FileText,
   Filter,
 } from 'lucide-react';
+import { Pagination } from '@/components/ui/pagination';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import readXlsxFile from 'read-excel-file/browser';
@@ -197,7 +208,6 @@ export function VariableResolutionModal({
   // Toggle "Send Plain" mode for a recipient
   const handleSkipChange = (phone: string, skip: boolean) => {
     setData((prev) => {
-      // Determine what plain text should be assigned
       let defaultMsg = firstEnteredPlainText.trim();
       if (!defaultMsg) {
         const found = prev.find((r) => r.plainTextMessage && r.plainTextMessage.trim().length > 0);
@@ -233,8 +243,6 @@ export function VariableResolutionModal({
         if (item.phone === phone) {
           return { ...item, plainTextMessage: text };
         }
-        // If other recipients are in "plain" mode but haven't typed their own text yet,
-        // sync the first entered text to them as requested
         if (wasFirstEmpty && item.skipVariables && (!item.plainTextMessage || item.plainTextMessage === target?.plainTextMessage)) {
           return { ...item, plainTextMessage: text };
         }
@@ -299,17 +307,6 @@ export function VariableResolutionModal({
     toast.success('Filled empty variable inputs with sample data!');
   };
 
-  // Reset variable values
-  const handleClearVariables = () => {
-    setData((prev) =>
-      prev.map((item) => ({
-        ...item,
-        values: variables.reduce((acc, v) => ({ ...acc, [v]: '' }), {}),
-      }))
-    );
-    toast.info('Cleared variable inputs.');
-  };
-
   // Handle uploaded spreadsheet / CSV file
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -367,14 +364,12 @@ export function VariableResolutionModal({
       h.trim().toLowerCase().replace(/[{}\[\]_]/g, '')
     );
 
-    // Locate phone column
     const phoneIdx = cleanHeaders.findIndex((h) =>
       ['phone', 'phonenumber', 'recipient', 'recipients', 'mobile', 'msisdn', 'number', 'contact', 'tel'].some((k) =>
         h.includes(k)
       )
     );
 
-    // Locate variables
     const varIndices: Record<string, number> = {};
     variables.forEach((v) => {
       const vClean = v.toLowerCase().replace(/[{}\[\]_]/g, '');
@@ -384,7 +379,6 @@ export function VariableResolutionModal({
       }
     });
 
-    // Locate plain text column
     const plainIdx = cleanHeaders.findIndex((h) =>
       ['plaintext', 'plain', 'message', 'text', 'sms', 'custommessage', 'content'].some((k) =>
         h.includes(k)
@@ -414,7 +408,6 @@ export function VariableResolutionModal({
             );
           });
 
-          // If phone in file is not in current list, append it!
           if (targetIndex === -1 && rawPhone.length >= 7) {
             const newItem: RecipientVariableData = {
               phone: rawPhone,
@@ -427,7 +420,6 @@ export function VariableResolutionModal({
             newRecipientsCount++;
           }
         } else if (rowIdx < nextData.length) {
-          // If no phone column present, match by row index
           targetIndex = rowIdx;
         }
 
@@ -435,7 +427,6 @@ export function VariableResolutionModal({
           const item = { ...nextData[targetIndex], values: { ...nextData[targetIndex].values } };
           let changed = false;
 
-          // Populate variable values
           variables.forEach((v) => {
             const colIdx = varIndices[v];
             if (colIdx !== undefined && row[colIdx] !== undefined && row[colIdx].trim() !== '') {
@@ -444,7 +435,6 @@ export function VariableResolutionModal({
             }
           });
 
-          // Populate plain text if present
           if (plainIdx !== -1 && row[plainIdx] !== undefined && row[plainIdx].trim() !== '') {
             item.plainTextMessage = row[plainIdx].trim();
             item.skipVariables = true;
@@ -468,7 +458,7 @@ export function VariableResolutionModal({
 
     if (updatedCount > 0 || newRecipientsCount > 0) {
       toast.success(
-        `Imported from ${filename}: updated ${updatedCount} recipient record(s)${
+        `Imported from ${filename}: updated ${updatedCount} record(s)${
           newRecipientsCount > 0 ? ` and added ${newRecipientsCount} new recipient(s)` : ''
         }!`
       );
@@ -481,7 +471,6 @@ export function VariableResolutionModal({
 
   // Download comprehensive sample CSV with active variables, dates, and realistic rows
   const handleDownloadSampleFile = () => {
-    // Other common system & custom variables with sample data
     const additionalColumns = [
       { key: 'date', sample: '2026-09-24' },
       { key: 'dueDate', sample: '2026-10-01' },
@@ -491,7 +480,6 @@ export function VariableResolutionModal({
       { key: 'accountNumber', sample: 'ACC-84920' },
     ];
 
-    // Filter out columns already in variables
     const extraCols = additionalColumns.filter(
       (c) => !variables.some((v) => v.toLowerCase() === c.key.toLowerCase())
     );
@@ -569,12 +557,10 @@ export function VariableResolutionModal({
   // Search & Filter
   const filteredData = React.useMemo(() => {
     return data.filter((item) => {
-      // Filter tab
       if (filterMode === 'missing' && isRowComplete(item)) return false;
       if (filterMode === 'complete' && !isRowComplete(item)) return false;
       if (filterMode === 'plain' && !item.skipVariables) return false;
 
-      // Search query
       if (!searchQuery.trim()) return true;
       const q = searchQuery.toLowerCase().trim();
       if (item.phone.toLowerCase().includes(q)) return true;
@@ -583,7 +569,7 @@ export function VariableResolutionModal({
     });
   }, [data, filterMode, searchQuery, isRowComplete]);
 
-  // Pagination
+  // Pagination calculation
   const totalPages = Math.max(1, Math.ceil(filteredData.length / pageSize));
   const paginatedData = React.useMemo(() => {
     const start = (currentPage - 1) * pageSize;
@@ -601,14 +587,12 @@ export function VariableResolutionModal({
       let customMessage = '';
 
       if (item.skipVariables) {
-        // User chose to send plain text for this recipient
         if (item.plainTextMessage && item.plainTextMessage.trim().length > 0) {
           customMessage = item.plainTextMessage.trim();
         } else {
           customMessage = stripVariables(templateMessage, variables);
         }
       } else {
-        // Substitute variables with recipient-specific values
         customMessage = templateMessage;
         variables.forEach((v) => {
           const val = item.values[v] || '';
@@ -628,23 +612,70 @@ export function VariableResolutionModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] max-w-5xl max-h-[92vh] flex flex-col p-0 overflow-hidden shadow-2xl border-border bg-card">
+      <DialogContent className="w-[96vw] max-w-5xl max-h-[92vh] flex flex-col p-0 overflow-hidden shadow-2xl border-border bg-card">
         {/* Header */}
-        <DialogHeader className="px-6 pt-5 pb-4 border-b border-border bg-muted/20 space-y-2">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <DialogTitle className="flex items-center gap-2 text-lg font-bold">
-                <Sparkles className="w-5 h-5 text-amber-500" />
-                Resolve Message Variables
-              </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground mt-1">
-                Your message contains <strong>{variables.length} variable(s)</strong> (
-                {variables.map((v) => `{{${v}}}`).join(', ')}). 
-                Provide values for each recipient, upload a spreadsheet, or customize individual plain text messages.
-              </DialogDescription>
+        <DialogHeader className="px-6 pt-5 pb-4 border-b border-border bg-muted/20 space-y-1.5">
+          <div className="flex items-center justify-between">
+            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-foreground">
+              <Sparkles className="w-5 h-5 text-amber-500" />
+              Resolve Message Variables
+            </DialogTitle>
+          </div>
+          <DialogDescription className="text-xs text-muted-foreground leading-relaxed">
+            Your message contains <strong>{variables.length} variable(s)</strong> (
+            {variables.map((v) => `{{${v}}}`).join(', ')}). 
+            Provide values for each recipient, upload a spreadsheet, or customize individual plain text messages.
+          </DialogDescription>
+        </DialogHeader>
+
+        {/* Toolbar: Search, Filter & Quick Actions matching /sms/drafts */}
+        <div className="px-6 py-3.5 border-b border-border/80 bg-muted/10">
+          <div className="flex flex-col md:flex-row gap-3 justify-between items-stretch md:items-center">
+            {/* Search Input */}
+            <div className="relative flex-1 max-w-md">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <Input
+                placeholder="Search by recipient phone or variable values..."
+                className="pl-9 pr-8 w-full text-xs h-9 bg-background shadow-xs border-border"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5"
+                  aria-label="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
 
-            {/* Quick Actions: Download Sample & Upload File */}
+            {/* Filter Mode Dropdown matching Drafts Select */}
+            <Select
+              value={filterMode}
+              onValueChange={(val: 'all' | 'missing' | 'complete' | 'plain') => {
+                setFilterMode(val);
+                setCurrentPage(1);
+              }}
+            >
+              <SelectTrigger className="w-full sm:w-[170px] h-9 text-xs bg-background shadow-xs">
+                <Filter className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
+                <SelectValue placeholder="All Recipients" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Recipients ({data.length})</SelectItem>
+                <SelectItem value="missing">Missing Values ({missingCount})</SelectItem>
+                <SelectItem value="complete">Complete ({data.length - missingCount})</SelectItem>
+                <SelectItem value="plain">Plain Text ({plainCount})</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Action Buttons matching Drafts Action Styling */}
             <div className="flex items-center gap-2 shrink-0">
               <input
                 ref={fileInputRef}
@@ -659,7 +690,7 @@ export function VariableResolutionModal({
                 variant="outline"
                 size="sm"
                 onClick={handleDownloadSampleFile}
-                className="h-8 text-xs gap-1.5 font-medium border-border/80 shadow-2xs hover:bg-muted"
+                className="h-9 px-3 text-xs gap-1.5 font-medium shadow-xs"
                 title="Download sample CSV template with all table columns, variables, and dates"
               >
                 <Download className="w-3.5 h-3.5 text-primary" />
@@ -672,11 +703,11 @@ export function VariableResolutionModal({
                 size="sm"
                 disabled={isUploading}
                 onClick={() => fileInputRef.current?.click()}
-                className="h-8 text-xs gap-1.5 font-medium border-primary/30 text-primary hover:bg-primary/10 shadow-2xs"
+                className="h-9 px-3 text-xs gap-1.5 font-medium border-primary/30 text-primary hover:bg-primary/10 shadow-xs"
                 title="Upload CSV or Excel file with recipient data"
               >
                 <Upload className="w-3.5 h-3.5" />
-                <span>{isUploading ? 'Parsing...' : 'Upload Data File'}</span>
+                <span>{isUploading ? 'Parsing...' : 'Upload Data'}</span>
               </Button>
 
               <Button
@@ -684,7 +715,7 @@ export function VariableResolutionModal({
                 variant="secondary"
                 size="sm"
                 onClick={handleFillSamples}
-                className="h-8 text-xs gap-1 font-medium shadow-2xs"
+                className="h-9 px-3 text-xs gap-1.5 font-medium shadow-xs"
                 title="Auto-fill empty variable inputs with realistic sample values"
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-500" />
@@ -692,158 +723,83 @@ export function VariableResolutionModal({
               </Button>
             </div>
           </div>
+        </div>
 
-          {/* Search & Filter Toolbar */}
-          <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search recipients or values..."
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="h-8 pl-8 text-xs bg-background/70 border-border"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              )}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-1.5 text-xs">
-              <span className="text-[11px] text-muted-foreground font-medium mr-1 flex items-center gap-1">
-                <Filter className="w-3 h-3" /> Filter:
-              </span>
-              <button
-                type="button"
-                onClick={() => {
-                  setFilterMode('all');
-                  setCurrentPage(1);
-                }}
-                className={cn(
-                  'px-2 py-1 rounded text-[11px] font-medium transition-colors cursor-pointer',
-                  filterMode === 'all'
-                    ? 'bg-foreground text-background font-semibold shadow-2xs'
-                    : 'bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground'
-                )}
-              >
-                All ({data.length})
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setFilterMode('missing');
-                  setCurrentPage(1);
-                }}
-                className={cn(
-                  'px-2 py-1 rounded text-[11px] font-medium transition-colors cursor-pointer flex items-center gap-1',
-                  filterMode === 'missing'
-                    ? 'bg-amber-500 text-white font-semibold shadow-2xs'
-                    : 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400'
-                )}
-              >
-                Missing ({missingCount})
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setFilterMode('plain');
-                  setCurrentPage(1);
-                }}
-                className={cn(
-                  'px-2 py-1 rounded text-[11px] font-medium transition-colors cursor-pointer',
-                  filterMode === 'plain'
-                    ? 'bg-primary text-primary-foreground font-semibold shadow-2xs'
-                    : 'bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground'
-                )}
-              >
-                Plain Text ({plainCount})
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setFilterMode('complete');
-                  setCurrentPage(1);
-                }}
-                className={cn(
-                  'px-2 py-1 rounded text-[11px] font-medium transition-colors cursor-pointer',
-                  filterMode === 'complete'
-                    ? 'bg-emerald-600 text-white font-semibold shadow-2xs'
-                    : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
-                )}
-              >
-                Complete ({data.length - missingCount})
-              </button>
-            </div>
-          </div>
-        </DialogHeader>
-
-        {/* Scrollable Table Area */}
+        {/* Data Table Area using standard UI Table components like /sms/drafts */}
         <div className="flex-1 overflow-auto p-0 min-h-[340px] max-h-[55vh]">
-          <table className="w-full text-sm text-left border-collapse">
-            <thead className="bg-muted/50 sticky top-0 z-10 shadow-xs border-b border-border/80 backdrop-blur-xs">
-              <tr>
-                <th className="px-4 py-3 font-semibold text-foreground border-r border-border/40 w-44">
-                  <div className="flex items-center justify-between">
+          <Table>
+            <TableHeader className="bg-muted/40 sticky top-0 z-10 shadow-2xs backdrop-blur-xs">
+              <TableRow className="hover:bg-transparent border-border/80">
+                <TableHead className="w-[200px] h-11 px-4 font-semibold text-xs text-foreground">
+                  <div className="flex items-center gap-2">
                     <span>Recipient</span>
-                    <span className="text-[10px] text-muted-foreground font-mono font-normal">
-                      ({filteredData.length})
-                    </span>
+                    <Badge variant="outline" className="font-mono text-[10px] px-1.5 py-0 h-4 bg-muted/60 text-muted-foreground border-border/60">
+                      {filteredData.length}
+                    </Badge>
                   </div>
-                </th>
+                </TableHead>
+
                 {variables.map((v) => (
-                  <th
+                  <TableHead
                     key={v}
-                    className="px-4 py-3 font-semibold text-foreground border-r border-border/40 min-w-[170px]"
+                    className="h-11 px-4 font-semibold text-xs text-foreground min-w-[190px]"
                   >
                     <div className="flex items-center gap-1.5">
-                      <span className="font-mono text-primary font-bold">{`{{${v}}}`}</span>
-                      <span className="text-[10px] text-muted-foreground font-normal">
+                      <span className="font-mono text-secondary dark:text-primary font-bold">{`{{${v}}}`}</span>
+                      <span className="text-[11px] font-normal text-muted-foreground font-sans truncate">
                         ({getSampleValueForVariable(v, 1)})
                       </span>
                     </div>
-                  </th>
+                  </TableHead>
                 ))}
-                <th className="px-4 py-3 font-semibold text-foreground text-center w-36">
+
+                <TableHead className="w-[140px] h-11 px-4 font-semibold text-xs text-foreground text-center">
                   <div className="flex items-center justify-center gap-2">
-                    <span className="text-xs">Send Plain</span>
+                    <span>Send Plain</span>
                     <button
                       type="button"
                       onClick={() => handleToggleAllMode(!allArePlain)}
-                      className="text-[10px] text-primary hover:underline font-normal cursor-pointer"
+                      className="text-[11px] font-normal text-primary hover:underline cursor-pointer"
                       title={allArePlain ? 'Switch all to variables' : 'Switch all to plain text'}
                     >
                       {allArePlain ? 'All Vars' : 'All Plain'}
                     </button>
                   </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40 bg-card">
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
               {paginatedData.length === 0 ? (
-                <tr>
-                  <td
+                <TableRow>
+                  <TableCell
                     colSpan={variables.length + 2}
-                    className="px-6 py-12 text-center text-muted-foreground"
+                    className="h-48 text-center text-muted-foreground py-10"
                   >
                     <div className="max-w-xs mx-auto space-y-2">
-                      <FileSpreadsheet className="w-8 h-8 mx-auto text-muted-foreground/60" />
-                      <p className="text-sm font-medium">No recipients found</p>
+                      <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mx-auto text-muted-foreground">
+                        <Search className="w-5 h-5" />
+                      </div>
+                      <p className="text-sm font-semibold text-foreground">No matching recipients</p>
                       <p className="text-xs text-muted-foreground">
                         {searchQuery
-                          ? `No matches for "${searchQuery}". Clear your search to view all.`
+                          ? `No recipients found matching "${searchQuery}".`
                           : 'No recipients match the active filter criteria.'}
                       </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSearchQuery('');
+                          setFilterMode('all');
+                        }}
+                        className="h-8 text-xs mt-1"
+                      >
+                        Clear Filters
+                      </Button>
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 paginatedData.map((item, idx) => {
                   const isPlain = item.skipVariables;
@@ -851,46 +807,46 @@ export function VariableResolutionModal({
                   const rowIndex = (currentPage - 1) * pageSize + idx + 1;
 
                   return (
-                    <tr
+                    <TableRow
                       key={item.phone}
                       className={cn(
-                        'transition-colors hover:bg-muted/20',
+                        'hover:bg-muted/40 transition-colors border-border/60',
                         isPlain && 'bg-muted/10',
                         rowMissing && !isPlain && 'bg-amber-500/[0.02]'
                       )}
                     >
                       {/* Recipient Cell */}
-                      <td className="px-4 py-3 font-mono text-xs border-r border-border/40 align-middle">
-                        <div className="space-y-0.5">
+                      <TableCell className="px-4 py-3 align-middle font-mono text-xs">
+                        <div className="space-y-1">
                           <div className="flex items-center gap-1.5 font-semibold text-foreground">
-                            <span className="text-[10px] text-muted-foreground font-sans">
+                            <span className="text-[10px] text-muted-foreground font-sans font-normal">
                               #{rowIndex}
                             </span>
                             <span>{item.phone}</span>
                           </div>
-                          <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                          <div className="flex items-center gap-1.5">
                             {isPlain ? (
-                              <Badge variant="outline" className="text-[9px] px-1 py-0 h-4 bg-muted text-muted-foreground">
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-muted/60 text-muted-foreground border-border/60">
                                 Plain Text
                               </Badge>
                             ) : rowMissing ? (
-                              <span className="text-amber-500 font-medium inline-flex items-center gap-0.5">
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 flex items-center gap-1">
                                 <AlertTriangle className="w-2.5 h-2.5" /> Missing
-                              </span>
+                              </Badge>
                             ) : (
-                              <span className="text-emerald-500 font-medium inline-flex items-center gap-0.5">
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 flex items-center gap-1">
                                 <CheckCircle2 className="w-2.5 h-2.5" /> Ready
-                              </span>
+                              </Badge>
                             )}
                           </div>
                         </div>
-                      </td>
+                      </TableCell>
 
-                      {/* Content Area: Variables OR Multi-Text Plain Message Input */}
+                      {/* Content Area: Variables Inputs OR Multi-Text Plain Message Input */}
                       {isPlain ? (
-                        <td
+                        <TableCell
                           colSpan={variables.length}
-                          className="px-4 py-2 border-r border-border/40 align-top"
+                          className="px-4 py-2.5 align-middle"
                         >
                           <div className="space-y-1.5 py-0.5">
                             <textarea
@@ -899,10 +855,10 @@ export function VariableResolutionModal({
                               onChange={(e) => handlePlainTextChange(item.phone, e.target.value)}
                               placeholder="Enter custom plain text message for this recipient..."
                               className={cn(
-                                'w-full text-xs font-sans p-2 rounded-md border border-input bg-background/90',
-                                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary resize-y min-h-[54px] shadow-2xs leading-relaxed',
+                                'w-full text-xs font-sans p-2.5 rounded-md border border-input bg-background text-foreground shadow-xs transition-colors',
+                                'placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-y min-h-[56px] leading-relaxed',
                                 !item.plainTextMessage?.trim() &&
-                                  'border-amber-500/60 focus-visible:ring-amber-500/60'
+                                  'border-amber-500/60 focus-visible:ring-amber-500/60 bg-amber-500/[0.02]'
                               )}
                             />
                             <div className="flex items-center justify-between text-[11px] text-muted-foreground px-0.5">
@@ -924,31 +880,31 @@ export function VariableResolutionModal({
                               )}
                             </div>
                           </div>
-                        </td>
+                        </TableCell>
                       ) : (
                         variables.map((v) => {
                           const val = item.values[v] || '';
                           const missing = !val.trim();
 
                           return (
-                            <td key={v} className="px-4 py-2 border-r border-border/40 align-middle">
+                            <TableCell key={v} className="px-4 py-2.5 align-middle">
                               <Input
                                 value={val}
                                 onChange={(e) => handleValueChange(item.phone, v, e.target.value)}
                                 placeholder={`Enter ${v}...`}
                                 className={cn(
-                                  'h-8 text-xs font-sans',
+                                  'h-9 text-xs font-sans bg-background border-input shadow-xs transition-colors',
                                   missing &&
                                     'border-amber-500/60 focus-visible:ring-amber-500/60 bg-amber-500/[0.03]'
                                 )}
                               />
-                            </td>
+                            </TableCell>
                           );
                         })
                       )}
 
                       {/* Send Plain Switch Column */}
-                      <td className="px-4 py-2 text-center align-middle">
+                      <TableCell className="px-4 py-2.5 text-center align-middle">
                         <div className="flex items-center justify-center">
                           <Switch
                             checked={item.skipVariables}
@@ -961,67 +917,33 @@ export function VariableResolutionModal({
                             }
                           />
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   );
                 })
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
 
-        {/* Pagination & Summary Bar */}
-        <div className="px-6 py-2.5 border-t border-border/60 bg-muted/10 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <span>
-              Showing {filteredData.length > 0 ? (currentPage - 1) * pageSize + 1 : 0} to{' '}
-              {Math.min(currentPage * pageSize, filteredData.length)} of {filteredData.length}{' '}
-              recipient(s)
-            </span>
-            {data.length > 10 && (
-              <select
-                value={pageSize}
-                onChange={(e) => {
-                  setPageSize(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className="h-6 text-[11px] rounded border border-border bg-background px-1.5 text-foreground cursor-pointer"
-              >
-                <option value={10}>10 / page</option>
-                <option value={25}>25 / page</option>
-                <option value={50}>50 / page</option>
-                <option value={100}>100 / page</option>
-                <option value={9999}>Show all</option>
-              </select>
-            )}
+        {/* Standard Pagination Component matching /sms/drafts */}
+        {filteredData.length > 0 && (
+          <div className="border-t border-border/80">
+            <Pagination
+              page={currentPage}
+              totalPages={totalPages}
+              pageSize={pageSize}
+              totalItems={filteredData.length}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={(newSize) => {
+                setPageSize(newSize);
+                setCurrentPage(1);
+              }}
+              pageSizeOptions={[10, 20, 50, 100]}
+              className="bg-muted/10 border-t-0 p-3 sm:p-3.5"
+            />
           </div>
-
-          {totalPages > 1 && (
-            <div className="flex items-center gap-1.5">
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-7 w-7 p-0"
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-              </Button>
-              <span className="text-[11px] font-medium px-2">
-                Page {currentPage} of {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-7 w-7 p-0"
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-              >
-                <ChevronRight className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-          )}
-        </div>
+        )}
 
         {/* Footer */}
         <DialogFooter className="px-6 py-4 border-t border-border bg-muted/20 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
