@@ -498,19 +498,17 @@ const PhoneRecipientsInputComponent = React.forwardRef<PhoneRecipientsInputHandl
         ref={containerRef}
         onClick={handleContainerClick}
         className={cn(
-          'relative flex items-center h-10 w-full rounded-md border border-input bg-background shadow-xs transition-all duration-200 overflow-hidden cursor-text',
-          'focus-within:outline-none focus-within:border-brand-blue focus-within:ring-2 focus-within:ring-brand-blue/25',
-          'dark:focus-within:border-sky-400 dark:focus-within:ring-sky-400/30',
-          error && 'border-destructive focus-within:border-destructive focus-within:ring-destructive/25',
+          'relative flex items-center h-10 min-h-10 max-h-10 w-full rounded-md border border-input bg-background shadow-sm transition-colors overflow-hidden cursor-text',
+          'focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
+          error && 'border-destructive focus-within:ring-destructive',
           disabled && 'opacity-50 cursor-not-allowed bg-muted/40',
-          readOnly && 'bg-muted/30 cursor-default',
           containerClassName
         )}
       >
         {/* Scrollable Badges Track and Inline Active Input */}
         <div
           ref={scrollTrackRef}
-          className="flex items-center gap-1.5 w-full h-full px-2.5 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex items-center gap-1.5 w-full h-full px-3 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {badges.map((badge, idx) => {
             const meta = getCachedBadgeMeta(badge);
@@ -520,7 +518,7 @@ const PhoneRecipientsInputComponent = React.forwardRef<PhoneRecipientsInputHandl
               <div
                 key={`badge-${idx}-${badge}`}
                 className={cn(
-                  'group/badge shrink-0 font-mono text-xs font-semibold rounded-[4px] py-0.5 px-1.5 inline-flex items-center gap-1.5 transition-all select-none align-middle',
+                  'group/badge shrink-0 font-mono text-xs font-semibold rounded-[4px] h-6 px-2 inline-flex items-center gap-1.5 transition-all select-none align-middle',
                   meta.isValid
                     ? 'text-emerald-700 bg-emerald-500/15 ring-1 ring-emerald-500/40 dark:text-emerald-300 dark:bg-emerald-500/25 dark:ring-emerald-400/50'
                     : isDuplicate
@@ -623,21 +621,21 @@ const PhoneRecipientsInputComponent = React.forwardRef<PhoneRecipientsInputHandl
 
         {/* Action Controls: Copy All & Clear All */}
         {!isLoading && badges.length > 0 && (
-          <div className="flex items-center gap-0.5 pr-2 shrink-0 bg-background/90 backdrop-blur-xs pl-1.5 border-l border-border/40 select-none">
+          <div className="flex items-center h-full gap-0.5 px-2 shrink-0 bg-background border-l border-border/60 select-none">
             <button
               type="button"
               onClick={copyAll}
-              className="p-1 text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors cursor-pointer"
+              className="h-7 w-7 inline-flex items-center justify-center text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors cursor-pointer"
               title={copied ? 'Copied all recipients!' : 'Copy all recipients'}
               aria-label="Copy all recipients"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
             </button>
-            {!readOnly && !disabled && (
+            {!disabled && (
               <button
                 type="button"
                 onClick={() => setShowClearConfirm(true)}
-                className="p-1 text-muted-foreground hover:text-destructive rounded-md hover:bg-muted transition-colors cursor-pointer"
+                className="h-7 w-7 inline-flex items-center justify-center text-muted-foreground hover:text-destructive rounded-md hover:bg-muted transition-colors cursor-pointer"
                 title="Clear all recipients"
                 aria-label="Clear all recipients"
               >

@@ -556,17 +556,15 @@ export default function SendSmsPage() {
                   <div className="flex justify-between items-center min-h-8">
                     <div className="flex items-center gap-2">
                       <Label htmlFor="recipients" required>Recipients</Label>
-                      {deliveryMode === 'manual' && (
-                        <CountryPickerDropdown
-                          disabled={deliveryMode !== 'manual' || isGroupLoading}
-                          selectedCountryCode={selectedDialCode}
-                          onSelectRegion={(region) => {
-                            if (!region.dialCode) return;
-                            setSelectedDialCode(region.dialCode);
-                            recipientsInputRef.current?.insertCountryCode(region.dialCode);
-                          }}
-                        />
-                      )}
+                      <CountryPickerDropdown
+                        disabled={isGroupLoading}
+                        selectedCountryCode={selectedDialCode}
+                        onSelectRegion={(region) => {
+                          if (!region.dialCode) return;
+                          setSelectedDialCode(region.dialCode);
+                          recipientsInputRef.current?.insertCountryCode(region.dialCode);
+                        }}
+                      />
                     </div>
                     <div className="flex items-center gap-2">
                       {isGroupLoading ? (
@@ -599,7 +597,7 @@ export default function SendSmsPage() {
                       setRecipientsTouched(true);
                     }}
                     onBlur={() => setRecipientsTouched(true)}
-                    readOnly={deliveryMode !== 'manual' || isGroupLoading}
+                    readOnly={isGroupLoading}
                     disabled={isGroupLoading}
                     isLoading={isGroupLoading}
                     loadingMessage={`Loading contacts from ${currentGroupName}...`}
