@@ -47,6 +47,7 @@ import { SortableHeader } from '@/components/ui/sortable-header';
 import { useTableState } from '@/hooks/use-table-state';
 import { SmsDraft } from '@/types/sms-draft';
 import { cn } from '@/lib/utils';
+import { TemplateHighlighter } from '@/components/sms/template-highlighter';
 
 function formatRelativeTime(dateStr: string): string {
   try {
@@ -459,16 +460,20 @@ export default function DraftsPage() {
                             <div className="flex items-center gap-2">
                               <span className="font-semibold text-sm text-foreground hover:text-primary transition-colors">
                                 <Link href={`/sms/send?draft=${draft.id}`}>
-                                  {draft.title}
+                                  <TemplateHighlighter text={draft.title} />
                                 </Link>
                               </span>
                               <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
                                 v{draft.version}
                               </span>
                             </div>
-                            <p className="text-xs text-muted-foreground font-mono line-clamp-2 leading-relaxed">
-                              {draft.message?.trim() || <span className="italic">No message content entered</span>}
-                            </p>
+                            <div className="text-xs text-muted-foreground font-sans line-clamp-2 leading-relaxed">
+                              {draft.message?.trim() ? (
+                                <TemplateHighlighter text={draft.message} />
+                              ) : (
+                                <span className="italic">No message content entered</span>
+                              )}
+                            </div>
                           </div>
                         </TableCell>
 
@@ -565,7 +570,7 @@ export default function DraftsPage() {
                           href={`/sms/send?draft=${draft.id}`}
                           className="font-semibold text-sm text-foreground hover:text-primary transition-colors block truncate"
                         >
-                          {draft.title}
+                          <TemplateHighlighter text={draft.title} />
                         </Link>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <span className="font-mono text-[10px] bg-muted px-1.5 py-0.2 rounded">v{draft.version}</span>
@@ -578,9 +583,13 @@ export default function DraftsPage() {
                       </Badge>
                     </div>
 
-                    <p className="text-xs text-muted-foreground font-mono line-clamp-2 bg-muted/20 p-2 rounded-md">
-                      {draft.message?.trim() || <span className="italic">No message content entered</span>}
-                    </p>
+                    <div className="text-xs text-muted-foreground font-sans line-clamp-2 bg-muted/20 p-2 rounded-md">
+                      {draft.message?.trim() ? (
+                        <TemplateHighlighter text={draft.message} />
+                      ) : (
+                        <span className="italic">No message content entered</span>
+                      )}
+                    </div>
 
                     <div className="flex items-center justify-between pt-1">
                       <div className="flex items-center gap-3 text-xs text-muted-foreground">

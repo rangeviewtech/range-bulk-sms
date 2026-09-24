@@ -44,6 +44,7 @@ import { Pagination } from '@/components/ui/pagination';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import readXlsxFile from 'read-excel-file/browser';
+import { TemplateHighlighter } from '@/components/sms/template-highlighter';
 
 export interface VariableResolutionModalProps {
   open: boolean;
@@ -621,11 +622,15 @@ export function VariableResolutionModal({
               Resolve Message Variables
             </DialogTitle>
           </div>
-          <DialogDescription className="text-xs text-muted-foreground leading-relaxed">
-            Your message contains <strong>{variables.length} variable(s)</strong> (
-            {variables.map((v) => `{{${v}}}`).join(', ')}). 
-            Provide values for each recipient, upload a spreadsheet, or customize individual plain text messages.
-          </DialogDescription>
+          <div className="text-xs text-muted-foreground leading-relaxed flex flex-wrap items-center gap-1.5">
+            <span>Your message contains <strong>{variables.length} variable(s)</strong>:</span>
+            <div className="inline-flex items-center gap-1 flex-wrap">
+              {variables.map((v) => (
+                <TemplateHighlighter key={v} text={`{{${v}}}`} />
+              ))}
+            </div>
+            <span>Provide values for each recipient, upload a spreadsheet, or customize individual plain text messages.</span>
+          </div>
         </DialogHeader>
 
         {/* Toolbar: Search, Filter & Quick Actions matching /sms/drafts */}
@@ -744,8 +749,8 @@ export function VariableResolutionModal({
                     key={v}
                     className="h-11 px-4 font-semibold text-xs text-foreground min-w-[190px]"
                   >
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-mono text-secondary dark:text-primary font-bold">{`{{${v}}}`}</span>
+                    <div className="flex items-center gap-2">
+                      <TemplateHighlighter text={`{{${v}}}`} />
                       <span className="text-[11px] font-normal text-muted-foreground font-sans truncate">
                         ({getSampleValueForVariable(v, 1)})
                       </span>
