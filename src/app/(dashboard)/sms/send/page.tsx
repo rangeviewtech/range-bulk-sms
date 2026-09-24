@@ -366,13 +366,16 @@ export default function SendSmsPage() {
     setShowVariableModal(false);
     
     if (pendingAction === 'schedule') {
-      handleConfirmSchedule(resolvedMessage);
+      handleConfirmSchedule(resolvedMessage, personalizedMessages);
     } else {
-      handleSendNow(resolvedMessage);
+      handleSendNow(resolvedMessage, personalizedMessages);
     }
   };
 
-  const handleSendNow = async (resolvedMsg?: string | React.MouseEvent<HTMLButtonElement>) => {
+  const handleSendNow = async (
+    resolvedMsg?: string | React.MouseEvent<HTMLButtonElement>,
+    personalizedList?: { phone: string; message: string }[]
+  ) => {
     recipientsInputRef.current?.commit();
     setRecipientsTouched(true);
     setMessageTouched(true);
@@ -396,7 +399,7 @@ export default function SendSmsPage() {
       return;
     }
 
-    if (typeof resolvedMsg !== 'string') {
+    if (typeof resolvedMsg !== 'string' && !personalizedList) {
       const vars = extractVariablesFromText(message);
       if (vars.length > 0) {
         setDetectedVariables(vars);
@@ -406,17 +409,20 @@ export default function SendSmsPage() {
       }
     }
 
-
     setSending(true);
     try {
-      const recipientsToSend = await resolveRecipients();
+      const recipientsToSend = personalizedList && personalizedList.length > 0
+        ? personalizedList.map((p) => p.phone)
+        : await resolveRecipients();
+
       const res = await fetch('/api/sms/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            senderId,
-            recipients: recipientsToSend,
-            message: msgToUse,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          senderId,
+          recipients: recipientsToSend,
+          message: msgToUse,
+          personalizedMessages: personalizedList && personalizedList.length > 0 ? personalizedList : undefined,
         }),
       });
 
@@ -439,7 +445,10 @@ export default function SendSmsPage() {
     }
   };
 
-  const handleConfirmSchedule = async (resolvedMsg?: string | React.MouseEvent<HTMLButtonElement>) => {
+  const handleConfirmSchedule = async (
+    resolvedMsg?: string | React.MouseEvent<HTMLButtonElement>,
+    personalizedList?: { phone: string; message: string }[]
+  ) => {
     recipientsInputRef.current?.commit();
     if (!validateScheduleDate(scheduleDate)) {
       return;
@@ -451,7 +460,7 @@ export default function SendSmsPage() {
       return;
     }
 
-    if (typeof resolvedMsg !== 'string') {
+    if (typeof resolvedMsg !== 'string' && !personalizedList) {
       const vars = extractVariablesFromText(message);
       if (vars.length > 0) {
         setDetectedVariables(vars);
@@ -463,15 +472,19 @@ export default function SendSmsPage() {
 
     setScheduling(true);
     try {
-      const recipientsToSend = await resolveRecipients();
+      const recipientsToSend = personalizedList && personalizedList.length > 0
+        ? personalizedList.map((p) => p.phone)
+        : await resolveRecipients();
+
       const res = await fetch('/api/sms/schedule', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            senderId,
-            recipients: recipientsToSend,
-            message: msgToUse,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          senderId,
+          recipients: recipientsToSend,
+          message: msgToUse,
           scheduledAt: new Date(scheduleDate).toISOString(),
+          personalizedMessages: personalizedList && personalizedList.length > 0 ? personalizedList : undefined,
         }),
       });
 
@@ -512,9 +525,11 @@ export default function SendSmsPage() {
               <CardDescription>Configure your message sender and recipients.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label htmlFor="sender" required>Sender ID</Label>
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6">
+                <div className="space-y-1.5 md:col-span-2">
+                  <div className="flex items-center min-h-8">
+                    <Label htmlFor="sender" required>Sender ID</Label>
+                  </div>
                   <Select value={senderId} onValueChange={setSenderId}>
                     <SelectTrigger id="sender">
                       <SelectValue placeholder="Select sender ID" />
@@ -537,7 +552,7 @@ export default function SendSmsPage() {
                   </Select>
                 </div>
 
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 md:col-span-3">
                   <div className="flex justify-between items-center min-h-8">
                     <div className="flex items-center gap-2">
                       <Label htmlFor="recipients" required>Recipients</Label>
