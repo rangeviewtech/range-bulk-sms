@@ -64,6 +64,7 @@ interface RecipientVariableData {
   values: Record<string, string>;
   skipVariables: boolean;
   plainTextMessage?: string;
+  hasCustomPlain?: boolean;
 }
 
 /**
@@ -98,12 +99,13 @@ function getSampleValueForVariable(key: string, index: number): string {
 /**
  * Strip variable tags from template message to produce clean default plain text
  */
-function stripVariables(text: string, variables: string[]): string {
-  let cleaned = text;
-  variables.forEach((v) => {
-    cleaned = cleaned.replace(new RegExp(`\\{\\{\\s*${v}\\s*\\}\\}`, 'g'), '');
-  });
-  return cleaned.replace(/\s{2,}/g, ' ').trim();
+function stripVariables(text: string, _variables?: string[]): string {
+  return text
+    .replace(/\{\{\s*[^}]+\s*\}\}/g, '')
+    .replace(/\[\{\s*[^}]+\s*\}\]/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+([.,!?;:])/g, '$1')
+    .trim();
 }
 
 /**
@@ -190,6 +192,7 @@ export function VariableResolutionModal({
           values: variables.reduce((acc, v) => ({ ...acc, [v]: '' }), {}),
           skipVariables: false,
           plainTextMessage: defaultPlain,
+          hasCustomPlain: false,
         }))
       );
     }
@@ -209,25 +212,20 @@ export function VariableResolutionModal({
   // Toggle "Send Plain" mode for a recipient
   const handleSkipChange = (phone: string, skip: boolean) => {
     setData((prev) => {
-      let defaultMsg = firstEnteredPlainText.trim();
-      if (!defaultMsg) {
-        const found = prev.find((r) => r.plainTextMessage && r.plainTextMessage.trim().length > 0);
-        if (found?.plainTextMessage) {
-          defaultMsg = found.plainTextMessage.trim();
-        }
-      }
-      if (!defaultMsg) {
-        defaultMsg = stripVariables(templateMessage, variables);
-      }
+      const fallbackMsg =
+        firstEnteredPlainText.trim() ||
+        prev.find((r) => r.hasCustomPlain && r.plainTextMessage?.trim())?.plainTextMessage?.trim() ||
+        stripVariables(templateMessage, variables);
 
       return prev.map((item) => {
         if (item.phone !== phone) return item;
-        const currentPlain = item.plainTextMessage?.trim();
         return {
           ...item,
           skipVariables: skip,
           plainTextMessage: skip
-            ? (currentPlain ? item.plainTextMessage : defaultMsg)
+            ? (item.hasCustomPlain && item.plainTextMessage?.trim()
+                ? item.plainTextMessage
+                : fallbackMsg)
             : item.plainTextMessage,
         };
       });
@@ -237,14 +235,13 @@ export function VariableResolutionModal({
   // Handle plain text content changes
   const handlePlainTextChange = (phone: string, text: string) => {
     setData((prev) => {
-      const target = prev.find((p) => p.phone === phone);
       const wasFirstEmpty = !firstEnteredPlainText && text.trim().length > 0;
 
       const updated = prev.map((item) => {
         if (item.phone === phone) {
-          return { ...item, plainTextMessage: text };
+          return { ...item, plainTextMessage: text, hasCustomPlain: true };
         }
-        if (wasFirstEmpty && item.skipVariables && (!item.plainTextMessage || item.plainTextMessage === target?.plainTextMessage)) {
+        if (wasFirstEmpty && item.skipVariables && !item.hasCustomPlain) {
           return { ...item, plainTextMessage: text };
         }
         return item;
@@ -253,7 +250,7 @@ export function VariableResolutionModal({
       return updated;
     });
 
-    if (!firstEnteredPlainText && text.trim().length > 0) {
+    if (text.trim().length > 0 && !firstEnteredPlainText) {
       setFirstEnteredPlainText(text);
     }
   };
@@ -268,6 +265,7 @@ export function VariableResolutionModal({
       prev.map((item) => ({
         ...item,
         plainTextMessage: item.skipVariables ? text : item.plainTextMessage,
+        hasCustomPlain: item.skipVariables ? true : item.hasCustomPlain,
       }))
     );
     setFirstEnteredPlainText(text);
@@ -276,13 +274,13 @@ export function VariableResolutionModal({
 
   // Master toggle: Switch all recipients to Plain Text or Variables
   const handleToggleAllMode = (toPlain: boolean) => {
-    const defaultMsg = firstEnteredPlainText.trim() || stripVariables(templateMessage, variables);
+    const fallbackMsg = firstEnteredPlainText.trim() || stripVariables(templateMessage, variables);
     setData((prev) =>
       prev.map((item) => ({
         ...item,
         skipVariables: toPlain,
         plainTextMessage: toPlain
-          ? (item.plainTextMessage?.trim() ? item.plainTextMessage : defaultMsg)
+          ? (item.hasCustomPlain && item.plainTextMessage?.trim() ? item.plainTextMessage : fallbackMsg)
           : item.plainTextMessage,
       }))
     );

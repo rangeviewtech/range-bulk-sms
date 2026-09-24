@@ -223,9 +223,9 @@ const PhoneRecipientsInputComponent = React.forwardRef<PhoneRecipientsInputHandl
           return;
         }
 
-        // Split by commas, semicolons, or newlines in case user pasted or typed multiple
+        // Split by commas, semicolons, newlines, or spaces in case user pasted or typed multiple numbers
         const parts = raw
-          .split(/[\n,;]+/)
+          .split(/[\n,;\s]+/)
           .map((s) => s.trim())
           .filter(Boolean);
 
@@ -587,13 +587,8 @@ const PhoneRecipientsInputComponent = React.forwardRef<PhoneRecipientsInputHandl
                 value={inputValue}
                 onChange={(e) => {
                   const val = e.target.value;
-                  if (val.includes(',')) {
-                    const withoutComma = val.replace(/,/g, '').trim();
-                    if (/^\+?\d{1,4}$/.test(withoutComma) && (withoutComma.startsWith('+') || withoutComma.length <= 4)) {
-                      setInputValue(withoutComma);
-                      return;
-                    }
-                    commitInput(withoutComma);
+                  if (val.includes(',') || val.includes(';') || val.includes('\n')) {
+                    commitInput(val);
                     return;
                   }
                   setInputValue(val);
