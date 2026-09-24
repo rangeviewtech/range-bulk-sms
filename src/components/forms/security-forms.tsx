@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { InputError } from '@/components/ui/input-error';
 import { Label } from '@/components/ui/label';
+import { useUnsavedChanges } from '@/hooks/use-unsaved-changes';
 
 interface MfaSetupFormProps {
   qrCode: string;
@@ -15,6 +16,17 @@ interface MfaSetupFormProps {
 export function MfaSetupForm({ qrCode, action }: MfaSetupFormProps) {
   const [token, setToken] = useState('');
   const [touched, setTouched] = useState(false);
+
+  const isSetupDirty = token.length > 0;
+  useUnsavedChanges({
+    id: 'mfa-setup-form',
+    isDirty: isSetupDirty,
+    title: 'Unsaved changes',
+    message: 'You have entered an unsaved verification code. If you leave now, your entry will be lost.',
+    onDiscard: () => {
+      setToken('');
+    },
+  });
 
   const error = touched
     ? !token
@@ -82,6 +94,18 @@ export function MfaActionForm({ mfaEnabled, isMandatoryRole, action }: MfaAction
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [token, setToken] = useState('');
   const [tokenTouched, setTokenTouched] = useState(false);
+
+  const isMfaDirty = password.length > 0 || token.length > 0;
+  useUnsavedChanges({
+    id: 'mfa-action-form',
+    isDirty: isMfaDirty,
+    title: 'Unsaved changes',
+    message: 'You have entered unsaved security credentials. If you leave now, your input will be lost.',
+    onDiscard: () => {
+      setPassword('');
+      setToken('');
+    },
+  });
 
   const passwordError = passwordTouched && !password ? 'Password is required' : '';
   const tokenError =
@@ -172,6 +196,18 @@ export function ScreenLockPinForm({ action }: ScreenLockPinFormProps) {
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [pin, setPin] = useState('');
   const [pinTouched, setPinTouched] = useState(false);
+
+  const isPinDirty = password.length > 0 || pin.length > 0;
+  useUnsavedChanges({
+    id: 'screen-lock-pin-form',
+    isDirty: isPinDirty,
+    title: 'Unsaved changes',
+    message: 'You have typed an unsaved password or PIN. If you leave now, your entries will be discarded.',
+    onDiscard: () => {
+      setPassword('');
+      setPin('');
+    },
+  });
 
   const passwordError = passwordTouched && !password ? 'Password is required' : '';
   const pinError = pinTouched

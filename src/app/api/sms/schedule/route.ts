@@ -3,6 +3,7 @@ import { prisma, Prisma } from '@/lib/prisma';
 import { requirePermission } from '@/lib/auth/authorization';
 import { scheduleSmsSchema } from '@/lib/validations/sms';
 import { AppError } from '@/lib/errors';
+import { consumeDraftOnSend, resolveUserTenant } from '@/lib/sms/draft-service';
 
 export async function GET(req: Request) {
   try {
@@ -65,7 +66,7 @@ export async function POST(req: Request) {
       );
     }
     
-    const { senderId, recipients, message, scheduledAt, timezone, isRecurring, cronExpression } = parsed.data;
+    const { senderId, recipients, message, scheduledAt, timezone, isRecurring, cronExpression, draftId, } = parsed.data;
 
     let validSenderIdId: string | null = null;
     if (senderId) {
@@ -121,6 +122,11 @@ export async function POST(req: Request) {
 
       return schedMsg;
     });
+
+    if (draftId) {
+      const tenantContext = await resolveUserTenant(session.userId);
+      await consumeDraftOnSend(tenantContext, draftId);
+    }
 
     return NextResponse.json({ success: true, scheduledMessageId: result.id, status: 'SCHEDULED' });
   } catch (error) {

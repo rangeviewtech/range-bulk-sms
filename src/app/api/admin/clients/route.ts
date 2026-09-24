@@ -4,6 +4,7 @@ import { verifySession } from '@/lib/auth/session';
 import { hasPermission } from '@/lib/auth/authorization';
 import { createClientSchema } from '@/lib/validations/admin';
 import bcrypt from 'bcryptjs';
+import { z } from 'zod';
 
 export async function GET(req: Request) {
   const session = await verifySession();
@@ -107,3 +108,48 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+const updateClientStatusSchema = z.object({
+  clientId: z.string().min(1, 'Client ID is required'),
+  status: z.enum(['ACTIVE', 'SUSPENDED', 'INACTIVE']),
+});
+
+export async function PATCH(req: Request) {
+  const session = await verifySession();
+  if (!session || !(await hasPermission(session.userId, 'clients.manage'))) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  }
+
+  try {
+    const rawBody = await req.json().catch(() => ({}));
+    const parsed = updateClientStatusSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid client status payload', details: parsed.error.format() },
+        { status: 400 }
+      );
+    }
+
+    const { clientId, status } = parsed.data;
+
+    const client = await prisma.client.findUnique({
+      where: { id: clientId },
+      select: { id: true, userId: true, user: { select: { email: true } } },
+    });
+
+    if (!client) {
+      return NextResponse.json({ error: 'Client not found' }, { status: 404 });
+    }
+
+    await prisma.user.update({
+      where: { id: client.userId },
+      data: { status },
+    });
+
+    return NextResponse.json({ success: true, clientId, status });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Failed to update client status';
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+

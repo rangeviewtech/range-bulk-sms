@@ -1,23 +1,52 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { z } from 'zod';
+import isEqual from 'lodash/isEqual';
+import { useUnsavedChanges } from './use-unsaved-changes';
 
 export interface UseFormValidationOptions<T extends Record<string, unknown>> {
   initialValues: T;
   schema: z.ZodType<T>;
   onSubmit?: (values: T) => void | Promise<void>;
+  id?: string;
+  protectUnsavedChanges?: boolean;
+  title?: string;
+  message?: string;
 }
 
 export function useFormValidation<T extends Record<string, unknown>>({
   initialValues,
   schema,
   onSubmit,
+  id,
+  protectUnsavedChanges = false,
+  title,
+  message,
 }: UseFormValidationOptions<T>) {
   const [values, setValues] = useState<T>(initialValues);
+  const [baselineValues, setBaselineValues] = useState<T>(initialValues);
   const [errors, setErrors] = useState<Partial<Record<keyof T, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<keyof T, boolean>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Compute dirty state by comparing current values to the baseline
+  const isDirty = useMemo(() => {
+    return !isEqual(values, baselineValues);
+  }, [values, baselineValues]);
+
+  // Hook into unsaved changes protection if enabled
+  const { confirmDiscard } = useUnsavedChanges({
+    id: id || undefined,
+    isDirty: protectUnsavedChanges ? isDirty : false,
+    onDiscard: () => {
+      setValues(baselineValues);
+      setErrors({});
+      setTouched({});
+    },
+    title,
+    message,
+  });
 
   const validateField = useCallback(
     (field: keyof T, val: unknown) => {
@@ -114,6 +143,8 @@ export function useFormValidation<T extends Record<string, unknown>>({
         try {
           setIsSubmitting(true);
           await onSubmit(data);
+          // On successful submission, mark current values as clean baseline
+          setBaselineValues(data);
         } finally {
           setIsSubmitting(false);
         }
@@ -132,7 +163,9 @@ export function useFormValidation<T extends Record<string, unknown>>({
 
   const reset = useCallback(
     (newValues?: T) => {
-      setValues(newValues || initialValues);
+      const target = newValues || initialValues;
+      setValues(target);
+      setBaselineValues(target);
       setErrors({});
       setTouched({});
       setIsSubmitting(false);
@@ -140,11 +173,20 @@ export function useFormValidation<T extends Record<string, unknown>>({
     [initialValues]
   );
 
+  const markClean = useCallback(
+    (newBaseline?: T) => {
+      setBaselineValues(newBaseline || values);
+    },
+    [values]
+  );
+
   return {
     values,
     errors,
     touched,
     isSubmitting,
+    isDirty,
+    baselineValues,
     setFieldValue,
     handleBlur,
     validateField,
@@ -153,5 +195,7 @@ export function useFormValidation<T extends Record<string, unknown>>({
     setServerErrors,
     reset,
     setValues,
+    markClean,
+    confirmDiscard,
   };
 }

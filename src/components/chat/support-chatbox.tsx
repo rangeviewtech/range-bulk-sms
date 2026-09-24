@@ -14,17 +14,25 @@ export function SupportChatbox() {
       isOpen ? "h-[500px]" : "h-[40px] cursor-pointer"
     )}>
       {/* Header */}
-      <div 
-        className="chatbotHeader flex items-center justify-between" 
+      <button 
+        type="button"
+        className="chatbotHeader flex items-center justify-between w-full text-left cursor-pointer" 
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-label="Toggle Support Chat"
       >
         <span className="Title text-white">Support Chat</span>
         {isOpen && (
-          <div className="down_arrow" style={{ display: 'flex' }} onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}>
+          <button 
+            type="button"
+            className="down_arrow flex items-center justify-center p-1 rounded hover:bg-white/20 cursor-pointer" 
+            onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
+            aria-label="Minimize Chat"
+          >
             <ChevronDown className="w-4 h-4 text-white/80 hover:text-white" />
-          </div>
+          </button>
         )}
-      </div>
+      </button>
 
       {isOpen && (
         <div className="chatbox__support">
@@ -38,7 +46,7 @@ export function SupportChatbox() {
             <div className="messages__item messages__item--operator">
               <div className="chatbotContiner flex gap-2">
                 <div className="botImage bg-blue-100 rounded-full w-6 h-6 flex items-center justify-center">
-                  <span className="text-xs">🤖</span>
+                  <span className="text-xs" role="img" aria-label="Bot">🤖</span>
                 </div>
                 <div className="answersDiv bg-white p-3 rounded-lg shadow-sm border border-gray-100">
                   Please select an option below or type your question.
@@ -62,29 +70,42 @@ export function SupportChatbox() {
             </div>
           </div>
 
-          {/* Quick Questions (optional based on CSS) */}
+          {/* Quick Questions */}
           <div className="helpMsg bg-white border-t border-gray-100 py-2">
             <span className="text-xs mb-2">Suggested Topics</span>
             <div className="askQuestions flex flex-wrap gap-2 justify-center">
-              <div className="questions bg-gray-50 hover:bg-gray-100 flex items-center px-2">
+              <button 
+                type="button" 
+                className="questions bg-gray-50 hover:bg-gray-100 flex items-center px-2 rounded text-xs py-1 border border-gray-200"
+                onClick={() => setMessage('Setup WhatsApp')}
+              >
                 <span className="questionText">Setup WhatsApp</span>
-              </div>
-              <div className="questions bg-gray-50 hover:bg-gray-100 flex items-center px-2">
+              </button>
+              <button 
+                type="button" 
+                className="questions bg-gray-50 hover:bg-gray-100 flex items-center px-2 rounded text-xs py-1 border border-gray-200"
+                onClick={() => setMessage('Telegram Bot Integration')}
+              >
                 <span className="questionText">Telegram Bot Integration</span>
-              </div>
+              </button>
             </div>
           </div>
 
           {/* Footer Input */}
-          <div className="chatbox__footer bg-white p-2">
+          <div className="chatbox__footer bg-white p-2 flex items-center gap-2">
             <input 
               type="text" 
-              className="input__box focus:outline-none" 
+              className="input__box focus:outline-none flex-1 px-2 py-1 text-sm border border-gray-200 rounded" 
               placeholder="Type your message..." 
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+              aria-label="Support chat message input"
             />
-            <button className="send__button bg-blue-600 hover:bg-blue-700 text-white p-2 rounded flex items-center justify-center">
+            <button 
+              type="button" 
+              aria-label="Send message"
+              className="send__button bg-blue-600 hover:bg-blue-700 text-white p-2 rounded flex items-center justify-center cursor-pointer transition-colors"
+            >
               <Send className="w-4 h-4" />
             </button>
           </div>

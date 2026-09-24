@@ -51,6 +51,7 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+
       {
         source: '/reset-password',
         headers: [
@@ -64,6 +65,19 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      ...(process.env.NODE_ENV === 'development'
+        ? [
+            {
+              source: '/_next/static/(.*)',
+              headers: [
+                {
+                  key: 'Cache-Control',
+                  value: 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+                },
+              ],
+            },
+          ]
+        : []),
     ];
   },
 
@@ -75,6 +89,14 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
     ];
+  },
+
+  // Response compression (Brotli & Gzip)
+  compress: true,
+
+  // Bundle optimization for heavy third-party modules
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'recharts', 'date-fns'],
   },
 
   // Image optimization

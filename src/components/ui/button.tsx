@@ -11,13 +11,15 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground font-bold shadow-sm hover:bg-primary/90",
+          "bg-primary text-primary-foreground font-bold shadow-sm hover:brightness-95 active:brightness-90",
+        primary:
+          "bg-primary text-primary-foreground font-bold shadow-sm hover:brightness-95 active:brightness-90",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
           "border border-input text-[#04648C] dark:text-[#FBCA07] bg-background shadow-xs hover:border-[#04648C]/60 hover:bg-[#04648C]/10 dark:hover:border-[#FBCA07]/60 dark:hover:bg-[#FBCA07]/10",
         secondary:
-          "bg-secondary text-secondary-foreground font-semibold shadow-sm hover:bg-secondary/90",
+          "bg-secondary text-secondary-foreground font-semibold shadow-sm hover:brightness-95",
         ghost: "hover:bg-[#04648C]/10 hover:text-[#04648C] dark:hover:bg-[#FBCA07]/10 dark:hover:text-[#FBCA07]",
         link: "text-[#04648C] dark:text-[#FBCA07] underline-offset-4 hover:underline font-semibold",
         brand:
@@ -30,7 +32,8 @@ const buttonVariants = cva(
       size: {
         default: "h-9 px-4 py-2",
         sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
+        md: "h-10 rounded-md px-4 text-sm",
+        lg: "h-11 rounded-lg px-8 text-base",
         icon: "h-9 w-9",
       },
     },
@@ -46,20 +49,25 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
   isLoading?: boolean
+  loading?: boolean
+  loadingLabel?: string
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, isLoading, children, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, isLoading, loading, loadingLabel, children, disabled, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
+    const isBusy = Boolean(loading || isLoading)
+
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
-        disabled={isLoading || props.disabled}
+        disabled={isBusy || disabled}
+        aria-busy={isBusy || undefined}
         {...props}
       >
-        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {asChild ? <Slottable>{children}</Slottable> : children}
+        {isBusy && <Loader2 className="mr-2 h-4 w-4 animate-spin shrink-0" />}
+        {isBusy && loadingLabel ? loadingLabel : asChild ? <Slottable>{children}</Slottable> : children}
       </Comp>
     )
   }

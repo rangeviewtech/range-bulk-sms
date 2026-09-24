@@ -128,3 +128,65 @@ export async function POST(req: Request) {
   }
 }
 
+const updateUserStatusSchema = z.object({
+  userId: z.string().min(1, 'User ID is required'),
+  status: z.enum(['ACTIVE', 'SUSPENDED', 'INACTIVE']),
+});
+
+export async function PATCH(req: Request) {
+  const session = await verifySession();
+  if (!session || !(await hasPermission(session.userId, 'users.manage'))) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  }
+
+  try {
+    const rawBody = await req.json().catch(() => ({}));
+    const parsed = updateUserStatusSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid user status payload', details: parsed.error.format() },
+        { status: 400 }
+      );
+    }
+
+    const { userId, status } = parsed.data;
+
+    if (userId === session.userId && status === 'SUSPENDED') {
+      return NextResponse.json(
+        { error: 'Cannot suspend your own active administrator account' },
+        { status: 400 }
+      );
+    }
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: { status },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        status: true,
+        mfaEnabled: true,
+        createdAt: true,
+        roles: { include: { role: true } },
+      },
+    });
+
+    await logAudit({
+      action: 'ADMIN_ACTION',
+      userId: session.userId,
+      category: 'SECURITY',
+      operation: 'UPDATE',
+      resourceType: 'User',
+      resourceId: user.id,
+      metadata: { email: user.email, status },
+    });
+
+    return NextResponse.json({ success: true, user });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Failed to update user status';
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+
+

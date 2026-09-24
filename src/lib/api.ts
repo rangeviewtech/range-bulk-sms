@@ -45,7 +45,7 @@ export const paginatedResponse = <T>(
 
 export const errorResponse = (
   error: unknown,
-  status: number = HTTP_STATUS.INTERNAL_SERVER_ERROR
+  status?: number
 ): NextResponse<ApiResponse<null>> => {
   if (error instanceof ZodError) {
     return NextResponse.json(
@@ -62,6 +62,7 @@ export const errorResponse = (
     );
   }
 
+  const httpStatus = status ?? (error instanceof AppError ? error.statusCode : HTTP_STATUS.INTERNAL_SERVER_ERROR);
   let errCode = 'INTERNAL_ERROR';
   let errMessage = 'Something went wrong. Please try again later.';
 
@@ -93,6 +94,6 @@ export const errorResponse = (
       },
       timestamp: new Date().toISOString(),
     },
-    { status }
+    { status: httpStatus }
   );
 };

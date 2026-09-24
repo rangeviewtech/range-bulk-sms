@@ -1,11 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { User, Shield, Bell, MessageSquare } from "lucide-react";
+import { PageHeader } from "@/components/layout/page-header";
 
 export default function SettingsHubPage() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
-      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Settings</h1>
+      <PageHeader
+        title="Settings"
+        description="Configure your account profile, security credentials, notification rules, and SMS preferences."
+      />
       
       <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2">
         <Link href="/settings/account">

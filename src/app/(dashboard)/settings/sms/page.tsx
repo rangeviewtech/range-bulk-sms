@@ -14,13 +14,17 @@ import { Loader2 } from "lucide-react";
 export default function SmsSettingsPage() {
   const [saving, setSaving] = useState(false);
 
-  const { values, errors, touched, setFieldValue, handleBlur, validateAll } =
+  const { values, errors, touched, setFieldValue, handleBlur, validateAll, reset, markClean } =
     useFormValidation<SmsPreferencesInput>({
       schema: smsPreferencesSchema,
       initialValues: {
         defaultSenderId: 'RANGESMS',
         webhookUrl: '',
       },
+      protectUnsavedChanges: true,
+      id: 'sms-preferences',
+      title: 'Unsaved changes',
+      message: 'You have unsaved changes in your SMS preferences. If you leave now, your changes will be lost.',
     });
 
   useEffect(() => {
@@ -31,8 +35,10 @@ export default function SmsSettingsPage() {
           const json = await res.json();
           const data = json.data;
           if (data) {
-            if (data.defaultSenderId) setFieldValue('defaultSenderId', data.defaultSenderId);
-            if (data.webhookUrl) setFieldValue('webhookUrl', data.webhookUrl);
+            reset({
+              defaultSenderId: data.defaultSenderId || 'RANGESMS',
+              webhookUrl: data.webhookUrl || '',
+            });
           }
         }
       } catch {
@@ -40,7 +46,7 @@ export default function SmsSettingsPage() {
       }
     }
     loadPreferences();
-  }, [setFieldValue]);
+  }, [reset]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +70,7 @@ export default function SmsSettingsPage() {
         return;
       }
 
+      markClean();
       toast.success('SMS preferences saved successfully');
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to save SMS preferences');

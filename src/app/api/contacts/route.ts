@@ -3,36 +3,146 @@ import { prisma, Prisma } from '@/lib/prisma';
 import { requirePermission } from '@/lib/auth/authorization';
 import { successResponse, paginatedResponse, errorResponse } from '@/lib/api';
 import { createContactSchema } from '@/lib/validations/contacts';
+import { getMasterContacts, MasterContact } from '@/lib/contacts/master-directory';
 
 export async function GET(req: NextRequest) {
   try {
     const session = await requirePermission('contacts.view');
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+    const rawLimit = parseInt(searchParams.get('limit') || '20', 10);
+    const returnAll = searchParams.get('all') === 'true';
+    const limit = returnAll ? 1000 : Math.min(100, Math.max(1, isNaN(rawLimit) ? 20 : rawLimit));
     const search = searchParams.get('search') || '';
+    const groupId = searchParams.get('groupId') || searchParams.get('group');
+
+    // 1. Fetch any database contacts for this user
+    let dbContacts: Array<{
+      id: string;
+      firstName: string | null;
+      lastName: string | null;
+      phone: string;
+      normalizedPhone: string | null;
+      email: string | null;
+      optedOut: boolean;
+      createdAt: Date;
+      groups?: Array<{ contactGroup: { id: string; name: string } }>;
+    }> = [];
+
+    try {
+      dbContacts = await prisma.contact.findMany({
+        where: {
+          userId: session.userId,
+          deletedAt: null,
+        },
+        orderBy: { createdAt: 'desc' },
+        include: {
+          groups: {
+            include: {
+              contactGroup: true,
+            },
+          },
+        },
+      });
+    } catch {
+      // Prisma fallback if table or connection issue
+      dbContacts = [];
+    }
+
+    // 2. Map database contacts to unified contact items
+    const mappedDbContacts: MasterContact[] = dbContacts.map((c) => {
+      const gList = (c.groups || []).map((g) => ({
+        id: g.contactGroup.id,
+        name: g.contactGroup.name,
+      }));
+      return {
+        id: c.id,
+        firstName: c.firstName || '',
+        lastName: c.lastName || '',
+        name: [c.firstName, c.lastName].filter(Boolean).join(' ') || c.phone,
+        phone: c.phone,
+        normalizedPhone: c.normalizedPhone || c.phone,
+        email: c.email || null,
+        status: c.optedOut ? 'OPTED_OUT' : 'ACTIVE',
+        addedAt: c.createdAt.toISOString().slice(0, 10),
+        createdAt: c.createdAt.toISOString(),
+        groupId: gList[0]?.id || '',
+        groupName: gList[0]?.name || '',
+        groups: gList.length > 0 ? gList : [{ id: 'user_created', name: 'General' }],
+      };
+    });
+
+    // 3. Get master contacts directory (5,695 contacts)
+    const masterContacts = getMasterContacts();
+    const masterPhoneMatches = new Map<string, MasterContact[]>();
+    for (const mc of masterContacts) {
+      const list = masterPhoneMatches.get(mc.phone) || [];
+      list.push(mc);
+      masterPhoneMatches.set(mc.phone, list);
+    }
+
+    // 4. Merge: DB contacts take priority, inheriting all groups from master matches
+    const enrichedDbContacts = mappedDbContacts.map((c) => {
+      const matches = masterPhoneMatches.get(c.phone);
+      if (matches && matches.length > 0) {
+        const allGroups = [...c.groups.filter((g) => g.id !== 'user_created')];
+        for (const m of matches) {
+          for (const g of m.groups) {
+            if (!allGroups.some((ag) => ag.id === g.id || ag.name.toLowerCase() === g.name.toLowerCase())) {
+              allGroups.push(g);
+            }
+          }
+        }
+        return {
+          ...c,
+          groupId: matches[0].groupId,
+          groupName: matches[0].groupName,
+          groups: allGroups.length > 0 ? allGroups : matches[0].groups,
+        };
+      }
+      return c;
+    });
+
+    const dbPhoneSet = new Set(enrichedDbContacts.map((c) => c.phone));
+    const mergedContacts: MasterContact[] = [
+      ...enrichedDbContacts,
+      ...masterContacts.filter((c) => !dbPhoneSet.has(c.phone)),
+    ];
+
+    // 5. Apply filters if present
+    let filtered = mergedContacts;
+
+    if (search) {
+      const s = search.toLowerCase();
+      filtered = filtered.filter(
+        (c) =>
+          c.name.toLowerCase().includes(s) ||
+          c.phone.includes(s) ||
+          (c.email && c.email.toLowerCase().includes(s)) ||
+          c.groups.some((g) => g.name.toLowerCase().includes(s))
+      );
+    }
+
+    if (groupId && groupId !== 'ALL') {
+      const gLow = groupId.toLowerCase();
+      filtered = filtered.filter(
+        (c) =>
+          c.groupId.toLowerCase() === gLow ||
+          c.groupName.toLowerCase() === gLow ||
+          c.groups.some((g) => g.id.toLowerCase() === gLow || g.name.toLowerCase() === gLow)
+      );
+    }
+
+    const total = filtered.length;
+
+    if (returnAll) {
+      return successResponse(filtered.slice(0, 1000), 'Contacts retrieved successfully');
+    }
 
     const skip = (page - 1) * limit;
+    const paginated = filtered.slice(skip, skip + limit);
 
-    const where = {
-      userId: session.userId,
-      deletedAt: null,
-      ...(search ? {
-        OR: [
-          { firstName: { contains: search, mode: 'insensitive' as const } },
-          { lastName: { contains: search, mode: 'insensitive' as const } },
-          { phone: { contains: search } },
-          { email: { contains: search, mode: 'insensitive' as const } },
-        ]
-      } : {})
-    };
-
-    const [contacts, total] = await Promise.all([
-      prisma.contact.findMany({ where, skip, take: limit, orderBy: { createdAt: 'desc' } }),
-      prisma.contact.count({ where })
-    ]);
-
-    return paginatedResponse(contacts, total, page, limit);
+    return paginatedResponse(paginated, total, page, limit);
   } catch (error) {
     return errorResponse(error);
   }

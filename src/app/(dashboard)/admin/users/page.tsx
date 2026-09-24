@@ -5,9 +5,11 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, RefreshCw, Shield, User, X, ArrowDownUp } from "lucide-react";
+import { Plus, Search, RefreshCw, Shield, User, X, ArrowDownUp, ToggleLeft, ToggleRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TableSkeletonRows } from "@/components/blocks/ui/skeleton-layouts";
+import { ConfirmationDialog } from "@/components/feedback/confirmation-dialog";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -55,6 +57,49 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  // Status Change Confirmation State
+  const [statusConfirm, setStatusConfirm] = useState<{
+    open: boolean;
+    user: UserRecord;
+    nextStatus: 'ACTIVE' | 'SUSPENDED';
+  } | null>(null);
+
+  const handleRequestToggleStatus = (user: UserRecord) => {
+    const nextStatus = user.status.toUpperCase() === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
+    setStatusConfirm({
+      open: true,
+      user,
+      nextStatus,
+    });
+  };
+
+  const handleConfirmStatusChange = async () => {
+    if (!statusConfirm) return;
+    const { user, nextStatus } = statusConfirm;
+    setStatusConfirm(null);
+
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, status: nextStatus }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to update user status');
+      }
+
+      setUsers((prev) =>
+        prev.map((u) => (u.id === user.id ? { ...u, status: nextStatus } : u))
+      );
+      toast.success(
+        `User ${user.email} status updated to ${nextStatus === 'ACTIVE' ? 'Active' : 'Suspended'}`
+      );
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Error updating user status');
+    }
+  };
 
   const {
     values: userForm,
@@ -550,15 +595,32 @@ export default function UsersPage() {
                       </TableCell>
                       <TableCell>{getRoleBadge(u.roles)}</TableCell>
                       <TableCell>
-                        {u.status === "ACTIVE" ? (
-                          <Badge variant="outline" className="text-emerald-600 border-emerald-600/30 bg-emerald-500/10">
-                            Active
-                          </Badge>
-                        ) : u.status === "SUSPENDED" ? (
-                          <Badge variant="destructive">Suspended</Badge>
-                        ) : (
-                          <Badge variant="secondary">{u.status}</Badge>
-                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleRequestToggleStatus(u)}
+                          title={
+                            u.status === "ACTIVE"
+                              ? `Click to suspend ${u.name || u.email}`
+                              : `Click to activate ${u.name || u.email}`
+                          }
+                          aria-label={`Toggle user status for ${u.email}. Currently ${u.status}.`}
+                          className={cn(
+                            "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold transition-all cursor-pointer border select-none",
+                            u.status === "ACTIVE"
+                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20"
+                              : "bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20"
+                          )}
+                        >
+                          <span
+                            className={cn(
+                              "w-1.5 h-1.5 rounded-full",
+                              u.status === "ACTIVE"
+                                ? "bg-emerald-500 animate-pulse"
+                                : "bg-destructive"
+                            )}
+                          />
+                          {u.status === "ACTIVE" ? "Active" : u.status === "SUSPENDED" ? "Suspended" : u.status}
+                        </button>
                       </TableCell>
                       <TableCell>
                         {u.mfaEnabled ? (
@@ -574,15 +636,32 @@ export default function UsersPage() {
                         {format(new Date(u.createdAt), "MMM dd, yyyy")}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            toast.info(`User ID: ${u.id} • ${u.email}`);
-                          }}
-                        >
-                          Details
-                        </Button>
+                        <div className="flex items-center justify-end gap-1.5">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleRequestToggleStatus(u)}
+                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                            title={u.status === "ACTIVE" ? "Suspend user account" : "Activate user account"}
+                            aria-label={`Toggle status for ${u.email}`}
+                          >
+                            {u.status === "ACTIVE" ? (
+                              <ToggleRight className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                            ) : (
+                              <ToggleLeft className="w-4 h-4 text-destructive" />
+                            )}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              toast.info(`User ID: ${u.id} • ${u.email}`);
+                            }}
+                          >
+                            Details
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))
@@ -605,6 +684,29 @@ export default function UsersPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* User Status Change Confirmation Dialog */}
+      <ConfirmationDialog
+        open={Boolean(statusConfirm?.open)}
+        onOpenChange={(open) => !open && setStatusConfirm(null)}
+        title={
+          statusConfirm?.nextStatus === 'SUSPENDED'
+            ? `Suspend User ${statusConfirm?.user.name || statusConfirm?.user.email}?`
+            : `Activate User ${statusConfirm?.user.name || statusConfirm?.user.email}?`
+        }
+        description={
+          statusConfirm?.nextStatus === 'SUSPENDED'
+            ? `Are you sure you want to suspend "${statusConfirm?.user.email}"? The user will immediately lose access to their account, API keys, and active sessions.`
+            : `Are you sure you want to reactivate "${statusConfirm?.user.email}"? They will regain full access to their dashboard, campaigns, and API integrations.`
+        }
+        confirmLabel={
+          statusConfirm?.nextStatus === 'SUSPENDED'
+            ? 'Yes, Suspend User'
+            : 'Yes, Activate User'
+        }
+        variant={statusConfirm?.nextStatus === 'SUSPENDED' ? 'destructive' : 'default'}
+        onConfirm={handleConfirmStatusChange}
+      />
     </div>
   );
 }

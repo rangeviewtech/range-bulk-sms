@@ -20,6 +20,11 @@ export const navConfig: NavGroup[] = [
         icon: 'Send',
       },
       {
+        title: 'Draft Messages',
+        href: '/sms/drafts',
+        icon: 'FileEdit',
+      },
+      {
         title: 'Scheduled SMS',
         href: '/sms/scheduled',
         icon: 'Clock',

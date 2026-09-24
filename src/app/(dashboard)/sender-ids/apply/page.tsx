@@ -17,6 +17,7 @@ import { InputError } from '@/components/ui/input-error';
 export default function SenderIdApplyPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const {
     values: formValues,
@@ -26,12 +27,17 @@ export default function SenderIdApplyPage() {
     handleBlur,
     validateAll,
     setServerErrors,
+    markClean,
   } = useFormValidation({
     initialValues: {
       senderId: '',
       purpose: '',
     },
     schema: senderIdApplicationSchema,
+    protectUnsavedChanges: !isSubmitted,
+    id: 'sender-id-apply',
+    title: 'Unsaved changes',
+    message: 'You have entered an unsaved Sender ID request. If you leave now, your application draft will be lost.',
   });
 
   const handleSenderIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,6 +70,8 @@ export default function SenderIdApplyPage() {
         throw new Error(data.error?.message || data.error || 'Failed to submit Sender ID request');
       }
 
+      setIsSubmitted(true);
+      markClean();
       toast.success(`Sender ID "${formValues.senderId}" submitted for approval!`);
       router.push('/sender-ids');
     } catch (err: unknown) {

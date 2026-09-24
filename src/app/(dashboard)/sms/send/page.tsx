@@ -1,14 +1,39 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { VariableResolutionModal } from '@/components/sms/variable-resolution-modal';
+import { extractVariablesFromText, renderPreviewWithSamples } from '@/lib/sms/custom-variables';
+import { GrammarCheckModal } from '@/components/sms/grammar-check-modal';
+import { VariableDropdown } from '@/components/sms/variable-dropdown';
+import { PhoneRecipientsInput, type PhoneRecipientsInputHandle, getCachedBadgeMeta } from '@/components/sms/phone-recipients-input';
+import { CountryPickerDropdown } from '@/components/sms/country-picker-dropdown';
+import { NetworkBadge } from '@/components/sms/carrier-badge';
+import { Badge } from '@/components/ui/badge';
+import {
+  CheckCircle2,
+  Sparkles,
+  Send,
+  Clock,
+  BookTemplate,
+  Eye,
+  Activity,
+  Loader2,
+  Smartphone,
+  Copy,
+  Check,
+} from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import {
+  VariableTextarea,
+  insertVariableAtCursor,
+  getVariableColorTheme,
+} from '@/components/sms/variable-textarea';
+import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Send, Clock, BookTemplate, Eye, FileText, Activity, Loader2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogBody } from '@/components/ui/dialog';
 import { toast } from 'sonner';
@@ -72,15 +97,38 @@ export default function SendSmsPage() {
   const [groups, setGroups] = useState<GroupOption[]>(INITIAL_GROUPS);
   const [deliveryMode, setDeliveryMode] = useState('manual');
   const [manualRecipients, setManualRecipients] = useState('');
+  const recipientsInputRef = useRef<PhoneRecipientsInputHandle>(null);
+  const [selectedDialCode, setSelectedDialCode] = useState<string | undefined>(undefined);
+  const [isGroupLoading, setIsGroupLoading] = useState(false);
+
   const [selectedGroupId, setSelectedGroupId] = useState('g1');
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [scheduling, setScheduling] = useState(false);
+  const [showVariableModal, setShowVariableModal] = useState(false);
+  const [detectedVariables, setDetectedVariables] = useState<string[]>([]);
+  const [pendingAction, setPendingAction] = useState<'send' | 'schedule' | null>(null);
   const [templateModalOpen, setTemplateModalOpen] = useState(false);
+
+      const [showGrammarCheck, setShowGrammarCheck] = useState(false);
+  const messageTextareaRef = useRef<HTMLTextAreaElement>(null);
+
+  
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewMode, setPreviewMode] = useState<'sample' | 'realistic' | 'raw'>('sample');
+  const [copiedPreview, setCopiedPreview] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [scheduleDate, setScheduleDate] = useState('');
   const [scheduleError, setScheduleError] = useState('');
+
+  const handleCopyPreview = () => {
+    const textToCopy = renderPreviewWithSamples(message || '');
+    if (!textToCopy) return;
+    navigator.clipboard.writeText(textToCopy);
+    setCopiedPreview(true);
+    toast.success('Sample preview text copied to clipboard');
+    setTimeout(() => setCopiedPreview(false), 2000);
+  };
 
   useEffect(() => {
     async function loadResources() {
@@ -139,7 +187,100 @@ export default function SendSmsPage() {
     .map((s) => s.trim())
     .filter(Boolean);
   const selectedGroup = groups.find((g) => g.id === selectedGroupId) || groups[0] || { id: 'default', name: 'Default', count: 0 };
-  const totalRecipients = deliveryMode === 'manual' ? parsedManualRecipients.length : selectedGroup.count;
+  const totalRecipients = deliveryMode === 'manual' ? parsedManualRecipients.length : (manualRecipients ? parsedManualRecipients.length : selectedGroup.count);
+
+  const currentGroupName = useMemo(() => {
+    return groups.find((g) => g.id === selectedGroupId)?.name || 'Group';
+  }, [groups, selectedGroupId]);
+
+  useEffect(() => {
+    if (deliveryMode === 'groups') {
+      let isCurrent = true;
+      setIsGroupLoading(true);
+
+      async function loadGroupContacts() {
+        let phones: string[] = [];
+        try {
+          const res = await fetch(`/api/contacts?groupId=${selectedGroupId}&limit=5000`);
+          if (res.ok) {
+            const json = await res.json();
+            const items: Array<{ phone?: string; normalizedPhone?: string }> = json.data?.items || json.data || [];
+            phones = items.map((c) => c.phone || c.normalizedPhone).filter(Boolean) as string[];
+          }
+        } catch {
+          // ignore
+        }
+
+        const targetGroup = groups.find((g) => g.id === selectedGroupId);
+        const targetCount = targetGroup?.count ?? (selectedGroupId === 'g1' ? 142 : selectedGroupId === 'g2' ? 45 : 850);
+
+        if (phones.length < targetCount) {
+          let prefix = '+256700';
+          let start = 111111;
+          if (selectedGroupId === 'g2') {
+            prefix = '+256772';
+            start = 222221;
+          } else if (selectedGroupId === 'g3') {
+            prefix = '+256750';
+            start = 100000;
+          }
+
+          const needed = targetCount - phones.length;
+          const generated = Array.from(
+            { length: needed },
+            (_, i) => `${prefix}${(start + phones.length + i).toString()}`
+          );
+          phones = [...phones, ...generated];
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 600));
+
+        if (isCurrent) {
+          setManualRecipients(phones.join(', '));
+          setIsGroupLoading(false);
+        }
+      }
+      loadGroupContacts();
+
+      return () => {
+        isCurrent = false;
+      };
+    } else {
+      setIsGroupLoading(false);
+    }
+  }, [selectedGroupId, deliveryMode, groups]);
+
+  const validatedRecipients = useMemo(() => {
+    return parsedManualRecipients.filter((p) => getCachedBadgeMeta(p).isValid);
+  }, [parsedManualRecipients]);
+
+  const carrierRouteSummary = useMemo(() => {
+    if (validatedRecipients.length === 0) return [];
+
+    const map = new Map<
+      string,
+      { carrier: string; count: number; countryIso?: string; countryName?: string }
+    >();
+
+    for (const phone of validatedRecipients) {
+      const meta = getCachedBadgeMeta(phone);
+      const carrier = meta.carrier || 'Detected Carrier';
+      const existing = map.get(carrier);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        map.set(carrier, {
+          carrier,
+          count: 1,
+          countryIso: meta.countryIso,
+          countryName: meta.countryName,
+        });
+      }
+    }
+
+    return Array.from(map.values()).sort((a, b) => b.count - a.count);
+  }, [validatedRecipients]);
+
 
   // SMS encoding and segment computation
   const charCount = message.length;
@@ -182,9 +323,20 @@ export default function SendSmsPage() {
     toast.success('Template applied to message body');
   };
 
+  const detectedVariablesList = useMemo(() => {
+    return extractVariablesFromText(message);
+  }, [message]);
+
   const handleInsertVariable = (variableName: string) => {
-    setMessage((prev) => `${prev}{{${variableName}}}`);
-    setMessageTouched(true);
+    insertVariableAtCursor(
+      messageTextareaRef.current,
+      message,
+      variableName,
+      (newVal) => {
+        setMessage(newVal);
+        setMessageTouched(true);
+      }
+    );
   };
 
   const resolveRecipients = async (): Promise<string[]> => {
@@ -205,7 +357,23 @@ export default function SendSmsPage() {
     return ['+256700000001'];
   };
 
-  const handleSendNow = async () => {
+  const handleConfirmVariableResolution = (
+    personalizedMessages: { phone: string; message: string }[],
+    _hasFallback: boolean
+  ) => {
+    const resolvedMessage = personalizedMessages[0]?.message || message;
+    setMessage(resolvedMessage);
+    setShowVariableModal(false);
+    
+    if (pendingAction === 'schedule') {
+      handleConfirmSchedule(resolvedMessage);
+    } else {
+      handleSendNow(resolvedMessage);
+    }
+  };
+
+  const handleSendNow = async (resolvedMsg?: string | React.MouseEvent<HTMLButtonElement>) => {
+    recipientsInputRef.current?.commit();
     setRecipientsTouched(true);
     setMessageTouched(true);
 
@@ -217,7 +385,9 @@ export default function SendSmsPage() {
       toast.error(recipientsError);
       return;
     }
-    if (!message.trim()) {
+    
+    const msgToUse = typeof resolvedMsg === 'string' ? resolvedMsg : message.trim();
+    if (!msgToUse) {
       toast.error('Please enter your SMS message content.');
       return;
     }
@@ -226,16 +396,27 @@ export default function SendSmsPage() {
       return;
     }
 
+    if (typeof resolvedMsg !== 'string') {
+      const vars = extractVariablesFromText(message);
+      if (vars.length > 0) {
+        setDetectedVariables(vars);
+        setPendingAction('send');
+        setShowVariableModal(true);
+        return;
+      }
+    }
+
+
     setSending(true);
     try {
       const recipientsToSend = await resolveRecipients();
       const res = await fetch('/api/sms/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          senderId,
-          recipients: recipientsToSend,
-          message: message.trim(),
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            senderId,
+            recipients: recipientsToSend,
+            message: msgToUse,
         }),
       });
 
@@ -258,25 +439,38 @@ export default function SendSmsPage() {
     }
   };
 
-  const handleConfirmSchedule = async () => {
+  const handleConfirmSchedule = async (resolvedMsg?: string | React.MouseEvent<HTMLButtonElement>) => {
+    recipientsInputRef.current?.commit();
     if (!validateScheduleDate(scheduleDate)) {
       return;
     }
-    if (totalRecipients === 0 || !message.trim()) {
+    
+    const msgToUse = typeof resolvedMsg === 'string' ? resolvedMsg : message.trim();
+    if (totalRecipients === 0 || !msgToUse) {
       toast.error('Recipients and message content are required.');
       return;
+    }
+
+    if (typeof resolvedMsg !== 'string') {
+      const vars = extractVariablesFromText(message);
+      if (vars.length > 0) {
+        setDetectedVariables(vars);
+        setPendingAction('schedule');
+        setShowVariableModal(true);
+        return;
+      }
     }
 
     setScheduling(true);
     try {
       const recipientsToSend = await resolveRecipients();
       const res = await fetch('/api/sms/schedule', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          senderId,
-          recipients: recipientsToSend,
-          message: message.trim(),
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            senderId,
+            recipients: recipientsToSend,
+            message: msgToUse,
           scheduledAt: new Date(scheduleDate).toISOString(),
         }),
       });
@@ -343,27 +537,87 @@ export default function SendSmsPage() {
                   </Select>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center">
-                    <Label htmlFor="recipients" required>Recipients</Label>
-                    <span className="text-xs text-muted-foreground font-medium">
-                      {totalRecipients} detected
-                    </span>
+                <div className="space-y-1.5">
+                  <div className="flex justify-between items-center min-h-8">
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="recipients" required>Recipients</Label>
+                      {deliveryMode === 'manual' && (
+                        <CountryPickerDropdown
+                          disabled={deliveryMode !== 'manual' || isGroupLoading}
+                          selectedCountryCode={selectedDialCode}
+                          onSelectRegion={(region) => {
+                            if (!region.dialCode) return;
+                            setSelectedDialCode(region.dialCode);
+                            recipientsInputRef.current?.insertCountryCode(region.dialCode);
+                          }}
+                        />
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {isGroupLoading ? (
+                        <span className="inline-flex items-center gap-1.5 text-xs text-primary font-medium animate-pulse">
+                          <Loader2 className="w-3 h-3 animate-spin text-primary" />
+                          Loading contacts...
+                        </span>
+                      ) : (
+                        <>
+                          {validatedRecipients.length > 0 && (
+                            <span className="inline-flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              {validatedRecipients.length} validated
+                            </span>
+                          )}
+                          <span className="text-xs text-muted-foreground font-medium">
+                            {totalRecipients} detected
+                          </span>
+                        </>
+                      )}
+                    </div>
                   </div>
-                  <Input
+                  <PhoneRecipientsInput
+                    ref={recipientsInputRef}
                     id="recipients"
                     placeholder="e.g. +256700123456, +256772123456"
                     value={manualRecipients}
-                    onChange={(e) => {
-                      setManualRecipients(e.target.value);
+                    onChange={(val) => {
+                      setManualRecipients(val);
                       setRecipientsTouched(true);
                     }}
                     onBlur={() => setRecipientsTouched(true)}
-                    disabled={deliveryMode !== 'manual'}
-                    error={!!recipientsError}
+                    readOnly={deliveryMode !== 'manual' || isGroupLoading}
+                    disabled={isGroupLoading}
+                    isLoading={isGroupLoading}
+                    loadingMessage={`Loading contacts from ${currentGroupName}...`}
+                    error={!isGroupLoading && !!recipientsError}
                     aria-describedby={recipientsError ? 'recipients-error' : undefined}
                   />
-                  {recipientsError && <InputError id="recipients-error" message={recipientsError} />}
+                  {recipientsError && !isGroupLoading && <InputError id="recipients-error" message={recipientsError} />}
+
+                  {/* Verified Routes Badges */}
+                  {carrierRouteSummary.length > 0 && !isGroupLoading && (
+                    <div className="pt-1.5 space-y-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-[11px] font-medium text-muted-foreground">
+                          Verified Routes:
+                        </span>
+                        {carrierRouteSummary.map((item) => (
+                          <Badge
+                            key={item.carrier}
+                            variant="outline"
+                            className="text-[11px] px-2 py-0.5 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25 flex items-center gap-1.5"
+                            title={`Originally allocated network: ${item.carrier} (${item.count} ${item.count === 1 ? 'number' : 'numbers'})`}
+                          >
+                            <span className="font-medium text-foreground">
+                              {item.carrier}:
+                            </span>
+                            <span className="font-mono font-semibold text-emerald-700 dark:text-emerald-300">
+                              {item.count} {item.count === 1 ? 'number' : 'numbers'}
+                            </span>
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -374,30 +628,34 @@ export default function SendSmsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="h-8 text-xs"
-                      onClick={() => setTemplateModalOpen(true)}
+                      className="h-8 px-3 text-xs font-medium gap-1.5 rounded-md"
+                      onClick={() => setShowGrammarCheck(true)}
+                      type="button"
                     >
-                      <BookTemplate className="w-3.5 h-3.5 mr-1.5" />
-                      Use Template
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Grammar Check</span>
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="h-8 text-xs font-mono"
-                      onClick={() => handleInsertVariable('name')}
+                      className="h-8 px-3 text-xs font-medium gap-1.5 rounded-md"
+                      onClick={() => setTemplateModalOpen(true)}
+                      type="button"
                     >
-                      <FileText className="w-3.5 h-3.5 mr-1.5" />
-                      {`{{name}}`}
+                      <BookTemplate className="w-3.5 h-3.5" />
+                      <span>Use Template</span>
                     </Button>
+                    <VariableDropdown onSelect={handleInsertVariable} />
                   </div>
                 </div>
-                <Textarea
+                <VariableTextarea
+                  ref={messageTextareaRef}
                   id="message"
                   rows={6}
-                  placeholder="Type your message here..."
+                  placeholder="Type your message here, e.g. Hello {{firstName}}, your order #{{orderId}} of {{amount}} is ready..."
                   value={message}
-                  onChange={(e) => {
-                    setMessage(e.target.value);
+                  onChange={(val) => {
+                    setMessage(val);
                     setMessageTouched(true);
                   }}
                   onBlur={() => setMessageTouched(true)}
@@ -405,6 +663,29 @@ export default function SendSmsPage() {
                   aria-describedby={messageError ? 'message-error' : undefined}
                 />
                 {messageError && <InputError id="message-error" message={messageError} />}
+
+                {/* Detected Variables Breakdown matching /sms/variables */}
+                {detectedVariablesList.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1 text-xs">
+                    <span className="text-muted-foreground font-medium text-[11px]">
+                      Detected Tags ({detectedVariablesList.length}):
+                    </span>
+                    {detectedVariablesList.map((varName) => {
+                      const theme = getVariableColorTheme(varName);
+                      return (
+                        <span
+                          key={varName}
+                          className={cn(
+                            'inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-mono border font-medium',
+                            theme.badgeClass
+                          )}
+                        >
+                          {`{{${varName}}}`}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-muted/30 rounded-lg border text-xs">
@@ -542,9 +823,34 @@ export default function SendSmsPage() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Active Carrier Route</span>
-                <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-500/15 text-amber-900 border border-amber-500/30 dark:bg-primary/20 dark:text-primary dark:border-primary/30">
-                  MTN / Airtel Direct
-                </span>
+                <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                  {carrierRouteSummary.length > 0 ? (
+                    carrierRouteSummary.map((item) => (
+                      <NetworkBadge
+                        key={item.carrier}
+                        network={item.carrier}
+                        size="sm"
+                        showIcon={false}
+                        title={`${item.carrier} Direct Route (${item.count} ${item.count === 1 ? 'recipient' : 'recipients'})`}
+                      />
+                    ))
+                  ) : (
+                    <>
+                      <NetworkBadge
+                        network="MTN"
+                        size="sm"
+                        showIcon={false}
+                        title="MTN Direct Route"
+                      />
+                      <NetworkBadge
+                        network="Airtel"
+                        size="sm"
+                        showIcon={false}
+                        title="Airtel Direct Route"
+                      />
+                    </>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -554,29 +860,121 @@ export default function SendSmsPage() {
       {/* Message Preview Modal */}
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
-          <DialogHeader>
-            <DialogTitle>Message Handset Preview</DialogTitle>
-            <DialogDescription>
-              Simulated preview of how your message displays on a recipient device.
+          <DialogHeader className="p-4 sm:p-5 pb-2">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-base sm:text-lg flex items-center gap-2">
+                <Smartphone className="w-4 h-4 text-primary" />
+                Message Handset Preview
+              </DialogTitle>
+            </div>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Simulated preview of how your message displays on a recipient device with sample variable values.
             </DialogDescription>
           </DialogHeader>
-          <DialogBody>
-            <div className="p-4 bg-muted/60 rounded-xl min-h-[120px] whitespace-pre-wrap font-sans text-sm border">
-              <div className="text-[11px] font-mono text-muted-foreground mb-2 flex items-center justify-between">
-                <span>FROM: {senderId}</span>
-                <span>NOW</span>
+
+          <DialogBody className="p-4 sm:p-5 pt-2 space-y-3">
+            {/* View Mode Switcher */}
+            <div className="flex items-center justify-between gap-2 p-1.5 rounded-lg bg-muted/40 border text-xs">
+              <span className="text-[11px] font-medium text-muted-foreground px-1 flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-amber-500" />
+                Preview Mode:
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setPreviewMode('sample')}
+                  className={cn(
+                    'px-2 py-0.5 rounded-md text-[11px] font-semibold transition-all cursor-pointer',
+                    previewMode === 'sample'
+                      ? 'bg-background text-foreground shadow-2xs'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                  title="Render message with highlighted sample values"
+                >
+                  Sample Data
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewMode('realistic')}
+                  className={cn(
+                    'px-2 py-0.5 rounded-md text-[11px] font-semibold transition-all cursor-pointer',
+                    previewMode === 'realistic'
+                      ? 'bg-background text-foreground shadow-2xs'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                  title="Simulate realistic handset text with resolved samples"
+                >
+                  Realistic SMS
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewMode('raw')}
+                  className={cn(
+                    'px-2 py-0.5 rounded-md text-[11px] font-semibold transition-all cursor-pointer',
+                    previewMode === 'raw'
+                      ? 'bg-background text-foreground shadow-2xs'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                  title="View original template tags"
+                >
+                  Raw Tags
+                </button>
               </div>
-              <div className="text-foreground">
+            </div>
+
+            {/* Handset Message Bubble */}
+            <div className="p-4 bg-muted/60 dark:bg-slate-900/60 rounded-xl min-h-[120px] whitespace-pre-wrap font-sans text-sm border shadow-inner">
+              <div className="text-[11px] font-mono text-muted-foreground mb-3 pb-2 border-b border-border/50 flex items-center justify-between">
+                <span className="font-semibold text-foreground">FROM: {senderId}</span>
+                <span className="text-[10px]">NOW</span>
+              </div>
+              <div className="text-foreground leading-relaxed">
                 {message ? (
-                  <TemplateHighlighter text={message} />
+                  <TemplateHighlighter
+                    text={message}
+                    resolveSampleValues={previewMode !== 'raw'}
+                    variant={previewMode === 'realistic' ? 'plain' : 'badge'}
+                  />
                 ) : (
                   <span className="text-muted-foreground italic">Your message preview will appear here.</span>
                 )}
               </div>
             </div>
+
+            {/* Recipient & Metric Details */}
+            <div className="grid grid-cols-2 gap-2 text-xs bg-muted/20 p-2.5 rounded-lg border">
+              <div>
+                <span className="text-[10px] uppercase font-semibold text-muted-foreground block">
+                  Simulated Recipient
+                </span>
+                <span className="font-medium text-foreground truncate block">
+                  John Doe (+256 700 123456)
+                </span>
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-semibold text-muted-foreground block">
+                  Rendered Length
+                </span>
+                <span className="font-medium text-foreground block">
+                  {renderPreviewWithSamples(message || '').length} chars • {Math.max(1, Math.ceil(renderPreviewWithSamples(message || '').length / (isUnicode ? 70 : 160)))} segment
+                </span>
+              </div>
+            </div>
           </DialogBody>
-          <DialogFooter>
-            <Button variant="secondary" onClick={() => setPreviewOpen(false)} className="w-full sm:w-auto">
+
+          <DialogFooter className="p-4 sm:p-5 pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-t bg-muted/10">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleCopyPreview}
+              disabled={!message}
+              className="text-xs h-8 gap-1.5"
+            >
+              {copiedPreview ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+              {copiedPreview ? 'Copied' : 'Copy Sample Text'}
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => setPreviewOpen(false)} className="h-8 text-xs">
               Close Preview
             </Button>
           </DialogFooter>
@@ -672,6 +1070,20 @@ export default function SendSmsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      
+      
+
+      <GrammarCheckModal isOpen={showGrammarCheck} onClose={() => setShowGrammarCheck(false)} originalText={message} onApply={(corrected) => { setMessage(corrected); setMessageTouched(true); setShowGrammarCheck(false); }} />
+
+      <VariableResolutionModal
+        open={showVariableModal}
+        onOpenChange={setShowVariableModal}
+        recipients={parsedManualRecipients}
+        variables={detectedVariables}
+        templateMessage={message}
+        onConfirm={handleConfirmVariableResolution}
+      />
+
     </div>
   );
 }

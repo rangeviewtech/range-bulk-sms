@@ -14,7 +14,11 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+import { PageHeader } from '@/components/layout/page-header';
+import { Skeleton } from '@/components/ui/skeleton';
+import { EmptyState } from '@/components/ui/empty-state';
 import { toast } from 'sonner';
+import { buildSanitizedCsv } from '@/lib/security/csv-sanitizer';
 
 interface SmsReportData {
   metrics: {
@@ -68,7 +72,7 @@ export default function SmsReportsPage() {
 
     const headers = ['Date', 'Total Sent', 'Delivered', 'Failed'];
     const rows = data.trends.map((t) => [t.date, t.sent, t.delivered, t.failed]);
-    const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const csv = buildSanitizedCsv(headers, rows);
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -78,43 +82,41 @@ export default function SmsReportsPage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
     toast.success('SMS analytics report exported');
   };
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">SMS Delivery Analytics</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Real-time delivery receipts, carrier handoffs, and throughput performance.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={refreshing || loading}
-            aria-label="Refresh SMS analytics"
-            className="flex-1 sm:flex-initial"
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleExport}
-            disabled={!data?.trends || data.trends.length === 0}
-            className="flex-1 sm:flex-initial"
-          >
-            <Download className="mr-2 h-4 w-4" /> Export Report
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title="SMS Delivery Analytics"
+        description="Real-time delivery receipts, carrier handoffs, and throughput performance."
+        action={
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={refreshing || loading}
+              aria-label="Refresh SMS analytics"
+              className="flex-1 sm:flex-initial"
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExport}
+              disabled={!data?.trends || data.trends.length === 0}
+              className="flex-1 sm:flex-initial"
+            >
+              <Download className="mr-2 h-4 w-4" /> Export Report
+            </Button>
+          </div>
+        }
+      />
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -128,7 +130,7 @@ export default function SmsReportsPage() {
           <CardContent>
             <div className="text-2xl font-bold text-foreground">
               {loading ? (
-                <div className="h-7 w-20 bg-muted animate-pulse rounded" />
+                <Skeleton className="h-7 w-20" />
               ) : (
                 (data?.metrics?.totalSent || 0).toLocaleString()
               )}
@@ -147,7 +149,7 @@ export default function SmsReportsPage() {
           <CardContent>
             <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
               {loading ? (
-                <div className="h-7 w-24 bg-muted animate-pulse rounded" />
+                <Skeleton className="h-7 w-24" />
               ) : (
                 `${(data?.metrics?.totalDelivered || 0).toLocaleString()} (${data?.metrics?.deliveryRate || 0}%)`
               )}
@@ -166,7 +168,7 @@ export default function SmsReportsPage() {
           <CardContent>
             <div className="text-2xl font-bold text-destructive">
               {loading ? (
-                <div className="h-7 w-16 bg-muted animate-pulse rounded" />
+                <Skeleton className="h-7 w-16" />
               ) : (
                 (data?.metrics?.totalFailed || 0).toLocaleString()
               )}
@@ -201,13 +203,15 @@ export default function SmsReportsPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="h-[320px] w-full bg-muted/30 animate-pulse rounded-lg flex items-center justify-center">
-              <p className="text-xs text-muted-foreground">Loading delivery trends...</p>
+            <div className="h-[320px] w-full flex items-center justify-center" role="status" aria-label="Loading delivery trends">
+              <Skeleton className="h-[320px] w-full" />
             </div>
           ) : !data?.trends || data.trends.length === 0 ? (
-            <div className="h-[300px] flex items-center justify-center border border-dashed rounded-lg">
-              <p className="text-sm text-muted-foreground">No recent dispatch trends to display</p>
-            </div>
+            <EmptyState
+              title="No recent dispatch trends to display"
+              description="Deliveries will be graphed here automatically once you begin sending campaigns."
+              className="min-h-[280px]"
+            />
           ) : (
             <div className="h-[320px] w-full">
               <ResponsiveContainer width="100%" height="100%">

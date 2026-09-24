@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Radio, Send, CheckCircle2, AlertTriangle, RefreshCw, Key, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { sanitizeSinglePhoneInput, handlePhoneInputKeyDown } from '@/lib/sms/normalizer';
 
 export function WebhookSimulator() {
   const [eventType, setEventType] = React.useState<string>('message.delivered');
@@ -145,7 +146,8 @@ export function WebhookSimulator() {
             <input
               type="text"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => setPhone(sanitizeSinglePhoneInput(e.target.value))}
+              onKeyDown={(e) => handlePhoneInputKeyDown(e, false)}
               className="w-full p-2 text-xs font-mono rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-[#04648C] outline-none"
             />
           </div>

@@ -116,6 +116,29 @@ export default function ProvidersPage() {
     }
   };
 
+  const [statusConfirm, setStatusConfirm] = useState<{
+    open: boolean;
+    id: string;
+    current: boolean;
+    name: string;
+  } | null>(null);
+
+  const handleRequestToggleActive = (id: string, current: boolean, name: string) => {
+    setStatusConfirm({
+      open: true,
+      id,
+      current,
+      name,
+    });
+  };
+
+  const handleConfirmToggleActive = async () => {
+    if (!statusConfirm) return;
+    const { id, current, name } = statusConfirm;
+    setStatusConfirm(null);
+    await handleToggleActive(id, current, name);
+  };
+
   const handleAddProvider = async (e: React.FormEvent) => {
     e.preventDefault();
     const { isValid } = validateProviderAll();
@@ -440,7 +463,7 @@ export default function ProvidersPage() {
                       <div className="flex items-center gap-2">
                         <Switch
                           checked={prov.isActive}
-                          onCheckedChange={() => handleToggleActive(prov.id, prov.isActive, prov.displayName)}
+                          onCheckedChange={() => handleRequestToggleActive(prov.id, prov.isActive, prov.displayName)}
                         />
                         <span className="text-xs text-muted-foreground">
                           {prov.isActive ? "Enabled" : "Disabled"}
@@ -478,6 +501,22 @@ export default function ProvidersPage() {
         variant="destructive"
         loading={isDeleting}
         onConfirm={handleConfirmDelete}
+      />
+
+      {/* Confirmation Dialog for Provider Status Toggle */}
+      <ConfirmationDialog
+        open={Boolean(statusConfirm?.open)}
+        onOpenChange={(open) => !open && setStatusConfirm(null)}
+        title={statusConfirm?.current ? "Disable Telecom Provider" : "Enable Telecom Provider"}
+        description={
+          statusConfirm?.current
+            ? `Are you sure you want to disable "${statusConfirm?.name}"? Outbound SMS traffic actively routing through this provider will be halted or rerouted.`
+            : `Are you sure you want to enable "${statusConfirm?.name}"? This provider will become active in routing rules for SMS dispatch.`
+        }
+        confirmLabel={statusConfirm?.current ? "Disable Provider" : "Enable Provider"}
+        cancelLabel="Cancel"
+        variant={statusConfirm?.current ? "destructive" : "default"}
+        onConfirm={handleConfirmToggleActive}
       />
     </div>
   );

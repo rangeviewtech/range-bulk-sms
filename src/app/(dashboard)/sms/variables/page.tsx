@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import {
   Table,
@@ -35,6 +34,8 @@ import {
 import { ConfirmationDialog } from '@/components/feedback/confirmation-dialog';
 import { InputError } from '@/components/ui/input-error';
 import { useFormValidation } from '@/hooks/use-form-validation';
+import { useUnsavedChanges } from '@/hooks/use-unsaved-changes';
+import isEqual from 'lodash/isEqual';
 import { customVariableSchema } from '@/lib/validations/sms';
 import { useTableState } from '@/hooks/use-table-state';
 import { Pagination } from '@/components/ui/pagination';
@@ -53,6 +54,11 @@ import {
   checkVariableConflict,
 } from '@/lib/sms/custom-variables';
 import { TemplateHighlighter } from '@/components/sms/template-highlighter';
+import {
+  VariableTextarea,
+  insertVariableAtCursor,
+  getVariableColorTheme,
+} from '@/components/sms/variable-textarea';
 import {
   Braces,
   Plus,
@@ -92,6 +98,7 @@ export default function VariablesPage() {
   const [simulatorMessage, setSimulatorMessage] = useState<string>(
     'Hello {{firstName}}, your order #{{orderId}} of {{amount}} is confirmed! Track shipment: {{trackingUrl}}'
   );
+  const simTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Load custom variables from localStorage on mount
   useEffect(() => {
@@ -191,6 +198,7 @@ export default function VariablesPage() {
     handleBlur: handleCreateBlur,
     validateAll: validateCreateAll,
     reset: resetCreateForm,
+    confirmDiscard: confirmCreateDiscard,
   } = useFormValidation({
     initialValues: {
       key: '',
@@ -201,6 +209,28 @@ export default function VariablesPage() {
       description: '',
     },
     schema: customVariableSchema,
+    protectUnsavedChanges: createDialogOpen,
+    id: 'create-variable',
+    title: 'Unsaved changes',
+    message: 'You have unsaved changes in this variable draft. If you leave now, your changes will be lost.',
+  });
+
+  const [initialEditVariable, setInitialEditVariable] = useState<SmsVariable | null>(null);
+  const isEditDirty = useMemo(() => {
+    if (!editDialogOpen || !editingVariable || !initialEditVariable) return false;
+    return !isEqual(editingVariable, initialEditVariable);
+  }, [editDialogOpen, editingVariable, initialEditVariable]);
+
+  const { confirmDiscard: confirmEditDiscard } = useUnsavedChanges({
+    id: 'edit-variable',
+    isDirty: isEditDirty,
+    title: 'Unsaved changes',
+    message: 'You have unsaved changes in this variable. If you leave now, your changes will be lost.',
+    onDiscard: () => {
+      setEditDialogOpen(false);
+      setEditingVariable(null);
+      setInitialEditVariable(null);
+    },
   });
 
   // Real-time duplicate & conflict detection for Create Variable form
@@ -289,7 +319,8 @@ export default function VariablesPage() {
   // Open Edit Dialog
   const handleOpenEdit = (v: SmsVariable) => {
     if (v.isSystem) return;
-    setEditingVariable(v);
+    setInitialEditVariable({ ...v });
+    setEditingVariable({ ...v });
     setEditDialogOpen(true);
   };
 
@@ -333,6 +364,7 @@ export default function VariablesPage() {
     toast.success(`Variable "{{${editingVariable.key}}}" updated`);
     setEditDialogOpen(false);
     setEditingVariable(null);
+    setInitialEditVariable(null);
   };
 
   // Handle Delete Click
@@ -824,14 +856,13 @@ export default function VariablesPage() {
                     {simulatorMessage.length} chars
                   </span>
                 </div>
-                <Textarea
+                <VariableTextarea
+                  ref={simTextareaRef}
                   id="sim-msg"
                   rows={4}
                   value={simulatorMessage}
-                  onChange={(e) => setSimulatorMessage(e.target.value)}
-                  className="text-xs font-sans resize-none cursor-text pointer-events-auto relative z-10"
+                  onChange={setSimulatorMessage}
                   placeholder="Type an SMS with {{variableName}}..."
-                  style={{ position: 'relative', zIndex: 10, pointerEvents: 'auto', cursor: 'text' }}
                 />
               </div>
 
@@ -842,16 +873,30 @@ export default function VariablesPage() {
                   <span>Click to insert variable into template:</span>
                 </div>
                 <div className="flex flex-wrap gap-1 max-h-28 overflow-y-auto pr-1">
-                  {combinedVariables.map((v) => (
-                    <button
-                      key={v.key}
-                      type="button"
-                      onClick={() => setSimulatorMessage((prev) => `${prev} {{${v.key}}}`)}
-                      className="text-[11px] font-mono px-2 py-0.5 rounded bg-muted hover:bg-amber-500/15 hover:text-amber-900 dark:hover:bg-primary/20 dark:hover:text-primary border border-border transition-colors text-foreground cursor-pointer pointer-events-auto relative z-10"
-                    >
-                      + {`{{${v.key}}}`}
-                    </button>
-                  ))}
+                  {combinedVariables.map((v) => {
+                    const theme = getVariableColorTheme(v.key);
+                    return (
+                      <button
+                        key={v.key}
+                        type="button"
+                        onClick={() =>
+                          insertVariableAtCursor(
+                            simTextareaRef.current,
+                            simulatorMessage,
+                            v.key,
+                            setSimulatorMessage
+                          )
+                        }
+                        className={cn(
+                          'text-[11px] font-mono px-2 py-0.5 rounded border transition-colors cursor-pointer pointer-events-auto relative z-10',
+                          theme.badgeClass
+                        )}
+                        title={`Click to insert {{${v.key}}}`}
+                      >
+                        + {`{{${v.key}}}`}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -911,8 +956,8 @@ export default function VariablesPage() {
 
                 <div className="p-4 rounded-xl border bg-muted/30 dark:bg-slate-950/40 flex flex-col items-start">
                   <div className="max-w-[95%] p-3.5 rounded-2xl rounded-bl-xs bg-primary text-primary-foreground shadow-sm text-xs sm:text-sm whitespace-pre-wrap leading-relaxed">
-                    {simulatorRendered ? (
-                      <TemplateHighlighter text={simulatorRendered} variant="on-primary" />
+                    {simulatorMessage ? (
+                      <TemplateHighlighter text={simulatorMessage} variant="on-primary" resolveSampleValues />
                     ) : (
                       <span className="italic opacity-80">Your rendered message will appear here...</span>
                     )}
@@ -930,7 +975,19 @@ export default function VariablesPage() {
       {/* ========================================================================= */}
       {/* CREATE CUSTOM VARIABLE MODAL                                              */}
       {/* ========================================================================= */}
-      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+      <Dialog
+        open={createDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            confirmCreateDiscard(() => {
+              setCreateDialogOpen(false);
+              resetCreateForm();
+            });
+          } else {
+            setCreateDialogOpen(true);
+          }
+        }}
+      >
         <DialogContent className="w-[calc(100%-2rem)] max-w-xl p-0 overflow-hidden">
           <DialogHeader>
             <div className="flex items-center gap-2">
@@ -1127,7 +1184,12 @@ export default function VariablesPage() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setCreateDialogOpen(false)}
+                onClick={() => {
+                  confirmCreateDiscard(() => {
+                    setCreateDialogOpen(false);
+                    resetCreateForm();
+                  });
+                }}
                 className="w-full sm:w-auto min-w-[100px] px-4"
               >
                 Cancel
@@ -1147,7 +1209,20 @@ export default function VariablesPage() {
       {/* ========================================================================= */}
       {/* EDIT CUSTOM VARIABLE MODAL                                                */}
       {/* ========================================================================= */}
-      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+      <Dialog
+        open={editDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            confirmEditDiscard(() => {
+              setEditDialogOpen(false);
+              setEditingVariable(null);
+              setInitialEditVariable(null);
+            });
+          } else {
+            setEditDialogOpen(true);
+          }
+        }}
+      >
         <DialogContent className="w-[calc(100%-2rem)] max-w-xl p-0 overflow-hidden">
           <DialogHeader>
             <div className="flex items-center gap-2">
@@ -1272,7 +1347,13 @@ export default function VariablesPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setEditDialogOpen(false)}
+                  onClick={() => {
+                    confirmEditDiscard(() => {
+                      setEditDialogOpen(false);
+                      setEditingVariable(null);
+                      setInitialEditVariable(null);
+                    });
+                  }}
                   className="w-full sm:w-auto min-w-[100px] px-4"
                 >
                   Cancel

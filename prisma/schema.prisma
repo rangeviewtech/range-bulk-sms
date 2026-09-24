@@ -54,6 +54,7 @@ model User {
   agent             Agent?
   contacts          Contact[]
   contactGroups     ContactGroup[]
+  contactSegments   ContactSegment[]
   contactTags       ContactTag[]
   contactImports    ContactImport[]
   senderIds         SenderId[]
@@ -66,6 +67,7 @@ model User {
   webhooks          Webhook[]
   supportTickets    SupportTicket[]
   scheduledMessages ScheduledMessage[]
+  smsDrafts         SmsDraft[]
 
   gateways Gateway[]
 }
@@ -101,9 +103,9 @@ model UserDevice {
   id          String    @id @default(uuid())
   userId      String
   deviceHash  String    @unique // SHA-256 digest of the 32-byte secure random hex device token
-  deviceName  String?   // Parsed friendly device/browser name
-  deviceInfo  String?   // Raw user-agent string
-  ipAddress   String?   // Last seen IP address
+  deviceName  String? // Parsed friendly device/browser name
+  deviceInfo  String? // Raw user-agent string
+  ipAddress   String? // Last seen IP address
   lastLoginAt DateTime  @default(now())
   createdAt   DateTime  @default(now())
   revokedAt   DateTime?
@@ -203,57 +205,57 @@ model RolePermission {
 // -----------------------------------------------------------------------------
 
 model AuditLog {
-  id              String   @id @default(uuid()) @map("event_id")
-  schemaVersion   String   @default("1.0") @map("schema_version")
-  timestamp       DateTime @map("timestamp")
-  recordedAt      DateTime @default(now()) @map("recorded_at")
-  eventName       String   @map("event_name")
-  category        String   @map("category")
-  severity        String   @map("severity")
-  outcome         String   @map("outcome") // SUCCESS, FAILURE, DENIED
-  
+  id            String   @id @default(uuid()) @map("event_id")
+  schemaVersion String   @default("1.0") @map("schema_version")
+  timestamp     DateTime @map("timestamp")
+  recordedAt    DateTime @default(now()) @map("recorded_at")
+  eventName     String   @map("event_name")
+  category      String   @map("category")
+  severity      String   @map("severity")
+  outcome       String   @map("outcome") // SUCCESS, FAILURE, DENIED
+
   // Actor info
-  actorType       String   @map("actor_type")
-  actorId         String?  @map("actor_id")
-  actorRole       String?  @map("actor_role")
-  tenantId        String?  @map("tenant_id")
-  
+  actorType String  @map("actor_type")
+  actorId   String? @map("actor_id")
+  actorRole String? @map("actor_role")
+  tenantId  String? @map("tenant_id")
+
   // Resource info
-  resourceType    String?  @map("resource_type")
-  resourceId      String?  @map("resource_id")
-  
+  resourceType String? @map("resource_type")
+  resourceId   String? @map("resource_id")
+
   // Action info
-  action          String?  @map("action") // CREATE, READ, UPDATE, DELETE
-  
+  action String? @map("action") // CREATE, READ, UPDATE, DELETE
+
   // Trace / Request Context
-  requestId       String?  @map("request_id") @db.VarChar(255)
-  traceId         String?  @map("trace_id") @db.VarChar(255)
-  interactionId   String?  @map("interaction_id") @db.VarChar(255)
-  jobId           String?  @map("job_id") @db.VarChar(255)
-  transactionId   String?  @map("transaction_id") @db.VarChar(255)
-  
-  sourceIp        String?  @map("source_ip") @db.VarChar(45)
-  userAgent       String?  @map("user_agent") @db.Text
-  route           String?  @map("route")
-  httpMethod      String?  @map("http_method") @db.VarChar(10)
-  httpStatus      Int?     @map("http_status")
-  
+  requestId     String? @map("request_id") @db.VarChar(255)
+  traceId       String? @map("trace_id") @db.VarChar(255)
+  interactionId String? @map("interaction_id") @db.VarChar(255)
+  jobId         String? @map("job_id") @db.VarChar(255)
+  transactionId String? @map("transaction_id") @db.VarChar(255)
+
+  sourceIp   String? @map("source_ip") @db.VarChar(45)
+  userAgent  String? @map("user_agent") @db.Text
+  route      String? @map("route")
+  httpMethod String? @map("http_method") @db.VarChar(10)
+  httpStatus Int?    @map("http_status")
+
   // Outcome & Changes
-  reasonCode      String?  @map("reason_code")
-  changedFields   Json?    @map("changed_fields") // String array usually
-  previousVersion Json?    @map("previous_version")
-  newVersion      Json?    @map("new_version")
-  
+  reasonCode      String? @map("reason_code")
+  changedFields   Json?   @map("changed_fields") // String array usually
+  previousVersion Json?   @map("previous_version")
+  newVersion      Json?   @map("new_version")
+
   // System context
-  service         String   @default("range-bulk-sms") @map("service")
-  environment     String   @default("production") @map("environment")
-  deploymentId    String?  @map("deployment_id")
-  durationMs      Int?     @map("duration_ms")
-  description     String?  @map("description") @db.Text
+  service      String  @default("range-bulk-sms") @map("service")
+  environment  String  @default("production") @map("environment")
+  deploymentId String? @map("deployment_id")
+  durationMs   Int?    @map("duration_ms")
+  description  String? @map("description") @db.Text
 
   // Tamper resistance
-  previousHash    String?  @map("previous_hash") // hash of the previous log
-  hash            String?  @map("hash") // hash of this log
+  previousHash String? @map("previous_hash") // hash of the previous log
+  hash         String? @map("hash") // hash of this log
 
   user User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
 
@@ -264,7 +266,8 @@ model AuditLog {
   @@index([resourceType, resourceId])
   @@index([category, outcome])
   @@index([jobId])
-  
+  @@index([tenantId, recordedAt])
+  @@index([action, recordedAt])
   @@map("audit_logs")
 }
 
@@ -319,6 +322,8 @@ model Job {
 
   @@index([queue, status, availableAt, priority])
   @@index([status, lockedAt]) // For finding stuck/crashed jobs
+  @@index([type, status])
+  @@index([status, availableAt])
 }
 
 // -----------------------------------------------------------------------------
@@ -519,14 +524,32 @@ enum SenderIdStatus {
   EXPIRED
 }
 
+enum CampaignType {
+  BROADCAST
+  RECURRING
+  DRIP
+}
+
 enum CampaignStatus {
   DRAFT
+  VALIDATING
+  READY
+  PENDING_APPROVAL
+  APPROVED
   SCHEDULED
+  PREPARING
+  RUNNING
   PROCESSING
+  PAUSING
+  PAUSED
+  RESUMING
+  COMPLETING
   SENT
   PARTIALLY_SENT
+  PARTIALLY_COMPLETED
   COMPLETED
   FAILED
+  CANCELLING
   CANCELLED
 }
 
@@ -614,6 +637,7 @@ model Organization {
   wallets   Wallet[]
   apiKeys   ApiKey[]
   senderIds SenderId[]
+  smsDrafts SmsDraft[]
 
   gateways Gateway[]
 
@@ -703,12 +727,15 @@ model Contact {
   groups            ContactGroupMember[]
   tags              ContactTagAssignment[]
   messageRecipients MessageRecipient[]
+  consentLogs       ConsentLog[]
 
   @@unique([userId, normalizedPhone])
   @@index([userId])
   @@index([normalizedPhone])
   @@index([phone])
   @@index([deletedAt])
+  @@index([userId, deletedAt, createdAt])
+  @@index([userId, optedOut])
 }
 
 // ── CONTACT GROUP ─────────────────────────────────────────
@@ -769,7 +796,24 @@ model ContactTagAssignment {
   @@index([contactTagId])
 }
 
-// ── CONTACT IMPORT ────────────────────────────────────────
+// ==========================================
+// DYNAMIC SEGMENT
+// ==========================================
+model ContactSegment {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  description String?
+  rules       Json     // Stores the DSL logic
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// 📱 CONTACT IMPORT 📱
 model ContactImport {
   id               String    @id @default(uuid())
   userId           String
@@ -854,6 +898,10 @@ model Campaign {
   message         String         @db.Text
   variables       String[]       @default([])
   status          CampaignStatus @default(DRAFT)
+  type            CampaignType   @default(BROADCAST)
+  cronExpression  String?
+  maxOccurrences  Int?
+  currentOccurrence Int          @default(0)
   scheduledAt     DateTime?
   startedAt       DateTime?
   completedAt     DateTime?
@@ -881,6 +929,9 @@ model Campaign {
   @@index([status])
   @@index([createdAt])
   @@index([deletedAt])
+  @@index([userId, deletedAt, createdAt])
+  @@index([status, scheduledAt])
+  @@index([clientId, status])
 }
 
 model CampaignGroup {
@@ -937,6 +988,9 @@ model Message {
   @@index([providerMessageId])
   @@index([idempotencyKey])
   @@index([createdAt])
+  @@index([userId, status, createdAt])
+  @@index([userId, createdAt])
+  @@index([campaignId, status])
 }
 
 // ── MESSAGE RECIPIENT ─────────────────────────────────────
@@ -964,6 +1018,9 @@ model MessageRecipient {
   @@index([status])
   @@index([phone])
   @@index([providerMsgId])
+  @@index([messageId, status])
+  @@index([phone, createdAt])
+  @@index([status, createdAt])
 }
 
 // ── SMS PROVIDER ──────────────────────────────────────────
@@ -1069,6 +1126,8 @@ model Transaction {
   @@index([type])
   @@index([reference])
   @@index([createdAt])
+  @@index([walletId, createdAt])
+  @@index([userId, createdAt])
 }
 
 // ── SMS PRICING ───────────────────────────────────────────
@@ -1197,6 +1256,7 @@ model ApiRequest {
   apiKey ApiKey @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
 
   @@index([apiKeyId])
+  @@index([apiKeyId, createdAt])
   @@index([endpoint])
   @@index([createdAt])
   @@index([statusCode])
@@ -1242,6 +1302,8 @@ model WebhookDelivery {
   webhook Webhook @relation(fields: [webhookId], references: [id], onDelete: Cascade)
 
   @@index([webhookId])
+  @@index([webhookId, createdAt])
+  @@index([nextRetryAt, attempts])
   @@index([event])
   @@index([createdAt])
 }
@@ -1467,5 +1529,245 @@ model MessageAttempt {
 
   @@index([messageId])
   @@index([gatewayId])
+  @@index([gatewayId, status, createdAt])
   @@index([status])
+}
+
+// -----------------------------------------------------------------------------
+// CONSENT MANAGEMENT SYSTEM (PART 7)
+// -----------------------------------------------------------------------------
+
+enum ConsentAction {
+  OPT_IN
+  OPT_OUT
+  RENEWAL
+  EXPIRED
+  REVOKED
+  COMPLAINT
+}
+
+enum ConsentPurpose {
+  MARKETING
+  TRANSACTIONAL
+  SYSTEM
+}
+
+model ConsentLog {
+  id                String               @id @default(uuid())
+  contactId         String
+  tenantId          String? // Organization or Client ID
+  channel           CommunicationChannel
+  purpose           ConsentPurpose
+  action            ConsentAction
+  source            String? // e.g., 'WEB_FORM', 'SMS_KEYWORD', 'API', 'MANUAL_IMPORT'
+  evidence          String?              @db.Text // IP address, URL, screenshot link, raw SMS
+  disclosureVersion String? // Version of terms accepted
+  legalBasis        String? // e.g., 'LEGITIMATE_INTEREST', 'EXPLICIT_CONSENT'
+  expiresAt         DateTime?
+  createdAt         DateTime             @default(now())
+
+  contact Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([contactId])
+  @@index([tenantId])
+  @@index([channel, purpose, action])
+  @@index([createdAt])
+}
+
+// ── SMS DRAFT ──────────────────────────────────────────────
+model SmsDraft {
+  id               String        @id @default(uuid())
+  userId           String
+  organizationId   String?
+  title            String?
+  senderId         String?
+  deliveryMode     String        @default("manual") // "manual" | "groups" | "import"
+  message          String        @default("") @db.Text
+  manualRecipients String        @default("") @db.Text
+  recipientCount   Int           @default(0)
+  selectedGroupId  String?
+  importFilename   String?
+  importRowCount   Int?
+  templateId       String?
+  metadata         Json?
+  version          Int           @default(1)
+  isShared         Boolean       @default(false)
+  lastEditedById   String?
+  lastAutosavedAt  DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization     Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+
+  @@index([userId, updatedAt])
+  @@index([organizationId, updatedAt])
+  @@index([id, organizationId])
+  @@index([id, userId])
+}
+
+// ── GLOBAL TELEPHONE NUMBERING & PROVIDER ALLOCATION ──────────
+
+model Region {
+  id                       String   @id @default(uuid())
+  regionId                 String   @unique // e.g., "UG", "US", "XK", "AC"
+  name                     String
+  alpha2                   String
+  alpha3                   String?
+  isCldr                   Boolean  @default(false)
+  isUnMember               Boolean  @default(false)
+  isTerritory              Boolean  @default(false)
+  callingCodes             String[] // Array of dial codes, e.g. ["+256"] or ["+1"]
+  libphonenumberSupported  Boolean  @default(true)
+  independentPlanAvailable Boolean  @default(true)
+  exceptionalSharedCode    Boolean  @default(false)
+  sampleE164               String?
+  sampleNsnDigits          Int?
+  validationRule           String?
+  notes                    String?  @db.Text
+  displayNameProvenance    String?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  callingCodeAssignments CallingCodeAssignment[]
+  operators              Operator[]
+  allocations            Allocation[]
+  coverageAudits         CoverageAudit[]
+
+  @@index([alpha2])
+  @@index([isUnMember])
+  @@index([isTerritory])
+}
+
+model CallingCodeAssignment {
+  id              String    @id @default(uuid())
+  callingCode     String    // e.g. "+1", "+256", "+7"
+  regionId        String
+  leadingDigits   String?   // Leading digits / area code distinctions
+  isNonGeographic Boolean   @default(false)
+  source          String?
+  asOf            DateTime?
+  ambiguityPolicy String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  region Region @relation(fields: [regionId], references: [regionId], onDelete: Cascade)
+
+  @@index([callingCode])
+  @@index([regionId])
+}
+
+model NumberingMetadataVersion {
+  id           String    @id @default(uuid())
+  libraryName  String    // e.g. "libphonenumber"
+  exactVersion String    // e.g. "v9.0.39"
+  cldrVersion  String?   // e.g. "v45"
+  checksum     String?
+  builtAt      DateTime?
+  reviewedAt   DateTime?
+  referenceUrl String?
+  license      String    @default("Apache-2.0")
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([libraryName, exactVersion])
+  @@index([isActive])
+}
+
+model Operator {
+  id                String    @id @default(uuid())
+  operatorId        String    @unique // e.g. "UG_AIRTEL", "UG_MTN", "NG_MTN"
+  regionId          String
+  legalName         String
+  retailBrand       String
+  historicalAliases String[]
+  classification    String    @default("MNO") // MNO, MVNO, RESELLER
+  lifecycleState    String    @default("OPERATIONAL") // OPERATIONAL, ALLOCATED, NOT_YET_OPERATIONAL
+  effectiveFrom     DateTime?
+  effectiveTo       DateTime?
+  evidence          String?   @db.Text
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  region      Region       @relation(fields: [regionId], references: [regionId], onDelete: Cascade)
+  allocations Allocation[]
+
+  @@index([regionId])
+  @@index([retailBrand])
+  @@index([lifecycleState])
+}
+
+model Allocation {
+  id               String    @id @default(uuid())
+  regionId         String
+  callingCode      String
+  nsnLength        Int
+  prefix           String?   // Exact prefix, e.g. "70", "790"
+  nsnStart         String?   // Inclusive range boundary
+  nsnEnd           String?   // Inclusive range boundary
+  operatorId       String?
+  brand            String?
+  serviceType      String    @default("MOBILE") // MOBILE, FIXED_LINE, TOLL_FREE, etc.
+  effectiveFrom    DateTime?
+  effectiveTo      DateTime?
+  publishedAt      DateTime?
+  verifiedAt       DateTime?
+  sourceUrl        String?
+  sourceDocument   String?
+  extractionMethod String?   @default("regulator_notice")
+  snapshotVersion  String?
+  status           String    @default("VERIFIED") // VERIFIED, PROVISIONAL, DISPUTED, HISTORICAL
+  notes            String?   @db.Text
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  region   Region    @relation(fields: [regionId], references: [regionId], onDelete: Cascade)
+  operator Operator? @relation(fields: [operatorId], references: [operatorId], onDelete: SetNull)
+
+  @@index([regionId, callingCode])
+  @@index([prefix])
+  @@index([operatorId])
+  @@index([status])
+}
+
+model ProviderObservation {
+  id                   String   @id @default(uuid())
+  phoneHash            String   // Hashed phone number for PII privacy
+  e164Redacted         String   // Redacted format e.g. "+256770****56"
+  providerName         String   // Provider name as returned
+  packageName          String?  // e.g. "line_type_intelligence"
+  requestedAt          DateTime @default(now())
+  returnedAt           DateTime @default(now())
+  carrierSemantics     String   @default("provider_defined") // current, original, provider_defined, unknown
+  lineType             String?
+  mcc                  String?
+  mnc                  String?
+  portabilitySupported Boolean  @default(false)
+  isPorted             Boolean?
+  ttlExpiresAt         DateTime?
+  costIncurred         Float    @default(0)
+  createdAt            DateTime @default(now())
+
+  @@index([phoneHash])
+  @@index([ttlExpiresAt])
+}
+
+model CoverageAudit {
+  id             String    @id @default(uuid())
+  regionId       String
+  feature        String    // validation, carrier_metadata, official_allocations, ported_current_lookup, fixtures
+  coverageStatus String    // verified, partial, unknown, unsupported
+  recordCount    Int       @default(0)
+  source         String
+  lastCheckedAt  DateTime  @default(now())
+  gaps           String?   @db.Text
+  nextReviewDate DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  region Region @relation(fields: [regionId], references: [regionId], onDelete: Cascade)
+
+  @@index([regionId, feature])
+  @@index([coverageStatus])
 }

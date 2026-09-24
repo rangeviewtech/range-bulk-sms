@@ -5,6 +5,7 @@ import { sendSmsSchema } from '@/lib/validations/sms';
 import { WalletService } from '@/lib/wallet/service';
 import { enqueueJob } from '@/lib/jobs/db';
 import { AppError } from '@/lib/errors';
+import { consumeDraftOnSend, resolveUserTenant } from '@/lib/sms/draft-service';
 
 export async function POST(req: Request) {
   try {
@@ -19,7 +20,7 @@ export async function POST(req: Request) {
       );
     }
     
-    const { senderId, recipients, message, idempotencyKey } = parsed.data;
+    const { senderId, recipients, message, idempotencyKey, draftId, personalizedMessages } = parsed.data;
 
     if (idempotencyKey) {
       const existing = await prisma.message.findUnique({
@@ -89,8 +90,8 @@ export async function POST(req: Request) {
       where: { messageId: msg.id },
     });
 
-    // Enqueue delivery jobs to the background job queue
     for (const rec of recipientRecords) {
+      const customMsg = personalizedMessages?.find(p => p.phone === rec.phone)?.message || message;
       await enqueueJob({
         type: 'send-sms',
         queue: 'sms-default',
@@ -98,12 +99,17 @@ export async function POST(req: Request) {
         payload: {
           recipient: rec.phone,
           template: 'direct',
-          templateData: { body: message },
+          templateData: { body: customMsg },
           messageId: msg.id,
           recipientId: rec.id,
         },
         idempotencyKey: idempotencyKey ? `job-${idempotencyKey}-${rec.id}` : undefined,
       });
+    }
+
+    if (draftId) {
+      const tenantContext = await resolveUserTenant(session.userId);
+      await consumeDraftOnSend(tenantContext, draftId);
     }
 
     return NextResponse.json({ success: true, messageId: msg.id, status: 'QUEUED' });

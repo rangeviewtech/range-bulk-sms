@@ -118,17 +118,38 @@ export default function ScheduledSmsPage() {
     },
   });
 
-  const handleToggleStatus = (id: string) => {
+  const [statusConfirm, setStatusConfirm] = useState<{
+    open: boolean;
+    id: string;
+    name: string;
+    nextStatus: 'PAUSED' | 'SCHEDULED';
+  } | null>(null);
+
+  const handleRequestToggleStatus = (id: string, name: string, currentStatus: string) => {
+    const nextStatus = currentStatus === 'SCHEDULED' ? 'PAUSED' : 'SCHEDULED';
+    setStatusConfirm({
+      open: true,
+      id,
+      name,
+      nextStatus,
+    });
+  };
+
+  const handleConfirmStatusChange = () => {
+    if (!statusConfirm) return;
+    const { id, name, nextStatus } = statusConfirm;
+
     setItems((prev) =>
       prev.map((item) => {
         if (item.id === id) {
-          const nextStatus = item.status === 'SCHEDULED' ? 'PAUSED' : 'SCHEDULED';
-          toast.info(`Campaign "${item.name}" ${nextStatus === 'PAUSED' ? 'paused' : 'resumed'}.`);
           return { ...item, status: nextStatus };
         }
         return item;
       })
     );
+
+    toast.info(`Campaign "${name}" ${nextStatus === 'PAUSED' ? 'paused' : 'resumed'}.`);
+    setStatusConfirm(null);
   };
 
   const [deleteConfirm, setDeleteConfirm] = useState<{
@@ -305,7 +326,7 @@ export default function ScheduledSmsPage() {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 text-muted-foreground hover:text-amber-500"
-                          onClick={() => handleToggleStatus(item.id)}
+                          onClick={() => handleRequestToggleStatus(item.id, item.name, item.status)}
                           aria-label={item.status === 'SCHEDULED' ? 'Pause message' : 'Resume message'}
                         >
                           {item.status === 'SCHEDULED' ? (
@@ -353,6 +374,22 @@ export default function ScheduledSmsPage() {
         cancelLabel="Keep Scheduled"
         variant="destructive"
         onConfirm={handleConfirmDelete}
+      />
+
+      {/* Confirmation Dialog for Pausing/Resuming Scheduled Broadcast */}
+      <ConfirmationDialog
+        open={Boolean(statusConfirm?.open)}
+        onOpenChange={(open) => !open && setStatusConfirm(null)}
+        title={statusConfirm?.nextStatus === 'PAUSED' ? 'Pause Scheduled Broadcast' : 'Resume Scheduled Broadcast'}
+        description={
+          statusConfirm?.nextStatus === 'PAUSED'
+            ? `Are you sure you want to pause "${statusConfirm?.name}"? Scheduled messages will be held and will not be dispatched until resumed.`
+            : `Are you sure you want to resume "${statusConfirm?.name}"? Messages will be queued for dispatch according to their schedule.`
+        }
+        confirmLabel={statusConfirm?.nextStatus === 'PAUSED' ? 'Pause Broadcast' : 'Resume Broadcast'}
+        cancelLabel="Cancel"
+        variant={statusConfirm?.nextStatus === 'PAUSED' ? 'destructive' : 'default'}
+        onConfirm={handleConfirmStatusChange}
       />
     </div>
   );

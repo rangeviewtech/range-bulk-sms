@@ -4,11 +4,32 @@ import { Pool } from 'pg';
 import { logger } from './logger';
 
 const connectionString = process.env.DATABASE_URL;
+const readConnectionString = process.env.DATABASE_REPLICA_URL || process.env.DATABASE_READ_URL || connectionString;
 
-const createPrismaClient = () => {
-  const pool = new Pool({ connectionString });
+const createPrismaClient = (connUrl = connectionString, isReplica = false) => {
+  const isDedicatedReplica = isReplica && readConnectionString !== connectionString;
+  const poolMax = isDedicatedReplica
+    ? parseInt(process.env.DB_READ_POOL_MAX || '25', 10)
+    : parseInt(process.env.DB_POOL_MAX || '20', 10);
+
+  const pool = new Pool({
+    connectionString: connUrl,
+    max: poolMax,
+    min: parseInt(process.env.DB_POOL_MIN || '2', 10),
+    idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT_MS || '30000', 10),
+    connectionTimeoutMillis: parseInt(process.env.DB_CONN_TIMEOUT_MS || '5000', 10),
+  });
+
+  pool.on('error', (err) => {
+    logger.error(`Unexpected error on idle database client (${isReplica ? 'REPLICA' : 'PRIMARY'})`, {
+      error: err.message,
+    });
+  });
+
   const adapter = new PrismaPg(pool);
   const baseClient = new PrismaClient({ adapter });
+
+  const slowThreshold = parseInt(process.env.SLOW_QUERY_THRESHOLD_MS || '500', 10);
 
   return baseClient.$extends({
     query: {
@@ -18,8 +39,19 @@ const createPrismaClient = () => {
           try {
             const result = await query(args);
             const durationMs = Date.now() - startTime;
-            
-            // Log mutations automatically
+
+            // Slow query observability detection
+            if (durationMs > slowThreshold) {
+              logger.warn('Slow database query detected', {
+                model,
+                operation,
+                durationMs,
+                thresholdMs: slowThreshold,
+                clientRole: isReplica ? 'REPLICA' : 'PRIMARY',
+              });
+            }
+
+            // Log mutations automatically (only applicable on primary)
             if (['create', 'update', 'delete', 'upsert', 'createMany', 'updateMany', 'deleteMany'].includes(operation)) {
               if (model !== 'AuditLog' && model !== 'Job' && model !== 'Session' && model !== 'CronExecution' && model !== 'WebhookDelivery' && model !== 'GatewayLog') { 
                 const actionMapping: Record<string, string> = {
@@ -33,14 +65,9 @@ const createPrismaClient = () => {
                 };
                 
                 // Fire and forget logging for general CRUD
-                // Note: For critical operations, developers should still use `withTransactionalAudit` directly
                 Promise.resolve().then(async () => {
                    try {
                      const action = actionMapping[operation] || operation.toUpperCase();
-                     
-                     // We skip actual AuditLog inserts if we don't have actor info in this context,
-                     // but we still emit to structured stdout for observability.
-                     // The structured logger handles redaction.
                      const argsData = (args as { data?: unknown })?.data;
                      logger.audit({
                         eventName: `db.${model.toLowerCase()}.${operation}`,
@@ -89,14 +116,23 @@ export type PrismaTransactionClient = Parameters<Parameters<ExtendedPrismaClient
 
 const globalForPrisma = globalThis as unknown as {
   prisma: ExtendedPrismaClient | undefined;
+  prismaRead: ExtendedPrismaClient | undefined;
 };
 
 export const prisma =
   globalForPrisma.prisma ??
-  createPrismaClient();
+  createPrismaClient(connectionString, false);
+
+// Read Replica Client: routes to replica pool if configured, else reuses primary pool
+export const prismaRead =
+  globalForPrisma.prismaRead ??
+  (readConnectionString && readConnectionString !== connectionString
+    ? createPrismaClient(readConnectionString, true)
+    : prisma);
 
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
+  globalForPrisma.prismaRead = prismaRead;
 }
 
 export * from '../generated/prisma/client';

@@ -2,6 +2,15 @@ import { prisma } from '@/lib/prisma';
 import { normalizePhoneNumber } from '@/lib/sms/normalizer';
 import { ContactService } from './service';
 
+export interface InvalidContactItem {
+  row: number;
+  phone: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  error: string;
+}
+
 export interface ImportResult {
   totalRecords: number;
   validRecords: number;
@@ -10,6 +19,7 @@ export interface ImportResult {
   importedRecords: number;
   skippedRecords: number;
   errors: Array<{ row: number; field: string; error: string }>;
+  invalidContacts: InvalidContactItem[];
 }
 
 export interface ColumnMapping {
@@ -96,42 +106,104 @@ export const ContactImportService = {
     };
   },
   
-  async importRecords(userId: string, validRecords: Record<string, string>[], mapping: ColumnMapping, groupId?: string): Promise<ImportResult> {
-    const importData = validRecords.map(record => {
-      const phone = record[mapping.phone];
-      const norm = normalizePhoneNumber(phone).normalized;
-      
-      return {
+  async importRecords(
+    userId: string,
+    records: Record<string, string>[],
+    mapping: ColumnMapping,
+    groupId?: string,
+    status: 'ACTIVE' | 'OPTED_OUT' = 'ACTIVE'
+  ): Promise<ImportResult> {
+    const isOptedOut = status === 'OPTED_OUT';
+    const validImportData: Array<{
+      userId: string;
+      phone: string;
+      normalizedPhone: string;
+      firstName?: string;
+      lastName?: string;
+      email?: string;
+      optedOut: boolean;
+    }> = [];
+    const invalidContacts: InvalidContactItem[] = [];
+    const seenPhones = new Set<string>();
+    let fileDuplicateCount = 0;
+
+    for (let i = 0; i < records.length; i++) {
+      const record = records[i];
+      const rawPhone = (record[mapping.phone] || '').trim();
+      const firstName = mapping.firstName && record[mapping.firstName] ? record[mapping.firstName].trim() : undefined;
+      const lastName = mapping.lastName && record[mapping.lastName] ? record[mapping.lastName].trim() : undefined;
+      const email = mapping.email && record[mapping.email] ? record[mapping.email].trim() : undefined;
+
+      if (!rawPhone) {
+        invalidContacts.push({
+          row: i + 1,
+          phone: '',
+          firstName,
+          lastName,
+          email,
+          error: 'Missing phone number',
+        });
+        continue;
+      }
+
+      const norm = normalizePhoneNumber(rawPhone);
+      if (!norm.isValid) {
+        invalidContacts.push({
+          row: i + 1,
+          phone: rawPhone,
+          firstName,
+          lastName,
+          email,
+          error: norm.error || 'Invalid phone number format',
+        });
+        continue;
+      }
+
+      if (seenPhones.has(norm.normalized)) {
+        fileDuplicateCount++;
+        continue;
+      }
+
+      seenPhones.add(norm.normalized);
+      validImportData.push({
         userId,
-        phone,
-        normalizedPhone: norm,
-        firstName: mapping.firstName ? record[mapping.firstName] : undefined,
-        lastName: mapping.lastName ? record[mapping.lastName] : undefined,
-        email: mapping.email ? record[mapping.email] : undefined,
-      };
-    });
-
-    const result = await prisma.contact.createMany({
-      data: importData,
-      skipDuplicates: true 
-    });
-
-    if (groupId && result.count > 0) {
-      const imported = await prisma.contact.findMany({
-        where: { userId, normalizedPhone: { in: importData.map(d => d.normalizedPhone) } },
-        select: { id: true }
+        phone: rawPhone,
+        normalizedPhone: norm.normalized,
+        firstName,
+        lastName,
+        email,
+        optedOut: isOptedOut,
       });
-      await ContactService.addToGroup(imported.map(c => c.id), groupId);
     }
 
+    let importedCount = 0;
+    if (validImportData.length > 0) {
+      const result = await prisma.contact.createMany({
+        data: validImportData,
+        skipDuplicates: true,
+      });
+      importedCount = result.count;
+
+      if (groupId && importedCount > 0) {
+        const imported = await prisma.contact.findMany({
+          where: { userId, normalizedPhone: { in: validImportData.map(d => d.normalizedPhone) } },
+          select: { id: true }
+        });
+        await ContactService.addToGroup(imported.map(c => c.id), groupId);
+      }
+    }
+
+    const duplicateCount = fileDuplicateCount + (validImportData.length - importedCount);
+
     return {
-      totalRecords: validRecords.length,
-      validRecords: validRecords.length,
-      invalidRecords: 0, 
-      duplicateRecords: validRecords.length - result.count,
-      importedRecords: result.count,
-      skippedRecords: validRecords.length - result.count,
-      errors: []
+      totalRecords: records.length,
+      validRecords: validImportData.length,
+      invalidRecords: invalidContacts.length,
+      duplicateRecords: duplicateCount,
+      importedRecords: importedCount,
+      skippedRecords: duplicateCount + invalidContacts.length,
+      errors: invalidContacts.map(inv => ({ row: inv.row, field: 'phone', error: inv.error })),
+      invalidContacts,
     };
   }
 };

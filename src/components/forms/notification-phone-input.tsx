@@ -3,6 +3,12 @@
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { InputError } from '@/components/ui/input-error';
+import {
+  sanitizeSinglePhoneInput,
+  handlePhoneInputKeyDown,
+  validatePhoneCountryCode,
+  validatePhoneNumber,
+} from '@/lib/sms/normalizer';
 
 interface NotificationPhoneInputProps {
   defaultValue: string;
@@ -12,11 +18,19 @@ export function NotificationPhoneInput({ defaultValue }: NotificationPhoneInputP
   const [value, setValue] = useState(defaultValue);
   const [touched, setTouched] = useState(false);
 
-  const error = touched && value.trim()
-    ? !/^\+[1-9]\d{6,14}$/.test(value.trim())
-      ? 'Use international format with country code (e.g. +256700123456)'
-      : ''
-    : '';
+  let error = '';
+  if (touched && value.trim()) {
+    const val = value.trim();
+    const ccResult = validatePhoneCountryCode(val);
+    if (!ccResult.isValid) {
+      error = ccResult.error || 'Invalid country calling code';
+    } else {
+      const fullResult = validatePhoneNumber(val);
+      if (!fullResult.isValid) {
+        error = fullResult.error || 'Invalid phone format (e.g. +256700123456)';
+      }
+    }
+  }
 
   return (
     <div>
@@ -25,9 +39,11 @@ export function NotificationPhoneInput({ defaultValue }: NotificationPhoneInputP
         name="phone"
         value={value}
         onChange={(e) => {
-          setValue(e.target.value);
+          const sanitized = sanitizeSinglePhoneInput(e.target.value);
+          setValue(sanitized);
           if (!touched) setTouched(true);
         }}
+        onKeyDown={(e) => handlePhoneInputKeyDown(e, false)}
         onBlur={() => setTouched(true)}
         placeholder="+1234567890"
         error={!!error}

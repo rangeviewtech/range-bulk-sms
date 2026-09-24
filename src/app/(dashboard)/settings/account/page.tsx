@@ -14,7 +14,7 @@ import { Loader2 } from "lucide-react";
 export default function AccountSettingsPage() {
   const [saving, setSaving] = useState(false);
 
-  const { values, errors, touched, setFieldValue, handleBlur, validateAll } =
+  const { values, errors, touched, setFieldValue, handleBlur, validateAll, reset, markClean } =
     useFormValidation<AccountProfileInput>({
       schema: accountProfileSchema,
       initialValues: {
@@ -22,6 +22,10 @@ export default function AccountSettingsPage() {
         emailAddress: 'john@example.com',
         companyName: 'Acme Corp',
       },
+      protectUnsavedChanges: true,
+      id: 'account-settings',
+      title: 'Unsaved changes',
+      message: 'You have unsaved changes in your account profile. If you leave now, your changes will be lost.',
     });
 
   useEffect(() => {
@@ -32,9 +36,11 @@ export default function AccountSettingsPage() {
           const json = await res.json();
           const data = json.data;
           if (data) {
-            if (data.fullName) setFieldValue('fullName', data.fullName);
-            if (data.emailAddress) setFieldValue('emailAddress', data.emailAddress);
-            if (data.companyName) setFieldValue('companyName', data.companyName);
+            reset({
+              fullName: data.fullName || 'John Doe',
+              emailAddress: data.emailAddress || 'john@example.com',
+              companyName: data.companyName || '',
+            });
           }
         }
       } catch {
@@ -42,7 +48,7 @@ export default function AccountSettingsPage() {
       }
     }
     loadProfile();
-  }, [setFieldValue]);
+  }, [reset]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,6 +73,7 @@ export default function AccountSettingsPage() {
         return;
       }
 
+      markClean();
       toast.success('Account profile updated successfully');
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to update account settings');

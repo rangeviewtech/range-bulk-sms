@@ -1,7 +1,8 @@
 'use client';
+import { cn } from '@/lib/utils';
 
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -13,7 +14,6 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -26,6 +26,13 @@ import {
 import { InputError } from '@/components/ui/input-error';
 import { TemplateHighlighter } from '@/components/sms/template-highlighter';
 import { QuickAddVariable } from '@/components/sms/quick-add-variable';
+
+import { VariableTextarea, getVariableColorTheme } from '@/components/sms/variable-textarea';
+import { GrammarCheckModal } from '@/components/sms/grammar-check-modal';
+import { SmsVariable } from '@/lib/sms/custom-variables';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { ChevronDown } from 'lucide-react';
+
 import { getAllVariablesList } from '@/lib/sms/custom-variables';
 import {
   Sparkles,
@@ -83,14 +90,9 @@ export function EditCampaignDialog({
   const [scheduleTime, setScheduleTime] = useState('09:00');
   const [saving, setSaving] = useState(false);
   const [showAddVar, setShowAddVar] = useState(false);
-  const [availableVariables, setAvailableVariables] = useState<string[]>([
-    'firstName',
-    'name',
-    'company',
-    'phone',
-    'orderId',
-    'amount',
-  ]);
+  const [showGrammarCheck, setShowGrammarCheck] = useState(false);
+  const messageTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const [availableVariables, setAvailableVariables] = useState<SmsVariable[]>([]);
 
   // Sync state when campaign changes
   useEffect(() => {
@@ -148,11 +150,7 @@ export function EditCampaignDialog({
 
     const refreshVars = () => {
       try {
-        const allVars = getAllVariablesList();
-        const keys = allVars.map((v) => v.key);
-        setAvailableVariables(
-          Array.from(new Set([...keys, 'firstName', 'name', 'company', 'phone']))
-        );
+        setAvailableVariables(getAllVariablesList());
       } catch {
         // keep fallback
       }
@@ -214,8 +212,8 @@ export function EditCampaignDialog({
     }, 10);
   };
 
-  const handleVariableCreated = (newVar: { key: string }) => {
-    setAvailableVariables((prev) => Array.from(new Set([...prev, newVar.key])));
+  const handleVariableCreated = (newVar: SmsVariable) => {
+    setAvailableVariables((prev) => { if (prev.some(v => v.key === newVar.key)) return prev; return [...prev, newVar]; });
     setShowAddVar(false);
     handleInsertVariable(newVar.key);
   };
@@ -415,84 +413,112 @@ export function EditCampaignDialog({
 
             {/* Message Body Section */}
             <div className="space-y-2">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <Label htmlFor="edit-campaign-message-body" className="text-xs font-semibold">
-                  SMS Message Body <span className="text-destructive">*</span>
-                </Label>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowAddVar((prev) => !prev)}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-secondary hover:text-secondary/80 dark:text-primary dark:hover:text-primary/80 transition-colors cursor-pointer"
-                    title="Create a new custom variable"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Add Variable</span>
-                  </button>
-                  <span className="text-muted-foreground/30">•</span>
-                  <Link
-                    href="/sms/variables"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <span>Manage all</span>
-                    <ExternalLink className="w-2.5 h-2.5" />
-                  </Link>
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                  <Label htmlFor="edit-campaign-message-body" className="text-xs font-semibold">
+                    SMS Message Body <span className="text-destructive">*</span>
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 px-3 text-xs font-medium gap-1.5 rounded-md"
+                      onClick={() => setShowGrammarCheck(true)}
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Grammar Check</span>
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-3 text-xs font-medium gap-1.5 rounded-md transition-all"
+                        >
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>Insert Variable</span>
+                          <ChevronDown className="w-3 h-3 ml-0.5 opacity-60" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-64 max-h-96 overflow-y-auto">
+                        <div className="px-2 py-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex justify-between items-center">
+                          <span>Variables</span>
+                          <Link href="/sms/variables" target="_blank" rel="noopener noreferrer" className="text-secondary dark:text-primary hover:underline flex items-center gap-0.5 lowercase text-[10px]">
+                            manage all <ExternalLink className="w-2.5 h-2.5" />
+                          </Link>
+                        </div>
+                        
+                        <div className="px-2 py-1 mt-1 text-[10px] font-semibold text-foreground/50 uppercase tracking-wider">
+                          Built-in
+                        </div>
+                        {availableVariables.filter(v => v.isSystem).map((v) => {
+                          const theme = getVariableColorTheme(v.key);
+                          return (
+                            <DropdownMenuItem
+                              key={v.key}
+                              onClick={() => handleInsertVariable(v.key)}
+                              className="flex items-center justify-between text-xs cursor-pointer py-1.5 font-mono"
+                              title={v.label}
+                            >
+                              <span>{`{{${v.key}}}`}</span>
+                              <span className={cn('text-[10px] px-1.5 py-0.5 rounded font-sans font-medium', theme.badgeClass)}>
+                                Built-in
+                              </span>
+                            </DropdownMenuItem>
+                          );
+                        })}
+
+                        <DropdownMenuSeparator />
+                        <div className="px-2 py-1 text-[10px] font-semibold text-foreground/50 uppercase tracking-wider">
+                          Custom
+                        </div>
+                        {availableVariables.filter(v => !v.isSystem).map((v) => {
+                          const theme = getVariableColorTheme(v.key);
+                          return (
+                            <DropdownMenuItem
+                              key={v.key}
+                              onClick={() => handleInsertVariable(v.key)}
+                              className="flex items-center justify-between text-xs cursor-pointer py-1.5 font-mono"
+                              title={v.label}
+                            >
+                              <span>{`{{${v.key}}}`}</span>
+                              <span className={cn('text-[10px] px-1.5 py-0.5 rounded font-sans font-medium', theme.badgeClass)}>
+                                Custom
+                              </span>
+                            </DropdownMenuItem>
+                          );
+                        })}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => setShowAddVar(true)}
+                          className="text-xs font-sans text-secondary dark:text-primary cursor-pointer flex items-center gap-1.5 py-1.5"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Create Custom Variable</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
-              </div>
 
-              {showAddVar && (
-                <QuickAddVariable
-                  onSuccess={handleVariableCreated}
-                  onCancel={() => setShowAddVar(false)}
-                />
-              )}
+                <QuickAddVariable isOpen={showAddVar} onClose={() => setShowAddVar(false)} onSuccess={handleVariableCreated} />
+                <GrammarCheckModal isOpen={showGrammarCheck} onClose={() => setShowGrammarCheck(false)} originalText={message} onApply={(corrected) => { setMessage(corrected); setShowGrammarCheck(false); }} />
 
-              <Textarea
+              <VariableTextarea
+                ref={messageTextareaRef}
                 id="edit-campaign-message-body"
                 rows={5}
                 placeholder="Type campaign message here..."
                 value={message}
-                onChange={(e) => {
-                  setMessage(e.target.value);
-                  if (!messageTouched) setMessageTouched(true);
-                }}
+                onChange={(val) => setMessage(val)}
                 onBlur={() => setMessageTouched(true)}
                 error={!!messageError}
-                aria-describedby={messageError ? 'edit-message-error' : undefined}
+                className="resize-y min-h-[120px]"
                 required
               />
               {messageError && <InputError id="edit-message-error" message={messageError} />}
-
-              {/* Variable Insertion Chips */}
-              <div className="pt-1 space-y-1.5">
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Sparkles className="w-3.5 h-3.5 text-secondary dark:text-primary" />
-                  <span>Click to insert variable into cursor position:</span>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {availableVariables.map((v) => (
-                    <button
-                      key={v}
-                      type="button"
-                      onClick={() => handleInsertVariable(v)}
-                      className="inline-flex items-center text-xs font-mono px-2 py-0.5 rounded bg-muted hover:bg-amber-500/15 hover:text-amber-900 dark:hover:bg-primary/20 dark:hover:text-primary text-foreground border border-border/80 transition-colors cursor-pointer"
-                    >
-                      + {`{{${v}}}`}
-                    </button>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => setShowAddVar(true)}
-                    className="inline-flex items-center gap-1 text-xs font-sans px-2.5 py-0.5 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 border-amber-500/30 dark:bg-primary/10 dark:hover:bg-primary/20 dark:text-primary dark:border-primary/40 border border-dashed font-medium transition-colors cursor-pointer"
-                  >
-                    <Plus className="w-3 h-3" />
-                    <span>New Variable</span>
-                  </button>
-                </div>
               </div>
-            </div>
+
 
             {/* Metrics Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 bg-muted/30 rounded-lg border text-xs">

@@ -33,12 +33,14 @@ export function ToastProvider({ ...props }: ToasterProps) {
         toastOptions={{
           classNames: {
             toast:
-              "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg font-sans",
+              "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg font-sans pr-11 !rounded-xl",
             description: "group-[.toast]:text-muted-foreground",
             actionButton:
               "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground font-medium",
             cancelButton:
               "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
+            closeButton:
+              "!left-auto !right-3 !top-3 !transform-none !border-transparent !bg-transparent hover:!bg-black/10 dark:hover:!bg-white/15 text-inherit opacity-70 hover:opacity-100 !rounded-md !w-6 !h-6 transition-all",
           },
         }}
         {...props}

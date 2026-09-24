@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -18,8 +18,10 @@ import {
   ArrowUp,
   ArrowDown,
   X,
+  Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { buildSanitizedCsv } from '@/lib/security/csv-sanitizer';
 import { Pagination } from '@/components/ui/pagination';
 import { SortableHeader } from '@/components/ui/sortable-header';
 import { useTableState } from '@/hooks/use-table-state';
@@ -59,6 +61,29 @@ const INITIAL_RECORDS: DeliveryRecord[] = [
 ];
 
 export default function DeliveryReportsPage() {
+  const [records, setRecords] = useState<DeliveryRecord[]>(INITIAL_RECORDS);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    async function loadReports() {
+      try {
+        setLoading(true);
+        const res = await fetch('/api/sms/delivery-reports?limit=100');
+        if (res.ok) {
+          const json = await res.json();
+          if (Array.isArray(json.data) && json.data.length > 0) {
+            setRecords(json.data);
+          }
+        }
+      } catch {
+        // Fallback gracefully
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadReports();
+  }, []);
+
   const {
     search,
     setSearch,
@@ -77,7 +102,7 @@ export default function DeliveryReportsPage() {
     paginatedData,
     filteredData,
   } = useTableState<DeliveryRecord>({
-    data: INITIAL_RECORDS,
+    data: records,
     searchFields: ['phone', 'network', 'campaign', 'status', 'id'],
     initialSortKey: 'time',
     initialSortOrder: 'desc',
@@ -115,45 +140,45 @@ export default function DeliveryReportsPage() {
   });
 
   const deliveredCount = useMemo(
-    () => INITIAL_RECORDS.filter((r) => r.status === 'DELIVERED').length,
-    []
+    () => records.filter((r) => r.status === 'DELIVERED').length,
+    [records]
   );
   const failedCount = useMemo(
-    () => INITIAL_RECORDS.filter((r) => r.status === 'FAILED').length,
-    []
+    () => records.filter((r) => r.status === 'FAILED').length,
+    [records]
   );
   const pendingCount = useMemo(
-    () => INITIAL_RECORDS.filter((r) => r.status === 'PENDING').length,
-    []
+    () => records.filter((r) => r.status === 'PENDING').length,
+    [records]
   );
   const totalSpend = useMemo(
-    () => INITIAL_RECORDS.reduce((acc, curr) => acc + curr.cost, 0),
-    []
+    () => records.reduce((acc, curr) => acc + curr.cost, 0),
+    [records]
   );
 
   const handleExportCSV = () => {
-    const csvRows = [
-      ['Report ID', 'Phone Number', 'Network', 'Campaign', 'Status', 'Segments', 'Cost (UGX)', 'Timestamp'],
-      ...filteredData.map((r) => [
-        r.id,
-        r.phone,
-        r.network,
-        r.campaign,
-        r.status,
-        r.segments.toString(),
-        r.cost.toString(),
-        r.time,
-      ]),
-    ];
+    const headers = ['Report ID', 'Phone Number', 'Network', 'Campaign', 'Status', 'Segments', 'Cost (UGX)', 'Timestamp'];
+    const rows = filteredData.map((r) => [
+      r.id,
+      r.phone,
+      r.network,
+      r.campaign,
+      r.status,
+      r.segments,
+      r.cost,
+      r.time,
+    ]);
 
-    const csvContent = 'data:text/csv;charset=utf-8,' + csvRows.map((e) => e.join(',')).join('\n');
-    const encodedUri = encodeURI(csvContent);
+    const csvContent = buildSanitizedCsv(headers, rows);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `delivery_reports_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.href = url;
+    link.download = `delivery_reports_${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 
     toast.success(`Exported ${filteredData.length} delivery records to CSV!`);
   };
@@ -189,10 +214,13 @@ export default function DeliveryReportsPage() {
         title="Delivery Reports"
         description="Real-time carrier handset delivery logs, network routing receipts, and dispatch telemetry."
         action={
-          <Button variant="outline" onClick={handleExportCSV} className="w-full sm:w-auto">
-            <FileDown className="w-4 h-4 mr-2" />
-            Export CSV ({filteredData.length})
-          </Button>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            {loading && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
+            <Button variant="outline" onClick={handleExportCSV} className="w-full sm:w-auto">
+              <FileDown className="w-4 h-4 mr-2" />
+              Export CSV ({filteredData.length})
+            </Button>
+          </div>
         }
       />
 
@@ -204,7 +232,7 @@ export default function DeliveryReportsPage() {
               <span className="text-xs font-medium text-muted-foreground">Total Messages</span>
               <Smartphone className="w-4 h-4 text-primary" />
             </div>
-            <div className="text-2xl font-bold text-foreground mt-2">{INITIAL_RECORDS.length}</div>
+            <div className="text-2xl font-bold text-foreground mt-2">{records.length}</div>
             <p className="text-[11px] text-muted-foreground mt-1">Across all campaigns</p>
           </CardContent>
         </Card>
@@ -217,7 +245,7 @@ export default function DeliveryReportsPage() {
             </div>
             <div className="text-2xl font-bold text-emerald-600 mt-2">{deliveredCount}</div>
             <p className="text-[11px] text-muted-foreground mt-1">
-              {((deliveredCount / INITIAL_RECORDS.length) * 100).toFixed(1)}% handset success rate
+              {records.length > 0 ? ((deliveredCount / records.length) * 100).toFixed(1) : '0.0'}% handset success rate
             </p>
           </CardContent>
         </Card>
@@ -325,7 +353,7 @@ export default function DeliveryReportsPage() {
                 className="text-xs h-8"
                 onClick={() => setFilter('status', 'ALL')}
               >
-                All ({INITIAL_RECORDS.length})
+                All ({records.length})
               </Button>
               <Button
                 type="button"

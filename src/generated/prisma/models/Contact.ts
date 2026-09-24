@@ -278,6 +278,7 @@ export type ContactWhereInput = {
   groups?: Prisma.ContactGroupMemberListRelationFilter
   tags?: Prisma.ContactTagAssignmentListRelationFilter
   messageRecipients?: Prisma.MessageRecipientListRelationFilter
+  consentLogs?: Prisma.ConsentLogListRelationFilter
 }
 
 export type ContactOrderByWithRelationInput = {
@@ -302,6 +303,7 @@ export type ContactOrderByWithRelationInput = {
   groups?: Prisma.ContactGroupMemberOrderByRelationAggregateInput
   tags?: Prisma.ContactTagAssignmentOrderByRelationAggregateInput
   messageRecipients?: Prisma.MessageRecipientOrderByRelationAggregateInput
+  consentLogs?: Prisma.ConsentLogOrderByRelationAggregateInput
 }
 
 export type ContactWhereUniqueInput = Prisma.AtLeast<{
@@ -330,6 +332,7 @@ export type ContactWhereUniqueInput = Prisma.AtLeast<{
   groups?: Prisma.ContactGroupMemberListRelationFilter
   tags?: Prisma.ContactTagAssignmentListRelationFilter
   messageRecipients?: Prisma.MessageRecipientListRelationFilter
+  consentLogs?: Prisma.ConsentLogListRelationFilter
 }, "id" | "userId_normalizedPhone">
 
 export type ContactOrderByWithAggregationInput = {
@@ -399,6 +402,7 @@ export type ContactCreateInput = {
   groups?: Prisma.ContactGroupMemberCreateNestedManyWithoutContactInput
   tags?: Prisma.ContactTagAssignmentCreateNestedManyWithoutContactInput
   messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutContactInput
+  consentLogs?: Prisma.ConsentLogCreateNestedManyWithoutContactInput
 }
 
 export type ContactUncheckedCreateInput = {
@@ -422,6 +426,7 @@ export type ContactUncheckedCreateInput = {
   groups?: Prisma.ContactGroupMemberUncheckedCreateNestedManyWithoutContactInput
   tags?: Prisma.ContactTagAssignmentUncheckedCreateNestedManyWithoutContactInput
   messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutContactInput
+  consentLogs?: Prisma.ConsentLogUncheckedCreateNestedManyWithoutContactInput
 }
 
 export type ContactUpdateInput = {
@@ -445,6 +450,7 @@ export type ContactUpdateInput = {
   groups?: Prisma.ContactGroupMemberUpdateManyWithoutContactNestedInput
   tags?: Prisma.ContactTagAssignmentUpdateManyWithoutContactNestedInput
   messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutContactNestedInput
+  consentLogs?: Prisma.ConsentLogUpdateManyWithoutContactNestedInput
 }
 
 export type ContactUncheckedUpdateInput = {
@@ -468,6 +474,7 @@ export type ContactUncheckedUpdateInput = {
   groups?: Prisma.ContactGroupMemberUncheckedUpdateManyWithoutContactNestedInput
   tags?: Prisma.ContactTagAssignmentUncheckedUpdateManyWithoutContactNestedInput
   messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutContactNestedInput
+  consentLogs?: Prisma.ConsentLogUncheckedUpdateManyWithoutContactNestedInput
 }
 
 export type ContactCreateManyInput = {
@@ -698,6 +705,20 @@ export type ContactUpdateOneWithoutMessageRecipientsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ContactUpdateToOneWithWhereWithoutMessageRecipientsInput, Prisma.ContactUpdateWithoutMessageRecipientsInput>, Prisma.ContactUncheckedUpdateWithoutMessageRecipientsInput>
 }
 
+export type ContactCreateNestedOneWithoutConsentLogsInput = {
+  create?: Prisma.XOR<Prisma.ContactCreateWithoutConsentLogsInput, Prisma.ContactUncheckedCreateWithoutConsentLogsInput>
+  connectOrCreate?: Prisma.ContactCreateOrConnectWithoutConsentLogsInput
+  connect?: Prisma.ContactWhereUniqueInput
+}
+
+export type ContactUpdateOneRequiredWithoutConsentLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.ContactCreateWithoutConsentLogsInput, Prisma.ContactUncheckedCreateWithoutConsentLogsInput>
+  connectOrCreate?: Prisma.ContactCreateOrConnectWithoutConsentLogsInput
+  upsert?: Prisma.ContactUpsertWithoutConsentLogsInput
+  connect?: Prisma.ContactWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ContactUpdateToOneWithWhereWithoutConsentLogsInput, Prisma.ContactUpdateWithoutConsentLogsInput>, Prisma.ContactUncheckedUpdateWithoutConsentLogsInput>
+}
+
 export type ContactCreateWithoutUserInput = {
   id?: string
   firstName?: string | null
@@ -718,6 +739,7 @@ export type ContactCreateWithoutUserInput = {
   groups?: Prisma.ContactGroupMemberCreateNestedManyWithoutContactInput
   tags?: Prisma.ContactTagAssignmentCreateNestedManyWithoutContactInput
   messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutContactInput
+  consentLogs?: Prisma.ConsentLogCreateNestedManyWithoutContactInput
 }
 
 export type ContactUncheckedCreateWithoutUserInput = {
@@ -740,6 +762,7 @@ export type ContactUncheckedCreateWithoutUserInput = {
   groups?: Prisma.ContactGroupMemberUncheckedCreateNestedManyWithoutContactInput
   tags?: Prisma.ContactTagAssignmentUncheckedCreateNestedManyWithoutContactInput
   messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutContactInput
+  consentLogs?: Prisma.ConsentLogUncheckedCreateNestedManyWithoutContactInput
 }
 
 export type ContactCreateOrConnectWithoutUserInput = {
@@ -811,6 +834,7 @@ export type ContactCreateWithoutGroupsInput = {
   user: Prisma.UserCreateNestedOneWithoutContactsInput
   tags?: Prisma.ContactTagAssignmentCreateNestedManyWithoutContactInput
   messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutContactInput
+  consentLogs?: Prisma.ConsentLogCreateNestedManyWithoutContactInput
 }
 
 export type ContactUncheckedCreateWithoutGroupsInput = {
@@ -833,6 +857,7 @@ export type ContactUncheckedCreateWithoutGroupsInput = {
   updatedAt?: Date | string
   tags?: Prisma.ContactTagAssignmentUncheckedCreateNestedManyWithoutContactInput
   messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutContactInput
+  consentLogs?: Prisma.ConsentLogUncheckedCreateNestedManyWithoutContactInput
 }
 
 export type ContactCreateOrConnectWithoutGroupsInput = {
@@ -871,6 +896,7 @@ export type ContactUpdateWithoutGroupsInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutContactsNestedInput
   tags?: Prisma.ContactTagAssignmentUpdateManyWithoutContactNestedInput
   messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutContactNestedInput
+  consentLogs?: Prisma.ConsentLogUpdateManyWithoutContactNestedInput
 }
 
 export type ContactUncheckedUpdateWithoutGroupsInput = {
@@ -893,6 +919,7 @@ export type ContactUncheckedUpdateWithoutGroupsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tags?: Prisma.ContactTagAssignmentUncheckedUpdateManyWithoutContactNestedInput
   messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutContactNestedInput
+  consentLogs?: Prisma.ConsentLogUncheckedUpdateManyWithoutContactNestedInput
 }
 
 export type ContactCreateWithoutTagsInput = {
@@ -915,6 +942,7 @@ export type ContactCreateWithoutTagsInput = {
   user: Prisma.UserCreateNestedOneWithoutContactsInput
   groups?: Prisma.ContactGroupMemberCreateNestedManyWithoutContactInput
   messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutContactInput
+  consentLogs?: Prisma.ConsentLogCreateNestedManyWithoutContactInput
 }
 
 export type ContactUncheckedCreateWithoutTagsInput = {
@@ -937,6 +965,7 @@ export type ContactUncheckedCreateWithoutTagsInput = {
   updatedAt?: Date | string
   groups?: Prisma.ContactGroupMemberUncheckedCreateNestedManyWithoutContactInput
   messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutContactInput
+  consentLogs?: Prisma.ConsentLogUncheckedCreateNestedManyWithoutContactInput
 }
 
 export type ContactCreateOrConnectWithoutTagsInput = {
@@ -975,6 +1004,7 @@ export type ContactUpdateWithoutTagsInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutContactsNestedInput
   groups?: Prisma.ContactGroupMemberUpdateManyWithoutContactNestedInput
   messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutContactNestedInput
+  consentLogs?: Prisma.ConsentLogUpdateManyWithoutContactNestedInput
 }
 
 export type ContactUncheckedUpdateWithoutTagsInput = {
@@ -997,6 +1027,7 @@ export type ContactUncheckedUpdateWithoutTagsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   groups?: Prisma.ContactGroupMemberUncheckedUpdateManyWithoutContactNestedInput
   messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutContactNestedInput
+  consentLogs?: Prisma.ConsentLogUncheckedUpdateManyWithoutContactNestedInput
 }
 
 export type ContactCreateWithoutMessageRecipientsInput = {
@@ -1019,6 +1050,7 @@ export type ContactCreateWithoutMessageRecipientsInput = {
   user: Prisma.UserCreateNestedOneWithoutContactsInput
   groups?: Prisma.ContactGroupMemberCreateNestedManyWithoutContactInput
   tags?: Prisma.ContactTagAssignmentCreateNestedManyWithoutContactInput
+  consentLogs?: Prisma.ConsentLogCreateNestedManyWithoutContactInput
 }
 
 export type ContactUncheckedCreateWithoutMessageRecipientsInput = {
@@ -1041,6 +1073,7 @@ export type ContactUncheckedCreateWithoutMessageRecipientsInput = {
   updatedAt?: Date | string
   groups?: Prisma.ContactGroupMemberUncheckedCreateNestedManyWithoutContactInput
   tags?: Prisma.ContactTagAssignmentUncheckedCreateNestedManyWithoutContactInput
+  consentLogs?: Prisma.ConsentLogUncheckedCreateNestedManyWithoutContactInput
 }
 
 export type ContactCreateOrConnectWithoutMessageRecipientsInput = {
@@ -1079,6 +1112,7 @@ export type ContactUpdateWithoutMessageRecipientsInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutContactsNestedInput
   groups?: Prisma.ContactGroupMemberUpdateManyWithoutContactNestedInput
   tags?: Prisma.ContactTagAssignmentUpdateManyWithoutContactNestedInput
+  consentLogs?: Prisma.ConsentLogUpdateManyWithoutContactNestedInput
 }
 
 export type ContactUncheckedUpdateWithoutMessageRecipientsInput = {
@@ -1101,6 +1135,115 @@ export type ContactUncheckedUpdateWithoutMessageRecipientsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   groups?: Prisma.ContactGroupMemberUncheckedUpdateManyWithoutContactNestedInput
   tags?: Prisma.ContactTagAssignmentUncheckedUpdateManyWithoutContactNestedInput
+  consentLogs?: Prisma.ConsentLogUncheckedUpdateManyWithoutContactNestedInput
+}
+
+export type ContactCreateWithoutConsentLogsInput = {
+  id?: string
+  firstName?: string | null
+  lastName?: string | null
+  phone: string
+  email?: string | null
+  countryCode?: string
+  normalizedPhone: string
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  optedOut?: boolean
+  blacklisted?: boolean
+  consentGiven?: boolean
+  consentDate?: Date | string | null
+  source?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutContactsInput
+  groups?: Prisma.ContactGroupMemberCreateNestedManyWithoutContactInput
+  tags?: Prisma.ContactTagAssignmentCreateNestedManyWithoutContactInput
+  messageRecipients?: Prisma.MessageRecipientCreateNestedManyWithoutContactInput
+}
+
+export type ContactUncheckedCreateWithoutConsentLogsInput = {
+  id?: string
+  userId: string
+  firstName?: string | null
+  lastName?: string | null
+  phone: string
+  email?: string | null
+  countryCode?: string
+  normalizedPhone: string
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  optedOut?: boolean
+  blacklisted?: boolean
+  consentGiven?: boolean
+  consentDate?: Date | string | null
+  source?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  groups?: Prisma.ContactGroupMemberUncheckedCreateNestedManyWithoutContactInput
+  tags?: Prisma.ContactTagAssignmentUncheckedCreateNestedManyWithoutContactInput
+  messageRecipients?: Prisma.MessageRecipientUncheckedCreateNestedManyWithoutContactInput
+}
+
+export type ContactCreateOrConnectWithoutConsentLogsInput = {
+  where: Prisma.ContactWhereUniqueInput
+  create: Prisma.XOR<Prisma.ContactCreateWithoutConsentLogsInput, Prisma.ContactUncheckedCreateWithoutConsentLogsInput>
+}
+
+export type ContactUpsertWithoutConsentLogsInput = {
+  update: Prisma.XOR<Prisma.ContactUpdateWithoutConsentLogsInput, Prisma.ContactUncheckedUpdateWithoutConsentLogsInput>
+  create: Prisma.XOR<Prisma.ContactCreateWithoutConsentLogsInput, Prisma.ContactUncheckedCreateWithoutConsentLogsInput>
+  where?: Prisma.ContactWhereInput
+}
+
+export type ContactUpdateToOneWithWhereWithoutConsentLogsInput = {
+  where?: Prisma.ContactWhereInput
+  data: Prisma.XOR<Prisma.ContactUpdateWithoutConsentLogsInput, Prisma.ContactUncheckedUpdateWithoutConsentLogsInput>
+}
+
+export type ContactUpdateWithoutConsentLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  normalizedPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  optedOut?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blacklisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  consentGiven?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  consentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutContactsNestedInput
+  groups?: Prisma.ContactGroupMemberUpdateManyWithoutContactNestedInput
+  tags?: Prisma.ContactTagAssignmentUpdateManyWithoutContactNestedInput
+  messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutContactNestedInput
+}
+
+export type ContactUncheckedUpdateWithoutConsentLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  normalizedPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  optedOut?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blacklisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  consentGiven?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  consentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groups?: Prisma.ContactGroupMemberUncheckedUpdateManyWithoutContactNestedInput
+  tags?: Prisma.ContactTagAssignmentUncheckedUpdateManyWithoutContactNestedInput
+  messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutContactNestedInput
 }
 
 export type ContactCreateManyUserInput = {
@@ -1142,6 +1285,7 @@ export type ContactUpdateWithoutUserInput = {
   groups?: Prisma.ContactGroupMemberUpdateManyWithoutContactNestedInput
   tags?: Prisma.ContactTagAssignmentUpdateManyWithoutContactNestedInput
   messageRecipients?: Prisma.MessageRecipientUpdateManyWithoutContactNestedInput
+  consentLogs?: Prisma.ConsentLogUpdateManyWithoutContactNestedInput
 }
 
 export type ContactUncheckedUpdateWithoutUserInput = {
@@ -1164,6 +1308,7 @@ export type ContactUncheckedUpdateWithoutUserInput = {
   groups?: Prisma.ContactGroupMemberUncheckedUpdateManyWithoutContactNestedInput
   tags?: Prisma.ContactTagAssignmentUncheckedUpdateManyWithoutContactNestedInput
   messageRecipients?: Prisma.MessageRecipientUncheckedUpdateManyWithoutContactNestedInput
+  consentLogs?: Prisma.ConsentLogUncheckedUpdateManyWithoutContactNestedInput
 }
 
 export type ContactUncheckedUpdateManyWithoutUserInput = {
@@ -1194,12 +1339,14 @@ export type ContactCountOutputType = {
   groups: number
   tags: number
   messageRecipients: number
+  consentLogs: number
 }
 
 export type ContactCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   groups?: boolean | ContactCountOutputTypeCountGroupsArgs
   tags?: boolean | ContactCountOutputTypeCountTagsArgs
   messageRecipients?: boolean | ContactCountOutputTypeCountMessageRecipientsArgs
+  consentLogs?: boolean | ContactCountOutputTypeCountConsentLogsArgs
 }
 
 /**
@@ -1233,6 +1380,13 @@ export type ContactCountOutputTypeCountMessageRecipientsArgs<ExtArgs extends run
   where?: Prisma.MessageRecipientWhereInput
 }
 
+/**
+ * ContactCountOutputType without action
+ */
+export type ContactCountOutputTypeCountConsentLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ConsentLogWhereInput
+}
+
 
 export type ContactSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1256,6 +1410,7 @@ export type ContactSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   groups?: boolean | Prisma.Contact$groupsArgs<ExtArgs>
   tags?: boolean | Prisma.Contact$tagsArgs<ExtArgs>
   messageRecipients?: boolean | Prisma.Contact$messageRecipientsArgs<ExtArgs>
+  consentLogs?: boolean | Prisma.Contact$consentLogsArgs<ExtArgs>
   _count?: boolean | Prisma.ContactCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["contact"]>
 
@@ -1327,6 +1482,7 @@ export type ContactInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   groups?: boolean | Prisma.Contact$groupsArgs<ExtArgs>
   tags?: boolean | Prisma.Contact$tagsArgs<ExtArgs>
   messageRecipients?: boolean | Prisma.Contact$messageRecipientsArgs<ExtArgs>
+  consentLogs?: boolean | Prisma.Contact$consentLogsArgs<ExtArgs>
   _count?: boolean | Prisma.ContactCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ContactIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1343,6 +1499,7 @@ export type $ContactPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     groups: Prisma.$ContactGroupMemberPayload<ExtArgs>[]
     tags: Prisma.$ContactTagAssignmentPayload<ExtArgs>[]
     messageRecipients: Prisma.$MessageRecipientPayload<ExtArgs>[]
+    consentLogs: Prisma.$ConsentLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1760,6 +1917,7 @@ export interface Prisma__ContactClient<T, Null = never, ExtArgs extends runtime.
   groups<T extends Prisma.Contact$groupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Contact$groupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContactGroupMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   tags<T extends Prisma.Contact$tagsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Contact$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContactTagAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   messageRecipients<T extends Prisma.Contact$messageRecipientsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Contact$messageRecipientsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageRecipientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  consentLogs<T extends Prisma.Contact$consentLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Contact$consentLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConsentLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2276,6 +2434,30 @@ export type Contact$messageRecipientsArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.MessageRecipientScalarFieldEnum | Prisma.MessageRecipientScalarFieldEnum[]
+}
+
+/**
+ * Contact.consentLogs
+ */
+export type Contact$consentLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ConsentLog
+   */
+  select?: Prisma.ConsentLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ConsentLog
+   */
+  omit?: Prisma.ConsentLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ConsentLogInclude<ExtArgs> | null
+  where?: Prisma.ConsentLogWhereInput
+  orderBy?: Prisma.ConsentLogOrderByWithRelationInput | Prisma.ConsentLogOrderByWithRelationInput[]
+  cursor?: Prisma.ConsentLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ConsentLogScalarFieldEnum | Prisma.ConsentLogScalarFieldEnum[]
 }
 
 /**

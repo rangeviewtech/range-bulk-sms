@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { VariableDropdown } from '@/components/sms/variable-dropdown';
+
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,24 +28,7 @@ import {
   DialogBody,
 } from '@/components/ui/dialog';
 import { ConfirmationDialog } from '@/components/feedback/confirmation-dialog';
-import {
-  Plus,
-  Search,
-  Trash2,
-  Copy,
-  Check,
-  Filter,
-  ArrowUp,
-  ArrowDown,
-  X,
-  Eye,
-  Pencil,
-  Send,
-  Smartphone,
-  Sparkles,
-  FileText,
-  ExternalLink,
-} from 'lucide-react';
+import { Plus, Search, Trash2, Copy, Check, Filter, ArrowUp, ArrowDown, X, Eye, Pencil, Send, Smartphone, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { useFormValidation } from '@/hooks/use-form-validation';
@@ -53,9 +38,7 @@ import { useTableState } from '@/hooks/use-table-state';
 import { cn } from '@/lib/utils';
 import {
   getAllVariablesList,
-  SmsVariable,
 } from '@/lib/sms/custom-variables';
-import { QuickAddVariable } from '@/components/sms/quick-add-variable';
 import { TemplateHighlighter } from '@/components/sms/template-highlighter';
 
 const templateFormSchema = z.object({
@@ -141,26 +124,13 @@ const STANDARD_CATEGORIES = [
   'Transactional',
 ];
 
-const QUICK_VARIABLE_PRESETS = [
-  'name',
-  'orderId',
-  'code',
-  'date',
-  'time',
-  'amount',
-  'otp',
-  'phone',
-];
-
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState<TemplateItem[]>(INITIAL_TEMPLATES);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Quick Add Variable state for Create & Edit modals
-  const [showAddVarCreate, setShowAddVarCreate] = useState(false);
-  const [showAddVarEdit, setShowAddVarEdit] = useState(false);
-
+    
   // View Modal State
   const [viewingTemplate, setViewingTemplate] = useState<TemplateItem | null>(null);
   const [viewModalOpen, setViewModalOpen] = useState(false);
@@ -173,28 +143,8 @@ export default function TemplatesPage() {
   const [editModalOpen, setEditModalOpen] = useState(false);
 
   // Dynamic Available Variables (System + Custom)
-  const [availableVariables, setAvailableVariables] = useState<string[]>(QUICK_VARIABLE_PRESETS);
-
-  useEffect(() => {
-    const refreshVariables = () => {
-      try {
-        const allVars = getAllVariablesList();
-        const keys = allVars.map((v) => v.key);
-        setAvailableVariables(Array.from(new Set([...keys, ...QUICK_VARIABLE_PRESETS])));
-      } catch {
-        // keep presets
-      }
-    };
-    refreshVariables();
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('range_custom_variables_updated', refreshVariables);
-      return () => {
-        window.removeEventListener('range_custom_variables_updated', refreshVariables);
-      };
-    }
-  }, []);
-
+  
+  
   // Load from API if available
   useEffect(() => {
     async function loadTemplates() {
@@ -519,22 +469,6 @@ export default function TemplatesPage() {
       const newPos = start + insertion.length;
       textarea.setSelectionRange(newPos, newPos);
     }, 0);
-  };
-
-  // Handle variable created directly from quick-add tool
-  const handleVariableCreated = (
-    fieldName: 'create' | 'edit',
-    newVar: SmsVariable
-  ) => {
-    setAvailableVariables((prev) => {
-      if (prev.includes(newVar.key)) return prev;
-      return [newVar.key, ...prev];
-    });
-
-    insertVariableIntoField(fieldName, newVar.key);
-
-    if (fieldName === 'create') setShowAddVarCreate(false);
-    else setShowAddVarEdit(false);
   };
 
   // Compute live rendered preview for View Modal
@@ -1055,9 +989,13 @@ export default function TemplatesPage() {
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="edit-template-body" required>Message Body</Label>
-                  <span className="text-xs text-muted-foreground font-mono">
-                    {editMetrics.charCount} chars • {editMetrics.segments} part(s)
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <VariableDropdown onSelect={(key) => insertVariableIntoField('edit', key)} />
+
+                    <span className="text-xs text-muted-foreground font-mono">
+                      {editMetrics.charCount} chars • {editMetrics.segments} part(s)
+                    </span>
+                  </div>
                 </div>
                 <Textarea
                   id="edit-template-body"
@@ -1073,68 +1011,6 @@ export default function TemplatesPage() {
                 {editTouched.message && editErrors.message && (
                   <InputError id="edit-template-body-error" message={editErrors.message} />
                 )}
-
-                {/* Quick Variable Insertion Chips */}
-                <div className="pt-2 space-y-2">
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                    <div className="flex items-center gap-1.5 text-muted-foreground">
-                      <FileText className="w-3.5 h-3.5 text-secondary dark:text-primary" />
-                      <span className="font-medium">Click to insert variable into cursor position:</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setShowAddVarEdit((prev) => !prev)}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-secondary hover:text-secondary/80 dark:text-primary dark:hover:text-primary/80 transition-colors cursor-pointer"
-                        title="Create a new custom variable without going to the Variables page"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                        <span>Add Variable</span>
-                      </button>
-                      <span className="text-muted-foreground/30">•</span>
-                      <Link
-                        href="/sms/variables"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
-                        title="Open SMS Variables management in a new tab"
-                      >
-                        <span>Manage all</span>
-                        <ExternalLink className="w-2.5 h-2.5" />
-                      </Link>
-                    </div>
-                  </div>
-
-                  {/* Inline Quick Add Form */}
-                  {showAddVarEdit && (
-                    <QuickAddVariable
-                      onSuccess={(newVar) => handleVariableCreated('edit', newVar)}
-                      onCancel={() => setShowAddVarEdit(false)}
-                    />
-                  )}
-
-                  <div className="flex flex-wrap gap-1.5 pt-0.5">
-                    {availableVariables.map((v) => (
-                      <button
-                        key={v}
-                        type="button"
-                        onClick={() => insertVariableIntoField('edit', v)}
-                        className="inline-flex items-center text-xs font-mono px-2 py-0.5 rounded bg-muted hover:bg-amber-500/15 hover:text-amber-900 dark:hover:bg-primary/20 dark:hover:text-primary text-foreground border border-border/80 transition-colors cursor-pointer"
-                      >
-                        + {`{{${v}}}`}
-                      </button>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={() => setShowAddVarEdit(true)}
-                      className="inline-flex items-center gap-1 text-xs font-sans px-2.5 py-0.5 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 border-amber-500/30 dark:bg-primary/10 dark:hover:bg-primary/20 dark:text-primary dark:border-primary/40 border border-dashed font-medium transition-colors cursor-pointer"
-                      title="Create a new custom variable without leaving this modal"
-                    >
-                      <Plus className="w-3 h-3" />
-                      <span>New Variable</span>
-                    </button>
-                  </div>
-                </div>
               </div>
             </DialogBody>
 
@@ -1211,9 +1087,13 @@ export default function TemplatesPage() {
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="create-template-body" required>Message Body</Label>
-                  <span className="text-xs text-muted-foreground font-mono">
-                    {createMetrics.charCount} chars • {createMetrics.segments} part(s)
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <VariableDropdown onSelect={(key) => insertVariableIntoField('create', key)} />
+
+                    <span className="text-xs text-muted-foreground font-mono">
+                      {createMetrics.charCount} chars • {createMetrics.segments} part(s)
+                    </span>
+                  </div>
                 </div>
                 <Textarea
                   id="create-template-body"
@@ -1229,68 +1109,6 @@ export default function TemplatesPage() {
                 {templateTouched.message && templateErrors.message && (
                   <InputError id="template-body-error" message={templateErrors.message} />
                 )}
-
-                {/* Quick Variable Insertion Chips */}
-                <div className="pt-2 space-y-2">
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                    <div className="flex items-center gap-1.5 text-muted-foreground">
-                      <FileText className="w-3.5 h-3.5 text-secondary dark:text-primary" />
-                      <span className="font-medium">Click to insert variable into cursor position:</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setShowAddVarCreate((prev) => !prev)}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-secondary hover:text-secondary/80 dark:text-primary dark:hover:text-primary/80 transition-colors cursor-pointer"
-                        title="Create a new custom variable without going to the Variables page"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                        <span>Add Variable</span>
-                      </button>
-                      <span className="text-muted-foreground/30">•</span>
-                      <Link
-                        href="/sms/variables"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
-                        title="Open SMS Variables management in a new tab"
-                      >
-                        <span>Manage all</span>
-                        <ExternalLink className="w-2.5 h-2.5" />
-                      </Link>
-                    </div>
-                  </div>
-
-                  {/* Inline Quick Add Form */}
-                  {showAddVarCreate && (
-                    <QuickAddVariable
-                      onSuccess={(newVar) => handleVariableCreated('create', newVar)}
-                      onCancel={() => setShowAddVarCreate(false)}
-                    />
-                  )}
-
-                  <div className="flex flex-wrap gap-1.5 pt-0.5">
-                    {availableVariables.map((v) => (
-                      <button
-                        key={v}
-                        type="button"
-                        onClick={() => insertVariableIntoField('create', v)}
-                        className="inline-flex items-center text-xs font-mono px-2 py-0.5 rounded bg-muted hover:bg-amber-500/15 hover:text-amber-900 dark:hover:bg-primary/20 dark:hover:text-primary text-foreground border border-border/80 transition-colors cursor-pointer"
-                      >
-                        + {`{{${v}}}`}
-                      </button>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={() => setShowAddVarCreate(true)}
-                      className="inline-flex items-center gap-1 text-xs font-sans px-2.5 py-0.5 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 border-amber-500/30 dark:bg-primary/10 dark:hover:bg-primary/20 dark:text-primary dark:border-primary/40 border border-dashed font-medium transition-colors cursor-pointer"
-                      title="Create a new custom variable without leaving this modal"
-                    >
-                      <Plus className="w-3 h-3" />
-                      <span>New Variable</span>
-                    </button>
-                  </div>
-                </div>
               </div>
             </DialogBody>
 

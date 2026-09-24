@@ -5,9 +5,11 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, RefreshCw, Building2, X, ArrowDownUp } from "lucide-react";
+import { Plus, Search, RefreshCw, Building2, X, ArrowDownUp, ToggleLeft, ToggleRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TableSkeletonRows } from "@/components/blocks/ui/skeleton-layouts";
+import { ConfirmationDialog } from "@/components/feedback/confirmation-dialog";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -70,6 +72,51 @@ export default function ClientsPage() {
   const [loading, setLoading] = useState(true);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  // Status Change Confirmation State
+  const [statusConfirm, setStatusConfirm] = useState<{
+    open: boolean;
+    client: ClientRecord;
+    nextStatus: 'ACTIVE' | 'SUSPENDED';
+  } | null>(null);
+
+  const handleRequestToggleStatus = (client: ClientRecord) => {
+    const nextStatus = client.user.status.toUpperCase() === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
+    setStatusConfirm({
+      open: true,
+      client,
+      nextStatus,
+    });
+  };
+
+  const handleConfirmStatusChange = async () => {
+    if (!statusConfirm) return;
+    const { client, nextStatus } = statusConfirm;
+    setStatusConfirm(null);
+
+    try {
+      const res = await fetch('/api/admin/clients', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientId: client.id, status: nextStatus }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to update client status');
+      }
+
+      setClients((prev) =>
+        prev.map((c) =>
+          c.id === client.id ? { ...c, user: { ...c.user, status: nextStatus } } : c
+        )
+      );
+      toast.success(
+        `Client ${client.companyName || client.user.name} is now ${nextStatus === 'ACTIVE' ? 'Active' : 'Suspended'}`
+      );
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Error updating client status');
+    }
+  };
 
   const {
     values: clientForm,
@@ -571,15 +618,32 @@ export default function ClientsPage() {
                           {client.industry || "General"}
                         </TableCell>
                         <TableCell>
-                          {client.user.status === "ACTIVE" ? (
-                            <Badge variant="outline" className="text-emerald-600 border-emerald-600/20 bg-emerald-500/10">
-                              Active
-                            </Badge>
-                          ) : client.user.status === "SUSPENDED" ? (
-                            <Badge variant="destructive">Suspended</Badge>
-                          ) : (
-                            <Badge variant="secondary">{client.user.status}</Badge>
-                          )}
+                          <button
+                            type="button"
+                            onClick={() => handleRequestToggleStatus(client)}
+                            title={
+                              client.user.status === "ACTIVE"
+                                ? `Click to suspend ${client.companyName || client.user.name}`
+                                : `Click to activate ${client.companyName || client.user.name}`
+                            }
+                            aria-label={`Toggle client status for ${client.companyName || client.user.name}. Currently ${client.user.status}.`}
+                            className={cn(
+                              "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold transition-all cursor-pointer border select-none",
+                              client.user.status === "ACTIVE"
+                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20"
+                                : "bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20"
+                            )}
+                          >
+                            <span
+                              className={cn(
+                                "w-1.5 h-1.5 rounded-full",
+                                client.user.status === "ACTIVE"
+                                  ? "bg-emerald-500 animate-pulse"
+                                  : "bg-destructive"
+                              )}
+                            />
+                            {client.user.status === "ACTIVE" ? "Active" : client.user.status === "SUSPENDED" ? "Suspended" : client.user.status}
+                          </button>
                         </TableCell>
                         <TableCell>
                           <div className="font-semibold text-sm">
@@ -609,15 +673,32 @@ export default function ClientsPage() {
                           </div>
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              toast.info(`Client ID: ${client.id} - ${client.companyName}`);
-                            }}
-                          >
-                            Manage
-                          </Button>
+                          <div className="flex items-center justify-end gap-1.5">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleRequestToggleStatus(client)}
+                              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                              title={client.user.status === "ACTIVE" ? "Suspend client account" : "Activate client account"}
+                              aria-label={`Toggle status for ${client.companyName || client.user.name}`}
+                            >
+                              {client.user.status === "ACTIVE" ? (
+                                <ToggleRight className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                              ) : (
+                                <ToggleLeft className="w-4 h-4 text-destructive" />
+                              )}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                toast.info(`Client ID: ${client.id} - ${client.companyName}`);
+                              }}
+                            >
+                              Manage
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
@@ -641,6 +722,29 @@ export default function ClientsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Client Status Change Confirmation Dialog */}
+      <ConfirmationDialog
+        open={Boolean(statusConfirm?.open)}
+        onOpenChange={(open) => !open && setStatusConfirm(null)}
+        title={
+          statusConfirm?.nextStatus === 'SUSPENDED'
+            ? `Suspend Client ${statusConfirm?.client.companyName || statusConfirm?.client.user.name}?`
+            : `Activate Client ${statusConfirm?.client.companyName || statusConfirm?.client.user.name}?`
+        }
+        description={
+          statusConfirm?.nextStatus === 'SUSPENDED'
+            ? `Are you sure you want to suspend "${statusConfirm?.client.companyName || statusConfirm?.client.user.name}"? Their account, API access, and ongoing campaigns will be suspended immediately.`
+            : `Are you sure you want to activate "${statusConfirm?.client.companyName || statusConfirm?.client.user.name}"? Full platform access and SMS dispatching capabilities will be restored.`
+        }
+        confirmLabel={
+          statusConfirm?.nextStatus === 'SUSPENDED'
+            ? 'Yes, Suspend Client'
+            : 'Yes, Activate Client'
+        }
+        variant={statusConfirm?.nextStatus === 'SUSPENDED' ? 'destructive' : 'default'}
+        onConfirm={handleConfirmStatusChange}
+      />
     </div>
   );
 }

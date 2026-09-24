@@ -1,0 +1,19 @@
+Component Name,Source Path,Component Category,Consumers/Import Count,Variants,Sizes,Colors,Radius,Focus Behavior,Loading Behavior,Accessibility Concerns,Responsive Concerns,Target Replacement,Priority
+button,multiple,UI Primitive,441,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/button,P0
+input,multiple,UI Primitive,48,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/input,P0
+Dialog,multiple,UI Primitive,669,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/Dialog,P0
+Card,multiple,UI Primitive,1525,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/Card,P0
+Badge,multiple,UI Primitive,355,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/Badge,P0
+Pagination,multiple,UI Primitive,44,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/Pagination,P0
+Tabs,multiple,UI Primitive,129,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/Tabs,P0
+Tooltip,multiple,UI Primitive,25,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/Tooltip,P0
+Tag,multiple,UI Primitive,29,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/Tag,P0
+table,multiple,UI Primitive,18,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/table,P0
+Dropdown,multiple,UI Primitive,229,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/Dropdown,P0
+Skeleton,multiple,UI Primitive,165,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/Skeleton,P0
+select,multiple,UI Primitive,29,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/select,P0
+AlertDialog,multiple,UI Primitive,87,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/AlertDialog,P0
+Avatar,multiple,UI Primitive,46,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/Avatar,P0
+textarea,multiple,UI Primitive,23,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/textarea,P0
+Popover,multiple,UI Primitive,16,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/Popover,P0
+Toast,multiple,UI Primitive,2,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,ui/Toast,P0

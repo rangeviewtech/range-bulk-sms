@@ -6,13 +6,13 @@ import { MessageStatus } from '@/generated/prisma/client';
 export const POST = async (req: NextRequest) => {
   return withDeviceAuth(req, async (req, { gatewayId }) => {
     try {
-      const { attemptId, status, providerMsgId, errorCode, errorMessage } = await req.json();
+      const { attemptId, status, providerMsgId, errorCode, errorMessage, hasCarrierDlr } = await req.json();
 
       if (!attemptId || !status) {
         return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
       }
 
-      // Valid statuses from device: SUBMITTED_TO_MODEM, SENT, DELIVERED, FAILED
+      // Valid statuses from hardware gateway: SUBMITTED_TO_MODEM, SENT, DELIVERED, FAILED
       const validStatuses = ['SUBMITTED_TO_MODEM', 'SENT', 'DELIVERED', 'FAILED'];
       if (!validStatuses.includes(status)) {
         return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
@@ -24,6 +24,15 @@ export const POST = async (req: NextRequest) => {
 
       if (!attempt || attempt.gatewayId !== gatewayId) {
         return NextResponse.json({ error: 'Attempt not found or unauthorized' }, { status: 404 });
+      }
+
+      // Replay prevention: do not allow modifying attempts that have already reached terminal state
+      const terminalStatuses = ['DELIVERED', 'FAILED'];
+      if (attempt.finalizedAt || (terminalStatuses.includes(attempt.status) && status !== attempt.status)) {
+        return NextResponse.json({
+          error: 'Attempt has already reached a terminal state and cannot be modified',
+          currentStatus: attempt.status
+        }, { status: 409 });
       }
 
       const updateData: import("@/generated/prisma/client").Prisma.MessageAttemptUpdateInput = {
@@ -39,52 +48,60 @@ export const POST = async (req: NextRequest) => {
         updateData.finalizedAt = new Date();
       }
 
-      await prisma.messageAttempt.update({
-        where: { id: attemptId },
-        data: updateData
+      // Strict Telecom Classification Rule:
+      // A local hardware modem send is proof of air transmission ('SENT'),
+      // NOT handset delivery ('DELIVERED') unless explicit carrier DLR PDU is attached.
+      let effectiveMessageStatus: MessageStatus;
+      if (status === 'FAILED') {
+        effectiveMessageStatus = 'FAILED';
+      } else if (status === 'DELIVERED') {
+        effectiveMessageStatus = hasCarrierDlr ? 'DELIVERED' : 'SENT';
+      } else if (status === 'SENT') {
+        effectiveMessageStatus = 'SENT';
+      } else {
+        effectiveMessageStatus = 'SUBMITTED';
+      }
+
+      const parentMessage = await prisma.message.findUnique({
+        where: { id: attempt.messageId },
+        include: { recipients: true }
       });
 
-      // Update parent message and recipient status if final
-      if (['SENT', 'DELIVERED', 'FAILED'].includes(status)) {
-        const messageStatus = status === 'FAILED' ? 'FAILED' : status;
-        
-        // Find recipient ID based on attempt
-        // Note: this assumes 1 attempt = 1 message (or we update all recipients)
-        // For accurate tracking, we update the parent message status.
-        
-        const parentMessage = await prisma.message.findUnique({
-          where: { id: attempt.messageId },
-          include: { recipients: true }
+      await prisma.$transaction(async (tx) => {
+        await tx.messageAttempt.update({
+          where: { id: attemptId },
+          data: updateData
         });
 
         if (parentMessage) {
           const now = new Date();
-          await prisma.message.update({
+          await tx.message.update({
             where: { id: parentMessage.id },
             data: {
-              status: messageStatus as MessageStatus,
-              sentAt: status === 'SENT' ? now : undefined,
-              deliveredAt: status === 'DELIVERED' ? now : undefined,
-              failedAt: status === 'FAILED' ? now : undefined,
-              failureReason: errorMessage
+              status: effectiveMessageStatus,
+              sentAt: effectiveMessageStatus === 'SENT' ? now : undefined,
+              deliveredAt: effectiveMessageStatus === 'DELIVERED' ? now : undefined,
+              failedAt: effectiveMessageStatus === 'FAILED' ? now : undefined,
+              failureReason: errorMessage,
+              providerMessageId: providerMsgId || undefined,
             }
           });
 
-          await prisma.messageRecipient.updateMany({
+          await tx.messageRecipient.updateMany({
             where: { messageId: parentMessage.id },
             data: {
-              status: messageStatus as MessageStatus,
-              sentAt: status === 'SENT' ? now : undefined,
-              deliveredAt: status === 'DELIVERED' ? now : undefined,
-              failedAt: status === 'FAILED' ? now : undefined,
+              status: effectiveMessageStatus,
+              sentAt: effectiveMessageStatus === 'SENT' ? now : undefined,
+              deliveredAt: effectiveMessageStatus === 'DELIVERED' ? now : undefined,
+              failedAt: effectiveMessageStatus === 'FAILED' ? now : undefined,
               failureReason: errorMessage,
-              providerMsgId
+              providerMsgId: providerMsgId || undefined,
             }
           });
         }
-      }
+      });
 
-      return NextResponse.json({ success: true });
+      return NextResponse.json({ success: true, effectiveStatus: effectiveMessageStatus });
 
     } catch (error: unknown) {
       console.error('Gateway Result Error:', error);
@@ -92,4 +109,3 @@ export const POST = async (req: NextRequest) => {
     }
   });
 };
-

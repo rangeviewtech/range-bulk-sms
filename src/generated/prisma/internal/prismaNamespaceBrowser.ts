@@ -79,6 +79,7 @@ export const ModelName = {
   ContactGroupMember: 'ContactGroupMember',
   ContactTag: 'ContactTag',
   ContactTagAssignment: 'ContactTagAssignment',
+  ContactSegment: 'ContactSegment',
   ContactImport: 'ContactImport',
   SenderId: 'SenderId',
   SmsTemplate: 'SmsTemplate',
@@ -104,7 +105,16 @@ export const ModelName = {
   GatewayDevice: 'GatewayDevice',
   GatewayToken: 'GatewayToken',
   GatewayLog: 'GatewayLog',
-  MessageAttempt: 'MessageAttempt'
+  MessageAttempt: 'MessageAttempt',
+  ConsentLog: 'ConsentLog',
+  SmsDraft: 'SmsDraft',
+  Region: 'Region',
+  CallingCodeAssignment: 'CallingCodeAssignment',
+  NumberingMetadataVersion: 'NumberingMetadataVersion',
+  Operator: 'Operator',
+  Allocation: 'Allocation',
+  ProviderObservation: 'ProviderObservation',
+  CoverageAudit: 'CoverageAudit'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -567,6 +577,19 @@ export const ContactTagAssignmentScalarFieldEnum = {
 export type ContactTagAssignmentScalarFieldEnum = (typeof ContactTagAssignmentScalarFieldEnum)[keyof typeof ContactTagAssignmentScalarFieldEnum]
 
 
+export const ContactSegmentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  description: 'description',
+  rules: 'rules',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ContactSegmentScalarFieldEnum = (typeof ContactSegmentScalarFieldEnum)[keyof typeof ContactSegmentScalarFieldEnum]
+
+
 export const ContactImportScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -634,6 +657,10 @@ export const CampaignScalarFieldEnum = {
   message: 'message',
   variables: 'variables',
   status: 'status',
+  type: 'type',
+  cronExpression: 'cronExpression',
+  maxOccurrences: 'maxOccurrences',
+  currentOccurrence: 'currentOccurrence',
   scheduledAt: 'scheduledAt',
   startedAt: 'startedAt',
   completedAt: 'completedAt',
@@ -1076,6 +1103,195 @@ export const MessageAttemptScalarFieldEnum = {
 } as const
 
 export type MessageAttemptScalarFieldEnum = (typeof MessageAttemptScalarFieldEnum)[keyof typeof MessageAttemptScalarFieldEnum]
+
+
+export const ConsentLogScalarFieldEnum = {
+  id: 'id',
+  contactId: 'contactId',
+  tenantId: 'tenantId',
+  channel: 'channel',
+  purpose: 'purpose',
+  action: 'action',
+  source: 'source',
+  evidence: 'evidence',
+  disclosureVersion: 'disclosureVersion',
+  legalBasis: 'legalBasis',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ConsentLogScalarFieldEnum = (typeof ConsentLogScalarFieldEnum)[keyof typeof ConsentLogScalarFieldEnum]
+
+
+export const SmsDraftScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  organizationId: 'organizationId',
+  title: 'title',
+  senderId: 'senderId',
+  deliveryMode: 'deliveryMode',
+  message: 'message',
+  manualRecipients: 'manualRecipients',
+  recipientCount: 'recipientCount',
+  selectedGroupId: 'selectedGroupId',
+  importFilename: 'importFilename',
+  importRowCount: 'importRowCount',
+  templateId: 'templateId',
+  metadata: 'metadata',
+  version: 'version',
+  isShared: 'isShared',
+  lastEditedById: 'lastEditedById',
+  lastAutosavedAt: 'lastAutosavedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SmsDraftScalarFieldEnum = (typeof SmsDraftScalarFieldEnum)[keyof typeof SmsDraftScalarFieldEnum]
+
+
+export const RegionScalarFieldEnum = {
+  id: 'id',
+  regionId: 'regionId',
+  name: 'name',
+  alpha2: 'alpha2',
+  alpha3: 'alpha3',
+  isCldr: 'isCldr',
+  isUnMember: 'isUnMember',
+  isTerritory: 'isTerritory',
+  callingCodes: 'callingCodes',
+  libphonenumberSupported: 'libphonenumberSupported',
+  independentPlanAvailable: 'independentPlanAvailable',
+  exceptionalSharedCode: 'exceptionalSharedCode',
+  sampleE164: 'sampleE164',
+  sampleNsnDigits: 'sampleNsnDigits',
+  validationRule: 'validationRule',
+  notes: 'notes',
+  displayNameProvenance: 'displayNameProvenance',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RegionScalarFieldEnum = (typeof RegionScalarFieldEnum)[keyof typeof RegionScalarFieldEnum]
+
+
+export const CallingCodeAssignmentScalarFieldEnum = {
+  id: 'id',
+  callingCode: 'callingCode',
+  regionId: 'regionId',
+  leadingDigits: 'leadingDigits',
+  isNonGeographic: 'isNonGeographic',
+  source: 'source',
+  asOf: 'asOf',
+  ambiguityPolicy: 'ambiguityPolicy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CallingCodeAssignmentScalarFieldEnum = (typeof CallingCodeAssignmentScalarFieldEnum)[keyof typeof CallingCodeAssignmentScalarFieldEnum]
+
+
+export const NumberingMetadataVersionScalarFieldEnum = {
+  id: 'id',
+  libraryName: 'libraryName',
+  exactVersion: 'exactVersion',
+  cldrVersion: 'cldrVersion',
+  checksum: 'checksum',
+  builtAt: 'builtAt',
+  reviewedAt: 'reviewedAt',
+  referenceUrl: 'referenceUrl',
+  license: 'license',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NumberingMetadataVersionScalarFieldEnum = (typeof NumberingMetadataVersionScalarFieldEnum)[keyof typeof NumberingMetadataVersionScalarFieldEnum]
+
+
+export const OperatorScalarFieldEnum = {
+  id: 'id',
+  operatorId: 'operatorId',
+  regionId: 'regionId',
+  legalName: 'legalName',
+  retailBrand: 'retailBrand',
+  historicalAliases: 'historicalAliases',
+  classification: 'classification',
+  lifecycleState: 'lifecycleState',
+  effectiveFrom: 'effectiveFrom',
+  effectiveTo: 'effectiveTo',
+  evidence: 'evidence',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OperatorScalarFieldEnum = (typeof OperatorScalarFieldEnum)[keyof typeof OperatorScalarFieldEnum]
+
+
+export const AllocationScalarFieldEnum = {
+  id: 'id',
+  regionId: 'regionId',
+  callingCode: 'callingCode',
+  nsnLength: 'nsnLength',
+  prefix: 'prefix',
+  nsnStart: 'nsnStart',
+  nsnEnd: 'nsnEnd',
+  operatorId: 'operatorId',
+  brand: 'brand',
+  serviceType: 'serviceType',
+  effectiveFrom: 'effectiveFrom',
+  effectiveTo: 'effectiveTo',
+  publishedAt: 'publishedAt',
+  verifiedAt: 'verifiedAt',
+  sourceUrl: 'sourceUrl',
+  sourceDocument: 'sourceDocument',
+  extractionMethod: 'extractionMethod',
+  snapshotVersion: 'snapshotVersion',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AllocationScalarFieldEnum = (typeof AllocationScalarFieldEnum)[keyof typeof AllocationScalarFieldEnum]
+
+
+export const ProviderObservationScalarFieldEnum = {
+  id: 'id',
+  phoneHash: 'phoneHash',
+  e164Redacted: 'e164Redacted',
+  providerName: 'providerName',
+  packageName: 'packageName',
+  requestedAt: 'requestedAt',
+  returnedAt: 'returnedAt',
+  carrierSemantics: 'carrierSemantics',
+  lineType: 'lineType',
+  mcc: 'mcc',
+  mnc: 'mnc',
+  portabilitySupported: 'portabilitySupported',
+  isPorted: 'isPorted',
+  ttlExpiresAt: 'ttlExpiresAt',
+  costIncurred: 'costIncurred',
+  createdAt: 'createdAt'
+} as const
+
+export type ProviderObservationScalarFieldEnum = (typeof ProviderObservationScalarFieldEnum)[keyof typeof ProviderObservationScalarFieldEnum]
+
+
+export const CoverageAuditScalarFieldEnum = {
+  id: 'id',
+  regionId: 'regionId',
+  feature: 'feature',
+  coverageStatus: 'coverageStatus',
+  recordCount: 'recordCount',
+  source: 'source',
+  lastCheckedAt: 'lastCheckedAt',
+  gaps: 'gaps',
+  nextReviewDate: 'nextReviewDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CoverageAuditScalarFieldEnum = (typeof CoverageAuditScalarFieldEnum)[keyof typeof CoverageAuditScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -45,6 +45,7 @@ import {
   EditCampaignDialog,
   CampaignEditData,
 } from '@/components/sms/edit-campaign-dialog';
+import { EmptyState } from '@/components/ui/empty-state';
 
 export interface CampaignItem {
   id: string;
@@ -244,6 +245,12 @@ export default function CampaignsPage() {
 
   // Delete Campaign Confirmation State
   const [deleteConfirm, setDeleteConfirm] = useState<{
+    open: boolean;
+    campaign: CampaignItem;
+  } | null>(null);
+
+  // Cancel Schedule Confirmation State
+  const [cancelScheduleConfirm, setCancelScheduleConfirm] = useState<{
     open: boolean;
     campaign: CampaignItem;
   } | null>(null);
@@ -448,8 +455,19 @@ export default function CampaignsPage() {
     toast.success(`Campaign "${camp.name}" duplicated as a new draft`);
   };
 
-  // Cancel Scheduled Campaign
-  const handleCancelSchedule = async (camp: CampaignItem) => {
+  // Cancel Scheduled Campaign Handlers
+  const handleRequestCancelSchedule = (camp: CampaignItem) => {
+    setCancelScheduleConfirm({
+      open: true,
+      campaign: camp,
+    });
+  };
+
+  const handleConfirmCancelSchedule = async () => {
+    if (!cancelScheduleConfirm) return;
+    const { campaign: camp } = cancelScheduleConfirm;
+    setCancelScheduleConfirm(null);
+
     try {
       const isInitialStatic = INITIAL_CAMPAIGNS.some((ic) => ic.id === camp.id);
       if (!isInitialStatic && !camp.id.startsWith('draft-')) {
@@ -612,26 +630,26 @@ export default function CampaignsPage() {
               <TableBody>
                 {displayedCampaigns.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="py-12 text-center text-muted-foreground">
-                      <p className="font-medium text-foreground">
-                        No campaigns match your criteria.
-                      </p>
-                      <p className="text-xs mt-1">
-                        Try adjusting your search query or status filter.
-                      </p>
-                      {(search || filters.status !== 'ALL') && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="mt-3"
-                          onClick={() => {
-                            clearSearch();
-                            setFilter('status', 'ALL');
-                          }}
-                        >
-                          Reset Filters
-                        </Button>
-                      )}
+                    <TableCell colSpan={5} className="p-0">
+                      <EmptyState
+                        className="rounded-none border-0 bg-transparent py-16"
+                        icon={<BarChart2 className="h-8 w-8 text-muted-foreground" />}
+                        title="No campaigns found"
+                        description="Try adjusting your search query or status filter."
+                        action={
+                          (search || filters.status !== 'ALL') ? (
+                            <Button
+                              variant="outline"
+                              onClick={() => {
+                                clearSearch();
+                                setFilter('status', 'ALL');
+                              }}
+                            >
+                              Reset Filters
+                            </Button>
+                          ) : undefined
+                        }
+                      />
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -798,7 +816,7 @@ export default function CampaignsPage() {
 
                               {camp.status === 'SCHEDULED' && (
                                 <DropdownMenuItem
-                                  onClick={() => handleCancelSchedule(camp)}
+                                  onClick={() => handleRequestCancelSchedule(camp)}
                                   className="cursor-pointer flex items-center gap-2 text-amber-600 dark:text-amber-400"
                                 >
                                   <Clock className="w-4 h-4" />
@@ -826,17 +844,15 @@ export default function CampaignsPage() {
             </Table>
           </div>
 
-          {campaigns.length > 0 && (
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              pageSize={pageSize}
-              totalItems={totalItems}
-              onPageChange={setPage}
-              onPageSizeChange={setPageSize}
-              pageSizeOptions={[5, 10, 20, 50]}
-            />
-          )}
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalItems={totalItems}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+            pageSizeOptions={[5, 10, 20, 50]}
+          />
         </CardContent>
       </Card>
 
@@ -870,6 +886,18 @@ export default function CampaignsPage() {
         cancelLabel="Keep Campaign"
         variant="destructive"
         onConfirm={handleConfirmDelete}
+      />
+
+      {/* Confirmation Dialog for Cancelling Scheduled Broadcast */}
+      <ConfirmationDialog
+        open={Boolean(cancelScheduleConfirm?.open)}
+        onOpenChange={(open) => !open && setCancelScheduleConfirm(null)}
+        title="Cancel Scheduled Broadcast?"
+        description={`Are you sure you want to cancel the scheduled broadcast for "${cancelScheduleConfirm?.campaign.name}"? The campaign will be reverted to Draft status and no SMS messages will be dispatched.`}
+        confirmLabel="Yes, Cancel Broadcast"
+        cancelLabel="Keep Schedule"
+        variant="destructive"
+        onConfirm={handleConfirmCancelSchedule}
       />
     </div>
   );

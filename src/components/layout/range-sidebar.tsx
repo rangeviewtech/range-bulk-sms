@@ -69,6 +69,7 @@ export const RANGE_NAVIGATION: NavModule[] = [
         title: "Messaging",
         items: [
           { title: "Send SMS", href: "/sms/send" },
+          { title: "Draft Messages", href: "/sms/drafts" },
           { title: "Scheduled SMS", href: "/sms/scheduled" },
           { title: "Custom SMS", href: "/sms/custom" },
         ],
@@ -99,6 +100,7 @@ export const RANGE_NAVIGATION: NavModule[] = [
         items: [
           { title: "All Contacts", href: "/contacts" },
           { title: "Groups", href: "/contacts/groups" },
+          { title: "Segments", href: "/contacts/segments" },
           { title: "Tags", href: "/contacts/tags" },
         ],
       },
@@ -515,7 +517,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
           <div id="tree-logo" className="hidden md:flex items-center justify-center p-2 pt-2.5">
             <Link
               href="/dashboard"
-              className="w-[78px] h-[78px] rounded-2xl bg-transparent hover:bg-white/5 border border-transparent flex flex-col items-center justify-center trakzee-logo-badge group overflow-hidden transition-all duration-300"
+              className="w-[78px] h-[78px] rounded-2xl bg-transparent hover:bg-white/5 border border-transparent flex flex-col items-center justify-center range-logo-badge group overflow-hidden transition-all duration-300"
               title="Range SMS - Enterprise Bulk SMS"
             >
               <img
@@ -603,7 +605,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                           href={mod.href}
                           onClick={closeAllFlyouts}
                           className={cn(
-                            "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group transition-colors duration-150",
+                            "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white range-module-btn relative group transition-colors duration-150",
                             (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
                           )}
                         >
@@ -675,7 +677,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                             href={mod.href}
                             onClick={closeAllFlyouts}
                             className={cn(
-                              "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group",
+                              "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white range-module-btn relative group",
                               (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
                             )}
                           >
@@ -690,7 +692,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                         ) : (
                           <div
                             className={cn(
-                              "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white trakzee-module-btn relative group",
+                              "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white range-module-btn relative group",
                               (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
                             )}
                           >
@@ -819,7 +821,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                         setHoveredCategory(cat);
                       }}
                       className={cn(
-                        "h-[38px] px-3 flex items-center justify-between text-[12px] font-medium text-white/90 hover:text-white trakzee-menu-item cursor-pointer transition-all duration-150 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FBCA07] focus-visible:ring-inset",
+                        "h-[38px] px-3 flex items-center justify-between text-[12px] font-medium text-white/90 hover:text-white range-menu-item cursor-pointer transition-all duration-150 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FBCA07] focus-visible:ring-inset",
                         isCatHovered 
                           ? "bg-[#07163d] text-white font-semibold shadow-inner border-l-2 border-[#FBCA07]" 
                           : "hover:bg-[#07163d]/80 border-l-2 border-transparent"
@@ -858,7 +860,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                           href={screen.href}
                           onClick={closeAllFlyouts}
                           className={cn(
-                            "w-full h-full px-3.5 flex items-center text-[12px] text-white/90 hover:text-white trakzee-menu-item transition-all duration-150 truncate border-l-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FBCA07] focus-visible:ring-inset",
+                            "w-full h-full px-3.5 flex items-center text-[12px] text-white/90 hover:text-white range-menu-item transition-all duration-150 truncate border-l-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FBCA07] focus-visible:ring-inset",
                             isCurrent 
                               ? "bg-[#07163d] text-white font-semibold border-[#FBCA07]" 
                               : "border-transparent hover:bg-[#07163d]/90 hover:border-white/30"
@@ -1117,7 +1119,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
           >
             {/* Search Input Bar */}
             <div className="flex items-center px-4 py-3 border-b border-border gap-3 bg-muted/20">
-              <Search className="w-4 h-4 text-[#04648C] dark:text-[#FBCA07]" />
+              <Search className="w-4 h-4 text-brand-blue dark:text-brand-yellow" />
               <input
                 type="text"
                 autoFocus
@@ -1146,14 +1148,14 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                     className="flex items-center justify-between px-3.5 py-2.5 hover:bg-muted/70 rounded-md transition-all duration-150 group"
                   >
                     <div>
-                      <div className="text-xs font-semibold text-foreground group-hover:text-[#04648C] dark:group-hover:text-[#FBCA07] transition-colors">
+                      <div className="text-xs font-semibold text-foreground group-hover:text-brand-blue dark:group-hover:text-brand-yellow transition-colors">
                         {s.title}
                       </div>
                       <div className="text-[10px] text-muted-foreground">
                         {s.module} {s.category ? `> ${s.category}` : ""}
                       </div>
                     </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-[#04648C] dark:group-hover:text-[#FBCA07] transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-brand-blue dark:group-hover:text-brand-yellow transition-transform group-hover:translate-x-1" />
                   </Link>
                 ))
               ) : (

@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useSyncExternalStore } from 'react';
 
 function subscribe(callback: () => void) {
+  if (typeof window === 'undefined') return () => {};
   window.addEventListener('storage', callback);
   window.addEventListener('local-storage-change', callback);
   return () => {
@@ -10,6 +11,7 @@ function subscribe(callback: () => void) {
 }
 const getServerSnapshot = () => null;
 function read(key: string) {
+  if (typeof window === 'undefined') return null;
   try {
     return window.localStorage.getItem(key);
   } catch {
@@ -32,6 +34,7 @@ export function useLocalStorage<T>(
   const value = useMemo(() => parse(raw, initialValue), [raw, initialValue]);
   const setValue = useCallback(
     (next: T | ((previous: T) => T)) => {
+      if (typeof window === 'undefined') return;
       try {
         const previous = parse(read(key), initialValue);
         const resolved = typeof next === 'function' ? (next as (previous: T) => T)(previous) : next;

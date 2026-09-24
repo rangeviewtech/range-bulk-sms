@@ -70,12 +70,14 @@ export async function proxy(request: NextRequest) {
 
   if (!isCsrfExempt && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {
     const origin = request.headers.get('origin');
-    const host = request.headers.get('host');
+    const referer = request.headers.get('referer');
+    const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
 
-    if (origin) {
+    const sourceHeader = origin || referer;
+    if (sourceHeader && host) {
       try {
-        const originUrl = new URL(origin);
-        if (originUrl.host !== host) {
+        const sourceUrl = new URL(sourceHeader);
+        if (sourceUrl.host !== host) {
           return new NextResponse(
             JSON.stringify({
               success: false,
@@ -88,7 +90,7 @@ export async function proxy(request: NextRequest) {
         return new NextResponse(
           JSON.stringify({
             success: false,
-            error: { code: 'FORBIDDEN', message: 'Invalid origin' },
+            error: { code: 'FORBIDDEN', message: 'Invalid origin header' },
           }),
           { status: 403, headers: { 'Content-Type': 'application/json' } }
         );
@@ -219,11 +221,12 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
+     * Match all request paths except for:
      * - _next/static (static files)
      * - _next/image (image optimization files)
-     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+     * - favicon.ico, sitemap.xml, robots.txt, manifest.webmanifest, sw.js
+     * - static image formats (.svg, .png, .jpg, .jpeg, .gif, .webp, .ico)
      */
-    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+    '/((?!_next/static|_next/image|favicon\\.ico|sitemap\\.xml|robots\\.txt|manifest\\.webmanifest|sw\\.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
   ],
 };

@@ -7,6 +7,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "worker": "tsx src/workers/queue-runner.ts",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
@@ -31,6 +32,7 @@
     "db:seed": "prisma db seed"
   },
   "dependencies": {
+    "@google/genai": "^2.24.0",
     "@hookform/resolvers": "^5.9.1",
     "@marsidev/react-turnstile": "^1.6.0",
     "@prisma/adapter-pg": "^7.9.1",
@@ -71,7 +73,7 @@
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "cron-parser": "^5.10.0",
+    "cron-parser": "^5.10.1",
     "date-fns": "^4.4.0",
     "dotenv": "^17.4.2",
     "effect": "^3.22.1",
@@ -92,11 +94,13 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-hook-form": "^7.86.0",
+    "read-excel-file": "^9.3.10",
     "recharts": "^3.10.1",
     "server-only": "^0.0.1",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.6.0",
     "uuid": "^14.0.2",
+    "write-excel-file": "^4.1.1",
     "zod": "^3.25.76"
   },
   "devDependencies": {

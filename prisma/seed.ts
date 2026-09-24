@@ -133,7 +133,9 @@ async function main() {
   // Assign permissions to AGENT
   const agentPermissions = [
     'clients.view', 'clients.manage', 'commissions.view',
-    'reports.view', 'sms.view', 'support.view'
+    'reports.view', 'sms.view', 'support.view',
+    'contacts.view', 'contacts.manage', 'contacts.import',
+    'sms.send', 'sms.schedule', 'campaigns.create',
   ]
   for (const action of agentPermissions) {
     const perm = allPermissions.find(p => p.action === action)

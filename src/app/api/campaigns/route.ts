@@ -8,21 +8,23 @@ export async function GET(req: Request) {
   try {
     const session = await requirePermission('sms.view');
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const limit = parseInt(searchParams.get('limit') || '20', 10);
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+    const requestedLimit = parseInt(searchParams.get('limit') || '20', 10);
+    const limit = Math.min(100, Math.max(1, isNaN(requestedLimit) ? 20 : requestedLimit));
     
     const skip = (page - 1) * limit;
 
-    const campaigns = await prisma.campaign.findMany({
-      where: { userId: session.userId, deletedAt: null },
-      orderBy: { createdAt: 'desc' },
-      skip,
-      take: limit,
-    });
-
-    const total = await prisma.campaign.count({
-      where: { userId: session.userId, deletedAt: null },
-    });
+    const [campaigns, total] = await Promise.all([
+      prisma.campaign.findMany({
+        where: { userId: session.userId, deletedAt: null },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      prisma.campaign.count({
+        where: { userId: session.userId, deletedAt: null },
+      }),
+    ]);
 
     return NextResponse.json({
       success: true,
@@ -57,7 +59,7 @@ export async function POST(req: Request) {
       );
     }
     
-    const { name, senderId, message, variables, groupIds, scheduledAt } = parsed.data;
+    const { name, senderId, message, variables, groupIds, scheduledAt, type, cronExpression, maxOccurrences } = parsed.data;
 
     let validSenderIdId: string | null = null;
     if (senderId) {
@@ -101,6 +103,9 @@ export async function POST(req: Request) {
           variables,
           status: scheduledAt ? 'SCHEDULED' : 'DRAFT',
           scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
+          type,
+          cronExpression,
+          maxOccurrences,
         }
       });
 

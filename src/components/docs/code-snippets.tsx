@@ -529,8 +529,9 @@ $response | Format-List`;
         {LANGUAGES.slice(0, 8).map((lang) => (
           <button
             key={lang.id}
+            type="button"
             onClick={() => setSelectedLang(lang.id)}
-            className={`px-3 py-1 rounded-lg transition-all ${
+            className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
               selectedLang === lang.id
                 ? 'bg-[#04648C] text-white font-semibold shadow-xs dark:bg-[#FBCA07] dark:text-[#141B2D]'
                 : 'bg-muted/70 hover:bg-muted text-muted-foreground hover:text-foreground'
@@ -552,8 +553,9 @@ $response | Format-List`;
             </span>
           </div>
           <button
+            type="button"
             onClick={handleCopy}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-md transition-all duration-200 ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md transition-all duration-200 cursor-pointer ${
               copied
                 ? 'bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white font-medium border border-emerald-600 hover:border-emerald-700 shadow-sm'
                 : 'bg-white/10 hover:bg-white/20 text-white border border-transparent'

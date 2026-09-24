@@ -3,41 +3,40 @@ import { Coins, BadgeDollarSign, Building2, UserPlus, FileText } from "lucide-re
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/layout/page-header";
+import { MetricCard } from "@/components/ui/metric-card";
 
 export function AgentDashboard() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Agent Portal</h1>
-          <p className="text-sm text-muted-foreground">Manage your clients and track commissions.</p>
-        </div>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-          <Button asChild className="w-full sm:w-auto">
+      <PageHeader
+        title="Agent Portal"
+        description="Manage your clients and track commissions."
+        action={
+          <Button asChild className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90">
             <Link href="/agent/clients/new">
               <UserPlus className="mr-2 h-4 w-4" />
               Add Client
             </Link>
           </Button>
-        </div>
-      </div>
+        }
+      />
 
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { title: "My Clients", icon: Building2, value: "24" },
-          { title: "Client SMS Volume", icon: FileText, value: "145,200" },
-          { title: "Total Commissions", icon: Coins, value: "UGX 450,000" },
-          { title: "Pending Payout", icon: BadgeDollarSign, value: "UGX 125,000" },
+          { title: "My Clients", icon: Building2, value: "24", trend: { value: "3", isPositive: true, label: "this month" } },
+          { title: "Client SMS Volume", icon: FileText, value: "145,200", trend: { value: "15%", isPositive: true, label: "vs last month" } },
+          { title: "Total Commissions", icon: Coins, value: "UGX 450,000", description: "Accrued earnings" },
+          { title: "Pending Payout", icon: BadgeDollarSign, value: "UGX 125,000", description: "Next payout: Friday" },
         ].map((kpi, i) => (
-          <Card key={i}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
-              <kpi.icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{kpi.value}</div>
-            </CardContent>
-          </Card>
+          <MetricCard
+            key={i}
+            title={kpi.title}
+            icon={kpi.icon}
+            value={kpi.value}
+            trend={kpi.trend}
+            description={kpi.description}
+          />
         ))}
       </div>
 

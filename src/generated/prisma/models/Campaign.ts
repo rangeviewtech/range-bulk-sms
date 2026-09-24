@@ -27,6 +27,8 @@ export type AggregateCampaign = {
 }
 
 export type CampaignAvgAggregateOutputType = {
+  maxOccurrences: number | null
+  currentOccurrence: number | null
   totalRecipients: number | null
   totalSmsUnits: number | null
   totalCost: runtime.Decimal | null
@@ -37,6 +39,8 @@ export type CampaignAvgAggregateOutputType = {
 }
 
 export type CampaignSumAggregateOutputType = {
+  maxOccurrences: number | null
+  currentOccurrence: number | null
   totalRecipients: number | null
   totalSmsUnits: number | null
   totalCost: runtime.Decimal | null
@@ -54,6 +58,10 @@ export type CampaignMinAggregateOutputType = {
   name: string | null
   message: string | null
   status: $Enums.CampaignStatus | null
+  type: $Enums.CampaignType | null
+  cronExpression: string | null
+  maxOccurrences: number | null
+  currentOccurrence: number | null
   scheduledAt: Date | null
   startedAt: Date | null
   completedAt: Date | null
@@ -78,6 +86,10 @@ export type CampaignMaxAggregateOutputType = {
   name: string | null
   message: string | null
   status: $Enums.CampaignStatus | null
+  type: $Enums.CampaignType | null
+  cronExpression: string | null
+  maxOccurrences: number | null
+  currentOccurrence: number | null
   scheduledAt: Date | null
   startedAt: Date | null
   completedAt: Date | null
@@ -103,6 +115,10 @@ export type CampaignCountAggregateOutputType = {
   message: number
   variables: number
   status: number
+  type: number
+  cronExpression: number
+  maxOccurrences: number
+  currentOccurrence: number
   scheduledAt: number
   startedAt: number
   completedAt: number
@@ -123,6 +139,8 @@ export type CampaignCountAggregateOutputType = {
 
 
 export type CampaignAvgAggregateInputType = {
+  maxOccurrences?: true
+  currentOccurrence?: true
   totalRecipients?: true
   totalSmsUnits?: true
   totalCost?: true
@@ -133,6 +151,8 @@ export type CampaignAvgAggregateInputType = {
 }
 
 export type CampaignSumAggregateInputType = {
+  maxOccurrences?: true
+  currentOccurrence?: true
   totalRecipients?: true
   totalSmsUnits?: true
   totalCost?: true
@@ -150,6 +170,10 @@ export type CampaignMinAggregateInputType = {
   name?: true
   message?: true
   status?: true
+  type?: true
+  cronExpression?: true
+  maxOccurrences?: true
+  currentOccurrence?: true
   scheduledAt?: true
   startedAt?: true
   completedAt?: true
@@ -174,6 +198,10 @@ export type CampaignMaxAggregateInputType = {
   name?: true
   message?: true
   status?: true
+  type?: true
+  cronExpression?: true
+  maxOccurrences?: true
+  currentOccurrence?: true
   scheduledAt?: true
   startedAt?: true
   completedAt?: true
@@ -199,6 +227,10 @@ export type CampaignCountAggregateInputType = {
   message?: true
   variables?: true
   status?: true
+  type?: true
+  cronExpression?: true
+  maxOccurrences?: true
+  currentOccurrence?: true
   scheduledAt?: true
   startedAt?: true
   completedAt?: true
@@ -312,6 +344,10 @@ export type CampaignGroupByOutputType = {
   message: string
   variables: string[]
   status: $Enums.CampaignStatus
+  type: $Enums.CampaignType
+  cronExpression: string | null
+  maxOccurrences: number | null
+  currentOccurrence: number
   scheduledAt: Date | null
   startedAt: Date | null
   completedAt: Date | null
@@ -361,6 +397,10 @@ export type CampaignWhereInput = {
   message?: Prisma.StringFilter<"Campaign"> | string
   variables?: Prisma.StringNullableListFilter<"Campaign">
   status?: Prisma.EnumCampaignStatusFilter<"Campaign"> | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFilter<"Campaign"> | $Enums.CampaignType
+  cronExpression?: Prisma.StringNullableFilter<"Campaign"> | string | null
+  maxOccurrences?: Prisma.IntNullableFilter<"Campaign"> | number | null
+  currentOccurrence?: Prisma.IntFilter<"Campaign"> | number
   scheduledAt?: Prisma.DateTimeNullableFilter<"Campaign"> | Date | string | null
   startedAt?: Prisma.DateTimeNullableFilter<"Campaign"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"Campaign"> | Date | string | null
@@ -392,6 +432,10 @@ export type CampaignOrderByWithRelationInput = {
   message?: Prisma.SortOrder
   variables?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  type?: Prisma.SortOrder
+  cronExpression?: Prisma.SortOrderInput | Prisma.SortOrder
+  maxOccurrences?: Prisma.SortOrderInput | Prisma.SortOrder
+  currentOccurrence?: Prisma.SortOrder
   scheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   startedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -426,6 +470,10 @@ export type CampaignWhereUniqueInput = Prisma.AtLeast<{
   message?: Prisma.StringFilter<"Campaign"> | string
   variables?: Prisma.StringNullableListFilter<"Campaign">
   status?: Prisma.EnumCampaignStatusFilter<"Campaign"> | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFilter<"Campaign"> | $Enums.CampaignType
+  cronExpression?: Prisma.StringNullableFilter<"Campaign"> | string | null
+  maxOccurrences?: Prisma.IntNullableFilter<"Campaign"> | number | null
+  currentOccurrence?: Prisma.IntFilter<"Campaign"> | number
   scheduledAt?: Prisma.DateTimeNullableFilter<"Campaign"> | Date | string | null
   startedAt?: Prisma.DateTimeNullableFilter<"Campaign"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"Campaign"> | Date | string | null
@@ -457,6 +505,10 @@ export type CampaignOrderByWithAggregationInput = {
   message?: Prisma.SortOrder
   variables?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  type?: Prisma.SortOrder
+  cronExpression?: Prisma.SortOrderInput | Prisma.SortOrder
+  maxOccurrences?: Prisma.SortOrderInput | Prisma.SortOrder
+  currentOccurrence?: Prisma.SortOrder
   scheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   startedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -491,6 +543,10 @@ export type CampaignScalarWhereWithAggregatesInput = {
   message?: Prisma.StringWithAggregatesFilter<"Campaign"> | string
   variables?: Prisma.StringNullableListFilter<"Campaign">
   status?: Prisma.EnumCampaignStatusWithAggregatesFilter<"Campaign"> | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeWithAggregatesFilter<"Campaign"> | $Enums.CampaignType
+  cronExpression?: Prisma.StringNullableWithAggregatesFilter<"Campaign"> | string | null
+  maxOccurrences?: Prisma.IntNullableWithAggregatesFilter<"Campaign"> | number | null
+  currentOccurrence?: Prisma.IntWithAggregatesFilter<"Campaign"> | number
   scheduledAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Campaign"> | Date | string | null
   startedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Campaign"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Campaign"> | Date | string | null
@@ -514,6 +570,10 @@ export type CampaignCreateInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -545,6 +605,10 @@ export type CampaignUncheckedCreateInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -570,6 +634,10 @@ export type CampaignUpdateInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -601,6 +669,10 @@ export type CampaignUncheckedUpdateInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -629,6 +701,10 @@ export type CampaignCreateManyInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -652,6 +728,10 @@ export type CampaignUpdateManyMutationInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -678,6 +758,10 @@ export type CampaignUncheckedUpdateManyInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -714,6 +798,10 @@ export type CampaignCountOrderByAggregateInput = {
   message?: Prisma.SortOrder
   variables?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  type?: Prisma.SortOrder
+  cronExpression?: Prisma.SortOrder
+  maxOccurrences?: Prisma.SortOrder
+  currentOccurrence?: Prisma.SortOrder
   scheduledAt?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
@@ -732,6 +820,8 @@ export type CampaignCountOrderByAggregateInput = {
 }
 
 export type CampaignAvgOrderByAggregateInput = {
+  maxOccurrences?: Prisma.SortOrder
+  currentOccurrence?: Prisma.SortOrder
   totalRecipients?: Prisma.SortOrder
   totalSmsUnits?: Prisma.SortOrder
   totalCost?: Prisma.SortOrder
@@ -749,6 +839,10 @@ export type CampaignMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   message?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  type?: Prisma.SortOrder
+  cronExpression?: Prisma.SortOrder
+  maxOccurrences?: Prisma.SortOrder
+  currentOccurrence?: Prisma.SortOrder
   scheduledAt?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
@@ -773,6 +867,10 @@ export type CampaignMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   message?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  type?: Prisma.SortOrder
+  cronExpression?: Prisma.SortOrder
+  maxOccurrences?: Prisma.SortOrder
+  currentOccurrence?: Prisma.SortOrder
   scheduledAt?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
@@ -790,6 +888,8 @@ export type CampaignMinOrderByAggregateInput = {
 }
 
 export type CampaignSumOrderByAggregateInput = {
+  maxOccurrences?: Prisma.SortOrder
+  currentOccurrence?: Prisma.SortOrder
   totalRecipients?: Prisma.SortOrder
   totalSmsUnits?: Prisma.SortOrder
   totalCost?: Prisma.SortOrder
@@ -948,6 +1048,10 @@ export type EnumCampaignStatusFieldUpdateOperationsInput = {
   set?: $Enums.CampaignStatus
 }
 
+export type EnumCampaignTypeFieldUpdateOperationsInput = {
+  set?: $Enums.CampaignType
+}
+
 export type CampaignCreateNestedOneWithoutGroupsInput = {
   create?: Prisma.XOR<Prisma.CampaignCreateWithoutGroupsInput, Prisma.CampaignUncheckedCreateWithoutGroupsInput>
   connectOrCreate?: Prisma.CampaignCreateOrConnectWithoutGroupsInput
@@ -984,6 +1088,10 @@ export type CampaignCreateWithoutUserInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1013,6 +1121,10 @@ export type CampaignUncheckedCreateWithoutUserInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1070,6 +1182,10 @@ export type CampaignScalarWhereInput = {
   message?: Prisma.StringFilter<"Campaign"> | string
   variables?: Prisma.StringNullableListFilter<"Campaign">
   status?: Prisma.EnumCampaignStatusFilter<"Campaign"> | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFilter<"Campaign"> | $Enums.CampaignType
+  cronExpression?: Prisma.StringNullableFilter<"Campaign"> | string | null
+  maxOccurrences?: Prisma.IntNullableFilter<"Campaign"> | number | null
+  currentOccurrence?: Prisma.IntFilter<"Campaign"> | number
   scheduledAt?: Prisma.DateTimeNullableFilter<"Campaign"> | Date | string | null
   startedAt?: Prisma.DateTimeNullableFilter<"Campaign"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"Campaign"> | Date | string | null
@@ -1093,6 +1209,10 @@ export type CampaignCreateWithoutClientInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1122,6 +1242,10 @@ export type CampaignUncheckedCreateWithoutClientInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1173,6 +1297,10 @@ export type CampaignCreateWithoutSenderIdInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1202,6 +1330,10 @@ export type CampaignUncheckedCreateWithoutSenderIdInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1253,6 +1385,10 @@ export type CampaignCreateWithoutGroupsInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1283,6 +1419,10 @@ export type CampaignUncheckedCreateWithoutGroupsInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1323,6 +1463,10 @@ export type CampaignUpdateWithoutGroupsInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1353,6 +1497,10 @@ export type CampaignUncheckedUpdateWithoutGroupsInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1377,6 +1525,10 @@ export type CampaignCreateWithoutMessagesInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1407,6 +1559,10 @@ export type CampaignUncheckedCreateWithoutMessagesInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1447,6 +1603,10 @@ export type CampaignUpdateWithoutMessagesInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1477,6 +1637,10 @@ export type CampaignUncheckedUpdateWithoutMessagesInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1503,6 +1667,10 @@ export type CampaignCreateManyUserInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1526,6 +1694,10 @@ export type CampaignUpdateWithoutUserInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1555,6 +1727,10 @@ export type CampaignUncheckedUpdateWithoutUserInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1582,6 +1758,10 @@ export type CampaignUncheckedUpdateManyWithoutUserInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1607,6 +1787,10 @@ export type CampaignCreateManyClientInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1630,6 +1814,10 @@ export type CampaignUpdateWithoutClientInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1659,6 +1847,10 @@ export type CampaignUncheckedUpdateWithoutClientInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1686,6 +1878,10 @@ export type CampaignUncheckedUpdateManyWithoutClientInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1711,6 +1907,10 @@ export type CampaignCreateManySenderIdInput = {
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
   status?: $Enums.CampaignStatus
+  type?: $Enums.CampaignType
+  cronExpression?: string | null
+  maxOccurrences?: number | null
+  currentOccurrence?: number
   scheduledAt?: Date | string | null
   startedAt?: Date | string | null
   completedAt?: Date | string | null
@@ -1734,6 +1934,10 @@ export type CampaignUpdateWithoutSenderIdInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1763,6 +1967,10 @@ export type CampaignUncheckedUpdateWithoutSenderIdInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1790,6 +1998,10 @@ export type CampaignUncheckedUpdateManyWithoutSenderIdInput = {
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
   status?: Prisma.EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+  type?: Prisma.EnumCampaignTypeFieldUpdateOperationsInput | $Enums.CampaignType
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  maxOccurrences?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentOccurrence?: Prisma.IntFieldUpdateOperationsInput | number
   scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1856,6 +2068,10 @@ export type CampaignSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   message?: boolean
   variables?: boolean
   status?: boolean
+  type?: boolean
+  cronExpression?: boolean
+  maxOccurrences?: boolean
+  currentOccurrence?: boolean
   scheduledAt?: boolean
   startedAt?: boolean
   completedAt?: boolean
@@ -1888,6 +2104,10 @@ export type CampaignSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   message?: boolean
   variables?: boolean
   status?: boolean
+  type?: boolean
+  cronExpression?: boolean
+  maxOccurrences?: boolean
+  currentOccurrence?: boolean
   scheduledAt?: boolean
   startedAt?: boolean
   completedAt?: boolean
@@ -1917,6 +2137,10 @@ export type CampaignSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   message?: boolean
   variables?: boolean
   status?: boolean
+  type?: boolean
+  cronExpression?: boolean
+  maxOccurrences?: boolean
+  currentOccurrence?: boolean
   scheduledAt?: boolean
   startedAt?: boolean
   completedAt?: boolean
@@ -1946,6 +2170,10 @@ export type CampaignSelectScalar = {
   message?: boolean
   variables?: boolean
   status?: boolean
+  type?: boolean
+  cronExpression?: boolean
+  maxOccurrences?: boolean
+  currentOccurrence?: boolean
   scheduledAt?: boolean
   startedAt?: boolean
   completedAt?: boolean
@@ -1963,7 +2191,7 @@ export type CampaignSelectScalar = {
   updatedAt?: boolean
 }
 
-export type CampaignOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "clientId" | "senderIdId" | "name" | "message" | "variables" | "status" | "scheduledAt" | "startedAt" | "completedAt" | "cancelledAt" | "totalRecipients" | "totalSmsUnits" | "totalCost" | "sentCount" | "deliveredCount" | "failedCount" | "pendingCount" | "metadata" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["campaign"]>
+export type CampaignOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "clientId" | "senderIdId" | "name" | "message" | "variables" | "status" | "type" | "cronExpression" | "maxOccurrences" | "currentOccurrence" | "scheduledAt" | "startedAt" | "completedAt" | "cancelledAt" | "totalRecipients" | "totalSmsUnits" | "totalCost" | "sentCount" | "deliveredCount" | "failedCount" | "pendingCount" | "metadata" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["campaign"]>
 export type CampaignInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   client?: boolean | Prisma.Campaign$clientArgs<ExtArgs>
@@ -2001,6 +2229,10 @@ export type $CampaignPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     message: string
     variables: string[]
     status: $Enums.CampaignStatus
+    type: $Enums.CampaignType
+    cronExpression: string | null
+    maxOccurrences: number | null
+    currentOccurrence: number
     scheduledAt: Date | null
     startedAt: Date | null
     completedAt: Date | null
@@ -2452,6 +2684,10 @@ export interface CampaignFieldRefs {
   readonly message: Prisma.FieldRef<"Campaign", 'String'>
   readonly variables: Prisma.FieldRef<"Campaign", 'String[]'>
   readonly status: Prisma.FieldRef<"Campaign", 'CampaignStatus'>
+  readonly type: Prisma.FieldRef<"Campaign", 'CampaignType'>
+  readonly cronExpression: Prisma.FieldRef<"Campaign", 'String'>
+  readonly maxOccurrences: Prisma.FieldRef<"Campaign", 'Int'>
+  readonly currentOccurrence: Prisma.FieldRef<"Campaign", 'Int'>
   readonly scheduledAt: Prisma.FieldRef<"Campaign", 'DateTime'>
   readonly startedAt: Prisma.FieldRef<"Campaign", 'DateTime'>
   readonly completedAt: Prisma.FieldRef<"Campaign", 'DateTime'>

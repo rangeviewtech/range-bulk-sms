@@ -2,12 +2,13 @@
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUnsavedChanges } from '@/hooks/use-unsaved-changes';
 import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
@@ -35,6 +36,11 @@ import {
 import { toast } from 'sonner';
 import { InputError } from '@/components/ui/input-error';
 import { TemplateHighlighter } from '@/components/sms/template-highlighter';
+import {
+  VariableTextarea,
+  getVariableColorTheme,
+  insertVariableAtCursor,
+} from '@/components/sms/variable-textarea';
 
 interface SenderIdItem {
   id: string;
@@ -177,10 +183,18 @@ export default function CustomSmsPage() {
     }
   }, []);
 
+  const [isDispatched, setIsDispatched] = useState<boolean>(false);
+  const [baseline, setBaseline] = useState<{ fileName: string; message: string; campaignName: string }>({
+    fileName: '',
+    message: '',
+    campaignName: 'Spreadsheet Campaign - Q4',
+  });
+
   const loadDataset = useCallback((key: 'tuition' | 'invoices') => {
     const sample = SAMPLE_DATASETS[key];
     const parsed = parseCSV(sample.csv);
-    setFileName(sample.name + '.csv');
+    const newFileName = sample.name + '.csv';
+    setFileName(newFileName);
     setHeaders(parsed.headers);
     setRows(parsed.rows);
     setCurrentRowIndex(0);
@@ -191,8 +205,31 @@ export default function CustomSmsPage() {
     );
     setPhoneColumn(detectedPhone || parsed.headers[0] || '');
     setMessage(sample.defaultTemplate);
+    setBaseline({
+      fileName: newFileName,
+      message: sample.defaultTemplate,
+      campaignName: 'Spreadsheet Campaign - Q4',
+    });
+    setIsDispatched(false);
     toast.success(`Loaded sample dataset: ${sample.name}`);
   }, []);
+
+  const isCustomDirty =
+    !isDispatched &&
+    baseline.fileName !== '' &&
+    (message !== baseline.message ||
+      fileName !== baseline.fileName ||
+      campaignName !== baseline.campaignName);
+
+  useUnsavedChanges({
+    id: 'custom-sms-broadcast',
+    isDirty: isCustomDirty,
+    title: 'Unsaved changes',
+    message: 'You have unsaved changes in your custom spreadsheet campaign. If you leave now, your changes will be lost.',
+    onDiscard: () => {
+      loadDataset('tuition');
+    },
+  });
 
   // Load initial sample on mount so user immediately sees a rich, working experience
   useEffect(() => {
@@ -237,23 +274,8 @@ export default function CustomSmsPage() {
   };
 
   const handleInsertVariable = (varName: string) => {
-    const textarea = textareaRef.current;
-    const tag = `{{${varName}}}`;
-    if (!textarea) {
-      setMessage((prev) => prev + tag);
-      return;
-    }
-
-    const start = textarea.selectionStart ?? message.length;
-    const end = textarea.selectionEnd ?? message.length;
-    const nextVal = message.slice(0, start) + tag + message.slice(end);
-    setMessage(nextVal);
-
-    setTimeout(() => {
-      textarea.focus();
-      const nextPos = start + tag.length;
-      textarea.setSelectionRange(nextPos, nextPos);
-    }, 10);
+    insertVariableAtCursor(textareaRef.current, message, varName, setMessage);
+    if (!messageTouched) setMessageTouched(true);
   };
 
   const clearData = () => {
@@ -346,6 +368,7 @@ export default function CustomSmsPage() {
         return;
       }
 
+      setIsDispatched(true);
       toast.success(`Campaign "${payload.name}" launched successfully for ${rows.length} recipients!`);
       setIsReviewOpen(false);
       router.push('/sms/campaigns');
@@ -552,17 +575,23 @@ export default function CustomSmsPage() {
                   </p>
                 ) : (
                   <div className="flex flex-wrap gap-2">
-                    {headers.map((h) => (
-                      <button
-                        key={h}
-                        type="button"
-                        onClick={() => handleInsertVariable(h)}
-                        className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-mono font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors border border-primary/20 cursor-pointer"
-                        title={`Click to insert {{${h}}}`}
-                      >
-                        {`{{${h}}}`}
-                      </button>
-                    ))}
+                    {headers.map((h) => {
+                      const theme = getVariableColorTheme(h);
+                      return (
+                        <button
+                          key={h}
+                          type="button"
+                          onClick={() => handleInsertVariable(h)}
+                          className={cn(
+                            'inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-medium transition-transform active:scale-95 cursor-pointer shadow-xs',
+                            theme.badgeClass
+                          )}
+                          title={`Click to insert {{${h}}}`}
+                        >
+                          {`{{${h}}}`}
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -580,18 +609,18 @@ export default function CustomSmsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Textarea
+              <VariableTextarea
                 ref={textareaRef}
                 rows={5}
                 placeholder="Dear {{Parent Name}}, your child {{Student Name}} has a balance of {{Balance}}..."
                 value={message}
-                onChange={(e) => {
-                  setMessage(e.target.value);
+                onChange={(val) => {
+                  setMessage(val);
                   if (!messageTouched) setMessageTouched(true);
                 }}
                 onBlur={() => setMessageTouched(true)}
                 error={Boolean(messageError)}
-                className="font-sans resize-y"
+                className="resize-y"
               />
               <InputError message={messageError} />
 
@@ -660,7 +689,7 @@ export default function CustomSmsPage() {
                 </div>
 
                 <div className="my-3 p-3.5 bg-primary/10 dark:bg-primary/20 border border-primary/20 rounded-xl rounded-tl-none font-sans text-xs sm:text-sm leading-relaxed text-foreground whitespace-pre-wrap">
-                  <TemplateHighlighter text={interpolatedPreview} />
+                  <TemplateHighlighter text={message || 'Type your message template on the left...'} customValues={currentRow} />
                 </div>
 
                 <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-2 border-t border-border/40 font-mono">
@@ -768,7 +797,7 @@ export default function CustomSmsPage() {
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Sample Message (Row 1):</Label>
               <div className="p-3 bg-muted rounded-lg text-xs leading-relaxed font-sans text-foreground whitespace-pre-wrap border">
-                <TemplateHighlighter text={interpolatedPreview} />
+                <TemplateHighlighter text={message || 'Type your message template on the left...'} customValues={currentRow} />
               </div>
             </div>
           </DialogBody>

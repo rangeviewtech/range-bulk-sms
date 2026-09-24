@@ -18,6 +18,7 @@ import {
   ArrowDownUp,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { buildSanitizedCsv } from '@/lib/security/csv-sanitizer';
 import { useTableState } from '@/hooks/use-table-state';
 import { SortableHeader } from '@/components/ui/sortable-header';
 import { Pagination } from '@/components/ui/pagination';
@@ -137,12 +138,12 @@ export default function TransactionsPage() {
       t.type,
       Number(t.amount || 0),
       Number(t.balanceAfter || 0),
-      `"${(t.description || '').replace(/"/g, '""')}"`,
+      t.description || '',
       new Date(t.createdAt).toISOString(),
       t.status || 'COMPLETED',
     ]);
 
-    const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const csvContent = buildSanitizedCsv(headers, rows);
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');

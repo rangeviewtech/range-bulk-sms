@@ -47,7 +47,11 @@ export async function PUT(req: NextRequest, props: Params) {
        }
     }
 
-    const { groupIds, customFields, ...rest } = data;
+    const { groupIds, customFields, status, ...rest } = data;
+    let isOptedOut = data.optedOut;
+    if (status !== undefined) {
+      isOptedOut = status === 'OPTED_OUT';
+    }
 
     if (groupIds && groupIds.length > 0) {
       const userGroups = await prisma.contactGroup.findMany({
@@ -63,6 +67,7 @@ export async function PUT(req: NextRequest, props: Params) {
       where: { id },
       data: {
         ...rest,
+        ...(isOptedOut !== undefined ? { optedOut: isOptedOut } : {}),
         ...(customFields !== undefined && { customFields: customFields as Prisma.InputJsonValue }),
         normalizedPhone,
         groups: groupIds ? {

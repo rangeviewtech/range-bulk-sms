@@ -32,6 +32,9 @@ function pruneMemory() {
   }
 }
 
+// Single-flight in-flight promise coalescing to eliminate cache stampedes
+const inFlightRequests = new Map<string, Promise<unknown>>();
+
 /**
  * Enterprise Cache-Aside Manager
  */
@@ -56,10 +59,17 @@ export const redisCache = {
   },
 
   async set<T>(key: string, value: T, ttlSeconds?: number): Promise<void> {
+    // Apply jitter (+/- 8%) to TTLs > 10s to prevent synchronized expiration stampedes
+    let effectiveTtl = ttlSeconds;
+    if (ttlSeconds && ttlSeconds > 10) {
+      const jitterFraction = (Math.random() * 0.16) - 0.08;
+      effectiveTtl = Math.max(1, Math.round(ttlSeconds * (1 + jitterFraction)));
+    }
+
     if (redis) {
       try {
-        if (ttlSeconds && ttlSeconds > 0) {
-          await redis.set(key, value, { ex: ttlSeconds });
+        if (effectiveTtl && effectiveTtl > 0) {
+          await redis.set(key, value, { ex: effectiveTtl });
         } else {
           await redis.set(key, value);
         }
@@ -75,7 +85,7 @@ export const redisCache = {
     }
     memoryCache.set(key, {
       value,
-      expiresAt: ttlSeconds ? Date.now() + ttlSeconds * 1000 : null,
+      expiresAt: effectiveTtl ? Date.now() + effectiveTtl * 1000 : null,
     });
   },
 
@@ -91,18 +101,72 @@ export const redisCache = {
   },
 
   /**
-   * Cache-aside pattern: retrieves value from cache or executes fetcher and caches result.
+   * Invalidates multiple cache keys by wildcard/prefix pattern.
+   * Example: delByPattern('reports:sms:*')
+   */
+  async delByPattern(pattern: string): Promise<number> {
+    let deletedCount = 0;
+
+    // Convert glob pattern to regex for in-memory deletion
+    const regexPattern = new RegExp(`^${pattern.replace(/\*/g, '.*')}$`);
+    for (const k of Array.from(memoryCache.keys())) {
+      if (regexPattern.test(k)) {
+        memoryCache.delete(k);
+        deletedCount++;
+      }
+    }
+
+    if (redis) {
+      try {
+        const keys = await redis.keys(pattern);
+        if (keys && keys.length > 0) {
+          await redis.del(...keys);
+          deletedCount = Math.max(deletedCount, keys.length);
+        }
+      } catch (err) {
+        console.warn('Redis Cache delByPattern failed:', err);
+      }
+    }
+
+    return deletedCount;
+  },
+
+  /**
+   * Cache-aside pattern with Single-Flight Stampede Coalescing.
+   * Guarantees that concurrent requests for the same expired or missing key
+   * trigger only a single fetcher execution, sharing the result.
    */
   async remember<T>(key: string, ttlSeconds: number, fetcher: () => Promise<T>): Promise<T> {
     const cached = await this.get<T>(key);
     if (cached !== null && cached !== undefined) {
       return cached;
     }
-    const fresh = await fetcher();
-    if (fresh !== undefined) {
-      await this.set(key, fresh, ttlSeconds);
+
+    // If an identical fetch is currently in-flight, coalesce with it
+    if (inFlightRequests.has(key)) {
+      return inFlightRequests.get(key) as Promise<T>;
     }
-    return fresh;
+
+    const flight = (async () => {
+      try {
+        // Double-check cache in case another flight just finished
+        const check = await this.get<T>(key);
+        if (check !== null && check !== undefined) {
+          return check;
+        }
+
+        const fresh = await fetcher();
+        if (fresh !== undefined) {
+          await this.set(key, fresh, ttlSeconds);
+        }
+        return fresh;
+      } finally {
+        inFlightRequests.delete(key);
+      }
+    })();
+
+    inFlightRequests.set(key, flight);
+    return flight;
   },
 };
 

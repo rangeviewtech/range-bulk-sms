@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { getVariableColorTheme } from '@/components/sms/variable-textarea';
+import { getAllVariablesList, getSampleValueForVariable } from '@/lib/sms/custom-variables';
 
 export interface TemplateHighlighterProps extends React.HTMLAttributes<HTMLSpanElement> {
   /**
@@ -15,15 +17,24 @@ export interface TemplateHighlighterProps extends React.HTMLAttributes<HTMLSpanE
   variableClassName?: string;
   /**
    * Optional variant for variable appearance
-   * - 'badge': High-contrast brand badge (default)
+   * - 'badge': Multi-color variable theme matching the editor (default)
    * - 'on-primary': Contrast styling for rendering on brand yellow (bg-primary) surfaces
    * - 'subtle': Subtle text highlight with light border
+   * - 'plain': Clean inline text with subtle dotted underline for realistic SMS simulator
    */
-  variant?: 'badge' | 'on-primary' | 'subtle';
+  variant?: 'badge' | 'on-primary' | 'subtle' | 'plain';
   /**
    * Whether the container should render as block or inline
    */
   as?: 'span' | 'div' | 'p';
+  /**
+   * Whether to resolve and display the sample preview value instead of the {{variable}} tag
+   */
+  resolveSampleValues?: boolean;
+  /**
+   * Optional custom dictionary of variable replacements (e.g. from a spreadsheet row)
+   */
+  customValues?: Record<string, string>;
 }
 
 const VARIABLE_REGEX = /(\{\{[a-zA-Z0-9_\s-]+\}\})/g;
@@ -33,24 +44,30 @@ export function TemplateHighlighter({
   variableClassName,
   variant = 'badge',
   as = 'span',
+  resolveSampleValues = false,
+  customValues,
   className,
   ...props
 }: TemplateHighlighterProps) {
   if (!text) return null;
 
   const parts = text.split(VARIABLE_REGEX);
+  
+  const allVars = resolveSampleValues ? getAllVariablesList() : [];
 
-  const getVariantClasses = () => {
+  const getVariantClasses = (varName: string) => {
     switch (variant) {
       case 'on-primary':
         // High-contrast dark badge designed specifically for brand yellow (bg-primary) bubbles
         return 'text-slate-950 bg-black/10 border-black/25 hover:bg-black/15 shadow-2xs';
       case 'subtle':
         return 'text-amber-800 dark:text-primary/90 bg-amber-500/10 dark:bg-primary/10 border-amber-500/20 dark:border-primary/20';
+      case 'plain':
+        return 'text-foreground underline decoration-dotted decoration-foreground/35 underline-offset-2';
       case 'badge':
       default:
-        // Rich amber in light mode, brand yellow in dark mode
-        return 'text-amber-900 bg-amber-500/15 border-amber-500/30 hover:bg-amber-500/25 dark:text-primary dark:bg-primary/15 dark:border-primary/30 dark:hover:bg-primary/25 shadow-2xs';
+        // Distinct, vibrant color specific to this variable token
+        return getVariableColorTheme(varName).badgeClass;
     }
   };
 
@@ -59,18 +76,42 @@ export function TemplateHighlighter({
 
     if (isVariable) {
       const varName = part.slice(2, -2).trim();
+      let displayValue = part;
+
+      if (customValues && customValues[varName] !== undefined) {
+        displayValue = customValues[varName] || `[Empty ${varName}]`;
+      } else if (resolveSampleValues) {
+        displayValue = getSampleValueForVariable(varName, allVars);
+      }
+
+      if (variant === 'plain') {
+        return (
+          <span
+            key={`var-${index}`}
+            className={cn(
+              'font-medium text-foreground underline decoration-dotted decoration-foreground/40 underline-offset-2',
+              variableClassName
+            )}
+            title={resolveSampleValues ? `Sample value for {{${varName}}}` : `Variable tag: {{${varName}}}`}
+            data-variable={varName}
+          >
+            {displayValue}
+          </span>
+        );
+      }
+
       return (
         <span
           key={`var-${index}`}
           className={cn(
-            'inline-flex items-center align-baseline font-mono font-semibold text-[0.88em] px-1.5 py-0.5 mx-0.5 rounded border transition-colors select-all cursor-default',
-            getVariantClasses(),
+            'inline-flex items-center align-baseline font-medium text-[0.9em] px-1.5 py-0.5 mx-0.5 rounded border transition-colors select-all cursor-default shadow-2xs',
+            getVariantClasses(varName),
             variableClassName
           )}
-          title={`Variable tag: {{${varName}}}`}
+          title={resolveSampleValues ? `Sample value for {{${varName}}}` : `Variable tag: {{${varName}}}`}
           data-variable={varName}
         >
-          {part}
+          {displayValue}
         </span>
       );
     }

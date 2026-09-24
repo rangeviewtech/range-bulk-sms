@@ -3,41 +3,42 @@ import { Users, Send, Wallet, Activity, Contact, TrendingUp } from "lucide-react
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/layout/page-header";
+import { MetricCard } from "@/components/ui/metric-card";
 
 export function ClientDashboard() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Client Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Manage your SMS campaigns and contacts.</p>
-        </div>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-          <Button asChild variant="outline" className="w-full sm:w-auto">
-            <Link href="/wallet">Top Up Wallet</Link>
-          </Button>
-          <Button asChild className="w-full sm:w-auto">
-            <Link href="/sms/send">Send SMS</Link>
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title="Client Dashboard"
+        description="Manage your SMS campaigns and contacts."
+        action={
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+            <Button asChild variant="outline" className="w-full sm:w-auto">
+              <Link href="/wallet">Top Up Wallet</Link>
+            </Button>
+            <Button asChild className="w-full sm:w-auto">
+              <Link href="/sms/send">Send SMS</Link>
+            </Button>
+          </div>
+        }
+      />
 
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { title: "Total Contacts", icon: Users, value: "5,432" },
-          { title: "SMS Sent (Month)", icon: Send, value: "12,450" },
-          { title: "Wallet Balance", icon: Wallet, value: "UGX 45,000" },
-          { title: "Delivery Rate", icon: Activity, value: "99.1%" },
+          { title: "Total Contacts", icon: Users, value: "5,432", trend: { value: "12%", isPositive: true, label: "this month" } },
+          { title: "SMS Sent (Month)", icon: Send, value: "12,450", trend: { value: "8.4%", isPositive: true, label: "vs last month" } },
+          { title: "Wallet Balance", icon: Wallet, value: "UGX 45,000", description: "~1,285 SMS capacity" },
+          { title: "Delivery Rate", icon: Activity, value: "99.1%", trend: { value: "0.4%", isPositive: true } },
         ].map((kpi, i) => (
-          <Card key={i}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
-              <kpi.icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold whitespace-nowrap">{kpi.value}</div>
-            </CardContent>
-          </Card>
+          <MetricCard
+            key={i}
+            title={kpi.title}
+            icon={kpi.icon}
+            value={kpi.value}
+            trend={kpi.trend}
+            description={kpi.description}
+          />
         ))}
       </div>
 

@@ -5,9 +5,11 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, RefreshCw, Briefcase, X, ArrowDownUp } from "lucide-react";
+import { Plus, Search, RefreshCw, Briefcase, X, ArrowDownUp, ToggleLeft, ToggleRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TableSkeletonRows } from "@/components/blocks/ui/skeleton-layouts";
+import { ConfirmationDialog } from "@/components/feedback/confirmation-dialog";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -64,6 +66,51 @@ export default function AgentsPage() {
   const [loading, setLoading] = useState(true);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  // Status Change Confirmation State
+  const [statusConfirm, setStatusConfirm] = useState<{
+    open: boolean;
+    agent: AgentRecord;
+    nextStatus: 'ACTIVE' | 'SUSPENDED';
+  } | null>(null);
+
+  const handleRequestToggleStatus = (agent: AgentRecord) => {
+    const nextStatus = agent.user.status.toUpperCase() === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
+    setStatusConfirm({
+      open: true,
+      agent,
+      nextStatus,
+    });
+  };
+
+  const handleConfirmStatusChange = async () => {
+    if (!statusConfirm) return;
+    const { agent, nextStatus } = statusConfirm;
+    setStatusConfirm(null);
+
+    try {
+      const res = await fetch('/api/admin/agents', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agentId: agent.id, status: nextStatus }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to update agent status');
+      }
+
+      setAgents((prev) =>
+        prev.map((a) =>
+          a.id === agent.id ? { ...a, user: { ...a.user, status: nextStatus } } : a
+        )
+      );
+      toast.success(
+        `Agent ${agent.companyName || agent.user.name} is now ${nextStatus === 'ACTIVE' ? 'Active' : 'Suspended'}`
+      );
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Error updating agent status');
+    }
+  };
 
   const {
     values: agentForm,
@@ -530,24 +577,60 @@ export default function AgentsPage() {
                           )}
                         </TableCell>
                         <TableCell>
-                          {agent.user.status === "ACTIVE" ? (
-                            <Badge variant="outline" className="text-emerald-600 border-emerald-600/20 bg-emerald-500/10">
-                              Active
-                            </Badge>
-                          ) : (
-                            <Badge variant="secondary">{agent.user.status}</Badge>
-                          )}
+                          <button
+                            type="button"
+                            onClick={() => handleRequestToggleStatus(agent)}
+                            title={
+                              agent.user.status === "ACTIVE"
+                                ? `Click to suspend ${agent.companyName || agent.user.name}`
+                                : `Click to activate ${agent.companyName || agent.user.name}`
+                            }
+                            aria-label={`Toggle agent status for ${agent.companyName || agent.user.name}. Currently ${agent.user.status}.`}
+                            className={cn(
+                              "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold transition-all cursor-pointer border select-none",
+                              agent.user.status === "ACTIVE"
+                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20"
+                                : "bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20"
+                            )}
+                          >
+                            <span
+                              className={cn(
+                                "w-1.5 h-1.5 rounded-full",
+                                agent.user.status === "ACTIVE"
+                                  ? "bg-emerald-500 animate-pulse"
+                                  : "bg-destructive"
+                              )}
+                            />
+                            {agent.user.status === "ACTIVE" ? "Active" : agent.user.status === "SUSPENDED" ? "Suspended" : agent.user.status}
+                          </button>
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              toast.info(`Agent ID: ${agent.id} • ${agent.companyName}`);
-                            }}
-                          >
-                            View Details
-                          </Button>
+                          <div className="flex items-center justify-end gap-1.5">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleRequestToggleStatus(agent)}
+                              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                              title={agent.user.status === "ACTIVE" ? "Suspend agent account" : "Activate agent account"}
+                              aria-label={`Toggle status for ${agent.companyName || agent.user.name}`}
+                            >
+                              {agent.user.status === "ACTIVE" ? (
+                                <ToggleRight className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                              ) : (
+                                <ToggleLeft className="w-4 h-4 text-destructive" />
+                              )}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                toast.info(`Agent ID: ${agent.id} • ${agent.companyName}`);
+                              }}
+                            >
+                              View Details
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
@@ -571,6 +654,29 @@ export default function AgentsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Agent Status Change Confirmation Dialog */}
+      <ConfirmationDialog
+        open={Boolean(statusConfirm?.open)}
+        onOpenChange={(open) => !open && setStatusConfirm(null)}
+        title={
+          statusConfirm?.nextStatus === 'SUSPENDED'
+            ? `Suspend Agent ${statusConfirm?.agent.companyName || statusConfirm?.agent.user.name}?`
+            : `Activate Agent ${statusConfirm?.agent.companyName || statusConfirm?.agent.user.name}?`
+        }
+        description={
+          statusConfirm?.nextStatus === 'SUSPENDED'
+            ? `Are you sure you want to suspend "${statusConfirm?.agent.companyName || statusConfirm?.agent.user.name}"? The agent and their affiliated portal will be suspended immediately.`
+            : `Are you sure you want to activate "${statusConfirm?.agent.companyName || statusConfirm?.agent.user.name}"? Reseller features and client commissions will be re-enabled.`
+        }
+        confirmLabel={
+          statusConfirm?.nextStatus === 'SUSPENDED'
+            ? 'Yes, Suspend Agent'
+            : 'Yes, Activate Agent'
+        }
+        variant={statusConfirm?.nextStatus === 'SUSPENDED' ? 'destructive' : 'default'}
+        onConfirm={handleConfirmStatusChange}
+      />
     </div>
   );
 }

@@ -56,11 +56,11 @@ export async function PUT(
       return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
     }
 
-    if (!['DRAFT', 'SCHEDULED'].includes(campaign.status)) {
-      return NextResponse.json({ success: false, error: 'Only DRAFT or SCHEDULED campaigns can be updated' }, { status: 400 });
+    if (!['DRAFT', 'SCHEDULED', 'PAUSED'].includes(campaign.status)) {
+      return NextResponse.json({ success: false, error: 'Only DRAFT, SCHEDULED, or PAUSED campaigns can be updated' }, { status: 400 });
     }
 
-    const { name, senderId, message, variables, scheduledAt } = parsed.data;
+    const { name, senderId, message, variables, scheduledAt, type, cronExpression, maxOccurrences } = parsed.data;
 
     if (senderId) {
       const validSender = await prisma.senderId.findFirst({
@@ -81,7 +81,10 @@ export async function PUT(
         ...(senderId !== undefined && { senderIdId: senderId || null }),
         ...(message && { message }),
         ...(variables && { variables }),
-        ...(scheduledAt !== undefined && { scheduledAt: scheduledAt ? new Date(scheduledAt) : null })
+        ...(scheduledAt !== undefined && { scheduledAt: scheduledAt ? new Date(scheduledAt) : null }),
+        ...(type && { type }),
+        ...(cronExpression !== undefined && { cronExpression }),
+        ...(maxOccurrences !== undefined && { maxOccurrences })
       }
     });
 

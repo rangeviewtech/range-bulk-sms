@@ -1,22 +1,46 @@
 import { getDictionary, LanguageCode } from '@/lib/i18n';
 import { appConfig } from '@/config/app';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const SMSTemplates: Record<string, (data: any) => string> = {
+export interface TemplateData {
+  otp?: string;
+  device?: string;
+  locale?: string;
+  lang?: string;
+  token?: string;
+  name?: string;
+  code?: string;
+  [key: string]: unknown;
+}
+
+export interface RenderedEmail {
+  subject: string;
+  html: string;
+  text: string;
+}
+
+export interface RenderedTemplateResult {
+  body?: string;
+  subject?: string;
+  html?: string;
+  text?: string;
+  whatsappTemplateName?: string;
+  whatsappComponents?: unknown[];
+}
+
+export const SMSTemplates: Record<string, (data: TemplateData) => string> = {
   'auth.login_otp': (data) => {
     const lang = (data.locale || data.lang || 'EN') as LanguageCode;
     const t = getDictionary(lang).email;
-    return `${appConfig.name}: ${t.otpBody.replace('{otp}', data.otp).replace('{app}', appConfig.name)}`;
+    return `${appConfig.name}: ${t.otpBody.replace('{otp}', String(data.otp || '')).replace('{app}', appConfig.name)}`;
   },
   'auth.security_alert': (data) => {
     const lang = (data.locale || data.lang || 'EN') as LanguageCode;
     const t = getDictionary(lang).email;
-    return `${appConfig.name}: ${t.securityAlertBody.replace('{device}', data.device || 'a new device')}`;
+    return `${appConfig.name}: ${t.securityAlertBody.replace('{device}', String(data.device || 'a new device'))}`;
   },
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const TelegramTemplates: Record<string, (data: any) => string> = {
+export const TelegramTemplates: Record<string, (data: TemplateData) => string> = {
   'auth.login_otp': (data) => {
     const lang = (data.locale || data.lang || 'EN') as LanguageCode;
     const t = getDictionary(lang).email;
@@ -25,12 +49,11 @@ export const TelegramTemplates: Record<string, (data: any) => string> = {
   'auth.security_alert': (data) => {
     const lang = (data.locale || data.lang || 'EN') as LanguageCode;
     const t = getDictionary(lang).email;
-    return `⚠️ <b>${t.securityAlertSubject}</b>\n\n${t.securityAlertBody.replace('{device}', data.device || 'a new device')}`;
+    return `⚠️ <b>${t.securityAlertSubject}</b>\n\n${t.securityAlertBody.replace('{device}', String(data.device || 'a new device'))}`;
   },
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const EmailTemplates: Record<string, (data: any) => { subject: string, html: string, text: string }> = {
+export const EmailTemplates: Record<string, (data: TemplateData) => RenderedEmail> = {
   'auth.password_reset': (data) => {
     const lang = (data.locale || data.lang || 'EN') as LanguageCode;
     const t = getDictionary(lang).email;
@@ -150,8 +173,11 @@ export const EmailTemplates: Record<string, (data: any) => { subject: string, ht
   },
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function renderTemplate(channel: 'EMAIL' | 'SMS' | 'TELEGRAM' | 'WHATSAPP', templateId: string, data: any): any {
+export function renderTemplate(
+  channel: 'EMAIL' | 'SMS' | 'TELEGRAM' | 'WHATSAPP',
+  templateId: string,
+  data: TemplateData
+): RenderedTemplateResult {
   if (channel === 'SMS') {
     const renderer = SMSTemplates[templateId];
     if (!renderer) throw new Error(`SMS Template ${templateId} not found`);

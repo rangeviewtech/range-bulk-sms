@@ -4,6 +4,7 @@ import { verifySession } from '@/lib/auth/session';
 import { hasPermission } from '@/lib/auth/authorization';
 import { createAgentSchema } from '@/lib/validations/admin';
 import bcrypt from 'bcryptjs';
+import { z } from 'zod';
 
 export async function GET(req: Request) {
   const session = await verifySession();
@@ -107,3 +108,48 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+const updateAgentStatusSchema = z.object({
+  agentId: z.string().min(1, 'Agent ID is required'),
+  status: z.enum(['ACTIVE', 'SUSPENDED', 'INACTIVE']),
+});
+
+export async function PATCH(req: Request) {
+  const session = await verifySession();
+  if (!session || !(await hasPermission(session.userId, 'agents.manage'))) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  }
+
+  try {
+    const rawBody = await req.json().catch(() => ({}));
+    const parsed = updateAgentStatusSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid agent status payload', details: parsed.error.format() },
+        { status: 400 }
+      );
+    }
+
+    const { agentId, status } = parsed.data;
+
+    const agent = await prisma.agent.findUnique({
+      where: { id: agentId },
+      select: { id: true, userId: true, user: { select: { email: true } } },
+    });
+
+    if (!agent) {
+      return NextResponse.json({ error: 'Agent not found' }, { status: 404 });
+    }
+
+    await prisma.user.update({
+      where: { id: agent.userId },
+      data: { status },
+    });
+
+    return NextResponse.json({ success: true, agentId, status });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Failed to update agent status';
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+

@@ -10,7 +10,8 @@ export const apiRateLimit = redis
 const localWindows = new Map<string, { count: number; reset: number }>();
 
 export async function checkRateLimit(type: 'auth' | 'api', identifier: string) {
-  const limit = type === 'auth' ? 5 : 100;
+  const isProd = process.env.NODE_ENV === 'production';
+  const limit = type === 'auth' ? 5 : (isProd ? 100 : 500);
   const duration = type === 'auth' ? 900_000 : 60_000;
   const now = Date.now();
   const limiter = type === 'auth' ? authRateLimit : apiRateLimit;

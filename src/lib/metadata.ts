@@ -7,6 +7,7 @@ interface MetadataProps {
   description?: string;
   image?: string;
   noIndex?: boolean;
+  canonical?: string;
 }
 
 export function createMetadata({
@@ -14,6 +15,7 @@ export function createMetadata({
   description = appConfig.description,
   image = appAssets.logo,
   noIndex = false,
+  canonical,
 }: MetadataProps = {}): Metadata {
   const fullTitle = title ? `${title} | ${appConfig.name}` : appConfig.name;
 
@@ -22,6 +24,9 @@ export function createMetadata({
     description,
     authors: [{ name: appConfig.company }],
     metadataBase: new URL(appConfig.url),
+    alternates: {
+      canonical: canonical || undefined,
+    },
     manifest: '/manifest.webmanifest',
     icons: {
       icon: [

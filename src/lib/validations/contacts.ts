@@ -1,12 +1,35 @@
 import { z } from 'zod';
+import { validatePhoneCountryCode, validatePhoneNumber } from '@/lib/sms/country-codes';
 
 // Create contact schema
 export const createContactSchema = z.object({
   firstName: z.string().max(100).optional(),
   lastName: z.string().max(100).optional(),
-  phone: z.string().min(7, 'Phone number required').max(20),
+  phone: z
+    .string()
+    .min(7, 'Phone number required')
+    .max(20)
+    .superRefine((val, ctx) => {
+      const ccResult = validatePhoneCountryCode(val);
+      if (!ccResult.isValid) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: ccResult.error || 'Invalid country calling code',
+        });
+        return;
+      }
+      const fullResult = validatePhoneNumber(val);
+      if (!fullResult.isValid) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: fullResult.error || 'Invalid phone format',
+        });
+      }
+    }),
   email: z.string().email('Invalid email').optional().or(z.literal('')),
   countryCode: z.string().default('+256'),
+  optedOut: z.boolean().optional(),
+  status: z.enum(['ACTIVE', 'OPTED_OUT']).optional(),
   customFields: z.record(z.unknown()).optional(),
   groupIds: z.array(z.string().uuid()).optional(),
 });

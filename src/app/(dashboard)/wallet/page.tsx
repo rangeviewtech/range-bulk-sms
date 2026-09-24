@@ -32,6 +32,9 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { useFormValidation } from '@/hooks/use-form-validation';
 import { InputError } from '@/components/ui/input-error';
+import { PageHeader } from '@/components/layout/page-header';
+import { Skeleton } from '@/components/ui/skeleton';
+import { EmptyState } from '@/components/ui/empty-state';
 
 const depositFormSchema = z.object({
   amount: z
@@ -164,133 +167,130 @@ export default function WalletPage() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Wallet & Billing</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage your prepaid balance, SMS credits, and review transaction history.
-          </p>
-        </div>
+      <PageHeader
+        title="Wallet & Billing"
+        description="Manage your prepaid balance, SMS credits, and review transaction history."
+        action={
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleManualRefresh}
+              disabled={refreshing || loading}
+              aria-label="Refresh wallet data"
+              className="w-full sm:w-auto"
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleManualRefresh}
-            disabled={refreshing || loading}
-            aria-label="Refresh wallet data"
-            className="w-full sm:w-auto"
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
+            <Dialog open={isDepositOpen} onOpenChange={setIsDepositOpen}>
+              <DialogTrigger asChild>
+                <Button className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90">
+                  <Plus className="mr-2 h-4 w-4" /> Deposit Funds
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
+                <DialogHeader>
+                  <DialogTitle>Top-up Wallet</DialogTitle>
+                  <DialogDescription>
+                    Add funds instantly to your SMS sending balance.
+                  </DialogDescription>
+                </DialogHeader>
 
-          <Dialog open={isDepositOpen} onOpenChange={setIsDepositOpen}>
-            <DialogTrigger asChild>
-              <Button className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90">
-                <Plus className="mr-2 h-4 w-4" /> Deposit Funds
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
-              <DialogHeader>
-                <DialogTitle>Top-up Wallet</DialogTitle>
-                <DialogDescription>
-                  Add funds instantly to your SMS sending balance.
-                </DialogDescription>
-              </DialogHeader>
-
-              <form onSubmit={handleDepositSubmit} noValidate className="flex flex-col flex-1 overflow-hidden">
-                <DialogBody>
-                  <div className="space-y-1">
-                    <Label htmlFor="quick-amount">Quick Select ({currency})</Label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      {PRESET_AMOUNTS.map((amt) => (
-                        <Button
-                          key={amt}
-                          type="button"
-                          variant={depositValues.amount === amt.toString() ? 'default' : 'outline'}
-                          size="sm"
-                          className={
-                            depositValues.amount === amt.toString()
-                              ? 'bg-primary text-primary-foreground font-bold'
-                              : ''
-                          }
-                          onClick={() => setDepositFieldValue('amount', amt.toString())}
-                        >
-                          {amt.toLocaleString()}
-                        </Button>
-                      ))}
+                <form onSubmit={handleDepositSubmit} noValidate className="flex flex-col flex-1 overflow-hidden">
+                  <DialogBody>
+                    <div className="space-y-1">
+                      <Label htmlFor="quick-amount">Quick Select ({currency})</Label>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {PRESET_AMOUNTS.map((amt) => (
+                          <Button
+                            key={amt}
+                            type="button"
+                            variant={depositValues.amount === amt.toString() ? 'default' : 'outline'}
+                            size="sm"
+                            className={
+                              depositValues.amount === amt.toString()
+                                ? 'bg-primary text-primary-foreground font-bold'
+                                : ''
+                            }
+                            onClick={() => setDepositFieldValue('amount', amt.toString())}
+                          >
+                            {amt.toLocaleString()}
+                          </Button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="space-y-1">
-                    <Label htmlFor="amount" required>Custom Amount ({currency})</Label>
-                    <Input
-                      id="amount"
-                      type="number"
-                      min="1000"
-                      step="1000"
-                      value={depositValues.amount}
-                      onChange={(e) => setDepositFieldValue('amount', e.target.value)}
-                      onBlur={() => handleDepositBlur('amount')}
-                      error={depositTouched.amount && !!depositErrors.amount}
-                      aria-describedby={depositErrors.amount ? 'amount-error' : undefined}
-                      placeholder="Enter amount"
-                      required
-                    />
-                    {depositTouched.amount && depositErrors.amount && (
-                      <InputError id="amount-error" message={depositErrors.amount} />
-                    )}
-                  </div>
-
-                  <div className="space-y-1">
-                    <Label htmlFor="description">Payment Reference / Note</Label>
-                    <Input
-                      id="description"
-                      value={depositValues.description}
-                      onChange={(e) => setDepositFieldValue('description', e.target.value)}
-                      onBlur={() => handleDepositBlur('description')}
-                      error={depositTouched.description && !!depositErrors.description}
-                      aria-describedby={depositErrors.description ? 'description-error' : undefined}
-                      placeholder="e.g. MTN Mobile Money deposit"
-                    />
-                    {depositTouched.description && depositErrors.description && (
-                      <InputError id="description-error" message={depositErrors.description} />
-                    )}
-                  </div>
-
-                  <div className="rounded-md bg-secondary/10 p-3 text-xs text-secondary-foreground space-y-1">
-                    <div className="font-semibold flex items-center gap-1.5">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-secondary" /> Instant Credit
+                    <div className="space-y-1">
+                      <Label htmlFor="amount" required>Custom Amount ({currency})</Label>
+                      <Input
+                        id="amount"
+                        type="number"
+                        min="1000"
+                        step="1000"
+                        value={depositValues.amount}
+                        onChange={(e) => setDepositFieldValue('amount', e.target.value)}
+                        onBlur={() => handleDepositBlur('amount')}
+                        error={depositTouched.amount && !!depositErrors.amount}
+                        aria-describedby={depositErrors.amount ? 'amount-error' : undefined}
+                        placeholder="Enter amount"
+                        required
+                      />
+                      {depositTouched.amount && depositErrors.amount && (
+                        <InputError id="amount-error" message={depositErrors.amount} />
+                      )}
                     </div>
-                    <p className="text-muted-foreground">
-                      Funds are immediately credited to your wallet balance for SMS campaigns.
-                    </p>
-                  </div>
-                </DialogBody>
 
-                <DialogFooter>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsDepositOpen(false)}
-                    disabled={submittingDeposit}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    className="bg-primary text-primary-foreground font-bold hover:bg-primary/90"
-                    disabled={submittingDeposit}
-                  >
-                    {submittingDeposit ? 'Processing...' : 'Confirm Deposit'}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="description">Payment Reference / Note</Label>
+                      <Input
+                        id="description"
+                        value={depositValues.description}
+                        onChange={(e) => setDepositFieldValue('description', e.target.value)}
+                        onBlur={() => handleDepositBlur('description')}
+                        error={depositTouched.description && !!depositErrors.description}
+                        aria-describedby={depositErrors.description ? 'description-error' : undefined}
+                        placeholder="e.g. MTN Mobile Money deposit"
+                      />
+                      {depositTouched.description && depositErrors.description && (
+                        <InputError id="description-error" message={depositErrors.description} />
+                      )}
+                    </div>
+
+                    <div className="rounded-md bg-secondary/10 p-3 text-xs text-secondary-foreground space-y-1">
+                      <div className="font-semibold flex items-center gap-1.5">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-secondary" /> Instant Credit
+                      </div>
+                      <p className="text-muted-foreground">
+                        Funds are immediately credited to your wallet balance for SMS campaigns.
+                      </p>
+                    </div>
+                  </DialogBody>
+
+                  <DialogFooter>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsDepositOpen(false)}
+                      disabled={submittingDeposit}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="bg-primary text-primary-foreground font-bold hover:bg-primary/90"
+                      disabled={submittingDeposit}
+                    >
+                      {submittingDeposit ? 'Processing...' : 'Confirm Deposit'}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+        }
+      />
 
       {/* KPI Cards */}
       <div className="grid gap-4 md:grid-cols-3">
@@ -305,7 +305,7 @@ export default function WalletPage() {
           <CardContent>
             <div className="text-3xl font-bold tracking-tight text-foreground">
               {loading ? (
-                <div className="h-8 w-32 bg-muted animate-pulse rounded" />
+                <Skeleton className="h-8 w-32" />
               ) : (
                 `${currency} ${balance.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
               )}
@@ -324,7 +324,7 @@ export default function WalletPage() {
           <CardContent>
             <div className="text-3xl font-bold tracking-tight text-foreground">
               {loading ? (
-                <div className="h-8 w-24 bg-muted animate-pulse rounded" />
+                <Skeleton className="h-8 w-24" />
               ) : (
                 `~ ${smsCredits.toLocaleString()} SMS`
               )}
@@ -366,26 +366,27 @@ export default function WalletPage() {
         </CardHeader>
         <CardContent className="p-0 sm:p-6">
           {loading ? (
-            <div className="space-y-2 p-4 sm:p-0 py-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-10 w-full bg-muted/40 animate-pulse rounded" />
+            <div className="space-y-3 p-4 sm:p-0 py-4" role="status" aria-label="Loading transactions">
+              <span className="sr-only">Loading transactions...</span>
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="h-12 w-full" />
               ))}
             </div>
           ) : transactions.length === 0 ? (
-            <div className="text-center py-10 m-4 sm:m-0 border border-dashed rounded-lg">
-              <WalletIcon className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
-              <p className="text-sm font-medium text-foreground">No transactions recorded yet</p>
-              <p className="text-xs text-muted-foreground mt-1 mb-4">
-                Top up your wallet to send your first bulk SMS campaign.
-              </p>
-              <Button
-                size="sm"
-                className="bg-primary text-primary-foreground font-bold hover:bg-primary/90"
-                onClick={() => setIsDepositOpen(true)}
-              >
-                Deposit Funds Now
-              </Button>
-            </div>
+            <EmptyState
+              icon={<WalletIcon className="h-6 w-6" />}
+              title="No transactions recorded yet"
+              description="Top up your wallet to start sending bulk SMS campaigns."
+              action={
+                <Button
+                  size="sm"
+                  className="bg-primary text-primary-foreground font-bold hover:bg-primary/90"
+                  onClick={() => setIsDepositOpen(true)}
+                >
+                  <Plus className="mr-1.5 h-4 w-4" /> Deposit Funds Now
+                </Button>
+              }
+            />
           ) : (
             <div className="w-full">
               <Table className="min-w-[650px]">

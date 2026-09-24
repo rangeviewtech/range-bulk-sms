@@ -19,40 +19,48 @@ export const GET = async (req: NextRequest) => {
 
       const batchSize = Math.min(limit, gateway.batchSize || 10, 50);
 
-      // Find MessageAttempts assigned to this gateway that are PENDING
-      // In a real system we'd use a transaction lock to avoid race conditions.
-      const pendingAttempts = await prisma.messageAttempt.findMany({
-        where: {
-          gatewayId,
-          status: 'ASSIGNED',
-        },
-        include: {
-          message: {
-            include: {
-              recipients: true
+      // Atomic claim within transaction to prevent race conditions across concurrent pollers
+      const pendingAttempts = await prisma.$transaction(async (tx) => {
+        const attempts = await tx.messageAttempt.findMany({
+          where: {
+            gatewayId,
+            status: 'ASSIGNED',
+          },
+          include: {
+            message: {
+              include: {
+                recipients: true
+              }
             }
+          },
+          take: batchSize,
+          orderBy: {
+            createdAt: 'asc'
           }
-        },
-        take: batchSize,
-        orderBy: {
-          createdAt: 'asc'
+        });
+
+        if (attempts.length === 0) {
+          return [];
         }
+
+        const attemptIds = attempts.map(a => a.id);
+        await tx.messageAttempt.updateMany({
+          where: {
+            id: { in: attemptIds },
+            status: 'ASSIGNED',
+          },
+          data: {
+            status: 'SENT_TO_GATEWAY',
+            sentToGatewayAt: new Date()
+          }
+        });
+
+        return attempts;
       });
 
       if (pendingAttempts.length === 0) {
         return NextResponse.json({ success: true, messages: [] });
       }
-
-      // Mark them as SENT_TO_GATEWAY
-      const attemptIds = pendingAttempts.map(a => a.id);
-      
-      await prisma.messageAttempt.updateMany({
-        where: { id: { in: attemptIds } },
-        data: {
-          status: 'SENT_TO_GATEWAY',
-          sentToGatewayAt: new Date()
-        }
-      });
 
       // Format for the device
       const messages = pendingAttempts.flatMap(attempt => {

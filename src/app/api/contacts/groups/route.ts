@@ -10,10 +10,26 @@ export async function GET(_req: NextRequest) {
 
     const groups = await prisma.contactGroup.findMany({
       where: { userId: session.userId },
+      include: {
+        _count: {
+          select: { members: true }
+        }
+      },
       orderBy: { name: 'asc' }
     });
 
-    return successResponse(groups);
+    const formatted = groups.map((g) => ({
+      id: g.id,
+      name: g.name,
+      description: g.description,
+      color: g.color,
+      memberCount: g.memberCount,
+      contactCount: g._count?.members ?? g.memberCount ?? 0,
+      createdAt: g.createdAt,
+      updatedAt: g.updatedAt,
+    }));
+
+    return successResponse(formatted);
   } catch (error) {
     return errorResponse(error);
   }
@@ -42,11 +58,16 @@ export async function POST(req: NextRequest) {
       data: {
         name: data.name,
         description: data.description,
+        color: data.color,
         user: { connect: { id: session.userId } }
       }
     });
 
-    return successResponse(group, 'Contact group created successfully', 201);
+    return successResponse(
+      { ...group, contactCount: 0 },
+      'Contact group created successfully',
+      201
+    );
   } catch (error) {
     return errorResponse(error);
   }

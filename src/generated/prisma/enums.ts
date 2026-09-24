@@ -99,14 +99,35 @@ export const SenderIdStatus = {
 export type SenderIdStatus = (typeof SenderIdStatus)[keyof typeof SenderIdStatus]
 
 
+export const CampaignType = {
+  BROADCAST: 'BROADCAST',
+  RECURRING: 'RECURRING',
+  DRIP: 'DRIP'
+} as const
+
+export type CampaignType = (typeof CampaignType)[keyof typeof CampaignType]
+
+
 export const CampaignStatus = {
   DRAFT: 'DRAFT',
+  VALIDATING: 'VALIDATING',
+  READY: 'READY',
+  PENDING_APPROVAL: 'PENDING_APPROVAL',
+  APPROVED: 'APPROVED',
   SCHEDULED: 'SCHEDULED',
+  PREPARING: 'PREPARING',
+  RUNNING: 'RUNNING',
   PROCESSING: 'PROCESSING',
+  PAUSING: 'PAUSING',
+  PAUSED: 'PAUSED',
+  RESUMING: 'RESUMING',
+  COMPLETING: 'COMPLETING',
   SENT: 'SENT',
   PARTIALLY_SENT: 'PARTIALLY_SENT',
+  PARTIALLY_COMPLETED: 'PARTIALLY_COMPLETED',
   COMPLETED: 'COMPLETED',
   FAILED: 'FAILED',
+  CANCELLING: 'CANCELLING',
   CANCELLED: 'CANCELLED'
 } as const
 
@@ -231,3 +252,24 @@ export const MessageAttemptStatus = {
 } as const
 
 export type MessageAttemptStatus = (typeof MessageAttemptStatus)[keyof typeof MessageAttemptStatus]
+
+
+export const ConsentAction = {
+  OPT_IN: 'OPT_IN',
+  OPT_OUT: 'OPT_OUT',
+  RENEWAL: 'RENEWAL',
+  EXPIRED: 'EXPIRED',
+  REVOKED: 'REVOKED',
+  COMPLAINT: 'COMPLAINT'
+} as const
+
+export type ConsentAction = (typeof ConsentAction)[keyof typeof ConsentAction]
+
+
+export const ConsentPurpose = {
+  MARKETING: 'MARKETING',
+  TRANSACTIONAL: 'TRANSACTIONAL',
+  SYSTEM: 'SYSTEM'
+} as const
+
+export type ConsentPurpose = (typeof ConsentPurpose)[keyof typeof ConsentPurpose]

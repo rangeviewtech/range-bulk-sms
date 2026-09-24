@@ -1,9 +1,20 @@
+export interface WhatsAppTemplateComponent {
+  type: string;
+  parameters?: Array<{
+    type: string;
+    text?: string;
+    image?: { link: string };
+    document?: { link: string; filename?: string };
+    [key: string]: unknown;
+  }>;
+  [key: string]: unknown;
+}
+
 export interface WhatsAppPayload {
   to: string;
   templateName: string;
   languageCode?: string;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-  components?: any[];
+  components?: WhatsAppTemplateComponent[];
 }
 
 export interface WhatsAppProvider {

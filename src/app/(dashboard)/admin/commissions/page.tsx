@@ -10,6 +10,7 @@ import { TableSkeletonRows } from "@/components/blocks/ui/skeleton-layouts";
 import { RefreshCw, CheckCircle2, DollarSign, CreditCard, Building2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { ConfirmationDialog } from "@/components/feedback/confirmation-dialog";
 
 interface CommissionRecord {
   id: string;
@@ -61,7 +62,35 @@ export default function CommissionsPage() {
     fetchCommissions(activeTab);
   }, [activeTab, fetchCommissions]);
 
-  const handleAction = async (id: string, action: "approve" | "pay") => {
+  // Payout / Approval Confirmation State
+  const [actionConfirm, setActionConfirm] = useState<{
+    open: boolean;
+    id: string;
+    action: "approve" | "pay";
+    agentName: string;
+    amount: number | string;
+  } | null>(null);
+
+  const handleRequestAction = (
+    id: string,
+    action: "approve" | "pay",
+    agentName: string,
+    amount: number | string
+  ) => {
+    setActionConfirm({
+      open: true,
+      id,
+      action,
+      agentName,
+      amount,
+    });
+  };
+
+  const handleConfirmAction = async () => {
+    if (!actionConfirm) return;
+    const { id, action } = actionConfirm;
+    setActionConfirm(null);
+
     try {
       setProcessingId(id);
       const res = await fetch(`/api/admin/commissions/${id}`, {
@@ -203,7 +232,14 @@ export default function CommissionsPage() {
                               size="sm"
                               disabled={isProcessing}
                               className="text-blue-600 border-blue-600/30 hover:bg-blue-50"
-                              onClick={() => handleAction(c.id, "approve")}
+                              onClick={() =>
+                                handleRequestAction(
+                                  c.id,
+                                  "approve",
+                                  c.agent.companyName || c.agent.user.name || c.agent.user.email,
+                                  c.amount
+                                )
+                              }
                             >
                               Approve
                             </Button>
@@ -213,7 +249,14 @@ export default function CommissionsPage() {
                               size="sm"
                               disabled={isProcessing}
                               className="bg-emerald-600 hover:bg-emerald-700 text-white"
-                              onClick={() => handleAction(c.id, "pay")}
+                              onClick={() =>
+                                handleRequestAction(
+                                  c.id,
+                                  "pay",
+                                  c.agent.companyName || c.agent.user.name || c.agent.user.email,
+                                  c.amount
+                                )
+                              }
                             >
                               <DollarSign className="w-3.5 h-3.5 mr-1" />
                               Pay Out
@@ -236,6 +279,31 @@ export default function CommissionsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Commission Action Confirmation Dialog */}
+      <ConfirmationDialog
+        open={Boolean(actionConfirm?.open)}
+        onOpenChange={(open) => !open && setActionConfirm(null)}
+        title={
+          actionConfirm?.action === "approve"
+            ? "Approve Commission Payout?"
+            : "Disburse Commission Payout?"
+        }
+        description={
+          actionConfirm?.action === "approve"
+            ? `Are you sure you want to approve the commission payout of UGX ${Number(
+                actionConfirm?.amount || 0
+              ).toLocaleString()} for ${actionConfirm?.agentName}?`
+            : `Are you sure you want to disburse UGX ${Number(
+                actionConfirm?.amount || 0
+              ).toLocaleString()} to ${actionConfirm?.agentName}? This will credit the agent's wallet or execute payout transfer.`
+        }
+        confirmLabel={
+          actionConfirm?.action === "approve" ? "Yes, Approve Payout" : "Yes, Disburse Funds"
+        }
+        variant="default"
+        onConfirm={handleConfirmAction}
+      />
     </div>
   );
 }

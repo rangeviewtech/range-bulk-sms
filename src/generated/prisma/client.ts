@@ -182,6 +182,11 @@ export type ContactTag = Prisma.ContactTagModel
  */
 export type ContactTagAssignment = Prisma.ContactTagAssignmentModel
 /**
+ * Model ContactSegment
+ * 
+ */
+export type ContactSegment = Prisma.ContactSegmentModel
+/**
  * Model ContactImport
  * 
  */
@@ -311,3 +316,48 @@ export type GatewayLog = Prisma.GatewayLogModel
  * 
  */
 export type MessageAttempt = Prisma.MessageAttemptModel
+/**
+ * Model ConsentLog
+ * 
+ */
+export type ConsentLog = Prisma.ConsentLogModel
+/**
+ * Model SmsDraft
+ * 
+ */
+export type SmsDraft = Prisma.SmsDraftModel
+/**
+ * Model Region
+ * 
+ */
+export type Region = Prisma.RegionModel
+/**
+ * Model CallingCodeAssignment
+ * 
+ */
+export type CallingCodeAssignment = Prisma.CallingCodeAssignmentModel
+/**
+ * Model NumberingMetadataVersion
+ * 
+ */
+export type NumberingMetadataVersion = Prisma.NumberingMetadataVersionModel
+/**
+ * Model Operator
+ * 
+ */
+export type Operator = Prisma.OperatorModel
+/**
+ * Model Allocation
+ * 
+ */
+export type Allocation = Prisma.AllocationModel
+/**
+ * Model ProviderObservation
+ * 
+ */
+export type ProviderObservation = Prisma.ProviderObservationModel
+/**
+ * Model CoverageAudit
+ * 
+ */
+export type CoverageAudit = Prisma.CoverageAuditModel

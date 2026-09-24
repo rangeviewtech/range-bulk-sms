@@ -23,6 +23,16 @@ export const MAX_CUSTOM_VARIABLES = 20;
  */
 export const SYSTEM_VARIABLES: SmsVariable[] = [
   {
+    id: 'sys-full-name',
+    key: 'name',
+    label: 'Full Name',
+    description: 'Recipient full name',
+    fallbackValue: 'Customer',
+    sampleValue: 'John Doe',
+    dataType: 'TEXT',
+    isSystem: true,
+  },
+  {
     id: 'sys-first-name',
     key: 'firstName',
     label: 'First Name',
@@ -242,6 +252,81 @@ export function extractVariablesFromText(text: string): string[] {
 }
 
 /**
+ * Resolves a realistic sample value for any variable name or tag for preview.
+ * Prioritizes defined variables (including case-insensitive and snake_case matches),
+ * then checks semantic aliases (e.g. order, date, amount, code),
+ * and finally falls back to a clean formatted placeholder.
+ */
+export function getSampleValueForVariable(
+  varName: string,
+  allVars: SmsVariable[] = getAllVariablesList()
+): string {
+  const cleanKey = varName.replace(/[{}\s]/g, '');
+  if (!cleanKey) return '';
+
+  const normalized = cleanKey.toLowerCase().replace(/[_-]/g, '');
+
+  // 1. Direct or normalized match in variable registry
+  const matched = allVars.find(
+    (v) =>
+      v.key.toLowerCase() === cleanKey.toLowerCase() ||
+      v.key.toLowerCase().replace(/[_-]/g, '') === normalized
+  );
+  if (matched?.sampleValue) return matched.sampleValue;
+  if (matched?.fallbackValue) return matched.fallbackValue;
+
+  // 2. Common semantic aliases
+  if (normalized === 'name' || normalized === 'fullname' || normalized === 'customername' || normalized === 'clientname') {
+    return 'Sarah Mukasa';
+  }
+  if (normalized === 'firstname' || normalized === 'first' || normalized === 'fname') {
+    return 'Sarah';
+  }
+  if (normalized === 'lastname' || normalized === 'last' || normalized === 'lname' || normalized === 'surname') {
+    return 'Mukasa';
+  }
+  if (normalized === 'customer' || normalized === 'client' || normalized === 'user') {
+    return 'Sarah Mukasa';
+  }
+  if (normalized.includes('order') || normalized.includes('invoice') || normalized.includes('receipt') || normalized.includes('tracking')) {
+    return 'ORD-2026';
+  }
+  if (normalized.includes('amount') || normalized.includes('price') || normalized.includes('cost') || normalized.includes('balance') || normalized.includes('fee') || normalized.includes('total')) {
+    return '50,000 UGX';
+  }
+  if (normalized.includes('date') || normalized === 'today') {
+    return 'Oct 15, 2026';
+  }
+  if (normalized.includes('time')) {
+    return '14:30';
+  }
+  if (normalized.includes('code') || normalized.includes('promo') || normalized.includes('discount') || normalized.includes('coupon') || normalized.includes('otp') || normalized.includes('pin')) {
+    return 'FLASH50';
+  }
+  if (normalized.includes('phone') || normalized.includes('mobile') || normalized.includes('tel')) {
+    return '+256701234567';
+  }
+  if (normalized.includes('email') || normalized.includes('mail')) {
+    return 'sarah.m@example.com';
+  }
+  if (normalized.includes('company') || normalized.includes('business') || normalized.includes('brand')) {
+    return 'Range View Tech';
+  }
+  if (normalized.includes('account') || normalized.includes('acc')) {
+    return 'ACC-84920';
+  }
+  if (normalized.includes('url') || normalized.includes('link')) {
+    return 'https://range.ug/r/8492';
+  }
+  if (normalized.includes('city') || normalized.includes('location') || normalized.includes('address')) {
+    return 'Kampala';
+  }
+
+  // 3. Fallback: Clean title-cased name e.g. "Item Name"
+  return cleanKey.replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').trim().replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/**
  * Render template text with provided or sample variable values
  */
 export function renderTemplateWithVariables(
@@ -261,6 +346,25 @@ export function renderTemplateWithVariables(
       return values[matched.key] || matched.sampleValue || matched.fallbackValue || match;
     }
     return match;
+  });
+}
+
+/**
+ * Render full preview text with sample variable substitutions for live handset simulators.
+ */
+export function renderPreviewWithSamples(
+  template: string,
+  customValues: Record<string, string> = {},
+  allVars: SmsVariable[] = getAllVariablesList()
+): string {
+  if (!template) return '';
+  const regex = /(\{\{[a-zA-Z0-9_\s-]+\}\})/g;
+  return template.replace(regex, (match) => {
+    const varName = match.replace(/[{}]/g, '').trim();
+    if (customValues[varName] !== undefined && customValues[varName] !== '') {
+      return customValues[varName];
+    }
+    return getSampleValueForVariable(varName, allVars);
   });
 }
 

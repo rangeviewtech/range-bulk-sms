@@ -274,6 +274,7 @@ export type UserWhereInput = {
   agent?: Prisma.XOR<Prisma.AgentNullableScalarRelationFilter, Prisma.AgentWhereInput> | null
   contacts?: Prisma.ContactListRelationFilter
   contactGroups?: Prisma.ContactGroupListRelationFilter
+  contactSegments?: Prisma.ContactSegmentListRelationFilter
   contactTags?: Prisma.ContactTagListRelationFilter
   contactImports?: Prisma.ContactImportListRelationFilter
   senderIds?: Prisma.SenderIdListRelationFilter
@@ -286,6 +287,7 @@ export type UserWhereInput = {
   webhooks?: Prisma.WebhookListRelationFilter
   supportTickets?: Prisma.SupportTicketListRelationFilter
   scheduledMessages?: Prisma.ScheduledMessageListRelationFilter
+  smsDrafts?: Prisma.SmsDraftListRelationFilter
   gateways?: Prisma.GatewayListRelationFilter
 }
 
@@ -317,6 +319,7 @@ export type UserOrderByWithRelationInput = {
   agent?: Prisma.AgentOrderByWithRelationInput
   contacts?: Prisma.ContactOrderByRelationAggregateInput
   contactGroups?: Prisma.ContactGroupOrderByRelationAggregateInput
+  contactSegments?: Prisma.ContactSegmentOrderByRelationAggregateInput
   contactTags?: Prisma.ContactTagOrderByRelationAggregateInput
   contactImports?: Prisma.ContactImportOrderByRelationAggregateInput
   senderIds?: Prisma.SenderIdOrderByRelationAggregateInput
@@ -329,6 +332,7 @@ export type UserOrderByWithRelationInput = {
   webhooks?: Prisma.WebhookOrderByRelationAggregateInput
   supportTickets?: Prisma.SupportTicketOrderByRelationAggregateInput
   scheduledMessages?: Prisma.ScheduledMessageOrderByRelationAggregateInput
+  smsDrafts?: Prisma.SmsDraftOrderByRelationAggregateInput
   gateways?: Prisma.GatewayOrderByRelationAggregateInput
 }
 
@@ -363,6 +367,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   agent?: Prisma.XOR<Prisma.AgentNullableScalarRelationFilter, Prisma.AgentWhereInput> | null
   contacts?: Prisma.ContactListRelationFilter
   contactGroups?: Prisma.ContactGroupListRelationFilter
+  contactSegments?: Prisma.ContactSegmentListRelationFilter
   contactTags?: Prisma.ContactTagListRelationFilter
   contactImports?: Prisma.ContactImportListRelationFilter
   senderIds?: Prisma.SenderIdListRelationFilter
@@ -375,6 +380,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   webhooks?: Prisma.WebhookListRelationFilter
   supportTickets?: Prisma.SupportTicketListRelationFilter
   scheduledMessages?: Prisma.ScheduledMessageListRelationFilter
+  smsDrafts?: Prisma.SmsDraftListRelationFilter
   gateways?: Prisma.GatewayListRelationFilter
 }, "id" | "email" | "telegramChatId" | "phone">
 
@@ -448,6 +454,7 @@ export type UserCreateInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -460,6 +467,7 @@ export type UserCreateInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -491,6 +499,7 @@ export type UserUncheckedCreateInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -503,6 +512,7 @@ export type UserUncheckedCreateInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -534,6 +544,7 @@ export type UserUpdateInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -546,6 +557,7 @@ export type UserUpdateInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -577,6 +589,7 @@ export type UserUncheckedUpdateInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -589,6 +602,7 @@ export type UserUncheckedUpdateInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -918,6 +932,20 @@ export type UserUpdateOneRequiredWithoutContactTagsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutContactTagsInput, Prisma.UserUpdateWithoutContactTagsInput>, Prisma.UserUncheckedUpdateWithoutContactTagsInput>
 }
 
+export type UserCreateNestedOneWithoutContactSegmentsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutContactSegmentsInput, Prisma.UserUncheckedCreateWithoutContactSegmentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutContactSegmentsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutContactSegmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutContactSegmentsInput, Prisma.UserUncheckedCreateWithoutContactSegmentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutContactSegmentsInput
+  upsert?: Prisma.UserUpsertWithoutContactSegmentsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutContactSegmentsInput, Prisma.UserUpdateWithoutContactSegmentsInput>, Prisma.UserUncheckedUpdateWithoutContactSegmentsInput>
+}
+
 export type UserCreateNestedOneWithoutContactImportsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutContactImportsInput, Prisma.UserUncheckedCreateWithoutContactImportsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutContactImportsInput
@@ -1090,6 +1118,20 @@ export type UserUpdateOneRequiredWithoutGatewaysNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutGatewaysInput, Prisma.UserUpdateWithoutGatewaysInput>, Prisma.UserUncheckedUpdateWithoutGatewaysInput>
 }
 
+export type UserCreateNestedOneWithoutSmsDraftsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSmsDraftsInput, Prisma.UserUncheckedCreateWithoutSmsDraftsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSmsDraftsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSmsDraftsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSmsDraftsInput, Prisma.UserUncheckedCreateWithoutSmsDraftsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSmsDraftsInput
+  upsert?: Prisma.UserUpsertWithoutSmsDraftsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSmsDraftsInput, Prisma.UserUpdateWithoutSmsDraftsInput>, Prisma.UserUncheckedUpdateWithoutSmsDraftsInput>
+}
+
 export type UserCreateWithoutSessionsInput = {
   id?: string
   email: string
@@ -1117,6 +1159,7 @@ export type UserCreateWithoutSessionsInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -1129,6 +1172,7 @@ export type UserCreateWithoutSessionsInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -1159,6 +1203,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -1171,6 +1216,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1217,6 +1263,7 @@ export type UserUpdateWithoutSessionsInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -1229,6 +1276,7 @@ export type UserUpdateWithoutSessionsInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -1259,6 +1307,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -1271,6 +1320,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1301,6 +1351,7 @@ export type UserCreateWithoutDevicesInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -1313,6 +1364,7 @@ export type UserCreateWithoutDevicesInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -1343,6 +1395,7 @@ export type UserUncheckedCreateWithoutDevicesInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -1355,6 +1408,7 @@ export type UserUncheckedCreateWithoutDevicesInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1401,6 +1455,7 @@ export type UserUpdateWithoutDevicesInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -1413,6 +1468,7 @@ export type UserUpdateWithoutDevicesInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -1443,6 +1499,7 @@ export type UserUncheckedUpdateWithoutDevicesInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -1455,6 +1512,7 @@ export type UserUncheckedUpdateWithoutDevicesInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1485,6 +1543,7 @@ export type UserCreateWithoutAuthenticatorsInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -1497,6 +1556,7 @@ export type UserCreateWithoutAuthenticatorsInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -1527,6 +1587,7 @@ export type UserUncheckedCreateWithoutAuthenticatorsInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -1539,6 +1600,7 @@ export type UserUncheckedCreateWithoutAuthenticatorsInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1585,6 +1647,7 @@ export type UserUpdateWithoutAuthenticatorsInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -1597,6 +1660,7 @@ export type UserUpdateWithoutAuthenticatorsInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -1627,6 +1691,7 @@ export type UserUncheckedUpdateWithoutAuthenticatorsInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -1639,6 +1704,7 @@ export type UserUncheckedUpdateWithoutAuthenticatorsInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1669,6 +1735,7 @@ export type UserCreateWithoutRolesInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -1681,6 +1748,7 @@ export type UserCreateWithoutRolesInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -1711,6 +1779,7 @@ export type UserUncheckedCreateWithoutRolesInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -1723,6 +1792,7 @@ export type UserUncheckedCreateWithoutRolesInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1769,6 +1839,7 @@ export type UserUpdateWithoutRolesInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -1781,6 +1852,7 @@ export type UserUpdateWithoutRolesInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -1811,6 +1883,7 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -1823,6 +1896,7 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1853,6 +1927,7 @@ export type UserCreateWithoutAuditLogsInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -1865,6 +1940,7 @@ export type UserCreateWithoutAuditLogsInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -1895,6 +1971,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -1907,6 +1984,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1953,6 +2031,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -1965,6 +2044,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -1995,6 +2075,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -2007,6 +2088,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -2037,6 +2119,7 @@ export type UserCreateWithoutTelegramLinkingTokensInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -2049,6 +2132,7 @@ export type UserCreateWithoutTelegramLinkingTokensInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -2079,6 +2163,7 @@ export type UserUncheckedCreateWithoutTelegramLinkingTokensInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -2091,6 +2176,7 @@ export type UserUncheckedCreateWithoutTelegramLinkingTokensInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -2137,6 +2223,7 @@ export type UserUpdateWithoutTelegramLinkingTokensInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -2149,6 +2236,7 @@ export type UserUpdateWithoutTelegramLinkingTokensInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -2179,6 +2267,7 @@ export type UserUncheckedUpdateWithoutTelegramLinkingTokensInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -2191,6 +2280,7 @@ export type UserUncheckedUpdateWithoutTelegramLinkingTokensInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -2221,6 +2311,7 @@ export type UserCreateWithoutNotificationPreferencesInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -2233,6 +2324,7 @@ export type UserCreateWithoutNotificationPreferencesInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -2263,6 +2355,7 @@ export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -2275,6 +2368,7 @@ export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -2321,6 +2415,7 @@ export type UserUpdateWithoutNotificationPreferencesInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -2333,6 +2428,7 @@ export type UserUpdateWithoutNotificationPreferencesInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -2363,6 +2459,7 @@ export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -2375,6 +2472,7 @@ export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -2405,6 +2503,7 @@ export type UserCreateWithoutNotificationsInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -2417,6 +2516,7 @@ export type UserCreateWithoutNotificationsInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -2447,6 +2547,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -2459,6 +2560,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -2505,6 +2607,7 @@ export type UserUpdateWithoutNotificationsInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -2517,6 +2620,7 @@ export type UserUpdateWithoutNotificationsInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -2547,6 +2651,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -2559,6 +2664,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -2589,6 +2695,7 @@ export type UserCreateWithoutClientInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -2601,6 +2708,7 @@ export type UserCreateWithoutClientInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -2631,6 +2739,7 @@ export type UserUncheckedCreateWithoutClientInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -2643,6 +2752,7 @@ export type UserUncheckedCreateWithoutClientInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -2689,6 +2799,7 @@ export type UserUpdateWithoutClientInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -2701,6 +2812,7 @@ export type UserUpdateWithoutClientInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -2731,6 +2843,7 @@ export type UserUncheckedUpdateWithoutClientInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -2743,6 +2856,7 @@ export type UserUncheckedUpdateWithoutClientInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -2773,6 +2887,7 @@ export type UserCreateWithoutAgentInput = {
   client?: Prisma.ClientCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -2785,6 +2900,7 @@ export type UserCreateWithoutAgentInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -2815,6 +2931,7 @@ export type UserUncheckedCreateWithoutAgentInput = {
   client?: Prisma.ClientUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -2827,6 +2944,7 @@ export type UserUncheckedCreateWithoutAgentInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -2873,6 +2991,7 @@ export type UserUpdateWithoutAgentInput = {
   client?: Prisma.ClientUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -2885,6 +3004,7 @@ export type UserUpdateWithoutAgentInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -2915,6 +3035,7 @@ export type UserUncheckedUpdateWithoutAgentInput = {
   client?: Prisma.ClientUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -2927,6 +3048,7 @@ export type UserUncheckedUpdateWithoutAgentInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -2957,6 +3079,7 @@ export type UserCreateWithoutContactsInput = {
   client?: Prisma.ClientCreateNestedOneWithoutUserInput
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -2969,6 +3092,7 @@ export type UserCreateWithoutContactsInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -2999,6 +3123,7 @@ export type UserUncheckedCreateWithoutContactsInput = {
   client?: Prisma.ClientUncheckedCreateNestedOneWithoutUserInput
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -3011,6 +3136,7 @@ export type UserUncheckedCreateWithoutContactsInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -3057,6 +3183,7 @@ export type UserUpdateWithoutContactsInput = {
   client?: Prisma.ClientUpdateOneWithoutUserNestedInput
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -3069,6 +3196,7 @@ export type UserUpdateWithoutContactsInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -3099,6 +3227,7 @@ export type UserUncheckedUpdateWithoutContactsInput = {
   client?: Prisma.ClientUncheckedUpdateOneWithoutUserNestedInput
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -3111,6 +3240,7 @@ export type UserUncheckedUpdateWithoutContactsInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -3141,6 +3271,7 @@ export type UserCreateWithoutContactGroupsInput = {
   client?: Prisma.ClientCreateNestedOneWithoutUserInput
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -3153,6 +3284,7 @@ export type UserCreateWithoutContactGroupsInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -3183,6 +3315,7 @@ export type UserUncheckedCreateWithoutContactGroupsInput = {
   client?: Prisma.ClientUncheckedCreateNestedOneWithoutUserInput
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -3195,6 +3328,7 @@ export type UserUncheckedCreateWithoutContactGroupsInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -3241,6 +3375,7 @@ export type UserUpdateWithoutContactGroupsInput = {
   client?: Prisma.ClientUpdateOneWithoutUserNestedInput
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -3253,6 +3388,7 @@ export type UserUpdateWithoutContactGroupsInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -3283,6 +3419,7 @@ export type UserUncheckedUpdateWithoutContactGroupsInput = {
   client?: Prisma.ClientUncheckedUpdateOneWithoutUserNestedInput
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -3295,6 +3432,7 @@ export type UserUncheckedUpdateWithoutContactGroupsInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -3326,6 +3464,7 @@ export type UserCreateWithoutContactTagsInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
   smsTemplates?: Prisma.SmsTemplateCreateNestedManyWithoutUserInput
@@ -3337,6 +3476,7 @@ export type UserCreateWithoutContactTagsInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -3368,6 +3508,7 @@ export type UserUncheckedCreateWithoutContactTagsInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
   smsTemplates?: Prisma.SmsTemplateUncheckedCreateNestedManyWithoutUserInput
@@ -3379,6 +3520,7 @@ export type UserUncheckedCreateWithoutContactTagsInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -3426,6 +3568,7 @@ export type UserUpdateWithoutContactTagsInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
   smsTemplates?: Prisma.SmsTemplateUpdateManyWithoutUserNestedInput
@@ -3437,6 +3580,7 @@ export type UserUpdateWithoutContactTagsInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -3468,6 +3612,7 @@ export type UserUncheckedUpdateWithoutContactTagsInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
   smsTemplates?: Prisma.SmsTemplateUncheckedUpdateManyWithoutUserNestedInput
@@ -3479,6 +3624,199 @@ export type UserUncheckedUpdateWithoutContactTagsInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+  gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutContactSegmentsInput = {
+  id?: string
+  email: string
+  name?: string | null
+  passwordHash?: string | null
+  status?: $Enums.UserStatus
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  mfaEnabled?: boolean
+  mfaSecret?: string | null
+  screenLockPin?: string | null
+  telegramChatId?: string | null
+  whatsappConsent?: boolean
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
+  authenticators?: Prisma.AuthenticatorCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  client?: Prisma.ClientCreateNestedOneWithoutUserInput
+  agent?: Prisma.AgentCreateNestedOneWithoutUserInput
+  contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
+  contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
+  contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
+  senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
+  smsTemplates?: Prisma.SmsTemplateCreateNestedManyWithoutUserInput
+  campaigns?: Prisma.CampaignCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutUserInput
+  wallets?: Prisma.WalletCreateNestedOneWithoutUserInput
+  transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
+  webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
+  gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutContactSegmentsInput = {
+  id?: string
+  email: string
+  name?: string | null
+  passwordHash?: string | null
+  status?: $Enums.UserStatus
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  mfaEnabled?: boolean
+  mfaSecret?: string | null
+  screenLockPin?: string | null
+  telegramChatId?: string | null
+  whatsappConsent?: boolean
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
+  authenticators?: Prisma.AuthenticatorUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  client?: Prisma.ClientUncheckedCreateNestedOneWithoutUserInput
+  agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
+  contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
+  contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
+  contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
+  senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
+  smsTemplates?: Prisma.SmsTemplateUncheckedCreateNestedManyWithoutUserInput
+  campaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutUserInput
+  wallets?: Prisma.WalletUncheckedCreateNestedOneWithoutUserInput
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
+  webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
+  gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutContactSegmentsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutContactSegmentsInput, Prisma.UserUncheckedCreateWithoutContactSegmentsInput>
+}
+
+export type UserUpsertWithoutContactSegmentsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutContactSegmentsInput, Prisma.UserUncheckedUpdateWithoutContactSegmentsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutContactSegmentsInput, Prisma.UserUncheckedCreateWithoutContactSegmentsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutContactSegmentsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutContactSegmentsInput, Prisma.UserUncheckedUpdateWithoutContactSegmentsInput>
+}
+
+export type UserUpdateWithoutContactSegmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
+  authenticators?: Prisma.AuthenticatorUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  client?: Prisma.ClientUpdateOneWithoutUserNestedInput
+  agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
+  contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
+  contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
+  contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
+  senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
+  smsTemplates?: Prisma.SmsTemplateUpdateManyWithoutUserNestedInput
+  campaigns?: Prisma.CampaignUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutUserNestedInput
+  wallets?: Prisma.WalletUpdateOneWithoutUserNestedInput
+  transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
+  webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
+  gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutContactSegmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
+  authenticators?: Prisma.AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  client?: Prisma.ClientUncheckedUpdateOneWithoutUserNestedInput
+  agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
+  contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
+  contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
+  contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
+  senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
+  smsTemplates?: Prisma.SmsTemplateUncheckedUpdateManyWithoutUserNestedInput
+  campaigns?: Prisma.CampaignUncheckedUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutUserNestedInput
+  wallets?: Prisma.WalletUncheckedUpdateOneWithoutUserNestedInput
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
+  webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -3510,6 +3848,7 @@ export type UserCreateWithoutContactImportsInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
   smsTemplates?: Prisma.SmsTemplateCreateNestedManyWithoutUserInput
@@ -3521,6 +3860,7 @@ export type UserCreateWithoutContactImportsInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -3552,6 +3892,7 @@ export type UserUncheckedCreateWithoutContactImportsInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
   smsTemplates?: Prisma.SmsTemplateUncheckedCreateNestedManyWithoutUserInput
@@ -3563,6 +3904,7 @@ export type UserUncheckedCreateWithoutContactImportsInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -3610,6 +3952,7 @@ export type UserUpdateWithoutContactImportsInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
   smsTemplates?: Prisma.SmsTemplateUpdateManyWithoutUserNestedInput
@@ -3621,6 +3964,7 @@ export type UserUpdateWithoutContactImportsInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -3652,6 +3996,7 @@ export type UserUncheckedUpdateWithoutContactImportsInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
   smsTemplates?: Prisma.SmsTemplateUncheckedUpdateManyWithoutUserNestedInput
@@ -3663,6 +4008,7 @@ export type UserUncheckedUpdateWithoutContactImportsInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -3694,6 +4040,7 @@ export type UserCreateWithoutSenderIdsInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   smsTemplates?: Prisma.SmsTemplateCreateNestedManyWithoutUserInput
@@ -3705,6 +4052,7 @@ export type UserCreateWithoutSenderIdsInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -3736,6 +4084,7 @@ export type UserUncheckedCreateWithoutSenderIdsInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   smsTemplates?: Prisma.SmsTemplateUncheckedCreateNestedManyWithoutUserInput
@@ -3747,6 +4096,7 @@ export type UserUncheckedCreateWithoutSenderIdsInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -3794,6 +4144,7 @@ export type UserUpdateWithoutSenderIdsInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   smsTemplates?: Prisma.SmsTemplateUpdateManyWithoutUserNestedInput
@@ -3805,6 +4156,7 @@ export type UserUpdateWithoutSenderIdsInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -3836,6 +4188,7 @@ export type UserUncheckedUpdateWithoutSenderIdsInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   smsTemplates?: Prisma.SmsTemplateUncheckedUpdateManyWithoutUserNestedInput
@@ -3847,6 +4200,7 @@ export type UserUncheckedUpdateWithoutSenderIdsInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -3878,6 +4232,7 @@ export type UserCreateWithoutSmsTemplatesInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -3889,6 +4244,7 @@ export type UserCreateWithoutSmsTemplatesInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -3920,6 +4276,7 @@ export type UserUncheckedCreateWithoutSmsTemplatesInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -3931,6 +4288,7 @@ export type UserUncheckedCreateWithoutSmsTemplatesInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -3978,6 +4336,7 @@ export type UserUpdateWithoutSmsTemplatesInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -3989,6 +4348,7 @@ export type UserUpdateWithoutSmsTemplatesInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -4020,6 +4380,7 @@ export type UserUncheckedUpdateWithoutSmsTemplatesInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -4031,6 +4392,7 @@ export type UserUncheckedUpdateWithoutSmsTemplatesInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -4062,6 +4424,7 @@ export type UserCreateWithoutCampaignsInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -4073,6 +4436,7 @@ export type UserCreateWithoutCampaignsInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -4104,6 +4468,7 @@ export type UserUncheckedCreateWithoutCampaignsInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -4115,6 +4480,7 @@ export type UserUncheckedCreateWithoutCampaignsInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -4162,6 +4528,7 @@ export type UserUpdateWithoutCampaignsInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -4173,6 +4540,7 @@ export type UserUpdateWithoutCampaignsInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -4204,6 +4572,7 @@ export type UserUncheckedUpdateWithoutCampaignsInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -4215,6 +4584,7 @@ export type UserUncheckedUpdateWithoutCampaignsInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -4246,6 +4616,7 @@ export type UserCreateWithoutMessagesInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -4257,6 +4628,7 @@ export type UserCreateWithoutMessagesInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -4288,6 +4660,7 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -4299,6 +4672,7 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -4346,6 +4720,7 @@ export type UserUpdateWithoutMessagesInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -4357,6 +4732,7 @@ export type UserUpdateWithoutMessagesInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -4388,6 +4764,7 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -4399,6 +4776,7 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -4430,6 +4808,7 @@ export type UserCreateWithoutWalletsInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -4441,6 +4820,7 @@ export type UserCreateWithoutWalletsInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -4472,6 +4852,7 @@ export type UserUncheckedCreateWithoutWalletsInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -4483,6 +4864,7 @@ export type UserUncheckedCreateWithoutWalletsInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -4530,6 +4912,7 @@ export type UserUpdateWithoutWalletsInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -4541,6 +4924,7 @@ export type UserUpdateWithoutWalletsInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -4572,6 +4956,7 @@ export type UserUncheckedUpdateWithoutWalletsInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -4583,6 +4968,7 @@ export type UserUncheckedUpdateWithoutWalletsInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -4614,6 +5000,7 @@ export type UserCreateWithoutTransactionsInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -4625,6 +5012,7 @@ export type UserCreateWithoutTransactionsInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -4656,6 +5044,7 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -4667,6 +5056,7 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -4714,6 +5104,7 @@ export type UserUpdateWithoutTransactionsInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -4725,6 +5116,7 @@ export type UserUpdateWithoutTransactionsInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -4756,6 +5148,7 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -4767,6 +5160,7 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -4798,6 +5192,7 @@ export type UserCreateWithoutApiKeysInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -4809,6 +5204,7 @@ export type UserCreateWithoutApiKeysInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -4840,6 +5236,7 @@ export type UserUncheckedCreateWithoutApiKeysInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -4851,6 +5248,7 @@ export type UserUncheckedCreateWithoutApiKeysInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -4898,6 +5296,7 @@ export type UserUpdateWithoutApiKeysInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -4909,6 +5308,7 @@ export type UserUpdateWithoutApiKeysInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -4940,6 +5340,7 @@ export type UserUncheckedUpdateWithoutApiKeysInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -4951,6 +5352,7 @@ export type UserUncheckedUpdateWithoutApiKeysInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -4982,6 +5384,7 @@ export type UserCreateWithoutWebhooksInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -4993,6 +5396,7 @@ export type UserCreateWithoutWebhooksInput = {
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -5024,6 +5428,7 @@ export type UserUncheckedCreateWithoutWebhooksInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -5035,6 +5440,7 @@ export type UserUncheckedCreateWithoutWebhooksInput = {
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -5082,6 +5488,7 @@ export type UserUpdateWithoutWebhooksInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -5093,6 +5500,7 @@ export type UserUpdateWithoutWebhooksInput = {
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -5124,6 +5532,7 @@ export type UserUncheckedUpdateWithoutWebhooksInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -5135,6 +5544,7 @@ export type UserUncheckedUpdateWithoutWebhooksInput = {
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -5166,6 +5576,7 @@ export type UserCreateWithoutSupportTicketsInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -5177,6 +5588,7 @@ export type UserCreateWithoutSupportTicketsInput = {
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -5208,6 +5620,7 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -5219,6 +5632,7 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -5266,6 +5680,7 @@ export type UserUpdateWithoutSupportTicketsInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -5277,6 +5692,7 @@ export type UserUpdateWithoutSupportTicketsInput = {
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -5308,6 +5724,7 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -5319,6 +5736,7 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -5350,6 +5768,7 @@ export type UserCreateWithoutScheduledMessagesInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -5361,6 +5780,7 @@ export type UserCreateWithoutScheduledMessagesInput = {
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
 }
 
@@ -5392,6 +5812,7 @@ export type UserUncheckedCreateWithoutScheduledMessagesInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -5403,6 +5824,7 @@ export type UserUncheckedCreateWithoutScheduledMessagesInput = {
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
   gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -5450,6 +5872,7 @@ export type UserUpdateWithoutScheduledMessagesInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -5461,6 +5884,7 @@ export type UserUpdateWithoutScheduledMessagesInput = {
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
 }
 
@@ -5492,6 +5916,7 @@ export type UserUncheckedUpdateWithoutScheduledMessagesInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -5503,6 +5928,7 @@ export type UserUncheckedUpdateWithoutScheduledMessagesInput = {
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
   gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -5534,6 +5960,7 @@ export type UserCreateWithoutGatewaysInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
@@ -5546,6 +5973,7 @@ export type UserCreateWithoutGatewaysInput = {
   webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGatewaysInput = {
@@ -5576,6 +6004,7 @@ export type UserUncheckedCreateWithoutGatewaysInput = {
   agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
   contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
   contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
   contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
@@ -5588,6 +6017,7 @@ export type UserUncheckedCreateWithoutGatewaysInput = {
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  smsDrafts?: Prisma.SmsDraftUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGatewaysInput = {
@@ -5634,6 +6064,7 @@ export type UserUpdateWithoutGatewaysInput = {
   agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
@@ -5646,6 +6077,7 @@ export type UserUpdateWithoutGatewaysInput = {
   webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGatewaysInput = {
@@ -5676,6 +6108,7 @@ export type UserUncheckedUpdateWithoutGatewaysInput = {
   agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
   contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
   contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
   contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
@@ -5688,6 +6121,199 @@ export type UserUncheckedUpdateWithoutGatewaysInput = {
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  smsDrafts?: Prisma.SmsDraftUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutSmsDraftsInput = {
+  id?: string
+  email: string
+  name?: string | null
+  passwordHash?: string | null
+  status?: $Enums.UserStatus
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  mfaEnabled?: boolean
+  mfaSecret?: string | null
+  screenLockPin?: string | null
+  telegramChatId?: string | null
+  whatsappConsent?: boolean
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceCreateNestedManyWithoutUserInput
+  authenticators?: Prisma.AuthenticatorCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenCreateNestedManyWithoutUserInput
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  client?: Prisma.ClientCreateNestedOneWithoutUserInput
+  agent?: Prisma.AgentCreateNestedOneWithoutUserInput
+  contacts?: Prisma.ContactCreateNestedManyWithoutUserInput
+  contactGroups?: Prisma.ContactGroupCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentCreateNestedManyWithoutUserInput
+  contactTags?: Prisma.ContactTagCreateNestedManyWithoutUserInput
+  contactImports?: Prisma.ContactImportCreateNestedManyWithoutUserInput
+  senderIds?: Prisma.SenderIdCreateNestedManyWithoutUserInput
+  smsTemplates?: Prisma.SmsTemplateCreateNestedManyWithoutUserInput
+  campaigns?: Prisma.CampaignCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutUserInput
+  wallets?: Prisma.WalletCreateNestedOneWithoutUserInput
+  transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
+  webhooks?: Prisma.WebhookCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutUserInput
+  gateways?: Prisma.GatewayCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutSmsDraftsInput = {
+  id?: string
+  email: string
+  name?: string | null
+  passwordHash?: string | null
+  status?: $Enums.UserStatus
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  mfaEnabled?: boolean
+  mfaSecret?: string | null
+  screenLockPin?: string | null
+  telegramChatId?: string | null
+  whatsappConsent?: boolean
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  devices?: Prisma.UserDeviceUncheckedCreateNestedManyWithoutUserInput
+  authenticators?: Prisma.AuthenticatorUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedCreateNestedManyWithoutUserInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  client?: Prisma.ClientUncheckedCreateNestedOneWithoutUserInput
+  agent?: Prisma.AgentUncheckedCreateNestedOneWithoutUserInput
+  contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutUserInput
+  contactGroups?: Prisma.ContactGroupUncheckedCreateNestedManyWithoutUserInput
+  contactSegments?: Prisma.ContactSegmentUncheckedCreateNestedManyWithoutUserInput
+  contactTags?: Prisma.ContactTagUncheckedCreateNestedManyWithoutUserInput
+  contactImports?: Prisma.ContactImportUncheckedCreateNestedManyWithoutUserInput
+  senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutUserInput
+  smsTemplates?: Prisma.SmsTemplateUncheckedCreateNestedManyWithoutUserInput
+  campaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutUserInput
+  wallets?: Prisma.WalletUncheckedCreateNestedOneWithoutUserInput
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
+  webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutUserInput
+  gateways?: Prisma.GatewayUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutSmsDraftsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSmsDraftsInput, Prisma.UserUncheckedCreateWithoutSmsDraftsInput>
+}
+
+export type UserUpsertWithoutSmsDraftsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSmsDraftsInput, Prisma.UserUncheckedUpdateWithoutSmsDraftsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSmsDraftsInput, Prisma.UserUncheckedCreateWithoutSmsDraftsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSmsDraftsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSmsDraftsInput, Prisma.UserUncheckedUpdateWithoutSmsDraftsInput>
+}
+
+export type UserUpdateWithoutSmsDraftsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUpdateManyWithoutUserNestedInput
+  authenticators?: Prisma.AuthenticatorUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenUpdateManyWithoutUserNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  client?: Prisma.ClientUpdateOneWithoutUserNestedInput
+  agent?: Prisma.AgentUpdateOneWithoutUserNestedInput
+  contacts?: Prisma.ContactUpdateManyWithoutUserNestedInput
+  contactGroups?: Prisma.ContactGroupUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUpdateManyWithoutUserNestedInput
+  contactTags?: Prisma.ContactTagUpdateManyWithoutUserNestedInput
+  contactImports?: Prisma.ContactImportUpdateManyWithoutUserNestedInput
+  senderIds?: Prisma.SenderIdUpdateManyWithoutUserNestedInput
+  smsTemplates?: Prisma.SmsTemplateUpdateManyWithoutUserNestedInput
+  campaigns?: Prisma.CampaignUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutUserNestedInput
+  wallets?: Prisma.WalletUpdateOneWithoutUserNestedInput
+  transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
+  webhooks?: Prisma.WebhookUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutUserNestedInput
+  gateways?: Prisma.GatewayUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSmsDraftsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  devices?: Prisma.UserDeviceUncheckedUpdateManyWithoutUserNestedInput
+  authenticators?: Prisma.AuthenticatorUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  telegramLinkingTokens?: Prisma.TelegramLinkingTokenUncheckedUpdateManyWithoutUserNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  client?: Prisma.ClientUncheckedUpdateOneWithoutUserNestedInput
+  agent?: Prisma.AgentUncheckedUpdateOneWithoutUserNestedInput
+  contacts?: Prisma.ContactUncheckedUpdateManyWithoutUserNestedInput
+  contactGroups?: Prisma.ContactGroupUncheckedUpdateManyWithoutUserNestedInput
+  contactSegments?: Prisma.ContactSegmentUncheckedUpdateManyWithoutUserNestedInput
+  contactTags?: Prisma.ContactTagUncheckedUpdateManyWithoutUserNestedInput
+  contactImports?: Prisma.ContactImportUncheckedUpdateManyWithoutUserNestedInput
+  senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutUserNestedInput
+  smsTemplates?: Prisma.SmsTemplateUncheckedUpdateManyWithoutUserNestedInput
+  campaigns?: Prisma.CampaignUncheckedUpdateManyWithoutUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutUserNestedInput
+  wallets?: Prisma.WalletUncheckedUpdateOneWithoutUserNestedInput
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
+  webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput
+  gateways?: Prisma.GatewayUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -5706,6 +6332,7 @@ export type UserCountOutputType = {
   notifications: number
   contacts: number
   contactGroups: number
+  contactSegments: number
   contactTags: number
   contactImports: number
   senderIds: number
@@ -5717,6 +6344,7 @@ export type UserCountOutputType = {
   webhooks: number
   supportTickets: number
   scheduledMessages: number
+  smsDrafts: number
   gateways: number
 }
 
@@ -5731,6 +6359,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
   contacts?: boolean | UserCountOutputTypeCountContactsArgs
   contactGroups?: boolean | UserCountOutputTypeCountContactGroupsArgs
+  contactSegments?: boolean | UserCountOutputTypeCountContactSegmentsArgs
   contactTags?: boolean | UserCountOutputTypeCountContactTagsArgs
   contactImports?: boolean | UserCountOutputTypeCountContactImportsArgs
   senderIds?: boolean | UserCountOutputTypeCountSenderIdsArgs
@@ -5742,6 +6371,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   webhooks?: boolean | UserCountOutputTypeCountWebhooksArgs
   supportTickets?: boolean | UserCountOutputTypeCountSupportTicketsArgs
   scheduledMessages?: boolean | UserCountOutputTypeCountScheduledMessagesArgs
+  smsDrafts?: boolean | UserCountOutputTypeCountSmsDraftsArgs
   gateways?: boolean | UserCountOutputTypeCountGatewaysArgs
 }
 
@@ -5828,6 +6458,13 @@ export type UserCountOutputTypeCountContactGroupsArgs<ExtArgs extends runtime.Ty
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountContactSegmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ContactSegmentWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountContactTagsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ContactTagWhereInput
 }
@@ -5905,6 +6542,13 @@ export type UserCountOutputTypeCountScheduledMessagesArgs<ExtArgs extends runtim
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountSmsDraftsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SmsDraftWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountGatewaysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.GatewayWhereInput
 }
@@ -5938,6 +6582,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   agent?: boolean | Prisma.User$agentArgs<ExtArgs>
   contacts?: boolean | Prisma.User$contactsArgs<ExtArgs>
   contactGroups?: boolean | Prisma.User$contactGroupsArgs<ExtArgs>
+  contactSegments?: boolean | Prisma.User$contactSegmentsArgs<ExtArgs>
   contactTags?: boolean | Prisma.User$contactTagsArgs<ExtArgs>
   contactImports?: boolean | Prisma.User$contactImportsArgs<ExtArgs>
   senderIds?: boolean | Prisma.User$senderIdsArgs<ExtArgs>
@@ -5950,6 +6595,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   webhooks?: boolean | Prisma.User$webhooksArgs<ExtArgs>
   supportTickets?: boolean | Prisma.User$supportTicketsArgs<ExtArgs>
   scheduledMessages?: boolean | Prisma.User$scheduledMessagesArgs<ExtArgs>
+  smsDrafts?: boolean | Prisma.User$smsDraftsArgs<ExtArgs>
   gateways?: boolean | Prisma.User$gatewaysArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -6022,6 +6668,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   agent?: boolean | Prisma.User$agentArgs<ExtArgs>
   contacts?: boolean | Prisma.User$contactsArgs<ExtArgs>
   contactGroups?: boolean | Prisma.User$contactGroupsArgs<ExtArgs>
+  contactSegments?: boolean | Prisma.User$contactSegmentsArgs<ExtArgs>
   contactTags?: boolean | Prisma.User$contactTagsArgs<ExtArgs>
   contactImports?: boolean | Prisma.User$contactImportsArgs<ExtArgs>
   senderIds?: boolean | Prisma.User$senderIdsArgs<ExtArgs>
@@ -6034,6 +6681,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   webhooks?: boolean | Prisma.User$webhooksArgs<ExtArgs>
   supportTickets?: boolean | Prisma.User$supportTicketsArgs<ExtArgs>
   scheduledMessages?: boolean | Prisma.User$scheduledMessagesArgs<ExtArgs>
+  smsDrafts?: boolean | Prisma.User$smsDraftsArgs<ExtArgs>
   gateways?: boolean | Prisma.User$gatewaysArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -6055,6 +6703,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     agent: Prisma.$AgentPayload<ExtArgs> | null
     contacts: Prisma.$ContactPayload<ExtArgs>[]
     contactGroups: Prisma.$ContactGroupPayload<ExtArgs>[]
+    contactSegments: Prisma.$ContactSegmentPayload<ExtArgs>[]
     contactTags: Prisma.$ContactTagPayload<ExtArgs>[]
     contactImports: Prisma.$ContactImportPayload<ExtArgs>[]
     senderIds: Prisma.$SenderIdPayload<ExtArgs>[]
@@ -6067,6 +6716,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     webhooks: Prisma.$WebhookPayload<ExtArgs>[]
     supportTickets: Prisma.$SupportTicketPayload<ExtArgs>[]
     scheduledMessages: Prisma.$ScheduledMessagePayload<ExtArgs>[]
+    smsDrafts: Prisma.$SmsDraftPayload<ExtArgs>[]
     gateways: Prisma.$GatewayPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -6491,6 +7141,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   agent<T extends Prisma.User$agentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$agentArgs<ExtArgs>>): Prisma.Prisma__AgentClient<runtime.Types.Result.GetResult<Prisma.$AgentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   contacts<T extends Prisma.User$contactsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contactsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   contactGroups<T extends Prisma.User$contactGroupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contactGroupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContactGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  contactSegments<T extends Prisma.User$contactSegmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contactSegmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContactSegmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   contactTags<T extends Prisma.User$contactTagsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contactTagsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContactTagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   contactImports<T extends Prisma.User$contactImportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contactImportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContactImportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   senderIds<T extends Prisma.User$senderIdsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$senderIdsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SenderIdPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -6503,6 +7154,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   webhooks<T extends Prisma.User$webhooksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$webhooksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebhookPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   supportTickets<T extends Prisma.User$supportTicketsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$supportTicketsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   scheduledMessages<T extends Prisma.User$scheduledMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$scheduledMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScheduledMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  smsDrafts<T extends Prisma.User$smsDraftsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$smsDraftsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SmsDraftPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   gateways<T extends Prisma.User$gatewaysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$gatewaysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GatewayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -7219,6 +7871,30 @@ export type User$contactGroupsArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
+ * User.contactSegments
+ */
+export type User$contactSegmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ContactSegment
+   */
+  select?: Prisma.ContactSegmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ContactSegment
+   */
+  omit?: Prisma.ContactSegmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ContactSegmentInclude<ExtArgs> | null
+  where?: Prisma.ContactSegmentWhereInput
+  orderBy?: Prisma.ContactSegmentOrderByWithRelationInput | Prisma.ContactSegmentOrderByWithRelationInput[]
+  cursor?: Prisma.ContactSegmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ContactSegmentScalarFieldEnum | Prisma.ContactSegmentScalarFieldEnum[]
+}
+
+/**
  * User.contactTags
  */
 export type User$contactTagsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -7499,6 +8175,30 @@ export type User$scheduledMessagesArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.ScheduledMessageScalarFieldEnum | Prisma.ScheduledMessageScalarFieldEnum[]
+}
+
+/**
+ * User.smsDrafts
+ */
+export type User$smsDraftsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SmsDraft
+   */
+  select?: Prisma.SmsDraftSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SmsDraft
+   */
+  omit?: Prisma.SmsDraftOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SmsDraftInclude<ExtArgs> | null
+  where?: Prisma.SmsDraftWhereInput
+  orderBy?: Prisma.SmsDraftOrderByWithRelationInput | Prisma.SmsDraftOrderByWithRelationInput[]
+  cursor?: Prisma.SmsDraftWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SmsDraftScalarFieldEnum | Prisma.SmsDraftScalarFieldEnum[]
 }
 
 /**

@@ -26,6 +26,7 @@ import { InputError } from "@/components/ui/input-error";
 import { useTableState } from "@/hooks/use-table-state";
 import { SortableHeader } from "@/components/ui/sortable-header";
 import { Pagination } from "@/components/ui/pagination";
+import { ConfirmationDialog } from "@/components/feedback/confirmation-dialog";
 
 interface SenderIdRecord {
   id: string;
@@ -141,6 +142,13 @@ export default function SenderIdsPage() {
     },
   });
 
+  const [approveConfirm, setApproveConfirm] = useState<{
+    open: boolean;
+    id: string;
+    senderId: string;
+    clientName: string;
+  } | null>(null);
+
   const handleApprove = async (id: string, name: string) => {
     try {
       const res = await fetch(`/api/admin/sender-ids/${id}/approve`, {
@@ -156,6 +164,22 @@ export default function SenderIdsPage() {
       const msg = err instanceof Error ? err.message : "Failed to approve";
       toast.error(msg);
     }
+  };
+
+  const handleRequestApprove = (id: string, senderId: string, clientName: string) => {
+    setApproveConfirm({
+      open: true,
+      id,
+      senderId,
+      clientName,
+    });
+  };
+
+  const handleConfirmApprove = async () => {
+    if (!approveConfirm) return;
+    const { id, senderId } = approveConfirm;
+    setApproveConfirm(null);
+    await handleApprove(id, senderId);
   };
 
   const handleConfirmReject = async () => {
@@ -394,7 +418,7 @@ export default function SenderIdsPage() {
                                 variant="outline"
                                 size="sm"
                                 className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 border-emerald-600/30"
-                                onClick={() => handleApprove(item.id, item.senderId)}
+                                onClick={() => handleRequestApprove(item.id, item.senderId, item.client?.companyName || item.user.name || item.user.email)}
                               >
                                 <Check className="w-3.5 h-3.5 mr-1" />
                                 Approve
@@ -505,6 +529,18 @@ export default function SenderIdsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Confirmation Dialog for Approving Sender ID */}
+      <ConfirmationDialog
+        open={Boolean(approveConfirm?.open)}
+        onOpenChange={(open) => !open && setApproveConfirm(null)}
+        title="Approve Sender ID"
+        description={`Are you sure you want to approve Sender ID "${approveConfirm?.senderId}" for client "${approveConfirm?.clientName}"? This alphanumeric mask will immediately be activated for network message dispatching.`}
+        confirmLabel="Approve Sender ID"
+        cancelLabel="Cancel"
+        variant="default"
+        onConfirm={handleConfirmApprove}
+      />
     </div>
   );
 }

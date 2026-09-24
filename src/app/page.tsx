@@ -26,6 +26,7 @@ export const metadata = createMetadata({
   title: 'Enterprise Bulk SMS Platform | Range View Technology',
   description:
     'Deliver high-volume SMS across Uganda and East Africa with carrier-grade reliability, dedicated alphanumeric sender IDs, hardware gateways, and developer APIs.',
+  canonical: '/',
 });
 
 const features = [
@@ -164,8 +165,48 @@ export default async function HomePage() {
       }
     : null;
 
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': 'https://bulk.rangeview.co.ug/#organization',
+        name: 'Range View Technology Services Uganda Limited',
+        url: 'https://bulk.rangeview.co.ug',
+        logo: 'https://bulk.rangeview.co.ug/images/brand/range-icon-transparent.svg',
+        description: 'Enterprise Telecom Messaging Aggregator and Bulk SMS Provider in Uganda.',
+        contactPoint: {
+          '@type': 'ContactPoint',
+          telephone: '+256-700-000000',
+          contactType: 'customer support',
+          areaServed: 'UG',
+          availableLanguage: ['English', 'Luganda'],
+        },
+      },
+      {
+        '@type': 'SoftwareApplication',
+        '@id': 'https://bulk.rangeview.co.ug/#software',
+        name: 'Range Bulk SMS Platform',
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'All',
+        offers: {
+          '@type': 'AggregateOffer',
+          priceCurrency: 'UGX',
+          lowPrice: '32',
+          highPrice: '45',
+          offerCount: '3',
+        },
+        description: 'Carrier-grade bulk SMS platform across Uganda with dedicated alphanumeric sender IDs, hardware gateways, and developer APIs.',
+      },
+    ],
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground selection:bg-primary/20 selection:text-primary">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       {/* Sticky Enterprise Header */}
       <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/85 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">

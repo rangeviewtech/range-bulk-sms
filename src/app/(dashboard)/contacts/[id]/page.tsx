@@ -1,8 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Edit, MessageSquare, Phone, Mail, MapPin } from 'lucide-react';
+import { ArrowLeft, Edit, MessageSquare, Mail, MapPin } from 'lucide-react';
 import Link from 'next/link';
+import { CountryFlagPhone } from '@/components/sms/country-flag-phone';
+import { CarrierBadge } from '@/components/sms/carrier-badge';
 
 export default function ContactDetailPage({ params: _params }: { params: Promise<{ id: string }> }) {
   return (
@@ -38,9 +40,12 @@ export default function ContactDetailPage({ params: _params }: { params: Promise
               <CardTitle>Contact Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Phone className="w-4 h-4 text-muted-foreground" />
-                <span>+256 700 123456</span>
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs font-medium text-muted-foreground">Phone Number & Network</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <CountryFlagPhone phone="+256700123456" asLink className="text-sm font-semibold text-foreground" />
+                  <CarrierBadge phone="+256700123456" showIcon={false} size="sm" />
+                </div>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-muted-foreground" />

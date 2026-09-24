@@ -19,14 +19,18 @@ export async function POST(
       return NextResponse.json({ success: false, error: 'Campaign not found' }, { status: 404 });
     }
 
-    if (!['SCHEDULED', 'PROCESSING'].includes(campaign.status)) {
+    if (['COMPLETED', 'CANCELLED', 'CANCELLING', 'FAILED'].includes(campaign.status)) {
       return NextResponse.json({ success: false, error: 'Campaign cannot be cancelled in its current state' }, { status: 400 });
     }
 
+    // If it's still preparing or running, it transitions to CANCELLING, then the dispatcher aborts it.
+    // If it's a DRAFT or SCHEDULED, we can immediately CANCEL it.
+    const isImmediate = ['DRAFT', 'SCHEDULED', 'PAUSED'].includes(campaign.status);
+    
     await prisma.campaign.update({
       where: { id },
       data: {
-        status: 'CANCELLED',
+        status: isImmediate ? 'CANCELLED' : 'CANCELLING',
         cancelledAt: new Date()
       }
     });
