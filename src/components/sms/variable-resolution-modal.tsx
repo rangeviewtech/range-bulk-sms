@@ -611,7 +611,7 @@ export function VariableResolutionModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[96vw] max-w-5xl max-h-[92vh] flex flex-col p-0 overflow-hidden shadow-2xl border-border bg-card">
+      <DialogContent className="w-[96vw] max-w-7xl 2xl:max-w-[1536px] max-h-[92vh] flex flex-col p-0 overflow-hidden shadow-2xl border-border bg-card">
         {/* Header */}
         <DialogHeader className="px-6 pt-5 pb-4 border-b border-border bg-muted/20 space-y-1.5">
           <div className="flex items-center justify-between">
@@ -635,7 +635,7 @@ export function VariableResolutionModal({
         <div className="px-6 py-3.5 border-b border-border/80 bg-muted/10">
           <div className="flex flex-col md:flex-row gap-3 justify-between items-stretch md:items-center">
             {/* Search Input */}
-            <div className="relative flex-1 max-w-md">
+            <div className="relative flex-1 max-w-md lg:max-w-lg">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
               <Input
                 placeholder="Search by recipient phone or variable values..."
