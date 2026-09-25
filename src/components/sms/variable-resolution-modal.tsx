@@ -622,11 +622,11 @@ export function VariableResolutionModal({
           </div>
           <DialogDescription className="text-xs text-muted-foreground leading-relaxed flex flex-wrap items-center gap-1.5">
             <span>Your message contains <strong>{variables.length} variable(s)</strong>:</span>
-            <div className="inline-flex items-center gap-1 flex-wrap">
+            <span className="inline-flex items-center gap-1 flex-wrap">
               {variables.map((v) => (
                 <TemplateHighlighter key={v} text={`{{${v}}}`} />
               ))}
-            </div>
+            </span>
             <span>Provide values for each recipient, upload a spreadsheet, or customize individual plain text messages.</span>
           </DialogDescription>
         </DialogHeader>
