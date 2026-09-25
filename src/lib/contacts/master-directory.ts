@@ -280,6 +280,29 @@ export function getMasterContacts(): MasterContact[] {
   return all;
 }
 
+let cachedPhoneMatches: Map<string, MasterContact[]> | null = null;
+
+/**
+ * Returns a pre-indexed map of phone -> MasterContact[] for O(1) contact enrichment,
+ * preventing expensive loop iterations on every request.
+ */
+export function getMasterPhoneMatches(): Map<string, MasterContact[]> {
+  if (cachedPhoneMatches) {
+    return cachedPhoneMatches;
+  }
+
+  const contacts = getMasterContacts();
+  const map = new Map<string, MasterContact[]>();
+  for (const mc of contacts) {
+    const list = map.get(mc.phone) || [];
+    list.push(mc);
+    map.set(mc.phone, list);
+  }
+
+  cachedPhoneMatches = map;
+  return map;
+}
+
 /**
  * Returns contacts belonging to a specific group by ID or name
  */
@@ -296,3 +319,4 @@ export function getMasterGroupMembers(groupIdOrName: string): MasterContact[] {
 export function getMasterGroups(): GroupItem[] {
   return MASTER_GROUPS;
 }
+

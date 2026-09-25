@@ -3,7 +3,7 @@ import { prisma, Prisma } from '@/lib/prisma';
 import { requirePermission } from '@/lib/auth/authorization';
 import { successResponse, paginatedResponse, errorResponse } from '@/lib/api';
 import { createContactSchema } from '@/lib/validations/contacts';
-import { getMasterContacts, MasterContact } from '@/lib/contacts/master-directory';
+import { getMasterContacts, getMasterGroupMembers, getMasterPhoneMatches, MasterContact } from '@/lib/contacts/master-directory';
 
 export async function GET(req: NextRequest) {
   try {
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get('search') || '';
     const groupId = searchParams.get('groupId') || searchParams.get('group');
 
-    // 1. Fetch any database contacts for this user
+    // 1. Fetch any database contacts for this user (scoped to group if requested)
     let dbContacts: Array<{
       id: string;
       firstName: string | null;
@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
         where: {
           userId: session.userId,
           deletedAt: null,
+          ...(groupId ? { groups: { some: { contactGroup: { id: groupId } } } } : {}),
         },
         orderBy: { createdAt: 'desc' },
         include: {
@@ -72,14 +73,9 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    // 3. Get master contacts directory (5,695 contacts)
-    const masterContacts = getMasterContacts();
-    const masterPhoneMatches = new Map<string, MasterContact[]>();
-    for (const mc of masterContacts) {
-      const list = masterPhoneMatches.get(mc.phone) || [];
-      list.push(mc);
-      masterPhoneMatches.set(mc.phone, list);
-    }
+    // 3. Get master contacts directory (using pre-indexed phone map for O(1) matching)
+    const masterPhoneMatches = getMasterPhoneMatches();
+    const masterContacts = groupId ? getMasterGroupMembers(groupId) : getMasterContacts();
 
     // 4. Merge: DB contacts take priority, inheriting all groups from master matches
     const enrichedDbContacts = mappedDbContacts.map((c) => {

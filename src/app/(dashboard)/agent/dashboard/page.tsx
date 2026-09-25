@@ -100,12 +100,14 @@ export default function AgentDashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">
+            <div className="text-2xl font-bold text-foreground h-8 flex items-center">
               {loading ? <div className="h-7 w-16 bg-muted animate-pulse rounded" /> : data?.totalClients || 0}
             </div>
-            <Link href="/agent/clients" className="text-xs text-secondary hover:underline mt-1 inline-block dark:text-primary">
-              Manage clients &rarr;
-            </Link>
+            <div className="h-5 flex items-center mt-1">
+              <Link href="/agent/clients" className="text-xs text-secondary hover:underline inline-block dark:text-primary">
+                Manage clients &rarr;
+              </Link>
+            </div>
           </CardContent>
         </Card>
 
@@ -117,14 +119,16 @@ export default function AgentDashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">
+            <div className="text-2xl font-bold text-foreground h-8 flex items-center">
               {loading ? (
                 <div className="h-7 w-20 bg-muted animate-pulse rounded" />
               ) : (
                 (data?.clientSmsVolume || 0).toLocaleString()
               )}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">Dispatched by your portfolio</p>
+            <div className="h-5 flex items-center mt-1">
+              <p className="text-xs text-muted-foreground">Dispatched by your portfolio</p>
+            </div>
           </CardContent>
         </Card>
 
@@ -136,14 +140,16 @@ export default function AgentDashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground whitespace-nowrap">
+            <div className="text-2xl font-bold text-foreground whitespace-nowrap h-8 flex items-center">
               {loading ? (
                 <div className="h-7 w-28 bg-muted animate-pulse rounded" />
               ) : (
                 `UGX ${(data?.totalRevenue || 0).toLocaleString()}`
               )}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">Total client spend</p>
+            <div className="h-5 flex items-center mt-1">
+              <p className="text-xs text-muted-foreground">Total client spend</p>
+            </div>
           </CardContent>
         </Card>
 
@@ -156,16 +162,18 @@ export default function AgentDashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-secondary dark:text-primary whitespace-nowrap">
+            <div className="text-2xl font-bold text-secondary dark:text-primary whitespace-nowrap h-8 flex items-center">
               {loading ? (
                 <div className="h-7 w-24 bg-muted animate-pulse rounded" />
               ) : (
                 `UGX ${(data?.pendingCommissions || 0).toLocaleString()}`
               )}
             </div>
-            <Link href="/agent/commissions" className="text-xs text-secondary hover:underline mt-1 inline-block dark:text-primary">
-              View ledger &rarr;
-            </Link>
+            <div className="h-5 flex items-center mt-1">
+              <Link href="/agent/commissions" className="text-xs text-secondary hover:underline inline-block dark:text-primary">
+                View ledger &rarr;
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -179,17 +187,17 @@ export default function AgentDashboardPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {loading ? (
-            <div className="h-[320px] w-full bg-muted/30 animate-pulse rounded-lg flex items-center justify-center">
-              <p className="text-xs text-muted-foreground">Loading performance trends...</p>
-            </div>
-          ) : !data?.monthlyTrends || data.monthlyTrends.length === 0 ? (
-            <div className="h-[300px] flex items-center justify-center border border-dashed rounded-lg">
-              <p className="text-sm text-muted-foreground">No monthly trends data available yet</p>
-            </div>
-          ) : (
-            <div className="h-[260px] sm:h-[320px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+          <div className="h-[280px] sm:h-[320px] w-full">
+            {loading ? (
+              <div className="h-full w-full bg-muted/30 animate-pulse rounded-lg flex items-center justify-center">
+                <p className="text-xs text-muted-foreground">Loading performance trends...</p>
+              </div>
+            ) : !data?.monthlyTrends || data.monthlyTrends.length === 0 ? (
+              <div className="h-full w-full flex items-center justify-center border border-dashed rounded-lg">
+                <p className="text-sm text-muted-foreground">No monthly trends data available yet</p>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%" minHeight={280}>
                 <AreaChart data={data.monthlyTrends} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="agentVolumeGrad" x1="0" y1="0" x2="0" y2="1">
@@ -236,8 +244,8 @@ export default function AgentDashboardPage() {
                   />
                 </AreaChart>
               </ResponsiveContainer>
-            </div>
-          )}
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -43,7 +43,6 @@ import {
 import { Pagination } from '@/components/ui/pagination';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import readXlsxFile from 'read-excel-file/browser';
 import { TemplateHighlighter } from '@/components/sms/template-highlighter';
 
 export interface VariableResolutionModalProps {
@@ -318,6 +317,7 @@ export function VariableResolutionModal({
 
       const fileName = file.name.toLowerCase();
       if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+        const { default: readXlsxFile } = await import('read-excel-file/browser');
         const rawResult = await readXlsxFile(file);
         let parsedExcelRows: unknown[][] = [];
         if (Array.isArray(rawResult) && rawResult.length > 0) {

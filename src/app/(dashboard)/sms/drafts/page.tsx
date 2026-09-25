@@ -41,13 +41,18 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { ConfirmationDialog } from '@/components/feedback/confirmation-dialog';
+import dynamic from 'next/dynamic';
 import { Pagination } from '@/components/ui/pagination';
 import { SortableHeader } from '@/components/ui/sortable-header';
 import { useTableState } from '@/hooks/use-table-state';
 import { SmsDraft } from '@/types/sms-draft';
 import { cn } from '@/lib/utils';
 import { TemplateHighlighter } from '@/components/sms/template-highlighter';
+
+const ConfirmationDialog = dynamic(
+  () => import('@/components/feedback/confirmation-dialog').then((mod) => mod.ConfirmationDialog),
+  { ssr: false }
+);
 
 function formatRelativeTime(dateStr: string): string {
   try {

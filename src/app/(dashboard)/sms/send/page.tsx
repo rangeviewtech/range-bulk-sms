@@ -1,9 +1,18 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { VariableResolutionModal } from '@/components/sms/variable-resolution-modal';
+import dynamic from 'next/dynamic';
 import { extractVariablesFromText, renderPreviewWithSamples } from '@/lib/sms/custom-variables';
-import { GrammarCheckModal } from '@/components/sms/grammar-check-modal';
+
+const VariableResolutionModal = dynamic(
+  () => import('@/components/sms/variable-resolution-modal').then((mod) => mod.VariableResolutionModal),
+  { ssr: false }
+);
+
+const GrammarCheckModal = dynamic(
+  () => import('@/components/sms/grammar-check-modal').then((mod) => mod.GrammarCheckModal),
+  { ssr: false }
+);
 import { VariableDropdown } from '@/components/sms/variable-dropdown';
 import { PhoneRecipientsInput, type PhoneRecipientsInputHandle, getCachedBadgeMeta } from '@/components/sms/phone-recipients-input';
 import { CountryPickerDropdown } from '@/components/sms/country-picker-dropdown';

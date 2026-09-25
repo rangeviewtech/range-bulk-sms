@@ -96,7 +96,18 @@ const nextConfig: NextConfig = {
 
   // Bundle optimization for heavy third-party modules
   experimental: {
-    optimizePackageImports: ['lucide-react', 'recharts', 'date-fns'],
+    optimizePackageImports: [
+      'lucide-react',
+      'recharts',
+      'date-fns',
+      'lodash',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-select',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-tabs',
+      '@radix-ui/react-tooltip',
+      '@radix-ui/react-popover',
+    ],
   },
 
   // Image optimization

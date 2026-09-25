@@ -136,6 +136,7 @@ async function main() {
     'reports.view', 'sms.view', 'support.view',
     'contacts.view', 'contacts.manage', 'contacts.import',
     'sms.send', 'sms.schedule', 'campaigns.create',
+    'sender_ids.view', 'sender_ids.manage', 'wallet.view',
   ]
   for (const action of agentPermissions) {
     const perm = allPermissions.find(p => p.action === action)
