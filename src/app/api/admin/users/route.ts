@@ -10,8 +10,15 @@ import { logAudit } from '@/lib/security/audit';
 
 export async function GET(req: Request) {
   const session = await verifySession();
-  if (!session || !(await hasPermission(session.userId, 'users.read') || await hasPermission(session.userId, 'users.manage'))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const [canRead, canManage] = await Promise.all([
+    hasPermission(session.userId, 'users.read'),
+    hasPermission(session.userId, 'users.manage'),
+  ]);
+  if (!canRead && !canManage) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   const { searchParams } = new URL(req.url);
@@ -59,8 +66,11 @@ const createUserSchema = z.object({
 
 export async function POST(req: Request) {
   const session = await verifySession();
-  if (!session || !(await hasPermission(session.userId, 'users.manage'))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  if (!(await hasPermission(session.userId, 'users.manage'))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   try {
@@ -135,8 +145,11 @@ const updateUserStatusSchema = z.object({
 
 export async function PATCH(req: Request) {
   const session = await verifySession();
-  if (!session || !(await hasPermission(session.userId, 'users.manage'))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  if (!(await hasPermission(session.userId, 'users.manage'))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   try {

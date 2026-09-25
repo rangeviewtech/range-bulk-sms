@@ -6,8 +6,11 @@ import { smsPricingSchema } from '@/lib/validations/wallet';
 
 export async function GET(req: Request) {
   const session = await verifySession();
-  if (!session || !(await hasPermission(session.userId, 'pricing.manage'))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  if (!(await hasPermission(session.userId, 'pricing.manage'))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   const { searchParams } = new URL(req.url);
@@ -32,8 +35,11 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const session = await verifySession();
-  if (!session || !(await hasPermission(session.userId, 'pricing.manage'))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  if (!(await hasPermission(session.userId, 'pricing.manage'))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   try {

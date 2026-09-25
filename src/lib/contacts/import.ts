@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { normalizePhoneNumber } from '@/lib/sms/normalizer';
+import { sanitizeSpreadsheetField } from '@/lib/security/csv-sanitizer';
 import { ContactService } from './service';
 
 export interface InvalidContactItem {
@@ -130,9 +131,9 @@ export const ContactImportService = {
     for (let i = 0; i < records.length; i++) {
       const record = records[i];
       const rawPhone = (record[mapping.phone] || '').trim();
-      const firstName = mapping.firstName && record[mapping.firstName] ? record[mapping.firstName].trim() : undefined;
-      const lastName = mapping.lastName && record[mapping.lastName] ? record[mapping.lastName].trim() : undefined;
-      const email = mapping.email && record[mapping.email] ? record[mapping.email].trim() : undefined;
+      const firstName = mapping.firstName && record[mapping.firstName] ? sanitizeSpreadsheetField(record[mapping.firstName]) : undefined;
+      const lastName = mapping.lastName && record[mapping.lastName] ? sanitizeSpreadsheetField(record[mapping.lastName]) : undefined;
+      const email = mapping.email && record[mapping.email] ? sanitizeSpreadsheetField(record[mapping.email]) : undefined;
 
       if (!rawPhone) {
         invalidContacts.push({

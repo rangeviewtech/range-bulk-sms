@@ -199,6 +199,32 @@ export async function proxy(request: NextRequest) {
     }
   }
 
+  // 6.1 Admin Routes Guard (Edge Defense-in-Depth)
+  const isAdminPath = pathname === '/admin' || pathname.startsWith('/admin/') || pathname.startsWith('/api/admin');
+  if (isAdminPath) {
+    if (!hasSession) {
+      if (pathname.startsWith('/api/')) {
+        return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+      const redirectUrl = new URL('/login', request.url);
+      redirectUrl.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    if (!sessionRoles.includes('ADMIN')) {
+      if (pathname.startsWith('/api/')) {
+        return new NextResponse(JSON.stringify({ error: 'Forbidden: Admin access required' }), {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+  }
+
   if (pathname === '/screen-lock') {
     const screenLocked =
       signedScreenLocked || request.cookies.get('screen_locked')?.value === 'true';
@@ -215,6 +241,10 @@ export async function proxy(request: NextRequest) {
   requestHeaders.set('x-request-id', requestId);
   const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set('x-request-id', requestId);
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
   return response;
 }
 

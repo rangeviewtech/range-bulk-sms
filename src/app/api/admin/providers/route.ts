@@ -6,8 +6,11 @@ import { smsProviderSchema } from '@/lib/validations/sender-id';
 
 export async function GET(_req: Request) {
   const session = await verifySession();
-  if (!session || !(await hasPermission(session.userId, 'providers.manage'))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  if (!(await hasPermission(session.userId, 'providers.manage'))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   const providers = await prisma.smsProvider.findMany({
     orderBy: { priority: 'asc' }
@@ -17,8 +20,11 @@ export async function GET(_req: Request) {
 
 export async function POST(req: Request) {
   const session = await verifySession();
-  if (!session || !(await hasPermission(session.userId, 'providers.manage'))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  if (!(await hasPermission(session.userId, 'providers.manage'))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   try {
     const body = await req.json().catch(() => ({}));

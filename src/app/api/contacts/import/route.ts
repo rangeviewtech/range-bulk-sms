@@ -8,16 +8,23 @@ import { ContactImportService } from '@/lib/contacts/import';
 export async function POST(req: NextRequest) {
   try {
     const session = await requirePermission('contacts.import');
-    const body = await req.json();
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== 'object') {
+      return errorResponse('Invalid JSON payload', 400);
+    }
 
     // Direct batch records import
     if (Array.isArray(body.records) && body.records.length > 0 && body.mapping?.phone) {
+      if (body.records.length > 5000) {
+        return errorResponse('Batch import exceeds maximum allowed limit of 5,000 records per request', 400);
+      }
       const mapping = body.mapping;
+      const groupId = typeof body.groupId === 'string' && body.groupId.trim().length > 0 ? body.groupId.trim() : undefined;
       const result = await ContactImportService.importRecords(
         session.userId,
         body.records,
         mapping,
-        body.groupId,
+        groupId,
         body.status === 'OPTED_OUT' ? 'OPTED_OUT' : 'ACTIVE'
       );
       return successResponse(result, `Successfully imported ${result.importedRecords} contacts`, 201);

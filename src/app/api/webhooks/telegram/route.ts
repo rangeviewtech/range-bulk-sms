@@ -29,24 +29,32 @@ import { prisma as db } from '@/lib/prisma';
  *       401:
  *         description: Unauthorized (Invalid Secret Token)
  */
+import crypto from 'crypto';
+
 export async function POST(req: Request) {
   try {
-    // 1. Secret verification (optional but recommended in production)
-    const secretToken = req.headers.get('X-Telegram-Bot-Api-Secret-Token');
-    if (!process.env.TELEGRAM_WEBHOOK_SECRET) return NextResponse.json({}, { status: 401 });
-    if (process.env.TELEGRAM_WEBHOOK_SECRET) {
-      if (!secretToken) return NextResponse.json({}, { status: 401 });
+    // 1. Secret verification (X-Telegram-Bot-Api-Secret-Token)
+    const configuredSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
+    if (configuredSecret) {
+      const secretToken = req.headers.get('x-telegram-bot-api-secret-token');
+      if (!secretToken) {
+        return NextResponse.json({ error: 'Missing webhook secret token' }, { status: 401 });
+      }
 
-      const crypto = await import('crypto');
-      const expected = Buffer.from(process.env.TELEGRAM_WEBHOOK_SECRET);
+      const expected = Buffer.from(configuredSecret);
       const actual = Buffer.from(secretToken);
 
       if (expected.length !== actual.length || !crypto.timingSafeEqual(expected, actual)) {
-        return NextResponse.json({}, { status: 401 });
+        return NextResponse.json({ error: 'Invalid webhook secret token' }, { status: 401 });
       }
+    } else if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
     }
 
-    const body = await req.json();
+    const body = await req.json().catch(() => null);
+    if (!body) {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    }
 
     // 2. We only care about messages
     const message = body.message;
@@ -64,7 +72,13 @@ export async function POST(req: Request) {
 
     // 3. Handle "/start <token>" for linking accounts
     if (text.startsWith('/start ')) {
-      const token = text.split(' ')[1];
+      const parts = text.split(/\s+/);
+      const token = parts[1]?.trim();
+
+      if (!token || token.length < 8 || token.length > 128) {
+        await sendTelegramReply(chatId, '❌ Invalid or expired linking token.');
+        return NextResponse.json({ ok: true });
+      }
 
       // Find un-used, un-expired token
       const linkingToken = await db.telegramLinkingToken.findUnique({

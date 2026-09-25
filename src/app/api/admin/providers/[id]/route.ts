@@ -5,8 +5,11 @@ import { hasPermission } from '@/lib/auth/authorization';
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await verifySession();
-  if (!session || !(await hasPermission(session.userId, 'providers.manage'))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  if (!(await hasPermission(session.userId, 'providers.manage'))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   const { id } = await params;
   try {
@@ -34,8 +37,11 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await verifySession();
-  if (!session || !(await hasPermission(session.userId, 'providers.manage'))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  if (!(await hasPermission(session.userId, 'providers.manage'))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   const { id } = await params;
   try {

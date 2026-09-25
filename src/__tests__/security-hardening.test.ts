@@ -1,10 +1,12 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
 import {
   isPrivateOrReservedIpv4,
   isPrivateOrReservedIpv6,
   validateSsrfUrl,
 } from '@/lib/security/ssrf-filter';
-import { sanitizeCsvField, buildSanitizedCsv } from '@/lib/security/csv-sanitizer';
+import { sanitizeCsvField, buildSanitizedCsv, sanitizeSpreadsheetField } from '@/lib/security/csv-sanitizer';
+import { verifyEdgeSession } from '@/lib/auth/edge-session';
+import { SignJWT } from 'jose';
 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
@@ -107,6 +109,21 @@ describe('Production Security Hardening Suite', () => {
       expect(lines[1]).toBe('"\'=cmd|/C calc!A0","\'+256700000000","Safe regular note"');
       expect(lines[2]).toBe('"Jane ""The Boss"" Doe","0772000000","\'@malicious_tag"');
     });
+
+    it('neutralizes individual input values with sanitizeSpreadsheetField', () => {
+      expect(sanitizeSpreadsheetField('=1+1')).toBe(`'=1+1`);
+      expect(sanitizeSpreadsheetField('+256700000000')).toBe(`'+256700000000`);
+      expect(sanitizeSpreadsheetField('-100')).toBe(`'-100`);
+      expect(sanitizeSpreadsheetField('@SUM(A1)')).toBe(`'@SUM(A1)`);
+      expect(sanitizeSpreadsheetField('\tDDE')).toBe(`'\tDDE`);
+      expect(sanitizeSpreadsheetField('\rCOMMAND')).toBe(`'\rCOMMAND`);
+      expect(sanitizeSpreadsheetField('John Doe')).toBe('John Doe');
+      expect(sanitizeSpreadsheetField('  Alice  ')).toBe('Alice');
+      expect(sanitizeSpreadsheetField(null)).toBeUndefined();
+      expect(sanitizeSpreadsheetField(undefined)).toBeUndefined();
+      expect(sanitizeSpreadsheetField('')).toBeUndefined();
+      expect(sanitizeSpreadsheetField('   ')).toBeUndefined();
+    });
   });
 
   describe('Hardware Gateway Replay and State Protection', () => {
@@ -182,6 +199,99 @@ describe('Production Security Hardening Suite', () => {
           }),
         })
       );
+    });
+  });
+
+  describe('Edge-Level Session Verification & Defense-in-Depth', () => {
+    const testSecret = 'test-secret-key-that-is-at-least-32-chars-long';
+
+    beforeAll(() => {
+      process.env.AUTH_SECRET = testSecret;
+    });
+
+    it('verifies a valid signed JWT session token with roles and mfa status', async () => {
+      const payload = {
+        sessionId: 'sess-12345',
+        userId: 'user-admin-01',
+        mfaVerified: true,
+        rememberMe: true,
+        roles: ['ADMIN'],
+        expiresAt: new Date(Date.now() + 3600 * 1000).toISOString(),
+        idleExpiresAt: null,
+      };
+
+      const key = new TextEncoder().encode(testSecret);
+      const token = await new SignJWT(payload)
+        .setProtectedHeader({ alg: 'HS256' })
+        .setIssuedAt()
+        .setExpirationTime('1h')
+        .sign(key);
+
+      const verified = await verifyEdgeSession(token);
+      expect(verified).not.toBeNull();
+      expect(verified?.userId).toBe('user-admin-01');
+      expect(verified?.roles).toContain('ADMIN');
+      expect(verified?.mfaVerified).toBe(true);
+    });
+
+    it('rejects an expired session token', async () => {
+      const payload = {
+        sessionId: 'sess-expired',
+        userId: 'user-02',
+        mfaVerified: true,
+        rememberMe: false,
+        expiresAt: new Date(Date.now() - 60 * 1000).toISOString(), // expired 1 minute ago
+        idleExpiresAt: null,
+      };
+
+      const key = new TextEncoder().encode(testSecret);
+      const token = await new SignJWT(payload)
+        .setProtectedHeader({ alg: 'HS256' })
+        .setIssuedAt()
+        .sign(key);
+
+      const verified = await verifyEdgeSession(token);
+      expect(verified).toBeNull();
+    });
+
+    it('rejects tokens signed with an invalid or untrusted key', async () => {
+      const payload = {
+        sessionId: 'sess-tampered',
+        userId: 'user-attacker',
+        mfaVerified: true,
+        rememberMe: true,
+        roles: ['ADMIN'],
+        expiresAt: new Date(Date.now() + 3600 * 1000).toISOString(),
+        idleExpiresAt: null,
+      };
+
+      const attackerKey = new TextEncoder().encode('attacker-provided-secret-key-at-least-32-chars-long');
+      const token = await new SignJWT(payload)
+        .setProtectedHeader({ alg: 'HS256' })
+        .setIssuedAt()
+        .sign(attackerKey);
+
+      const verified = await verifyEdgeSession(token);
+      expect(verified).toBeNull();
+    });
+
+    it('returns null when given null or empty token', async () => {
+      expect(await verifyEdgeSession(null)).toBeNull();
+      expect(await verifyEdgeSession('')).toBeNull();
+      expect(await verifyEdgeSession(undefined)).toBeNull();
+    });
+  });
+
+  describe('Webhook Authentication & Telegram Secret Token Security', () => {
+    it('verifies constant-time comparison for secret tokens', async () => {
+      const crypto = await import('crypto');
+      const secret = 'super-secret-telegram-webhook-token-12345';
+      const expected = Buffer.from(secret);
+      const valid = Buffer.from(secret);
+      const invalid = Buffer.from('attacker-wrong-secret-token-padding123');
+
+      expect(expected.length === valid.length && crypto.timingSafeEqual(expected, valid)).toBe(true);
+      expect(expected.length === invalid.length && crypto.timingSafeEqual(expected, invalid)).toBe(false);
     });
   });
 });

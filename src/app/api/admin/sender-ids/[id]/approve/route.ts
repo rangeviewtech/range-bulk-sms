@@ -12,8 +12,11 @@ const approveSchema = z.object({
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await verifySession();
-  if (!session || !(await hasPermission(session.userId, 'sender_ids.approve'))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  if (!(await hasPermission(session.userId, 'sender_ids.approve'))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   const { id } = await params;
   try {

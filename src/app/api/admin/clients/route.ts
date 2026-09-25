@@ -8,8 +8,15 @@ import { z } from 'zod';
 
 export async function GET(req: Request) {
   const session = await verifySession();
-  if (!session || !(await hasPermission(session.userId, 'clients.view') || await hasPermission(session.userId, 'clients.manage'))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const [canView, canManage] = await Promise.all([
+    hasPermission(session.userId, 'clients.view'),
+    hasPermission(session.userId, 'clients.manage'),
+  ]);
+  if (!canView && !canManage) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   const { searchParams } = new URL(req.url);
@@ -43,8 +50,11 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const session = await verifySession();
-  if (!session || !(await hasPermission(session.userId, 'clients.manage'))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  if (!(await hasPermission(session.userId, 'clients.manage'))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   try {
@@ -116,8 +126,11 @@ const updateClientStatusSchema = z.object({
 
 export async function PATCH(req: Request) {
   const session = await verifySession();
-  if (!session || !(await hasPermission(session.userId, 'clients.manage'))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  if (!(await hasPermission(session.userId, 'clients.manage'))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   try {

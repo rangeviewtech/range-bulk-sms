@@ -5,8 +5,15 @@ import { hasPermission } from '@/lib/auth/authorization';
 
 export async function GET(req: Request) {
   const session = await verifySession();
-  if (!session || !(await hasPermission(session.userId, 'sender_ids.view') || await hasPermission(session.userId, 'sender_ids.manage'))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const [canView, canManage] = await Promise.all([
+    hasPermission(session.userId, 'sender_ids.view'),
+    hasPermission(session.userId, 'sender_ids.manage'),
+  ]);
+  if (!canView && !canManage) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   const { searchParams } = new URL(req.url);

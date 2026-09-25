@@ -38,3 +38,22 @@ export function buildSanitizedCsv(headers: string[], rows: (string | number | bo
   const sanitizedRows = rows.map((row) => row.map((cell) => sanitizeCsvField(cell)).join(','));
   return [sanitizedHeaders, ...sanitizedRows].join('\n');
 }
+
+/**
+ * Neutralizes formula triggers from string inputs (e.g. contact name, email)
+ * before persistence to prevent stored formula injection attacks.
+ */
+export function sanitizeSpreadsheetField(val?: string | null): string | undefined {
+  if (val === null || val === undefined) return undefined;
+  const raw = String(val);
+  if (!raw.trim()) return undefined;
+  if (FORMULA_TRIGGERS.some((prefix) => raw.startsWith(prefix))) {
+    return `'${raw}`;
+  }
+  const trimmed = raw.trim();
+  if (FORMULA_TRIGGERS.some((prefix) => trimmed.startsWith(prefix))) {
+    return `'${trimmed}`;
+  }
+  return trimmed;
+}
+
