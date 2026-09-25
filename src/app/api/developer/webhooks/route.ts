@@ -4,6 +4,7 @@ import { requireAuth } from '@/lib/auth/session';
 import crypto from 'crypto';
 import { z } from 'zod';
 import { AppError } from '@/lib/errors';
+import { validateSsrfUrl } from '@/lib/security/ssrf-filter';
 
 const createWebhookSchema = z.object({
   url: z.string().url('A valid HTTPS or HTTP URL is required'),
@@ -47,6 +48,15 @@ export async function POST(req: NextRequest) {
     }
 
     const { url, description, events } = parsed.data;
+
+    // Validate URL against SSRF (blocks localhost, 169.254.x, RFC1918 private IPs, etc.)
+    const ssrfCheck = await validateSsrfUrl(url);
+    if (!ssrfCheck.isSafe) {
+      return NextResponse.json(
+        { success: false, error: `Invalid webhook destination: ${ssrfCheck.reason}` },
+        { status: 400 }
+      );
+    }
 
     // Generate cryptographic HMAC secret for webhook payload signing
     const secret = `whsec_${crypto.randomBytes(24).toString('hex')}`;

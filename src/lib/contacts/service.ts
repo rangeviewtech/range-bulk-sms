@@ -23,8 +23,8 @@ export const ContactService = {
   },
   
   async findMany(userId: string, params: { page?: number; limit?: number; search?: string; groupId?: string; tagId?: string; optedOut?: boolean; blacklisted?: boolean }) {
-    const page = params.page || 1;
-    const limit = params.limit || 20;
+    const page = Math.max(1, isNaN(Number(params.page)) ? 1 : Number(params.page));
+    const limit = Math.min(100, Math.max(1, isNaN(Number(params.limit)) ? 20 : Number(params.limit)));
     const skip = (page - 1) * limit;
 
     const where: import("@/generated/prisma/client").Prisma.ContactWhereInput = { userId, deletedAt: null };

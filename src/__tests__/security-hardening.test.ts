@@ -1,10 +1,19 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   isPrivateOrReservedIpv4,
   isPrivateOrReservedIpv6,
   validateSsrfUrl,
 } from '@/lib/security/ssrf-filter';
 import { sanitizeCsvField, buildSanitizedCsv } from '@/lib/security/csv-sanitizer';
+
+vi.mock('@/lib/prisma', () => ({
+  prisma: {
+    contact: {
+      findMany: vi.fn().mockResolvedValue([]),
+      count: vi.fn().mockResolvedValue(0),
+    },
+  },
+}));
 
 describe('Production Security Hardening Suite', () => {
   describe('SSRF Protection (Server-Side Request Forgery)', () => {
@@ -114,4 +123,66 @@ describe('Production Security Hardening Suite', () => {
       expect(shouldBlock).toBe(true);
     });
   });
+
+  describe('Unbounded Query DoS Hardening & Tenant Isolation', () => {
+    it('clamps pagination limit to maximum 100 and minimum 1 in ContactService', async () => {
+      const { ContactService } = await import('@/lib/contacts/service');
+      const { prisma } = await import('@/lib/prisma');
+
+      // Test 1: Excessive limit (DoS attempt) should be clamped to 100
+      await ContactService.findMany('tenant-user-1', { limit: 10000, page: 1 });
+      expect(prisma.contact.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          take: 100,
+          skip: 0,
+          where: expect.objectContaining({ userId: 'tenant-user-1', deletedAt: null }),
+        })
+      );
+
+      // Test 2: Negative/zero page should be clamped to 1 (skip: 0)
+      await ContactService.findMany('tenant-user-1', { limit: 50, page: -3 });
+      expect(prisma.contact.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          take: 50,
+          skip: 0,
+        })
+      );
+
+      // Test 3: Normal valid pagination (page 3, limit 25 -> skip 50)
+      await ContactService.findMany('tenant-user-2', { limit: 25, page: 3 });
+      expect(prisma.contact.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          take: 25,
+          skip: 50,
+          where: expect.objectContaining({ userId: 'tenant-user-2', deletedAt: null }),
+        })
+      );
+
+      // Test 4: NaN fallback defaults to limit 20, page 1
+      await ContactService.findMany('tenant-user-3', { limit: Number('invalid'), page: Number('invalid') });
+      expect(prisma.contact.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          take: 20,
+          skip: 0,
+          where: expect.objectContaining({ userId: 'tenant-user-3', deletedAt: null }),
+        })
+      );
+    });
+
+    it('strictly enforces multi-tenant isolation in ContactService query filters', async () => {
+      const { ContactService } = await import('@/lib/contacts/service');
+      const { prisma } = await import('@/lib/prisma');
+
+      await ContactService.findMany('isolated-user-abc', { search: 'John' });
+      expect(prisma.contact.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            userId: 'isolated-user-abc',
+            deletedAt: null,
+          }),
+        })
+      );
+    });
+  });
 });
+

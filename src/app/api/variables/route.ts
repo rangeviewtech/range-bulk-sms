@@ -5,6 +5,7 @@ import {
   SYSTEM_VARIABLES,
   MAX_CUSTOM_VARIABLES,
   checkVariableConflict,
+  type VariableDataType,
 } from '@/lib/sms/custom-variables';
 import { customVariableSchema } from '@/lib/validations/sms';
 
@@ -68,7 +69,7 @@ export async function POST(req: NextRequest) {
       description: v.description || undefined,
       fallbackValue: v.fallbackValue || undefined,
       sampleValue: v.sampleValue || '',
-      dataType: v.dataType as any,
+      dataType: v.dataType as VariableDataType,
       isSystem: false,
       createdAt: v.createdAt.toISOString(),
       updatedAt: v.updatedAt.toISOString(),
@@ -152,7 +153,7 @@ export async function PUT(req: NextRequest) {
       description: v.description || undefined,
       fallbackValue: v.fallbackValue || undefined,
       sampleValue: v.sampleValue || '',
-      dataType: v.dataType as any,
+      dataType: v.dataType as VariableDataType,
       isSystem: false,
       createdAt: v.createdAt.toISOString(),
       updatedAt: v.updatedAt.toISOString(),

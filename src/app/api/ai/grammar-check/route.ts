@@ -9,7 +9,7 @@ const requestSchema = z.object({
 
 export async function POST(req: Request) {
   try {
-    const session = await requirePermission('sms.draft'); // Require auth before using AI
+    const _session = await requirePermission('sms.draft'); // Require auth before using AI
     
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {

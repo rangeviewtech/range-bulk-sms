@@ -11,8 +11,8 @@ export async function GET(
     const session = await requirePermission('sms.view');
     const { id } = await params;
 
-    const message = await prisma.message.findUnique({
-      where: { id },
+    const message = await prisma.message.findFirst({
+      where: { id, userId: session.userId },
       include: {
         recipients: {
           select: {
@@ -20,13 +20,13 @@ export async function GET(
             status: true,
             deliveredAt: true,
             failedAt: true,
-            failureReason: true
-          }
-        }
-      }
+            failureReason: true,
+          },
+        },
+      },
     });
 
-    if (!message || message.userId !== session.userId) {
+    if (!message) {
       return NextResponse.json({ success: false, error: 'Message not found' }, { status: 404 });
     }
 

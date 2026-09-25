@@ -620,7 +620,7 @@ export function VariableResolutionModal({
               Resolve Message Variables
             </DialogTitle>
           </div>
-          <div className="text-xs text-muted-foreground leading-relaxed flex flex-wrap items-center gap-1.5">
+          <DialogDescription className="text-xs text-muted-foreground leading-relaxed flex flex-wrap items-center gap-1.5">
             <span>Your message contains <strong>{variables.length} variable(s)</strong>:</span>
             <div className="inline-flex items-center gap-1 flex-wrap">
               {variables.map((v) => (
@@ -628,7 +628,7 @@ export function VariableResolutionModal({
               ))}
             </div>
             <span>Provide values for each recipient, upload a spreadsheet, or customize individual plain text messages.</span>
-          </div>
+          </DialogDescription>
         </DialogHeader>
 
         {/* Toolbar: Search, Filter & Quick Actions matching /sms/drafts */}

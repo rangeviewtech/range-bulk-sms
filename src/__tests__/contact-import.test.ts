@@ -12,6 +12,7 @@ vi.mock('@/lib/prisma', () => ({
       createMany: vi.fn(),
     },
     contactGroup: {
+      findUnique: vi.fn(),
       update: vi.fn(),
     },
     contactImport: {
@@ -107,6 +108,8 @@ describe('ContactImportService & Invalid Contact Separation', () => {
     prisma.contact.findMany.mockResolvedValue([{ id: 'c-1' }]);
     // @ts-expect-error Mocking prisma method
     prisma.contact.createMany.mockResolvedValue({ count: 1 });
+    // @ts-expect-error Mocking prisma method
+    prisma.contactGroup.findUnique.mockResolvedValue({ id: 'group-xyz', userId: 'user-123' });
     // @ts-expect-error Mocking prisma method
     prisma.contactGroup.update.mockResolvedValue({});
 
