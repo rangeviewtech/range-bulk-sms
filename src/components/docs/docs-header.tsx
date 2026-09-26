@@ -4,6 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ThemeToggle } from '@/components/navigation/theme-toggle';
+import { LanguageToggle } from '@/components/navigation/language-toggle';
 import {
   Search,
   Key,
@@ -237,6 +238,11 @@ export function DocsHeader({
               />
               <span className="whitespace-nowrap">{environment === 'sandbox' ? 'Sandbox' : 'Live'}</span>
             </button>
+          </div>
+
+          {/* Language Switcher */}
+          <div className="shrink-0">
+            <LanguageToggle />
           </div>
 
           {/* Theme Switcher */}

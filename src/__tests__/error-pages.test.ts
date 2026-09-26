@@ -79,6 +79,13 @@ describe('Error & 404 Pages UI/UX', () => {
       expect(screen.getByText(/Delivery Reports/i)).toBeTruthy();
       expect(screen.getByText(/Help & Support/i)).toBeTruthy();
     });
+
+    it('renders the language switcher toggle in the header', () => {
+      render(React.createElement(NotFoundContent));
+
+      const langTrigger = screen.getByRole('button', { name: /Select language/i });
+      expect(langTrigger).toBeTruthy();
+    });
   });
 
   describe('500 Error Page (ErrorPage)', () => {
@@ -124,6 +131,18 @@ describe('Error & 404 Pages UI/UX', () => {
 
       // Diagnostics should display digest reference
       expect(screen.getByText(/DIGEST_X/i)).toBeTruthy();
+    });
+
+    it('renders the language switcher toggle in the header', () => {
+      render(
+        React.createElement(ErrorPage, {
+          error: new Error('Critical server error') as Error & { digest?: string },
+          reset: vi.fn(),
+        })
+      );
+
+      const langTrigger = screen.getByRole('button', { name: /Select language/i });
+      expect(langTrigger).toBeTruthy();
     });
   });
 });

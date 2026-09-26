@@ -11,14 +11,25 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 import { useLanguage } from "@/hooks/use-language";
 import { SUPPORTED_LANGUAGES, LanguageCode } from "@/lib/i18n";
 
-export function LanguageToggle() {
+export interface LanguageToggleProps {
+  className?: string;
+  align?: "start" | "center" | "end";
+}
+
+export function LanguageToggle({ className, align = "end" }: LanguageToggleProps = {}) {
   const { language, setLanguage, currentLanguageMeta, dict } = useLanguage();
   const [open, setOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const isPointerDownRef = React.useRef(false);
   const [search, setSearch] = useState<string>('');
+
+  React.useEffect(() => {
+    setImageError(false);
+  }, [currentLanguageMeta?.code]);
 
   const filtered = SUPPORTED_LANGUAGES.filter((l) =>
     l.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -34,7 +45,10 @@ export function LanguageToggle() {
           id="top-nav-language-toggle-trigger"
           aria-label="Select language"
           title="Select language"
-          className="h-9 w-9 rounded-full transition-transform active:scale-95 text-muted-foreground hover:text-foreground"
+          className={cn(
+            "h-9 w-9 rounded-full transition-transform active:scale-95 text-muted-foreground hover:text-foreground",
+            className
+          )}
           onPointerDown={() => {
             isPointerDownRef.current = true;
           }}
@@ -45,10 +59,11 @@ export function LanguageToggle() {
             isPointerDownRef.current = false;
           }}
         >
-          {currentLanguageMeta.flag ? (
+          {currentLanguageMeta?.flag && !imageError ? (
             <img
               src={`https://flagcdn.com/20x15/${currentLanguageMeta.flag}.png`}
               alt={currentLanguageMeta.name}
+              onError={() => setImageError(true)}
               className="h-3.5 w-5 rounded-[2px] object-cover shadow-sm"
             />
           ) : (
@@ -58,7 +73,7 @@ export function LanguageToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        align="end"
+        align={align}
         className="w-60 p-1.5 rounded-xl border bg-popover text-popover-foreground shadow-xl z-50"
       >
         {/* Search Header */}

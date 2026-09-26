@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { RangeLogo } from '@/components/brand/range-logo';
 import { ThemeToggle } from '@/components/navigation/theme-toggle';
+import { LanguageToggle } from '@/components/navigation/language-toggle';
 import { Button } from '@/components/ui/button';
 import {
   AlertTriangle,
@@ -95,6 +96,7 @@ export default function ErrorPage({
                 <span>Support Center</span>
               </Link>
             </Button>
+            <LanguageToggle />
             <ThemeToggle />
           </div>
         </div>

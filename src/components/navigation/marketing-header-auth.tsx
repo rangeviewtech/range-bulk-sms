@@ -16,6 +16,7 @@ import {
 import { toast } from 'sonner';
 
 import { ThemeToggle } from '@/components/navigation/theme-toggle';
+import { LanguageToggle } from '@/components/navigation/language-toggle';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -40,6 +41,7 @@ interface MarketingHeaderAuthProps {
   initialUser?: HeaderUser | null;
   className?: string;
   showThemeToggle?: boolean;
+  showLanguageToggle?: boolean;
   children?: React.ReactNode;
 }
 
@@ -47,6 +49,7 @@ export function MarketingHeaderAuth({
   initialUser = null,
   className = '',
   showThemeToggle = true,
+  showLanguageToggle = true,
   children,
 }: MarketingHeaderAuthProps) {
   const [user, setUser] = useState<HeaderUser | null>(initialUser);
@@ -156,6 +159,9 @@ export function MarketingHeaderAuth({
 
   return (
     <div className={`flex items-center gap-2.5 sm:gap-3 ${className}`}>
+      {/* Language Switcher Toggle */}
+      {showLanguageToggle && <LanguageToggle />}
+
       {/* Theme Switcher Toggle */}
       {showThemeToggle && <ThemeToggle />}
       {children}

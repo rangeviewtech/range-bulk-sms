@@ -5,7 +5,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { RangeLogo } from '@/components/brand/range-logo';
 import { ThemeToggle } from '@/components/navigation/theme-toggle';
+import { LanguageToggle } from '@/components/navigation/language-toggle';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/hooks/use-language';
+import { cn } from '@/lib/utils';
 import {
   Home,
   ArrowLeft,
@@ -22,6 +25,7 @@ import {
 
 export function NotFoundContent() {
   const router = useRouter();
+  const { isRtl } = useLanguage();
 
   const handleGoBack = () => {
     if (typeof window !== 'undefined' && window.history.length > 1) {
@@ -100,6 +104,7 @@ export function NotFoundContent() {
                 <span>Support Center</span>
               </Link>
             </Button>
+            <LanguageToggle />
             <ThemeToggle />
           </div>
         </div>
@@ -173,7 +178,7 @@ export function NotFoundContent() {
             onClick={handleGoBack}
             className="text-xs text-muted-foreground hover:text-foreground font-medium px-3 mt-1 sm:mt-0 flex items-center gap-1.5"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
+            <ArrowLeft className={cn("w-3.5 h-3.5", isRtl && "rotate-180")} />
             <span>Return to Previous Page</span>
           </Button>
         </div>

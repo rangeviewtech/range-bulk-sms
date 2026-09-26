@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation';
 import { appConfig } from '@/config/app';
 import { appAssets } from '@/config/assets';
 import { MarketingHeaderAuth } from '@/components/navigation/marketing-header-auth';
-import { LanguageToggle } from '@/components/navigation/language-toggle';
 import { useLanguage } from '@/hooks/use-language';
 import { ShieldCheck, FileText, Cookie, ArrowLeft, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 
@@ -89,9 +88,7 @@ export function LegalLayout({
             </nav>
           </div>
 
-          <MarketingHeaderAuth showThemeToggle={true}>
-            <LanguageToggle />
-          </MarketingHeaderAuth>
+          <MarketingHeaderAuth showThemeToggle={true} showLanguageToggle={true} />
         </div>
       </header>
 
