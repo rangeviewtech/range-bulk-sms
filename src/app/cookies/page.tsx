@@ -1,4 +1,10 @@
 import { LegalLayout } from '@/components/layout/legal-layout';
+import { createMetadata } from '@/lib/metadata';
+
+export const metadata = createMetadata({
+  title: 'Cookie Policy',
+  description: 'How Range Bulk SMS uses cookies and tracking technologies to secure and optimize your messaging experience.',
+});
 
 export default function CookiesPage() {
   return (

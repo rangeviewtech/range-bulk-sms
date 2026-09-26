@@ -10,10 +10,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { NotificationPhoneInput } from '@/components/forms/notification-phone-input';
 import { redirect } from 'next/navigation';
+import { createMetadata } from '@/lib/metadata';
 
-export const metadata = {
-  title: 'Notification Preferences | Settings',
-};
+export const metadata = createMetadata({
+  title: 'Notification Preferences',
+  description: 'Manage SMS, Telegram, and email notification preferences.',
+});
 
 const CATEGORIES = [
   { id: 'SECURITY', label: 'Security & Alerts', desc: 'Login alerts, password changes.' },

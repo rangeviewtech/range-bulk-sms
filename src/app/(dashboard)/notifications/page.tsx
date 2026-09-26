@@ -3,10 +3,12 @@ import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/dal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bell } from 'lucide-react';
+import { createMetadata } from '@/lib/metadata';
 
-export const metadata = {
-  title: 'Notifications | Dashboard',
-};
+export const metadata = createMetadata({
+  title: 'Notifications',
+  description: 'View and manage system alerts, campaign reports, and activity notifications.',
+});
 
 export default async function NotificationsPage() {
   const session = await requireAuth();

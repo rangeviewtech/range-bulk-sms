@@ -23,7 +23,7 @@ import { MarketingHeaderAuth } from '@/components/navigation/marketing-header-au
 import { verifySession } from '@/lib/auth/session';
 
 export const metadata = createMetadata({
-  title: 'Enterprise Bulk SMS Platform | Range View Technology',
+  title: 'Enterprise Bulk SMS Platform',
   description:
     'Deliver high-volume SMS across Uganda and East Africa with carrier-grade reliability, dedicated alphanumeric sender IDs, hardware gateways, and developer APIs.',
   canonical: '/',

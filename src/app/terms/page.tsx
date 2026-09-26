@@ -1,4 +1,10 @@
 import { LegalLayout } from '@/components/layout/legal-layout';
+import { createMetadata } from '@/lib/metadata';
+
+export const metadata = createMetadata({
+  title: 'Terms of Service',
+  description: 'Terms and conditions for using the Range Bulk SMS messaging platform.',
+});
 
 export default function TermsPage() {
   return (

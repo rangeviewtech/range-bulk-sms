@@ -6,6 +6,7 @@ import { ToastProvider } from "./toast-provider";
 import { LanguageProvider } from "./language-provider";
 import { RippleProvider } from "./ripple-provider";
 import { UnsavedChangesProvider } from "./unsaved-changes-provider";
+import { PageTitleSync } from "@/components/navigation/page-title-sync";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +14,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       <LanguageProvider>
         <RippleProvider>
           <UnsavedChangesProvider>
+            <PageTitleSync />
             {children}
             <ToastProvider />
           </UnsavedChangesProvider>

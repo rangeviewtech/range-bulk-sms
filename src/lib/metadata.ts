@@ -17,10 +17,24 @@ export function createMetadata({
   noIndex = false,
   canonical,
 }: MetadataProps = {}): Metadata {
-  const fullTitle = title ? `${title} | ${appConfig.name}` : appConfig.name;
+  // Normalize title: strip any pre-existing brand suffixes to ensure uniform formatting
+  const cleanTitle = title
+    ? title.replace(/\s*\|\s*(Range Bulk SMS|Range SMS|Range View Technology Services|Range View Technology|Range View).*$/i, '').trim()
+    : '';
+
+  const fullTitle = cleanTitle ? `${cleanTitle} | ${appConfig.name}` : appConfig.name;
 
   return {
-    title: fullTitle,
+    title: cleanTitle
+      ? {
+          default: fullTitle,
+          template: `%s | ${appConfig.name}`,
+          absolute: fullTitle,
+        }
+      : {
+          default: appConfig.name,
+          template: `%s | ${appConfig.name}`,
+        },
     description,
     authors: [{ name: appConfig.company }],
     metadataBase: new URL(appConfig.url),
