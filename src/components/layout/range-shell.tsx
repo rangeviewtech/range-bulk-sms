@@ -12,7 +12,7 @@ interface RangeShellProps {
 
 export function RangeShell({ children, className, user }: RangeShellProps) {
   return (
-    <div className={cn("flex h-screen overflow-hidden bg-[#f4f4f4] dark:bg-background font-sans text-sm text-[#333333] dark:text-foreground", className)}>
+    <div className={cn("flex h-screen overflow-hidden bg-muted/40 dark:bg-background font-sans text-sm text-foreground", className)}>
       <RangeSidebar user={user} />
       <div className="flex flex-col flex-1 min-w-0 pl-0 md:pl-[90px] pt-14">
         {/* pt-14 reserves space for the fixed top-navigation-bar (h-14 = 56px) */}

@@ -79,6 +79,72 @@ function getNationalSample(region: RegionRecord): string {
   return cleanSample;
 }
 
+interface SinglePhoneCountryItemProps {
+  region: RegionRecord;
+  isSelected: boolean;
+  onSelect: (region: RegionRecord) => void;
+}
+
+const SinglePhoneCountryItem = React.memo(function SinglePhoneCountryItem({
+  region,
+  isSelected,
+  onSelect,
+}: SinglePhoneCountryItemProps) {
+  const [imgError, setImgError] = React.useState(false);
+
+  return (
+    <DropdownMenuItem
+      key={`${region.alpha2}-${region.id}`}
+      onClick={() => onSelect(region)}
+      className={cn(
+        'flex items-center justify-between rounded-lg px-2.5 py-2 text-xs cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground contain-content',
+        isSelected && 'bg-primary/10 font-medium'
+      )}
+    >
+      <div className="flex items-center gap-2.5 min-w-0">
+        {!imgError ? (
+          <img
+            src={`https://flagcdn.com/20x15/${region.alpha2.toLowerCase()}.png`}
+            alt={region.name}
+            width={16}
+            height={12}
+            loading="lazy"
+            decoding="async"
+            className="h-3 w-4 rounded-[2px] object-cover shadow-2xs border border-border/40 shrink-0"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <span className="w-4 h-3 rounded-[2px] bg-muted border border-border/40 flex items-center justify-center text-[7px] font-mono font-bold text-muted-foreground uppercase shrink-0">
+            {region.alpha2}
+          </span>
+        )}
+        <div className="flex flex-col text-left min-w-0">
+          <span
+            className={cn(
+              'truncate',
+              isSelected ? 'text-[#04648C] dark:text-[#FBCA07] font-semibold' : 'text-foreground'
+            )}
+          >
+            {region.name}
+          </span>
+          <span className="text-[10px] text-muted-foreground font-mono">
+            {region.alpha2} • {region.dialCode}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-1.5 shrink-0 ml-2">
+        <span className="font-mono text-[11px] text-muted-foreground">
+          {region.dialCode}
+        </span>
+        {isSelected && (
+          <Check className="h-4 w-4 text-[#04648C] dark:text-[#FBCA07]" />
+        )}
+      </div>
+    </DropdownMenuItem>
+  );
+});
+
 export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneInputProps>(
   (
     {
@@ -196,6 +262,16 @@ export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneIn
     const isValid = analysis?.validity === 'valid_pattern';
     const isComplete = value.trim().length >= 9;
 
+    const [visibleLimit, setVisibleLimit] = React.useState(35);
+
+    const handleDropdownOpenChange = React.useCallback((nextOpen: boolean) => {
+      if (nextOpen) {
+        setSearchQuery('');
+        setVisibleLimit(35);
+      }
+      setDropdownOpen(nextOpen);
+    }, []);
+
     // Filter regions in dropdown
     const filteredRegions = React.useMemo(() => {
       if (!searchQuery.trim()) {
@@ -203,6 +279,23 @@ export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneIn
       }
       return searchRegions(searchQuery.trim());
     }, [searchQuery]);
+
+    const visibleRegions = React.useMemo(() => {
+      if (searchQuery.trim()) {
+        return filteredRegions.slice(0, 50);
+      }
+      return filteredRegions.slice(0, visibleLimit);
+    }, [filteredRegions, searchQuery, visibleLimit]);
+
+    const handleScroll = React.useCallback(
+      (e: React.UIEvent<HTMLDivElement>) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+        if (scrollTop + clientHeight >= scrollHeight - 80) {
+          setVisibleLimit((prev) => (prev >= filteredRegions.length ? prev : prev + 35));
+        }
+      },
+      [filteredRegions.length]
+    );
 
     // Handle user selecting a country from the dropdown
     const handleSelectCountry = (region: RegionRecord) => {
@@ -266,7 +359,7 @@ export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneIn
       <div className="space-y-1.5 w-full">
         {/* Input with Country Selection Dropdown embedded */}
         <div className="relative flex items-center">
-          <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen} modal={false}>
+          <DropdownMenu open={dropdownOpen} onOpenChange={handleDropdownOpenChange} modal={false}>
             <DropdownMenuTrigger asChild>
               <Button
                 type="button"
@@ -283,6 +376,10 @@ export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneIn
                   <img
                     src={`https://flagcdn.com/20x15/${activeRegion.alpha2.toLowerCase()}.png`}
                     alt={activeRegion.name}
+                    width={16}
+                    height={12}
+                    loading="lazy"
+                    decoding="async"
                     className="h-3 w-4 min-w-4 object-cover rounded-[1.5px] shadow-2xs border border-border/40 pointer-events-none"
                     onError={() => setFlagError(true)}
                   />
@@ -297,6 +394,7 @@ export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneIn
             </DropdownMenuTrigger>
 
             <DropdownMenuContent
+              portalled={false}
               align="start"
               sideOffset={6}
               className="w-72 sm:w-80 p-1.5 rounded-xl border bg-popover text-popover-foreground shadow-xl z-[150]"
@@ -306,7 +404,7 @@ export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneIn
                 <Search className="absolute left-3 top-3.5 h-3.5 w-3.5 text-muted-foreground" />
                 <input
                   type="text"
-                  placeholder="Search country or code..."
+                  placeholder="Search country, alias, or +CC..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full rounded-lg bg-muted/60 py-1.5 pl-8 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-[#04648C] dark:focus:ring-[#FBCA07] focus:bg-muted transition-all"
@@ -316,61 +414,24 @@ export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneIn
                 />
               </div>
 
-              {/* Country Selection List */}
-              <div className="max-h-56 overflow-y-auto space-y-0.5 pr-0.5 custom-scroll">
+              {/* Country Selection List with progressive scroll */}
+              <div
+                onScroll={handleScroll}
+                className="max-h-56 overflow-y-auto space-y-0.5 pr-0.5 custom-scroll"
+              >
                 {filteredRegions.length === 0 ? (
                   <div className="py-4 text-center text-xs text-muted-foreground">
                     No countries found
                   </div>
                 ) : (
-                  filteredRegions.map((region) => {
-                    const isSelected = region.alpha2 === activeRegion.alpha2;
-                    return (
-                      <DropdownMenuItem
-                        key={`${region.alpha2}-${region.id}`}
-                        onClick={() => handleSelectCountry(region)}
-                        className={cn(
-                          'flex items-center justify-between rounded-lg px-2.5 py-2 text-xs cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground',
-                          isSelected && 'bg-primary/10 font-medium'
-                        )}
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <img
-                            src={`https://flagcdn.com/20x15/${region.alpha2.toLowerCase()}.png`}
-                            alt={region.name}
-                            loading="lazy"
-                            className="h-3 w-4 rounded-[2px] object-cover shadow-2xs border border-border/40 shrink-0"
-                            onError={(e) => {
-                              const target = e.currentTarget as HTMLElement;
-                              target.style.display = 'none';
-                            }}
-                          />
-                          <div className="flex flex-col text-left min-w-0">
-                            <span
-                              className={cn(
-                                'truncate',
-                                isSelected ? 'text-[#04648C] dark:text-[#FBCA07] font-semibold' : 'text-foreground'
-                              )}
-                            >
-                              {region.name}
-                            </span>
-                            <span className="text-[10px] text-muted-foreground font-mono">
-                              {region.alpha2} • {region.dialCode}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                          <span className="font-mono text-[11px] text-muted-foreground">
-                            {region.dialCode}
-                          </span>
-                          {isSelected && (
-                            <Check className="h-4 w-4 text-[#04648C] dark:text-[#FBCA07]" />
-                          )}
-                        </div>
-                      </DropdownMenuItem>
-                    );
-                  })
+                  visibleRegions.map((region) => (
+                    <SinglePhoneCountryItem
+                      key={`${region.alpha2}-${region.id}`}
+                      region={region}
+                      isSelected={region.alpha2 === activeRegion.alpha2}
+                      onSelect={handleSelectCountry}
+                    />
+                  ))
                 )}
               </div>
             </DropdownMenuContent>

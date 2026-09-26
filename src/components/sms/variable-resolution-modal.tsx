@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/select';
 import {
   AlertTriangle,
+  AlertCircle,
   Send,
   Sparkles,
   Upload,
@@ -44,6 +45,14 @@ import { Pagination } from '@/components/ui/pagination';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { TemplateHighlighter } from '@/components/sms/template-highlighter';
+import { generateSampleRecipientsCsv, triggerCsvDownload } from '@/lib/sms/template-csv';
+import { VariableCellInput } from '@/components/sms/variable-cell-input';
+import {
+  resolveVariableDataType,
+  validateVariableValue,
+  getVariableSampleValue,
+} from '@/lib/sms/variable-validation';
+import type { VariableDataType } from '@/lib/sms/custom-variables';
 
 export interface VariableResolutionModalProps {
   open: boolean;
@@ -56,6 +65,7 @@ export interface VariableResolutionModalProps {
     hasFallback: boolean
   ) => void | Promise<void>;
   isLoading?: boolean;
+  sourceFilename?: string | null;
 }
 
 interface RecipientVariableData {
@@ -66,34 +76,6 @@ interface RecipientVariableData {
   hasCustomPlain?: boolean;
 }
 
-/**
- * Returns clean sample values for given variable key based on row index
- */
-function getSampleValueForVariable(key: string, index: number): string {
-  const normalized = key.toLowerCase().replace(/[{}\[\]_]/g, '');
-  const names = ['Sarah Namubiru', 'John Okello', 'Brenda Akello', 'David Ssemwogerere', 'Grace Atuhaire'];
-  const firstNames = ['Sarah', 'John', 'Brenda', 'David', 'Grace'];
-  const lastNames = ['Namubiru', 'Okello', 'Akello', 'Ssemwogerere', 'Atuhaire'];
-  const amounts = ['50,000 UGX', '120,000 UGX', '35,000 UGX', '85,000 UGX', '200,000 UGX'];
-  const orders = ['ORD-8941', 'ORD-8942', 'ORD-8943', 'ORD-8944', 'ORD-8945'];
-  const accounts = ['ACC-84920', 'ACC-84921', 'ACC-84922', 'ACC-84923', 'ACC-84924'];
-
-  const idx = (index - 1) % 5;
-
-  if (normalized === 'name' || normalized === 'fullname') return names[idx];
-  if (normalized === 'firstname') return firstNames[idx];
-  if (normalized === 'lastname') return lastNames[idx];
-  if (normalized.includes('order')) return orders[idx];
-  if (normalized.includes('amount') || normalized.includes('price') || normalized.includes('fee')) return amounts[idx];
-  if (normalized.includes('account')) return accounts[idx];
-  if (normalized.includes('date')) return '2026-09-24';
-  if (normalized.includes('time')) return '14:30';
-  if (normalized.includes('company') || normalized.includes('org')) return 'Range View Tech';
-  if (normalized.includes('email')) return `client${index}@example.com`;
-  if (normalized.includes('code') || normalized.includes('pin')) return `${1000 + index * 123}`;
-
-  return `Sample ${key}`;
-}
 
 /**
  * Strip variable tags from template message to produce clean default plain text
@@ -163,10 +145,11 @@ export function VariableResolutionModal({
   templateMessage,
   onConfirm,
   isLoading,
+  sourceFilename,
 }: VariableResolutionModalProps) {
   const [data, setData] = React.useState<RecipientVariableData[]>([]);
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [filterMode, setFilterMode] = React.useState<'all' | 'missing' | 'complete' | 'plain'>('all');
+  const [filterMode, setFilterMode] = React.useState<'all' | 'missing' | 'invalid' | 'complete' | 'plain'>('all');
   const [firstEnteredPlainText, setFirstEnteredPlainText] = React.useState<string>('');
   const [currentPage, setCurrentPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState<number>(10);
@@ -286,14 +269,14 @@ export function VariableResolutionModal({
     toast.info(toPlain ? 'Switched all recipients to plain text' : 'Switched all recipients to variable tags');
   };
 
-  // Fill all empty variable inputs with realistic sample values
+  // Fill all empty variable inputs with realistic sample values based on inferred data types
   const handleFillSamples = () => {
     setData((prev) =>
       prev.map((item, idx) => {
         const newValues: Record<string, string> = { ...item.values };
         variables.forEach((v) => {
           if (!newValues[v]?.trim()) {
-            newValues[v] = getSampleValueForVariable(v, idx + 1);
+            newValues[v] = getVariableSampleValue(v, idx + 1);
           }
         });
         return {
@@ -304,6 +287,35 @@ export function VariableResolutionModal({
     );
     toast.success('Filled empty variable inputs with sample data!');
   };
+
+  // Fill empty values for a single column with realistic samples
+  const handleFillColumnSamples = React.useCallback((variable: string) => {
+    setData((prev) =>
+      prev.map((item, idx) => ({
+        ...item,
+        values: {
+          ...item.values,
+          [variable]: item.values[variable]?.trim() || getVariableSampleValue(variable, idx + 1),
+        },
+      }))
+    );
+    toast.success(`Filled missing values for {{${variable}}} with samples!`);
+  }, []);
+
+  // Clear values for a single column
+  const _handleClearColumn = React.useCallback((variable: string) => {
+    setData((prev) =>
+      prev.map((item) => ({
+        ...item,
+        values: {
+          ...item.values,
+          [variable]: '',
+        },
+      }))
+    );
+    toast.info(`Cleared column {{${variable}}}`);
+  }, []);
+
 
   // Handle uploaded spreadsheet / CSV file
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -468,96 +480,164 @@ export function VariableResolutionModal({
     }
   };
 
-  // Download comprehensive sample CSV with active variables, dates, and realistic rows
+  // Download sample CSV with only current available recipients and empty variable columns for user to fill
   const handleDownloadSampleFile = () => {
-    const additionalColumns = [
-      { key: 'date', sample: '2026-09-24' },
-      { key: 'dueDate', sample: '2026-10-01' },
-      { key: 'amount', sample: '50,000 UGX' },
-      { key: 'company', sample: 'Range View Tech' },
-      { key: 'email', sample: 'sarah.n@example.com' },
-      { key: 'accountNumber', sample: 'ACC-84920' },
-    ];
+    // Use only available recipients currently in the modal / campaign
+    const targetRecipients = data.length > 0
+      ? data.map((item) => item.phone)
+      : recipients.length > 0
+        ? recipients
+        : [];
 
-    const extraCols = additionalColumns.filter(
-      (c) => !variables.some((v) => v.toLowerCase() === c.key.toLowerCase())
-    );
+    if (targetRecipients.length === 0) {
+      toast.warning('No available recipients found in this campaign.');
+      return;
+    }
 
-    const headers = ['phone', ...variables, ...extraCols.map((c) => c.key), 'plainText'];
-
-    const samplePhoneNumbers = [
-      '+256700111250',
-      '+256700111251',
-      '+256772123452',
-      '+256750987654',
-      '+256780112233',
-    ];
-
-    const sampleRows = samplePhoneNumbers.map((phone, idx) => {
-      const varValues = variables.map((v) => getSampleValueForVariable(v, idx + 1));
-      const extraValues = extraCols.map((c) => getSampleValueForVariable(c.key, idx + 1));
-      const plainSample =
-        idx === 2
-          ? 'Hello Brenda, your parcel is ready for collection at our Kampala hub.'
-          : '';
-
-      return [phone, ...varValues, ...extraValues, plainSample];
+    const { content, filename, recipientCount } = generateSampleRecipientsCsv({
+      recipients: targetRecipients,
+      variables,
+      sourceFilename,
     });
 
-    const escapeCsv = (val: string) => {
-      if (val.includes(',') || val.includes('"') || val.includes('\n') || val.includes('\r')) {
-        return `"${val.replace(/"/g, '""')}"`;
-      }
-      return val;
-    };
-
-    const csvContent =
-      '\uFEFF' +
-      [headers.map(escapeCsv).join(','), ...sampleRows.map((r) => r.map(escapeCsv).join(','))].join(
-        '\r\n'
-      );
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `sms_variable_template_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-
-    toast.success('Sample file downloaded! Open in Excel or Google Sheets to fill your data.');
+    triggerCsvDownload(content, filename);
+    toast.success(
+      `Downloaded sample template with ${recipientCount} available recipient${
+        recipientCount === 1 ? '' : 's'
+      } and empty variable columns!`
+    );
   };
 
-  // Validation checks
-  const isRowComplete = React.useCallback(
+  // Variable data type map for all detected tags
+  const variableTypes = React.useMemo(() => {
+    const map: Record<string, VariableDataType> = {};
+    variables.forEach((v) => {
+      map[v] = resolveVariableDataType(v);
+    });
+    return map;
+  }, [variables]);
+
+  // Apply value to all rows for a column
+  const handleApplyColumnValue = React.useCallback((variable: string, valToApply: string) => {
+    setData((prev) =>
+      prev.map((item) => ({
+        ...item,
+        values: {
+          ...item.values,
+          [variable]: valToApply,
+        },
+      }))
+    );
+    toast.success(`Applied "${valToApply}" to all recipients for {{${variable}}}`);
+  }, []);
+
+  // Compute row-level real-time validation
+  const getRowValidation = React.useCallback(
     (item: RecipientVariableData) => {
       if (item.skipVariables) {
-        return (item.plainTextMessage ?? '').trim().length > 0;
+        const hasPlain = (item.plainTextMessage ?? '').trim().length > 0;
+        return {
+          isComplete: hasPlain,
+          hasError: false,
+          missingCount: hasPlain ? 0 : 1,
+          invalidCount: 0,
+          cellErrors: {} as Record<string, string>,
+          missingVars: hasPlain ? [] : ['message'],
+        };
       }
-      return variables.every((v) => (item.values[v] || '').trim().length > 0);
+
+      let rowMissing = 0;
+      let rowInvalid = 0;
+      const cellErrors: Record<string, string> = {};
+      const missingVars: string[] = [];
+
+      variables.forEach((v) => {
+        const val = item.values[v] || '';
+        const dt = variableTypes[v] || 'TEXT';
+        const res = validateVariableValue(val, dt, v);
+
+        if (res.isMissing) {
+          rowMissing++;
+          missingVars.push(v);
+        } else if (!res.isValid) {
+          rowInvalid++;
+          if (res.errorMessage) {
+            cellErrors[v] = res.errorMessage;
+          }
+        }
+      });
+
+      return {
+        isComplete: rowMissing === 0 && rowInvalid === 0,
+        hasError: rowInvalid > 0,
+        missingCount: rowMissing,
+        invalidCount: rowInvalid,
+        cellErrors,
+        missingVars,
+      };
     },
-    [variables]
+    [variables, variableTypes]
   );
 
-  const missingCount = React.useMemo(() => {
-    return data.filter((item) => !isRowComplete(item)).length;
-  }, [data, isRowComplete]);
+  // Overall Statistics across all rows
+  const validationStats = React.useMemo(() => {
+    let totalMissingRecipients = 0;
+    let totalInvalidRecipients = 0;
+    let totalReadyRecipients = 0;
+    const columnMissingStats: Record<string, number> = {};
+    const columnInvalidStats: Record<string, number> = {};
+
+    variables.forEach((v) => {
+      columnMissingStats[v] = 0;
+      columnInvalidStats[v] = 0;
+    });
+
+    data.forEach((item) => {
+      const rowVal = getRowValidation(item);
+      if (rowVal.missingCount > 0) totalMissingRecipients++;
+      if (rowVal.invalidCount > 0) totalInvalidRecipients++;
+      if (rowVal.isComplete) totalReadyRecipients++;
+
+      if (!item.skipVariables) {
+        variables.forEach((v) => {
+          const val = item.values[v] || '';
+          const dt = variableTypes[v] || 'TEXT';
+          const res = validateVariableValue(val, dt, v);
+          if (res.isMissing) columnMissingStats[v]++;
+          else if (!res.isValid) columnInvalidStats[v]++;
+        });
+      }
+    });
+
+    return {
+      totalMissingRecipients,
+      totalInvalidRecipients,
+      totalReadyRecipients,
+      columnMissingStats,
+      columnInvalidStats,
+    };
+  }, [data, variables, variableTypes, getRowValidation]);
 
   const plainCount = React.useMemo(() => {
     return data.filter((item) => item.skipVariables).length;
   }, [data]);
 
   const isFormValid = React.useMemo(() => {
-    return data.length > 0 && data.every(isRowComplete);
-  }, [data, isRowComplete]);
+    return (
+      data.length > 0 &&
+      validationStats.totalMissingRecipients === 0 &&
+      validationStats.totalInvalidRecipients === 0
+    );
+  }, [data.length, validationStats]);
 
   // Search & Filter
   const filteredData = React.useMemo(() => {
     return data.filter((item) => {
-      if (filterMode === 'missing' && isRowComplete(item)) return false;
-      if (filterMode === 'complete' && !isRowComplete(item)) return false;
+      const rowVal = getRowValidation(item);
+
+      if (filterMode === 'missing' && rowVal.missingCount === 0) return false;
+      if (filterMode === 'invalid' && rowVal.invalidCount === 0) return false;
+      if (filterMode === 'complete' && !rowVal.isComplete) return false;
       if (filterMode === 'plain' && !item.skipVariables) return false;
 
       if (!searchQuery.trim()) return true;
@@ -566,7 +646,7 @@ export function VariableResolutionModal({
       if (item.plainTextMessage?.toLowerCase().includes(q)) return true;
       return Object.values(item.values).some((val) => val.toLowerCase().includes(q));
     });
-  }, [data, filterMode, searchQuery, isRowComplete]);
+  }, [data, filterMode, searchQuery, getRowValidation]);
 
   // Pagination calculation
   const totalPages = Math.max(1, Math.ceil(filteredData.length / pageSize));
@@ -578,7 +658,15 @@ export function VariableResolutionModal({
   // Send Action: Compile final resolved or plain messages for every recipient
   const handleSend = () => {
     if (!isFormValid) {
-      toast.error(`Please provide values for the ${missingCount} recipient(s) with missing data.`);
+      if (validationStats.totalInvalidRecipients > 0) {
+        toast.error(
+          `Please correct format errors for ${validationStats.totalInvalidRecipients} recipient(s).`
+        );
+      } else {
+        toast.error(
+          `Please provide values for the ${validationStats.totalMissingRecipients} recipient(s) with missing data.`
+        );
+      }
       return;
     }
 
@@ -661,19 +749,28 @@ export function VariableResolutionModal({
             {/* Filter Mode Dropdown matching Drafts Select */}
             <Select
               value={filterMode}
-              onValueChange={(val: 'all' | 'missing' | 'complete' | 'plain') => {
+              onValueChange={(val: 'all' | 'missing' | 'invalid' | 'complete' | 'plain') => {
                 setFilterMode(val);
                 setCurrentPage(1);
               }}
             >
-              <SelectTrigger className="w-full sm:w-[170px] h-9 text-xs bg-background shadow-xs">
+              <SelectTrigger className="w-full sm:w-[185px] h-9 text-xs bg-background shadow-xs">
                 <Filter className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
                 <SelectValue placeholder="All Recipients" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Recipients ({data.length})</SelectItem>
-                <SelectItem value="missing">Missing Values ({missingCount})</SelectItem>
-                <SelectItem value="complete">Complete ({data.length - missingCount})</SelectItem>
+                <SelectItem value="missing">
+                  Missing Values ({validationStats.totalMissingRecipients})
+                </SelectItem>
+                {validationStats.totalInvalidRecipients > 0 && (
+                  <SelectItem value="invalid">
+                    Invalid Format ({validationStats.totalInvalidRecipients})
+                  </SelectItem>
+                )}
+                <SelectItem value="complete">
+                  Complete ({validationStats.totalReadyRecipients})
+                </SelectItem>
                 <SelectItem value="plain">Plain Text ({plainCount})</SelectItem>
               </SelectContent>
             </Select>
@@ -693,10 +790,10 @@ export function VariableResolutionModal({
                 variant="outline"
                 size="sm"
                 onClick={handleDownloadSampleFile}
-                className="h-9 px-3 text-xs gap-1.5 font-medium shadow-xs"
-                title="Download sample CSV template with all table columns, variables, and dates"
+                className="h-9 px-3 text-xs gap-1.5 font-medium border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 shadow-xs cursor-pointer"
+                title="Download CSV template containing available recipients and empty variable columns"
               >
-                <Download className="w-3.5 h-3.5 text-primary" />
+                <Download className="w-3.5 h-3.5" />
                 <span>Sample File</span>
               </Button>
 
@@ -706,7 +803,7 @@ export function VariableResolutionModal({
                 size="sm"
                 disabled={isUploading}
                 onClick={() => fileInputRef.current?.click()}
-                className="h-9 px-3 text-xs gap-1.5 font-medium border-primary/30 text-primary hover:bg-primary/10 shadow-xs"
+                className="h-9 px-3 text-xs gap-1.5 font-medium border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 shadow-xs cursor-pointer"
                 title="Upload CSV or Excel file with recipient data"
               >
                 <Upload className="w-3.5 h-3.5" />
@@ -715,13 +812,12 @@ export function VariableResolutionModal({
 
               <Button
                 type="button"
-                variant="secondary"
                 size="sm"
                 onClick={handleFillSamples}
-                className="h-9 px-3 text-xs gap-1.5 font-medium shadow-xs"
+                className="h-9 px-3 text-xs gap-1.5 font-semibold bg-[#0ea5e9] hover:bg-[#0284c7] text-white shadow-xs border-0 cursor-pointer"
                 title="Auto-fill empty variable inputs with realistic sample values"
               >
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <Sparkles className="w-3.5 h-3.5 text-white" />
                 <span>Fill Samples</span>
               </Button>
             </div>
@@ -742,19 +838,57 @@ export function VariableResolutionModal({
                   </div>
                 </TableHead>
 
-                {variables.map((v) => (
-                  <TableHead
-                    key={v}
-                    className="h-11 px-4 font-semibold text-xs text-foreground min-w-[190px]"
-                  >
-                    <div className="flex items-center gap-2">
-                      <TemplateHighlighter text={`{{${v}}}`} />
-                      <span className="text-[11px] font-normal text-muted-foreground font-sans truncate">
-                        ({getSampleValueForVariable(v, 1)})
-                      </span>
-                    </div>
-                  </TableHead>
-                ))}
+                {variables.map((v) => {
+                  const dt = variableTypes[v] || 'TEXT';
+                  const sampleVal = getVariableSampleValue(v, 1);
+                  const missingInCol = validationStats.columnMissingStats[v] || 0;
+                  const invalidInCol = validationStats.columnInvalidStats[v] || 0;
+
+                  return (
+                    <TableHead
+                      key={v}
+                      className="h-11 px-4 font-semibold text-xs text-foreground min-w-[220px]"
+                    >
+                      <div className="flex items-center justify-between gap-1.5 flex-wrap">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <TemplateHighlighter text={`{{${v}}}`} />
+                          <Badge
+                            variant="secondary"
+                            className="text-[9px] uppercase font-mono px-1 py-0 h-3.5 tracking-wider"
+                          >
+                            {dt}
+                          </Badge>
+                          <span
+                            className="text-[11px] text-muted-foreground font-normal truncate max-w-[120px]"
+                            title={sampleVal}
+                          >
+                            ({sampleVal})
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          {missingInCol > 0 ? (
+                            <button
+                              type="button"
+                              onClick={() => handleFillColumnSamples(v)}
+                              className="text-[10px] text-amber-600 dark:text-amber-400 font-medium hover:underline cursor-pointer flex items-center gap-0.5"
+                              title={`Click to fill ${missingInCol} missing value(s) in this column with samples`}
+                            >
+                              <span>{missingInCol} missing</span>
+                            </button>
+                          ) : invalidInCol > 0 ? (
+                            <span className="text-[10px] text-destructive font-medium">
+                              {invalidInCol} invalid
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                              ✓ Ready
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </TableHead>
+                  );
+                })}
 
                 <TableHead className="w-[140px] h-11 px-4 font-semibold text-xs text-foreground text-center">
                   <div className="flex items-center justify-center gap-2">
@@ -806,7 +940,7 @@ export function VariableResolutionModal({
               ) : (
                 paginatedData.map((item, idx) => {
                   const isPlain = item.skipVariables;
-                  const rowMissing = !isRowComplete(item);
+                  const rowVal = getRowValidation(item);
                   const rowIndex = (currentPage - 1) * pageSize + idx + 1;
 
                   return (
@@ -815,7 +949,8 @@ export function VariableResolutionModal({
                       className={cn(
                         'hover:bg-muted/40 transition-colors border-border/60',
                         isPlain && 'bg-muted/10',
-                        rowMissing && !isPlain && 'bg-amber-500/[0.02]'
+                        rowVal.hasError && !isPlain && 'bg-destructive/[0.03]',
+                        rowVal.missingCount > 0 && !rowVal.hasError && !isPlain && 'bg-amber-500/[0.02]'
                       )}
                     >
                       {/* Recipient Cell */}
@@ -827,19 +962,41 @@ export function VariableResolutionModal({
                             </span>
                             <span>{item.phone}</span>
                           </div>
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1.5 flex-wrap">
                             {isPlain ? (
-                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-muted/60 text-muted-foreground border-border/60">
+                              <Badge
+                                variant="outline"
+                                className="text-[10px] px-1.5 py-0 h-4 bg-muted/60 text-muted-foreground border-border/60"
+                              >
                                 Plain Text
                               </Badge>
-                            ) : rowMissing ? (
-                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 flex items-center gap-1">
-                                <AlertTriangle className="w-2.5 h-2.5" /> Missing
-                              </Badge>
                             ) : (
-                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 flex items-center gap-1">
-                                <CheckCircle2 className="w-2.5 h-2.5" /> Ready
-                              </Badge>
+                              <>
+                                {rowVal.invalidCount > 0 && (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[10px] px-1.5 py-0 h-4 bg-destructive/10 text-destructive border-destructive/30 flex items-center gap-1 font-medium"
+                                  >
+                                    <AlertCircle className="w-2.5 h-2.5" /> Invalid ({rowVal.invalidCount})
+                                  </Badge>
+                                )}
+                                {rowVal.missingCount > 0 && (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[10px] px-1.5 py-0 h-4 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 flex items-center gap-1 font-medium"
+                                  >
+                                    <AlertTriangle className="w-2.5 h-2.5" /> Missing
+                                  </Badge>
+                                )}
+                                {rowVal.isComplete && (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[10px] px-1.5 py-0 h-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 flex items-center gap-1 font-medium"
+                                  >
+                                    <CheckCircle2 className="w-2.5 h-2.5" /> Ready
+                                  </Badge>
+                                )}
+                              </>
                             )}
                           </div>
                         </div>
@@ -887,19 +1044,22 @@ export function VariableResolutionModal({
                       ) : (
                         variables.map((v) => {
                           const val = item.values[v] || '';
-                          const missing = !val.trim();
+                          const dt = variableTypes[v] || 'TEXT';
+                          const isMissing = !val.trim();
+                          const err = rowVal.cellErrors[v];
+                          const hasError = !isMissing && !!err;
 
                           return (
-                            <TableCell key={v} className="px-4 py-2.5 align-middle">
-                              <Input
+                            <TableCell key={v} className="px-4 py-2.5 align-middle min-w-[210px]">
+                              <VariableCellInput
+                                varName={v}
+                                dataType={dt}
                                 value={val}
-                                onChange={(e) => handleValueChange(item.phone, v, e.target.value)}
-                                placeholder={`Enter ${v}...`}
-                                className={cn(
-                                  'h-9 text-xs font-sans bg-background border-input shadow-xs transition-colors',
-                                  missing &&
-                                    'border-amber-500/60 focus-visible:ring-amber-500/60 bg-amber-500/[0.03]'
-                                )}
+                                onChange={(newVal) => handleValueChange(item.phone, v, newVal)}
+                                onApplyToAll={(newVal) => handleApplyColumnValue(v, newVal)}
+                                isMissing={isMissing}
+                                hasError={hasError}
+                                errorMessage={err}
                               />
                             </TableCell>
                           );
@@ -951,17 +1111,21 @@ export function VariableResolutionModal({
         {/* Footer */}
         <DialogFooter className="px-6 py-4 border-t border-border bg-muted/20 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2.5 text-xs">
-            {missingCount > 0 ? (
+            {validationStats.totalMissingRecipients > 0 || validationStats.totalInvalidRecipients > 0 ? (
               <div className="flex items-center gap-2 text-amber-600 dark:text-amber-500 font-medium">
                 <AlertTriangle className="w-4 h-4 shrink-0" />
                 <span>
-                  {missingCount} recipient(s) missing required variable values
+                  {validationStats.totalMissingRecipients > 0 && validationStats.totalInvalidRecipients > 0
+                    ? `${validationStats.totalMissingRecipients} recipient(s) missing required variable values • ${validationStats.totalInvalidRecipients} invalid format`
+                    : validationStats.totalMissingRecipients > 0
+                      ? `${validationStats.totalMissingRecipients} recipient(s) missing required variable values`
+                      : `${validationStats.totalInvalidRecipients} recipient(s) have invalid formatting`}
                 </span>
               </div>
             ) : (
               <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium">
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
-                <span>All {data.length} recipient messages resolved and ready to send</span>
+                <span>All {data.length} recipient messages resolved and validated</span>
               </div>
             )}
           </div>
@@ -979,7 +1143,7 @@ export function VariableResolutionModal({
               type="button"
               onClick={handleSend}
               disabled={!isFormValid || isLoading}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold min-w-[150px] text-xs h-9 shadow-md"
+              className="bg-amber-500 text-amber-950 hover:bg-amber-400 font-bold min-w-[160px] text-xs h-9 shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {isLoading ? 'Dispatching...' : `Send Messages (${data.length})`}
               {!isLoading && <Send className="w-3.5 h-3.5 ml-1.5" />}

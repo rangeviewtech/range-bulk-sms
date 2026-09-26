@@ -297,110 +297,51 @@ export default function TransactionsPage() {
               )}
             </div>
           ) : (
-            <div className="w-full overflow-x-auto">
-              <Table className="min-w-[700px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>
-                      <SortableHeader
-                        column="reference"
-                        label="Reference"
-                        currentSort={sortKey}
-                        currentOrder={sortOrder}
-                        onSort={toggleSort}
-                      />
-                    </TableHead>
-                    <TableHead>
-                      <SortableHeader
-                        column="type"
-                        label="Type"
-                        currentSort={sortKey}
-                        currentOrder={sortOrder}
-                        onSort={toggleSort}
-                      />
-                    </TableHead>
-                    <TableHead>
-                      <SortableHeader
-                        column="description"
-                        label="Description"
-                        currentSort={sortKey}
-                        currentOrder={sortOrder}
-                        onSort={toggleSort}
-                      />
-                    </TableHead>
-                    <TableHead>
-                      <SortableHeader
-                        column="amount"
-                        label="Amount"
-                        currentSort={sortKey}
-                        currentOrder={sortOrder}
-                        onSort={toggleSort}
-                      />
-                    </TableHead>
-                    <TableHead>
-                      <SortableHeader
-                        column="balanceAfter"
-                        label="Balance After"
-                        currentSort={sortKey}
-                        currentOrder={sortOrder}
-                        onSort={toggleSort}
-                      />
-                    </TableHead>
-                    <TableHead>
-                      <SortableHeader
-                        column="createdAt"
-                        label="Date"
-                        currentSort={sortKey}
-                        currentOrder={sortOrder}
-                        onSort={toggleSort}
-                      />
-                    </TableHead>
-                    <TableHead>
-                      <SortableHeader
-                        column="status"
-                        label="Status"
-                        currentSort={sortKey}
-                        currentOrder={sortOrder}
-                        onSort={toggleSort}
-                      />
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {displayedTransactions.map((tx) => {
-                    const isDeposit = tx.type === 'DEPOSIT';
-                    const isRefund = tx.type === 'REFUND';
-                    const amountVal = Number(tx.amount || 0);
-                    const balAfterVal = Number(tx.balanceAfter || 0);
+            <>
+              {/* Mobile View: High-density transaction cards */}
+              <div className="block md:hidden divide-y divide-border">
+                {displayedTransactions.map((tx) => {
+                  const isDeposit = tx.type === 'DEPOSIT';
+                  const isRefund = tx.type === 'REFUND';
+                  const amountVal = Number(tx.amount || 0);
+                  const balAfterVal = Number(tx.balanceAfter || 0);
 
-                    return (
-                      <TableRow key={tx.id}>
-                        <TableCell className="font-mono text-xs font-medium">
-                          {tx.reference}
-                        </TableCell>
-                        <TableCell>
-                          <span
-                            className={`inline-flex items-center text-xs font-semibold ${
-                              isDeposit
-                                ? 'text-emerald-600 dark:text-emerald-400'
-                                : isRefund
-                                ? 'text-blue-600 dark:text-blue-400'
-                                : 'text-red-600 dark:text-red-400'
-                            }`}
-                          >
-                            {isDeposit ? (
-                              <ArrowDownRight className="mr-1 h-3.5 w-3.5" />
-                            ) : (
-                              <ArrowUpRight className="mr-1 h-3.5 w-3.5" />
-                            )}
-                            {tx.type}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground max-w-xs truncate">
-                          {tx.description || 'System transaction'}
-                        </TableCell>
-                        <TableCell
-                          className={`font-semibold text-sm ${
+                  return (
+                    <div key={tx.id} className="p-4 space-y-2.5 hover:bg-muted/20 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <span
+                          className={`inline-flex items-center text-xs font-semibold ${
+                            isDeposit
+                              ? 'text-emerald-600 dark:text-emerald-400'
+                              : isRefund
+                              ? 'text-blue-600 dark:text-blue-400'
+                              : 'text-red-600 dark:text-red-400'
+                          }`}
+                        >
+                          {isDeposit ? (
+                            <ArrowDownRight className="mr-1 h-3.5 w-3.5" />
+                          ) : (
+                            <ArrowUpRight className="mr-1 h-3.5 w-3.5" />
+                          )}
+                          {tx.type}
+                        </span>
+                        <Badge
+                          variant={
+                            tx.status === 'COMPLETED'
+                              ? 'default'
+                              : tx.status === 'FAILED'
+                              ? 'destructive'
+                              : 'outline'
+                          }
+                          className="text-[11px]"
+                        >
+                          {tx.status || 'COMPLETED'}
+                        </Badge>
+                      </div>
+
+                      <div className="flex items-baseline justify-between">
+                        <span
+                          className={`text-base font-bold ${
                             isDeposit
                               ? 'text-emerald-600 dark:text-emerald-400'
                               : isRefund
@@ -409,38 +350,180 @@ export default function TransactionsPage() {
                           }`}
                         >
                           {isDeposit ? '+' : '-'}UGX {amountVal.toLocaleString()}
-                        </TableCell>
-                        <TableCell className="text-sm font-medium">
-                          UGX {balAfterVal.toLocaleString()}
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          Bal: UGX {balAfterVal.toLocaleString()}
+                        </span>
+                      </div>
+
+                      {tx.description && (
+                        <p className="text-xs text-muted-foreground line-clamp-1">
+                          {tx.description}
+                        </p>
+                      )}
+
+                      <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1 border-t border-border/40">
+                        <span className="font-mono truncate max-w-[180px]">{tx.reference}</span>
+                        <span>
                           {new Date(tx.createdAt).toLocaleDateString(undefined, {
                             month: 'short',
                             day: 'numeric',
-                            year: 'numeric',
                             hour: '2-digit',
                             minute: '2-digit',
                           })}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              tx.status === 'COMPLETED'
-                                ? 'default'
-                                : tx.status === 'FAILED'
-                                ? 'destructive'
-                                : 'outline'
-                            }
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Desktop View: Full data table */}
+              <div className="hidden md:block w-full overflow-x-auto">
+                <Table className="min-w-[700px]">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>
+                        <SortableHeader
+                          column="reference"
+                          label="Reference"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead>
+                        <SortableHeader
+                          column="type"
+                          label="Type"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead>
+                        <SortableHeader
+                          column="description"
+                          label="Description"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead>
+                        <SortableHeader
+                          column="amount"
+                          label="Amount"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead>
+                        <SortableHeader
+                          column="balanceAfter"
+                          label="Balance After"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead>
+                        <SortableHeader
+                          column="createdAt"
+                          label="Date"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead>
+                        <SortableHeader
+                          column="status"
+                          label="Status"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {displayedTransactions.map((tx) => {
+                      const isDeposit = tx.type === 'DEPOSIT';
+                      const isRefund = tx.type === 'REFUND';
+                      const amountVal = Number(tx.amount || 0);
+                      const balAfterVal = Number(tx.balanceAfter || 0);
+
+                      return (
+                        <TableRow key={tx.id}>
+                          <TableCell className="font-mono text-xs font-medium">
+                            {tx.reference}
+                          </TableCell>
+                          <TableCell>
+                            <span
+                              className={`inline-flex items-center text-xs font-semibold ${
+                                isDeposit
+                                  ? 'text-emerald-600 dark:text-emerald-400'
+                                  : isRefund
+                                  ? 'text-blue-600 dark:text-blue-400'
+                                  : 'text-red-600 dark:text-red-400'
+                              }`}
+                            >
+                              {isDeposit ? (
+                                <ArrowDownRight className="mr-1 h-3.5 w-3.5" />
+                              ) : (
+                                <ArrowUpRight className="mr-1 h-3.5 w-3.5" />
+                              )}
+                              {tx.type}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-xs text-muted-foreground max-w-xs truncate">
+                            {tx.description || 'System transaction'}
+                          </TableCell>
+                          <TableCell
+                            className={`font-semibold text-sm ${
+                              isDeposit
+                                ? 'text-emerald-600 dark:text-emerald-400'
+                                : isRefund
+                                ? 'text-blue-600 dark:text-blue-400'
+                                : 'text-red-600 dark:text-red-400'
+                            }`}
                           >
-                            {tx.status || 'COMPLETED'}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
+                            {isDeposit ? '+' : '-'}UGX {amountVal.toLocaleString()}
+                          </TableCell>
+                          <TableCell className="text-sm font-medium">
+                            UGX {balAfterVal.toLocaleString()}
+                          </TableCell>
+                          <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
+                            {new Date(tx.createdAt).toLocaleDateString(undefined, {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                tx.status === 'COMPLETED'
+                                  ? 'default'
+                                  : tx.status === 'FAILED'
+                                  ? 'destructive'
+                                  : 'outline'
+                              }
+                            >
+                              {tx.status || 'COMPLETED'}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
           )}
 
           {/* Pagination Controls */}

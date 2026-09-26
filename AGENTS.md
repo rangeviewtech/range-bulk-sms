@@ -24,20 +24,22 @@ When acting as an AI coding agent for this repository, you must adhere strictly 
 
 ## Core Directives
 
-1. **Read Architecture First:** Always understand the concepts in `ARCHITECTURE.md` and `DESIGN_SYSTEM.md` before generating code.
-2. **Reuse Existing Components:** Search the `src/components/` directory. Do not reinvent the wheel. If a button, input, or layout component exists, use it.
-3. **Follow Design Tokens:** Utilize the CSS variables defined in `src/design-system/tokens/colors.ts` and `src/app/globals.css`. Never use raw hex colors.
-4. **Follow Responsive Rules:** Code must be mobile-first. Test your assumptions using Tailwind's `md:`, `lg:` breakpoints.
-5. **Follow Accessibility (a11y) Rules:** Always provide `aria` labels for icon buttons, ensure focus visibility, and use semantic HTML.
-6. **Strict TypeScript:** Write strict TypeScript. Do not use `any`. Create proper interfaces/types.
-7. **Run Tests:** Run the testing suite after changes if instructed, or suggest running them.
-8. **Lint and Typecheck:** Ensure no ESLint or TypeScript errors are introduced.
-9. **No Unnecessary Dependencies:** Do not add external npm packages unless absolutely required and approved.
-10. **Security First:** Never expose secrets or API keys. Never bypass input validation.
-11. **Shared Components:** Do not modify a globally shared component (in `src/components/ui/`) for a highly specific feature requirement. Compose it or create a feature-specific wrapper instead.
-12. **Documentation:** Update relevant markdown files in `/docs` or the root if architecture changes.
-13. **Theming:** Maintain dark/light theme support. Every new UI element must look correct in both modes.
-14. **Preserve Design Language:** Keep the clean, modern, professional aesthetic.
+1. **Read Architecture & Design System First:** Always read and adhere strictly to `docs/UI_UX_DESIGN_SYSTEM.md`, `docs/RESPONSIVE_UI_AUDIT.md`, `ARCHITECTURE.md`, and `DESIGN_AND_RESPONSIVE_RULES.md` before generating or modifying UI code. Zero horizontal overflow down to 320px mobile (`document.documentElement.scrollWidth === clientWidth`) is strictly enforced across all 86 routes.
+2. **Dual Table/Card Transformation:** Whenever displaying tabular data exceeding 3 columns, implement a mobile card deck (`block md:hidden`) alongside the desktop table (`hidden md:block`) according to `docs/UI_UX_DESIGN_SYSTEM.md`. Never force mobile users to scroll wide tables horizontally.
+3. **Reuse Existing Components:** Search the `src/components/` directory. Do not reinvent the wheel. If a button, input, or layout component exists, use it.
+4. **Follow Design Tokens:** Utilize the semantic CSS variables defined in `src/design-system/tokens/colors.ts` and `src/app/globals.css`. Never use raw hex colors.
+5. **Follow Responsive Rules:** Code must be mobile-first. Test your assumptions across standard breakpoints (320px, 375px, 640px, 768px, 1024px, 1440px).
+6. **Follow Accessibility (a11y) Rules:** Always provide explicit `aria-label`s for icon buttons, ensure focus visibility rings, meet minimum 44×44px touch targets, and use semantic HTML.
+7. **Strict TypeScript:** Write strict TypeScript. Do not use `any`. Create proper interfaces/types.
+8. **Run Tests:** Run the testing suite after changes (`npx vitest run`) and verify type safety (`npm run typecheck`).
+9. **Lint and Typecheck:** Ensure no ESLint or TypeScript errors are introduced.
+10. **Chrome DevTools MCP Verification:** Always verify changes in the live browser using Chrome MCP tools (`evaluate_script`, `emulate`) to confirm 0px document overflow and visual parity.
+11. **No Unnecessary Dependencies:** Do not add external npm packages unless absolutely required and approved.
+12. **Security First:** Never expose secrets or API keys. Never bypass input validation.
+13. **Shared Components:** Do not modify a globally shared component (in `src/components/ui/`) for a highly specific feature requirement. Compose it or create a feature-specific wrapper instead.
+14. **Documentation:** Update relevant markdown files in `/docs` or the root if architecture changes.
+15. **Theming:** Maintain dark/light theme support. Every new UI element must look correct in both modes.
+16. **Preserve Design Language:** Keep the clean, modern, professional enterprise aesthetic.
 
 ## File Naming Conventions
 

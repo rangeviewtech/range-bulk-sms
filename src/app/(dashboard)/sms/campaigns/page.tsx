@@ -584,265 +584,440 @@ export default function CampaignsPage() {
 
       <Card>
         <CardContent className="p-0">
-          <div className="w-full overflow-x-auto">
-            <Table className="min-w-[700px]">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>
-                    <SortableHeader
-                      column="name"
-                      label="Campaign Name"
-                      currentSort={sortKey}
-                      currentOrder={sortOrder}
-                      onSort={toggleSort}
-                    />
-                  </TableHead>
-                  <TableHead>
-                    <SortableHeader
-                      column="status"
-                      label="Status"
-                      currentSort={sortKey}
-                      currentOrder={sortOrder}
-                      onSort={toggleSort}
-                    />
-                  </TableHead>
-                  <TableHead>
-                    <SortableHeader
-                      column="progress"
-                      label="Progress"
-                      currentSort={sortKey}
-                      currentOrder={sortOrder}
-                      onSort={toggleSort}
-                    />
-                  </TableHead>
-                  <TableHead>
-                    <SortableHeader
-                      column="date"
-                      label="Date"
-                      currentSort={sortKey}
-                      currentOrder={sortOrder}
-                      onSort={toggleSort}
-                    />
-                  </TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {displayedCampaigns.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="p-0">
-                      <EmptyState
-                        className="rounded-none border-0 bg-transparent py-16"
-                        icon={<BarChart2 className="h-8 w-8 text-muted-foreground" />}
-                        title="No campaigns found"
-                        description="Try adjusting your search query or status filter."
-                        action={
-                          (search || filters.status !== 'ALL') ? (
-                            <Button
-                              variant="outline"
-                              onClick={() => {
-                                clearSearch();
-                                setFilter('status', 'ALL');
-                              }}
-                            >
-                              Reset Filters
-                            </Button>
-                          ) : undefined
-                        }
-                      />
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  displayedCampaigns.map((camp) => (
-                    <TableRow key={camp.id} className="hover:bg-muted/30 transition-colors">
-                      <TableCell className="font-medium text-foreground">
-                        <div>
-                          <span>{camp.name}</span>
-                          <p className="text-xs text-muted-foreground">
-                            {camp.recipients.toLocaleString()} total recipients
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={`font-medium text-xs ${getStatusColor(camp.status)}`}
+          {displayedCampaigns.length === 0 ? (
+            <EmptyState
+              className="rounded-none border-0 bg-transparent py-16"
+              icon={<BarChart2 className="h-8 w-8 text-muted-foreground" />}
+              title="No campaigns found"
+              description="Try adjusting your search query or status filter."
+              action={
+                search || filters.status !== 'ALL' ? (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      clearSearch();
+                      setFilter('status', 'ALL');
+                    }}
+                  >
+                    Reset Filters
+                  </Button>
+                ) : undefined
+              }
+            />
+          ) : (
+            <>
+              {/* Mobile View: High-density responsive card list */}
+              <div className="block md:hidden divide-y divide-border">
+                {displayedCampaigns.map((camp) => (
+                  <div key={camp.id} className="p-4 space-y-3 hover:bg-muted/20 transition-colors">
+                    {/* Header: Name + Status */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="space-y-0.5 min-w-0">
+                        <Link
+                          href={`/sms/campaigns/${camp.id}`}
+                          className="font-semibold text-foreground text-sm hover:text-primary transition-colors line-clamp-1"
                         >
-                          {camp.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col gap-1.5 w-full max-w-[200px]">
-                          <div className="flex justify-between text-xs text-muted-foreground">
-                            <span>
-                              {camp.sent.toLocaleString()} / {camp.recipients.toLocaleString()}
-                            </span>
-                            <span>{camp.progress}%</span>
-                          </div>
-                          <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                            <div
-                              className={`h-full ${
-                                camp.status === 'COMPLETED' ? 'bg-emerald-500' : 'bg-primary'
-                              }`}
-                              style={{ width: `${camp.progress}%` }}
-                            />
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-xs">{camp.date}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          {/* 1. View / Analytics Button */}
+                          {camp.name}
+                        </Link>
+                        <p className="text-xs text-muted-foreground">
+                          {camp.recipients.toLocaleString()} recipients • {camp.date}
+                        </p>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className={`font-medium text-[11px] shrink-0 ${getStatusColor(camp.status)}`}
+                      >
+                        {camp.status}
+                      </Badge>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="space-y-1.5 bg-muted/40 p-2.5 rounded-lg border border-border/50">
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Progress ({camp.sent.toLocaleString()} / {camp.recipients.toLocaleString()})</span>
+                        <span className="font-semibold text-foreground">{camp.progress}%</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className={`h-full ${
+                            camp.status === 'COMPLETED' ? 'bg-emerald-500' : 'bg-primary'
+                          }`}
+                          style={{ width: `${camp.progress}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Meta tags */}
+                    <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                      {camp.senderId && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-sm bg-muted text-muted-foreground text-[11px]">
+                          Sender: <strong className="ml-1 text-foreground">{camp.senderId}</strong>
+                        </span>
+                      )}
+                      {camp.groupName && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-sm bg-muted text-muted-foreground text-[11px]">
+                          Group: <strong className="ml-1 text-foreground">{camp.groupName}</strong>
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Mobile Action Controls */}
+                    <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/40">
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-xs gap-1.5 flex-1"
+                      >
+                        <Link href={`/sms/campaigns/${camp.id}`}>
                           {camp.status === 'COMPLETED' || camp.status === 'PROCESSING' ? (
-                            <Button
-                              asChild
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                            >
-                              <Link
-                                href={`/sms/campaigns/${camp.id}`}
-                                title="View campaign analytics"
-                                aria-label={`View ${camp.name} analytics`}
-                              >
-                                <BarChart2 className="w-4 h-4" />
-                              </Link>
-                            </Button>
+                            <>
+                              <BarChart2 className="w-3.5 h-3.5" />
+                              <span>Analytics</span>
+                            </>
                           ) : (
-                            <Button
-                              asChild
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                            >
-                              <Link
-                                href={`/sms/campaigns/${camp.id}`}
-                                title="View campaign details"
-                                aria-label={`View ${camp.name} details`}
-                              >
-                                <Eye className="w-4 h-4" />
-                              </Link>
-                            </Button>
+                            <>
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>Details</span>
+                            </>
                           )}
+                        </Link>
+                      </Button>
 
-                          {/* 2. Edit Action (Editable for DRAFT and SCHEDULED, Duplicate for COMPLETED/PROCESSING) */}
-                          {camp.status === 'DRAFT' || camp.status === 'SCHEDULED' ? (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                              onClick={() => handleOpenEdit(camp)}
-                              title="Edit campaign"
-                              aria-label={`Edit ${camp.name}`}
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </Button>
-                          ) : (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground/50 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-                              onClick={() => handleDuplicate(camp)}
-                              title="Sent campaigns cannot be edited. Click to duplicate as a new draft."
-                              aria-label={`Duplicate ${camp.name}`}
-                            >
-                              <Copy className="w-4 h-4" />
-                            </Button>
-                          )}
+                      {camp.status === 'DRAFT' || camp.status === 'SCHEDULED' ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 text-xs gap-1.5"
+                          onClick={() => handleOpenEdit(camp)}
+                          aria-label={`Edit ${camp.name}`}
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                          <span>Edit</span>
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 text-xs gap-1.5"
+                          onClick={() => handleDuplicate(camp)}
+                          aria-label={`Duplicate ${camp.name}`}
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                          <span>Copy</span>
+                        </Button>
+                      )}
 
-                          {/* 3. Delete Action */}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50/60 dark:bg-red-500/10 border border-red-200/50 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
+                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                            aria-label={`More actions for ${camp.name}`}
+                          >
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-52">
+                          <DropdownMenuItem asChild className="cursor-pointer">
+                            <Link
+                              href={`/sms/campaigns/${camp.id}`}
+                              className="flex items-center gap-2"
+                            >
+                              {camp.status === 'COMPLETED' || camp.status === 'PROCESSING' ? (
+                                <BarChart2 className="w-4 h-4" />
+                              ) : (
+                                <Eye className="w-4 h-4" />
+                              )}
+                              <span>
+                                {camp.status === 'COMPLETED' || camp.status === 'PROCESSING'
+                                  ? 'View Analytics'
+                                  : 'View Details'}
+                              </span>
+                            </Link>
+                          </DropdownMenuItem>
+
+                          {(camp.status === 'DRAFT' || camp.status === 'SCHEDULED') && (
+                            <DropdownMenuItem
+                              onClick={() => handleOpenEdit(camp)}
+                              className="cursor-pointer flex items-center gap-2"
+                            >
+                              <Pencil className="w-4 h-4" />
+                              <span>Edit Campaign</span>
+                            </DropdownMenuItem>
+                          )}
+
+                          <DropdownMenuItem
+                            onClick={() => handleDuplicate(camp)}
+                            className="cursor-pointer flex items-center gap-2"
+                          >
+                            <Copy className="w-4 h-4" />
+                            <span>Duplicate Campaign</span>
+                          </DropdownMenuItem>
+
+                          {camp.status === 'SCHEDULED' && (
+                            <DropdownMenuItem
+                              onClick={() => handleRequestCancelSchedule(camp)}
+                              className="cursor-pointer flex items-center gap-2 text-amber-600 dark:text-amber-400"
+                            >
+                              <Clock className="w-4 h-4" />
+                              <span>Cancel Schedule</span>
+                            </DropdownMenuItem>
+                          )}
+
+                          <DropdownMenuSeparator />
+
+                          <DropdownMenuItem
                             onClick={() => handleDeleteClick(camp)}
-                            title="Delete campaign"
-                            aria-label={`Delete ${camp.name}`}
+                            className="cursor-pointer flex items-center gap-2 text-red-600 dark:text-red-400 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/40"
                           >
                             <Trash2 className="w-4 h-4" />
-                          </Button>
+                            <span>Delete Campaign</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-                          {/* 4. More Context Menu */}
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
+              {/* Desktop Table View */}
+              <div className="hidden md:block w-full overflow-x-auto">
+                <Table className="min-w-[700px]">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>
+                        <SortableHeader
+                          column="name"
+                          label="Campaign Name"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead>
+                        <SortableHeader
+                          column="status"
+                          label="Status"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead>
+                        <SortableHeader
+                          column="progress"
+                          label="Progress"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead>
+                        <SortableHeader
+                          column="date"
+                          label="Date"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {displayedCampaigns.map((camp) => (
+                      <TableRow key={camp.id} className="hover:bg-muted/30 transition-colors">
+                        <TableCell className="font-medium text-foreground">
+                          <div>
+                            <span>{camp.name}</span>
+                            <p className="text-xs text-muted-foreground">
+                              {camp.recipients.toLocaleString()} total recipients
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="outline"
+                            className={`font-medium text-xs ${getStatusColor(camp.status)}`}
+                          >
+                            {camp.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col gap-1.5 w-full max-w-[200px]">
+                            <div className="flex justify-between text-xs text-muted-foreground">
+                              <span>
+                                {camp.sent.toLocaleString()} / {camp.recipients.toLocaleString()}
+                              </span>
+                              <span>{camp.progress}%</span>
+                            </div>
+                            <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                              <div
+                                className={`h-full ${
+                                  camp.status === 'COMPLETED' ? 'bg-emerald-500' : 'bg-primary'
+                                }`}
+                                style={{ width: `${camp.progress}%` }}
+                              />
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-xs">{camp.date}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            {/* 1. View / Analytics Button */}
+                            {camp.status === 'COMPLETED' || camp.status === 'PROCESSING' ? (
+                              <Button
+                                asChild
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                              >
+                                <Link
+                                  href={`/sms/campaigns/${camp.id}`}
+                                  title="View campaign analytics"
+                                  aria-label={`View ${camp.name} analytics`}
+                                >
+                                  <BarChart2 className="w-4 h-4" />
+                                </Link>
+                              </Button>
+                            ) : (
+                              <Button
+                                asChild
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                              >
+                                <Link
+                                  href={`/sms/campaigns/${camp.id}`}
+                                  title="View campaign details"
+                                  aria-label={`View ${camp.name} details`}
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </Link>
+                              </Button>
+                            )}
+
+                            {/* 2. Edit Action (Editable for DRAFT and SCHEDULED, Duplicate for COMPLETED/PROCESSING) */}
+                            {camp.status === 'DRAFT' || camp.status === 'SCHEDULED' ? (
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-                                title="More options"
-                                aria-label="More campaign options"
+                                className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                onClick={() => handleOpenEdit(camp)}
+                                title="Edit campaign"
+                                aria-label={`Edit ${camp.name}`}
                               >
-                                <MoreHorizontal className="w-4 h-4" />
+                                <Pencil className="w-4 h-4" />
                               </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-52">
-                              <DropdownMenuItem asChild className="cursor-pointer">
-                                <Link
-                                  href={`/sms/campaigns/${camp.id}`}
-                                  className="flex items-center gap-2"
-                                >
-                                  {camp.status === 'COMPLETED' ||
-                                  camp.status === 'PROCESSING' ? (
-                                    <BarChart2 className="w-4 h-4" />
-                                  ) : (
-                                    <Eye className="w-4 h-4" />
-                                  )}
-                                  <span>
-                                    {camp.status === 'COMPLETED' ||
-                                    camp.status === 'PROCESSING'
-                                      ? 'View Analytics'
-                                      : 'View Details'}
-                                  </span>
-                                </Link>
-                              </DropdownMenuItem>
-
-                              {(camp.status === 'DRAFT' || camp.status === 'SCHEDULED') && (
-                                <DropdownMenuItem
-                                  onClick={() => handleOpenEdit(camp)}
-                                  className="cursor-pointer flex items-center gap-2"
-                                >
-                                  <Pencil className="w-4 h-4" />
-                                  <span>Edit Campaign</span>
-                                </DropdownMenuItem>
-                              )}
-
-                              <DropdownMenuItem
+                            ) : (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground/50 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
                                 onClick={() => handleDuplicate(camp)}
-                                className="cursor-pointer flex items-center gap-2"
+                                title="Sent campaigns cannot be edited. Click to duplicate as a new draft."
+                                aria-label={`Duplicate ${camp.name}`}
                               >
                                 <Copy className="w-4 h-4" />
-                                <span>Duplicate Campaign</span>
-                              </DropdownMenuItem>
+                              </Button>
+                            )}
 
-                              {camp.status === 'SCHEDULED' && (
-                                <DropdownMenuItem
-                                  onClick={() => handleRequestCancelSchedule(camp)}
-                                  className="cursor-pointer flex items-center gap-2 text-amber-600 dark:text-amber-400"
+                            {/* 3. Delete Action */}
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50/60 dark:bg-red-500/10 border border-red-200/50 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
+                              onClick={() => handleDeleteClick(camp)}
+                              title="Delete campaign"
+                              aria-label={`Delete ${camp.name}`}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+
+                            {/* 4. More Context Menu */}
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                                  title="More options"
+                                  aria-label="More campaign options"
                                 >
-                                  <Clock className="w-4 h-4" />
-                                  <span>Cancel Schedule</span>
+                                  <MoreHorizontal className="w-4 h-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-52">
+                                <DropdownMenuItem asChild className="cursor-pointer">
+                                  <Link
+                                    href={`/sms/campaigns/${camp.id}`}
+                                    className="flex items-center gap-2"
+                                  >
+                                    {camp.status === 'COMPLETED' ||
+                                    camp.status === 'PROCESSING' ? (
+                                      <BarChart2 className="w-4 h-4" />
+                                    ) : (
+                                      <Eye className="w-4 h-4" />
+                                    )}
+                                    <span>
+                                      {camp.status === 'COMPLETED' ||
+                                      camp.status === 'PROCESSING'
+                                        ? 'View Analytics'
+                                        : 'View Details'}
+                                    </span>
+                                  </Link>
                                 </DropdownMenuItem>
-                              )}
 
-                              <DropdownMenuSeparator />
+                                {(camp.status === 'DRAFT' || camp.status === 'SCHEDULED') && (
+                                  <DropdownMenuItem
+                                    onClick={() => handleOpenEdit(camp)}
+                                    className="cursor-pointer flex items-center gap-2"
+                                  >
+                                    <Pencil className="w-4 h-4" />
+                                    <span>Edit Campaign</span>
+                                  </DropdownMenuItem>
+                                )}
 
-                              <DropdownMenuItem
-                                onClick={() => handleDeleteClick(camp)}
-                                className="cursor-pointer flex items-center gap-2 text-red-600 dark:text-red-400 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/40"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                                <span>Delete Campaign</span>
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                                <DropdownMenuItem
+                                  onClick={() => handleDuplicate(camp)}
+                                  className="cursor-pointer flex items-center gap-2"
+                                >
+                                  <Copy className="w-4 h-4" />
+                                  <span>Duplicate Campaign</span>
+                                </DropdownMenuItem>
+
+                                {camp.status === 'SCHEDULED' && (
+                                  <DropdownMenuItem
+                                    onClick={() => handleRequestCancelSchedule(camp)}
+                                    className="cursor-pointer flex items-center gap-2 text-amber-600 dark:text-amber-400"
+                                  >
+                                    <Clock className="w-4 h-4" />
+                                    <span>Cancel Schedule</span>
+                                  </DropdownMenuItem>
+                                )}
+
+                                <DropdownMenuSeparator />
+
+                                <DropdownMenuItem
+                                  onClick={() => handleDeleteClick(camp)}
+                                  className="cursor-pointer flex items-center gap-2 text-red-600 dark:text-red-400 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/40"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                  <span>Delete Campaign</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
+          )}
 
           <Pagination
             page={page}

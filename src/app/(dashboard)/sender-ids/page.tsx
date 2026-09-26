@@ -164,10 +164,10 @@ export default function SenderIdsPage() {
       </div>
 
       <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 flex gap-3 text-sm">
-        <Info className="w-5 h-5 text-primary shrink-0" />
+        <Info className="w-5 h-5 text-primary shrink-0 mt-0.5" />
         <p>
-          Sender IDs are the names that appear on a recipient&apos;s phone when they receive your SMS.
-          New Sender IDs must be approved by telecom operators before they can be used for outbound campaigns.
+          Sender IDs are the alphanumeric brand names that appear on a recipient&apos;s phone when they receive your SMS (max 11 characters).
+          Telecom operator registration fee is UGX 250,000 (VAT Incl.) per Sender ID. Approvals take 24–48 business hours upon KYC verification.
         </p>
       </div>
 

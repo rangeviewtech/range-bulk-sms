@@ -35,6 +35,7 @@ import { InputError } from '@/components/ui/input-error';
 import { PageHeader } from '@/components/layout/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
+import { notifyWalletUpdated } from '@/hooks/use-wallet';
 
 const depositFormSchema = z.object({
   amount: z
@@ -119,6 +120,14 @@ export default function WalletPage() {
 
   useEffect(() => {
     fetchWalletData();
+
+    const handleCustomEvent = () => {
+      fetchWalletData();
+    };
+    window.addEventListener('range:wallet-updated', handleCustomEvent);
+    return () => {
+      window.removeEventListener('range:wallet-updated', handleCustomEvent);
+    };
   }, [fetchWalletData]);
 
   const handleManualRefresh = () => {
@@ -156,6 +165,7 @@ export default function WalletPage() {
       setIsDepositOpen(false);
       resetDepositForm();
       fetchWalletData();
+      notifyWalletUpdated();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to process deposit';
       toast.error(msg);
@@ -388,50 +398,51 @@ export default function WalletPage() {
               }
             />
           ) : (
-            <div className="w-full">
-              <Table className="min-w-[650px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Reference</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Balance After</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {transactions.map((tx) => {
-                    const isDeposit = tx.type === 'DEPOSIT';
-                    const isRefund = tx.type === 'REFUND';
-                    const amountVal = Number(tx.amount || 0);
-                    const balAfterVal = Number(tx.balanceAfter || 0);
+            <>
+              {/* Mobile View: High-density transaction cards */}
+              <div className="block md:hidden divide-y divide-border">
+                {transactions.map((tx) => {
+                  const isDeposit = tx.type === 'DEPOSIT';
+                  const isRefund = tx.type === 'REFUND';
+                  const amountVal = Number(tx.amount || 0);
+                  const balAfterVal = Number(tx.balanceAfter || 0);
 
-                    return (
-                      <TableRow key={tx.id}>
-                        <TableCell>
-                          <span
-                            className={`flex items-center text-xs font-semibold ${
-                              isDeposit
-                                ? 'text-emerald-600 dark:text-emerald-400'
-                                : isRefund
-                                ? 'text-blue-600 dark:text-blue-400'
-                                : 'text-red-600 dark:text-red-400'
-                            }`}
-                          >
-                            {isDeposit ? (
-                              <ArrowDownRight className="mr-1 h-4 w-4" />
-                            ) : (
-                              <ArrowUpRight className="mr-1 h-4 w-4" />
-                            )}
-                            {tx.type}
-                          </span>
-                        </TableCell>
-                        <TableCell className="font-mono text-xs text-muted-foreground">
-                          {tx.reference}
-                        </TableCell>
-                        <TableCell
-                          className={`font-semibold ${
+                  return (
+                    <div key={tx.id} className="p-4 space-y-2 hover:bg-muted/20 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <span
+                          className={`flex items-center text-xs font-semibold ${
+                            isDeposit
+                              ? 'text-emerald-600 dark:text-emerald-400'
+                              : isRefund
+                              ? 'text-blue-600 dark:text-blue-400'
+                              : 'text-red-600 dark:text-red-400'
+                          }`}
+                        >
+                          {isDeposit ? (
+                            <ArrowDownRight className="mr-1 h-3.5 w-3.5" />
+                          ) : (
+                            <ArrowUpRight className="mr-1 h-3.5 w-3.5" />
+                          )}
+                          {tx.type}
+                        </span>
+                        <Badge
+                          variant={
+                            tx.status === 'COMPLETED'
+                              ? 'default'
+                              : tx.status === 'FAILED'
+                              ? 'destructive'
+                              : 'outline'
+                          }
+                          className="text-[11px]"
+                        >
+                          {tx.status || 'COMPLETED'}
+                        </Badge>
+                      </div>
+
+                      <div className="flex items-baseline justify-between">
+                        <span
+                          className={`text-base font-bold ${
                             isDeposit
                               ? 'text-emerald-600 dark:text-emerald-400'
                               : isRefund
@@ -441,38 +452,115 @@ export default function WalletPage() {
                         >
                           {isDeposit ? '+' : '-'}
                           {currency} {amountVal.toLocaleString()}
-                        </TableCell>
-                        <TableCell className="text-sm font-medium">
-                          {currency} {balAfterVal.toLocaleString()}
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          Bal: {currency} {balAfterVal.toLocaleString()}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1 border-t border-border/40">
+                        <span className="font-mono truncate max-w-[180px]">{tx.reference}</span>
+                        <span>
                           {new Date(tx.createdAt).toLocaleDateString(undefined, {
                             month: 'short',
                             day: 'numeric',
-                            year: 'numeric',
                             hour: '2-digit',
                             minute: '2-digit',
                           })}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              tx.status === 'COMPLETED'
-                                ? 'default'
-                                : tx.status === 'FAILED'
-                                ? 'destructive'
-                                : 'outline'
-                            }
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Desktop View: Full data table */}
+              <div className="hidden md:block w-full overflow-x-auto">
+                <Table className="min-w-[650px]">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Reference</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Balance After</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {transactions.map((tx) => {
+                      const isDeposit = tx.type === 'DEPOSIT';
+                      const isRefund = tx.type === 'REFUND';
+                      const amountVal = Number(tx.amount || 0);
+                      const balAfterVal = Number(tx.balanceAfter || 0);
+
+                      return (
+                        <TableRow key={tx.id}>
+                          <TableCell>
+                            <span
+                              className={`flex items-center text-xs font-semibold ${
+                                isDeposit
+                                  ? 'text-emerald-600 dark:text-emerald-400'
+                                  : isRefund
+                                  ? 'text-blue-600 dark:text-blue-400'
+                                  : 'text-red-600 dark:text-red-400'
+                              }`}
+                            >
+                              {isDeposit ? (
+                                <ArrowDownRight className="mr-1 h-4 w-4" />
+                              ) : (
+                                <ArrowUpRight className="mr-1 h-4 w-4" />
+                              )}
+                              {tx.type}
+                            </span>
+                          </TableCell>
+                          <TableCell className="font-mono text-xs text-muted-foreground">
+                            {tx.reference}
+                          </TableCell>
+                          <TableCell
+                            className={`font-semibold ${
+                              isDeposit
+                                ? 'text-emerald-600 dark:text-emerald-400'
+                                : isRefund
+                                ? 'text-blue-600 dark:text-blue-400'
+                                : 'text-red-600 dark:text-red-400'
+                            }`}
                           >
-                            {tx.status || 'COMPLETED'}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
+                            {isDeposit ? '+' : '-'}
+                            {currency} {amountVal.toLocaleString()}
+                          </TableCell>
+                          <TableCell className="text-sm font-medium">
+                            {currency} {balAfterVal.toLocaleString()}
+                          </TableCell>
+                          <TableCell className="text-xs text-muted-foreground">
+                            {new Date(tx.createdAt).toLocaleDateString(undefined, {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                tx.status === 'COMPLETED'
+                                  ? 'default'
+                                  : tx.status === 'FAILED'
+                                  ? 'destructive'
+                                  : 'outline'
+                              }
+                            >
+                              {tx.status || 'COMPLETED'}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

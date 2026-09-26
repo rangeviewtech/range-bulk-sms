@@ -2,7 +2,8 @@
 
 > **Entity**: Range View Technology Services Uganda Limited  
 > **Aesthetic**: Enterprise Precision Dark/Light Aesthetic  
-> **Source Files**: `src/design-system/tokens/colors.ts`, `src/app/globals.css`, `tailwind.config.ts`
+> **Source Files**: `src/design-system/tokens/colors.ts`, `src/app/globals.css`, `tailwind.config.ts`  
+> **Next-Gen Rules**: See [`DESIGN_AND_RESPONSIVE_RULES.md`](./DESIGN_AND_RESPONSIVE_RULES.md) for full responsive breakpoints, enterprise API standards, and anti-AI-isms.
 
 ---
 

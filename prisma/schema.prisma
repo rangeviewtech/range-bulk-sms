@@ -1215,6 +1215,8 @@ model ApiKey {
   clientId        String?
   organizationId  String?
   name            String
+  appName         String       @default("Default App")
+  environment     String       @default("production")
   keyPrefix       String       @db.VarChar(12)
   keyHash         String       @unique
   status          ApiKeyStatus @default(ACTIVE)
@@ -1222,6 +1224,11 @@ model ApiKey {
   ipWhitelist     String[]     @default([])
   rateLimit       Int          @default(100)
   rateLimitWindow Int          @default(60)
+  quotaLimit      Int?
+  quotaPeriod     String?      @default("MONTHLY")
+  quotaUsed       Int          @default(0)
+  quotaResetAt    DateTime?
+  alertThreshold  Int?         @default(80)
   lastUsedAt      DateTime?
   expiresAt       DateTime?
   revokedAt       DateTime?
@@ -1237,6 +1244,8 @@ model ApiKey {
   @@index([keyHash])
   @@index([keyPrefix])
   @@index([status])
+  @@index([appName])
+  @@index([environment])
 }
 
 // ── API REQUEST LOG ───────────────────────────────────────

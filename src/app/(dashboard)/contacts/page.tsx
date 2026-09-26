@@ -866,236 +866,419 @@ export default function ContactsPage() {
       {/* Main Table Card */}
       <Card>
         <CardContent className="p-0">
-          <div className="w-full">
-            <Table className="min-w-[700px]">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>
-                    <SortableHeader
-                      column="name"
-                      label="Contact Name"
-                      currentSort={sortKey}
-                      currentOrder={sortOrder}
-                      onSort={toggleSort}
-                    />
-                  </TableHead>
-                  <TableHead>
-                    <SortableHeader
-                      column="phone"
-                      label="Phone Number"
-                      currentSort={sortKey}
-                      currentOrder={sortOrder}
-                      onSort={toggleSort}
-                    />
-                  </TableHead>
-                  <TableHead>
-                    <SortableHeader
-                      column="carrier"
-                      label="Network"
-                      currentSort={sortKey}
-                      currentOrder={sortOrder}
-                      onSort={toggleSort}
-                    />
-                  </TableHead>
-                  <TableHead>
-                    <SortableHeader
-                      column="email"
-                      label="Email"
-                      currentSort={sortKey}
-                      currentOrder={sortOrder}
-                      onSort={toggleSort}
-                    />
-                  </TableHead>
-                  <TableHead>
-                    <SortableHeader
-                      column="status"
-                      label="Status"
-                      currentSort={sortKey}
-                      currentOrder={sortOrder}
-                      onSort={toggleSort}
-                    />
-                  </TableHead>
-                  <TableHead>
-                    <SortableHeader
-                      column="groups"
-                      label="Groups / Tags"
-                      currentSort={sortKey}
-                      currentOrder={sortOrder}
-                      onSort={toggleSort}
-                    />
-                  </TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading ? (
-                  <TableSkeletonRows columns={7} rows={5} />
-                ) : paginatedData.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="p-0">
-                      <EmptyState
-                        className="rounded-none border-0 bg-transparent py-16"
-                        icon={<User className="h-8 w-8 text-muted-foreground" />}
-                        title="No contacts found"
-                        description={`We couldn't find any contacts matching "${search || filters.group || filters.status || filters.country || filters.network}".`}
-                        action={
-                          search ? (
-                            <Button variant="outline" onClick={clearSearch}>Clear Search</Button>
-                          ) : undefined
-                        }
-                      />
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  paginatedData.map((c) => {
-                    const fullName =
-                      [c.firstName, c.lastName].filter(Boolean).join(' ') || 'Unnamed Contact';
-                    return (
-                      <TableRow key={c.id} className="hover:bg-muted/30 transition-colors">
-                        <TableCell>
-                          <div className="flex items-center gap-2.5">
-                            <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
-                              <User className="w-4 h-4" />
-                            </div>
-                            <span className="font-semibold text-foreground text-sm">{fullName}</span>
+          {loading ? (
+            <>
+              {/* Mobile Skeleton */}
+              <div className="block md:hidden divide-y divide-border p-3 space-y-4">
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="pt-3 first:pt-0 space-y-2.5 animate-pulse">
+                    <div className="flex justify-between items-center">
+                      <div className="h-4 bg-muted rounded w-36" />
+                      <div className="h-5 bg-muted rounded-full w-16" />
+                    </div>
+                    <div className="h-3.5 bg-muted rounded w-28" />
+                    <div className="flex gap-2">
+                      <div className="h-7 bg-muted rounded flex-1" />
+                      <div className="h-7 bg-muted rounded w-16" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Desktop Skeleton */}
+              <div className="hidden md:block w-full overflow-x-auto">
+                <Table className="min-w-[700px]">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Contact Name</TableHead>
+                      <TableHead>Phone Number</TableHead>
+                      <TableHead>Network</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Groups / Tags</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableSkeletonRows columns={7} rows={5} />
+                  </TableBody>
+                </Table>
+              </div>
+            </>
+          ) : paginatedData.length === 0 ? (
+            <EmptyState
+              className="rounded-none border-0 bg-transparent py-16"
+              icon={<User className="h-8 w-8 text-muted-foreground" />}
+              title="No contacts found"
+              description={`We couldn't find any contacts matching "${search || filters.group || filters.status || filters.country || filters.network}".`}
+              action={
+                search ? (
+                  <Button variant="outline" onClick={clearSearch}>Clear Search</Button>
+                ) : undefined
+              }
+            />
+          ) : (
+            <>
+              {/* Mobile View: High-density responsive contact card list */}
+              <div className="block md:hidden divide-y divide-border">
+                {paginatedData.map((c) => {
+                  const fullName =
+                    [c.firstName, c.lastName].filter(Boolean).join(' ') || 'Unnamed Contact';
+                  return (
+                    <div key={c.id} className="p-4 space-y-3 hover:bg-muted/20 transition-colors">
+                      {/* Top Row: Avatar + Name + Status Pill */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="p-1.5 rounded-lg bg-primary/10 text-primary shrink-0">
+                            <User className="w-4 h-4" />
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          <CountryFlagPhone phone={c.phone} asLink className="text-xs text-foreground" />
-                        </TableCell>
-                        <TableCell>
-                          <CarrierBadge phone={c.phone} showIcon={false} size="sm" />
-                        </TableCell>
-                        <TableCell>
-                          {c.email ? (
-                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                              <Mail className="w-3.5 h-3.5 shrink-0" />
-                              <a
-                                href={`mailto:${c.email}`}
-                                title={`Send email to ${c.email}`}
-                                aria-label={`Send email to ${c.email}`}
-                                className="hover:underline hover:text-primary transition-colors cursor-pointer focus:outline-hidden focus-visible:ring-1 focus-visible:ring-primary rounded-xs"
-                              >
-                                {c.email}
-                              </a>
-                            </div>
-                          ) : (
-                            <span className="text-xs text-muted-foreground italic">—</span>
+                          <span className="font-semibold text-foreground text-sm line-clamp-1">
+                            {fullName}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRequestToggleStatus(c.id, fullName, c.status || 'ACTIVE')}
+                          title={(c.status || 'ACTIVE') === 'ACTIVE' ? `Click to opt out ${fullName}` : `Click to activate ${fullName}`}
+                          aria-label={`Toggle status for ${fullName}. Currently ${c.status || 'ACTIVE'}.`}
+                          className={cn(
+                            'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold transition-all cursor-pointer border select-none shrink-0',
+                            (c.status || 'ACTIVE') === 'ACTIVE'
+                              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                              : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
                           )}
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap">
-                          <button
-                            type="button"
-                            onClick={() => handleRequestToggleStatus(c.id, fullName, c.status || 'ACTIVE')}
-                            title={(c.status || 'ACTIVE') === 'ACTIVE' ? `Click to opt out ${fullName}` : `Click to activate ${fullName}`}
-                            aria-label={`Toggle status for ${fullName}. Currently ${c.status || 'ACTIVE'}.`}
+                        >
+                          <span
                             className={cn(
-                              'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold transition-all cursor-pointer border select-none',
+                              'w-1.5 h-1.5 rounded-full',
                               (c.status || 'ACTIVE') === 'ACTIVE'
-                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20'
-                                : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 hover:bg-amber-500/20'
+                                ? 'bg-emerald-500 animate-pulse'
+                                : 'bg-amber-500'
                             )}
-                          >
-                            <span
-                              className={cn(
-                                'w-1.5 h-1.5 rounded-full',
-                                (c.status || 'ACTIVE') === 'ACTIVE'
-                                  ? 'bg-emerald-500 animate-pulse'
-                                  : 'bg-amber-500'
-                              )}
-                            />
-                            {(c.status || 'ACTIVE') === 'ACTIVE' ? 'Active' : 'Opted Out'}
-                          </button>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            {c.groups && c.groups.length > 0 ? (
-                              c.groups.map((g, idx) => (
-                                <Badge key={idx} variant="secondary" className="text-xs">
-                                  {g.name}
-                                </Badge>
-                              ))
-                            ) : (
-                              <Badge variant="outline" className="text-[11px] text-muted-foreground">
-                                Default
+                          />
+                          {(c.status || 'ACTIVE') === 'ACTIVE' ? 'Active' : 'Opted Out'}
+                        </button>
+                      </div>
+
+                      {/* Phone & Network */}
+                      <div className="flex flex-wrap items-center justify-between gap-2 bg-muted/40 p-2.5 rounded-lg border border-border/50">
+                        <CountryFlagPhone phone={c.phone} asLink className="text-xs font-mono text-foreground" />
+                        <CarrierBadge phone={c.phone} showIcon={false} size="sm" />
+                      </div>
+
+                      {/* Email & Groups */}
+                      <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                        {c.email ? (
+                          <div className="flex items-center gap-1.5 text-muted-foreground">
+                            <Mail className="w-3.5 h-3.5 shrink-0" />
+                            <a
+                              href={`mailto:${c.email}`}
+                              title={`Send email to ${c.email}`}
+                              aria-label={`Send email to ${c.email}`}
+                              className="hover:underline hover:text-primary transition-colors cursor-pointer"
+                            >
+                              {c.email}
+                            </a>
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground/60 italic text-[11px]">No email</span>
+                        )}
+
+                        <div className="flex flex-wrap gap-1">
+                          {c.groups && c.groups.length > 0 ? (
+                            c.groups.map((g, idx) => (
+                              <Badge key={idx} variant="secondary" className="text-[11px] px-1.5 py-0">
+                                {g.name}
                               </Badge>
+                            ))
+                          ) : (
+                            <Badge variant="outline" className="text-[10px] text-muted-foreground px-1.5 py-0">
+                              Default
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Action buttons */}
+                      <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/40">
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          className="h-8 text-xs gap-1.5 flex-1 text-primary hover:text-primary"
+                        >
+                          <Link
+                            href={`/sms/send?deliveryMode=manual&recipients=${encodeURIComponent(c.phone)}`}
+                            title={`Send SMS to ${fullName}`}
+                            aria-label={`Send SMS to ${fullName}`}
+                          >
+                            <Send className="w-3.5 h-3.5" />
+                            <span>Send SMS</span>
+                          </Link>
+                        </Button>
+
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="h-8 text-xs gap-1.5"
+                          onClick={() => handleOpenEdit(c)}
+                          title={`Edit ${fullName}`}
+                          aria-label={`Edit ${fullName}`}
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                          <span>Edit</span>
+                        </Button>
+
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className={cn(
+                            'h-8 w-8 rounded-lg transition-colors border',
+                            (c.status || 'ACTIVE') === 'ACTIVE'
+                              ? 'text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-amber-500/10 hover:text-amber-600'
+                              : 'text-amber-600 dark:text-amber-400 border-amber-500/20 hover:bg-emerald-500/10 hover:text-emerald-600'
+                          )}
+                          onClick={() => handleRequestToggleStatus(c.id, fullName, c.status || 'ACTIVE')}
+                          title={(c.status || 'ACTIVE') === 'ACTIVE' ? `Opt out ${fullName}` : `Activate ${fullName}`}
+                          aria-label={(c.status || 'ACTIVE') === 'ACTIVE' ? `Opt out ${fullName}` : `Activate ${fullName}`}
+                        >
+                          {(c.status || 'ACTIVE') === 'ACTIVE' ? (
+                            <ToggleRight className="w-4 h-4" />
+                          ) : (
+                            <ToggleLeft className="w-4 h-4" />
+                          )}
+                        </Button>
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
+                          onClick={() => handleDeleteContact(c.id, fullName)}
+                          title={`Delete ${fullName}`}
+                          aria-label={`Delete ${fullName}`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Desktop Table View */}
+              <div className="hidden md:block w-full overflow-x-auto">
+                <Table className="min-w-[700px]">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>
+                        <SortableHeader
+                          column="name"
+                          label="Contact Name"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead>
+                        <SortableHeader
+                          column="phone"
+                          label="Phone Number"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead>
+                        <SortableHeader
+                          column="carrier"
+                          label="Network"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead>
+                        <SortableHeader
+                          column="email"
+                          label="Email"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead>
+                        <SortableHeader
+                          column="status"
+                          label="Status"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead>
+                        <SortableHeader
+                          column="groups"
+                          label="Groups / Tags"
+                          currentSort={sortKey}
+                          currentOrder={sortOrder}
+                          onSort={toggleSort}
+                        />
+                      </TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedData.map((c) => {
+                      const fullName =
+                        [c.firstName, c.lastName].filter(Boolean).join(' ') || 'Unnamed Contact';
+                      return (
+                        <TableRow key={c.id} className="hover:bg-muted/30 transition-colors">
+                          <TableCell>
+                            <div className="flex items-center gap-2.5">
+                              <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                                <User className="w-4 h-4" />
+                              </div>
+                              <span className="font-semibold text-foreground text-sm">{fullName}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <CountryFlagPhone phone={c.phone} asLink className="text-xs text-foreground" />
+                          </TableCell>
+                          <TableCell>
+                            <CarrierBadge phone={c.phone} showIcon={false} size="sm" />
+                          </TableCell>
+                          <TableCell>
+                            {c.email ? (
+                              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                <Mail className="w-3.5 h-3.5 shrink-0" />
+                                <a
+                                  href={`mailto:${c.email}`}
+                                  title={`Send email to ${c.email}`}
+                                  aria-label={`Send email to ${c.email}`}
+                                  className="hover:underline hover:text-primary transition-colors cursor-pointer focus:outline-hidden focus-visible:ring-1 focus-visible:ring-primary rounded-xs"
+                                >
+                                  {c.email}
+                                </a>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-muted-foreground italic">—</span>
                             )}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            {/* 1. Toggle Status */}
-                            <Button
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            <button
                               type="button"
-                              variant="ghost"
-                              size="icon"
-                              className={cn(
-                                'h-8 w-8 rounded-lg transition-colors',
-                                (c.status || 'ACTIVE') === 'ACTIVE'
-                                  ? 'text-emerald-600 dark:text-emerald-400 hover:text-amber-600 hover:bg-amber-500/10'
-                                  : 'text-amber-600 dark:text-amber-400 hover:text-emerald-600 hover:bg-emerald-500/10'
-                              )}
                               onClick={() => handleRequestToggleStatus(c.id, fullName, c.status || 'ACTIVE')}
-                              title={(c.status || 'ACTIVE') === 'ACTIVE' ? `Opt out ${fullName}` : `Activate ${fullName}`}
-                              aria-label={(c.status || 'ACTIVE') === 'ACTIVE' ? `Opt out ${fullName}` : `Activate ${fullName}`}
-                            >
-                              {(c.status || 'ACTIVE') === 'ACTIVE' ? (
-                                <ToggleRight className="w-4 h-4" />
-                              ) : (
-                                <ToggleLeft className="w-4 h-4" />
+                              title={(c.status || 'ACTIVE') === 'ACTIVE' ? `Click to opt out ${fullName}` : `Click to activate ${fullName}`}
+                              aria-label={`Toggle status for ${fullName}. Currently ${c.status || 'ACTIVE'}.`}
+                              className={cn(
+                                'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold transition-all cursor-pointer border select-none',
+                                (c.status || 'ACTIVE') === 'ACTIVE'
+                                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20'
+                                  : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 hover:bg-amber-500/20'
                               )}
-                            </Button>
-
-                            {/* 2. Edit Contact */}
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-                              onClick={() => handleOpenEdit(c)}
-                              title={`Edit ${fullName}`}
-                              aria-label={`Edit ${fullName}`}
                             >
-                              <Pencil className="w-3.5 h-3.5" />
-                            </Button>
-
-                            {/* 3. Direct Send SMS */}
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                              asChild
-                            >
-                              <Link
-                                href={`/sms/send?deliveryMode=manual&recipients=${encodeURIComponent(c.phone)}`}
-                                title={`Send SMS to ${fullName}`}
-                                aria-label={`Send SMS to ${fullName}`}
+                              <span
+                                className={cn(
+                                  'w-1.5 h-1.5 rounded-full',
+                                  (c.status || 'ACTIVE') === 'ACTIVE'
+                                    ? 'bg-emerald-500 animate-pulse'
+                                    : 'bg-amber-500'
+                                )}
+                              />
+                              {(c.status || 'ACTIVE') === 'ACTIVE' ? 'Active' : 'Opted Out'}
+                            </button>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-wrap gap-1">
+                              {c.groups && c.groups.length > 0 ? (
+                                c.groups.map((g, idx) => (
+                                  <Badge key={idx} variant="secondary" className="text-xs">
+                                    {g.name}
+                                  </Badge>
+                                ))
+                              ) : (
+                                <Badge variant="outline" className="text-[11px] text-muted-foreground">
+                                  Default
+                                </Badge>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-1">
+                              {/* 1. Toggle Status */}
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className={cn(
+                                  'h-8 w-8 rounded-lg transition-colors',
+                                  (c.status || 'ACTIVE') === 'ACTIVE'
+                                    ? 'text-emerald-600 dark:text-emerald-400 hover:text-amber-600 hover:bg-amber-500/10'
+                                    : 'text-amber-600 dark:text-amber-400 hover:text-emerald-600 hover:bg-emerald-500/10'
+                                )}
+                                onClick={() => handleRequestToggleStatus(c.id, fullName, c.status || 'ACTIVE')}
+                                title={(c.status || 'ACTIVE') === 'ACTIVE' ? `Opt out ${fullName}` : `Activate ${fullName}`}
+                                aria-label={(c.status || 'ACTIVE') === 'ACTIVE' ? `Opt out ${fullName}` : `Activate ${fullName}`}
                               >
-                                <Send className="w-3.5 h-3.5" />
-                              </Link>
-                            </Button>
+                                {(c.status || 'ACTIVE') === 'ACTIVE' ? (
+                                  <ToggleRight className="w-4 h-4" />
+                                ) : (
+                                  <ToggleLeft className="w-4 h-4" />
+                                )}
+                              </Button>
 
-                            {/* 4. Delete Contact */}
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
-                              onClick={() => handleDeleteContact(c.id, fullName)}
-                              title={`Delete ${fullName}`}
-                              aria-label={`Delete ${fullName}`}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                              {/* 2. Edit Contact */}
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                                onClick={() => handleOpenEdit(c)}
+                                title={`Edit ${fullName}`}
+                                aria-label={`Edit ${fullName}`}
+                              >
+                                <Pencil className="w-3.5 h-3.5" />
+                              </Button>
+
+                              {/* 3. Direct Send SMS */}
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                asChild
+                              >
+                                <Link
+                                  href={`/sms/send?deliveryMode=manual&recipients=${encodeURIComponent(c.phone)}`}
+                                  title={`Send SMS to ${fullName}`}
+                                  aria-label={`Send SMS to ${fullName}`}
+                                >
+                                  <Send className="w-3.5 h-3.5" />
+                                </Link>
+                              </Button>
+
+                              {/* 4. Delete Contact */}
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
+                                onClick={() => handleDeleteContact(c.id, fullName)}
+                                title={`Delete ${fullName}`}
+                                aria-label={`Delete ${fullName}`}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
+          )}
 
           <Pagination
             page={page}

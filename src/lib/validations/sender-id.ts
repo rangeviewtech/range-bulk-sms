@@ -1,12 +1,19 @@
 import { z } from 'zod';
 
-// Apply for sender ID
+// Apply for sender ID (Compliant with Airtel, MTN, and UCC Telecom standards)
+export const SENDER_ID_REGEX = /^[a-zA-Z0-9_-]+$/;
+
 export const senderIdApplicationSchema = z.object({
   senderId: z.string()
+    .trim()
     .min(3, 'Sender ID must be at least 3 characters')
-    .max(11, 'Sender ID cannot exceed 11 characters')
-    .regex(/^[a-zA-Z0-9]+$/, 'Sender ID must be alphanumeric'),
+    .max(11, 'Sender ID cannot exceed 11 characters as per standard telecom specifications')
+    .refine((val) => !/\s/.test(val), { message: 'Spaces are not allowed in telecom Sender IDs' })
+    .refine((val) => !/[()[\]{}]/.test(val), { message: 'Brackets and parentheses are not allowed in Sender IDs' })
+    .refine((val) => SENDER_ID_REGEX.test(val), { message: 'Sender ID can only contain letters, numbers, underscores (_), and dashes (-)' }),
   purpose: z.string().min(10, 'Please describe the purpose').max(500),
+  isNumeric: z.boolean().optional(),
+  uccApprovalReference: z.string().max(100).optional(),
 });
 
 // Admin approve/reject sender ID

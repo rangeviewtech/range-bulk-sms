@@ -3442,28 +3442,457 @@ export function getAllSupportedRegions(): readonly RegionRecord[] {
 }
 
 /**
- * Searches the registry by country name, ISO code, or dialing code.
+ * Normalizes text for search by stripping diacritics, punctuation, apostrophes, and whitespace.
+ */
+export function normalizeForSearch(text: string): string {
+  return (text || '')
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
+    .replace(/['’`.]/g, '')
+    .trim();
+}
+
+/**
+ * Common country aliases, acronyms, and colloquial names mapping.
+ * Keyed by ISO 3166-1 alpha-2 code.
+ */
+export const COUNTRY_ALIASES: Record<string, readonly string[]> = {
+  // East Africa & Horn of Africa
+  UG: ['uganda', 'ug', 'kla', 'kampala', 'entebbe', 'jinja', 'mbarara', 'gulu'],
+  KE: ['kenya', 'ke', 'nbi', 'nairobi', 'mombasa', 'kisumu', 'nakuru', 'eldoret'],
+  TZ: ['tanzania', 'tz', 'dar es salaam', 'dodoma', 'zanzibar', 'arusha', 'mwanza', 'united republic of tanzania'],
+  RW: ['rwanda', 'rw', 'kigali', 'butare', 'gisenyi'],
+  BI: ['burundi', 'bi', 'bujumbura', 'gitega'],
+  SS: ['south sudan', 'juba', 'malakal', 'wau'],
+  SD: ['sudan', 'khartoum', 'omdurman', 'port sudan'],
+  ET: ['ethiopia', 'addis ababa', 'habesha', 'oromia', 'amhara'],
+  SO: ['somalia', 'mogadishu', 'hargeisa', 'somaliland', 'puntland'],
+  DJ: ['djibouti', 'djibouti city'],
+  ER: ['eritrea', 'asmara'],
+
+  // West & Central Africa
+  NG: ['nigeria', 'ng', 'lagos', 'abuja', 'kano', 'ibadan', 'port harcourt', 'benin city'],
+  GH: ['ghana', 'gh', 'accra', 'kumasi', 'tema', 'tamale'],
+  CM: ['cameroon', 'cameroun', 'yaounde', 'douala'],
+  SN: ['senegal', 'dakar', 'thies'],
+  CI: ['ivory coast', 'cote divoire', 'côte d\'ivoire', 'abidjan', 'yamoussoukro'],
+  CD: ['drc', 'dr congo', 'congo kinshasa', 'congo drc', 'democratic republic of the congo', 'zaire', 'kinshasa', 'lubumbashi', 'goma'],
+  CG: ['congo', 'republic of the congo', 'congo brazzaville', 'brazzaville', 'pointe-noire'],
+  AO: ['angola', 'luanda', 'huambo'],
+  GA: ['gabon', 'libreville', 'port-gentil'],
+  GQ: ['equatorial guinea', 'malabo', 'bata'],
+  ML: ['mali', 'bamako'],
+  BF: ['burkina faso', 'ouagadougou', 'bobo-dioulasso'],
+  NE: ['niger', 'niamey', 'zinder'],
+  TD: ['chad', 'ndjamena'],
+  TG: ['togo', 'lome', 'lomé'],
+  BJ: ['benin', 'cotonou', 'porto-novo'],
+  GN: ['guinea', 'conakry'],
+  SL: ['sierra leone', 'freetown'],
+  LR: ['liberia', 'monrovia'],
+  GW: ['guinea-bissau', 'bissau'],
+  CV: ['cape verde', 'cabo verde', 'praia'],
+  ST: ['sao tome', 'são tomé', 'sao tome and principe', 'são tomé and príncipe'],
+  CF: ['car', 'central african republic', 'central africa', 'bangui'],
+
+  // Southern Africa
+  ZA: ['rsa', 'south africa', 'joburg', 'johannesburg', 'cape town', 'durban', 'pretoria', 'soweto', 'bloemfontein', 'gqeberha'],
+  ZM: ['zambia', 'lusaka', 'ndola', 'kitwe', 'livingstone'],
+  ZW: ['zimbabwe', 'harare', 'bulawayo'],
+  MW: ['malawi', 'lilongwe', 'blantyre', 'mzuzu'],
+  MZ: ['mozambique', 'maputo', 'matola', 'beira'],
+  BW: ['botswana', 'gaborone', 'francistown'],
+  NA: ['namibia', 'windhoek', 'walvis bay'],
+  LS: ['lesotho', 'maseru'],
+  SZ: ['swaziland', 'eswatini', 'mbabane', 'manzini'],
+  MG: ['madagascar', 'antananarivo'],
+  MU: ['mauritius', 'port louis'],
+  SC: ['seychelles', 'victoria'],
+  KM: ['comoros', 'moroni'],
+
+  // North Africa
+  EG: ['egypt', 'misr', 'cairo', 'alexandria', 'giza', 'sharm el sheikh'],
+  MA: ['morocco', 'maroc', 'rabat', 'casablanca', 'marrakech', 'tangier', 'fes'],
+  DZ: ['algeria', 'algerie', 'algiers', 'oran', 'constantine'],
+  TN: ['tunisia', 'tunis', 'sfax', 'sousse'],
+  LY: ['libya', 'tripoli', 'benghazi', 'misrata'],
+  MR: ['mauritania', 'nouakchott'],
+
+  // Middle East
+  AE: ['uae', 'united arab emirates', 'emirates', 'dubai', 'abu dhabi', 'sharjah', 'ajman', 'ras al khaimah', 'fujairah', 'al ain'],
+  SA: ['ksa', 'saudi', 'saudi arabia', 'riyadh', 'jeddah', 'mecca', 'makkah', 'medina', 'madinah', 'dammam', 'khobar'],
+  QA: ['qatar', 'doha', 'al wakrah'],
+  KW: ['kuwait', 'kuwait city', 'salmiya'],
+  BH: ['bahrain', 'manama', 'muharraq'],
+  OM: ['oman', 'muscat', 'salalah'],
+  YE: ['yemen', 'sanaa', 'aden', 'taiz'],
+  IQ: ['iraq', 'baghdad', 'erbil', 'basra', 'mosul', 'sulaymaniyah'],
+  JO: ['jordan', 'amman', 'zarqa', 'aqaba'],
+  LB: ['lebanon', 'beirut', 'tripoli'],
+  SY: ['syria', 'syrian arab republic', 'damascus', 'aleppo', 'homs'],
+  IL: ['israel', 'tel aviv', 'jerusalem', 'haifa'],
+  PS: ['palestine', 'state of palestine', 'gaza', 'west bank', 'ramallah', 'hebron', 'nablus'],
+  IR: ['iran', 'islamic republic of iran', 'persia', 'tehran', 'mashhad', 'isfahan', 'shiraz'],
+
+  // South Asia
+  IN: ['india', 'bharat', 'hindustan', 'delhi', 'new delhi', 'mumbai', 'bombay', 'bangalore', 'bengaluru', 'hyderabad', 'chennai', 'madras', 'kolkata', 'calcutta', 'pune', 'ahmedabad', 'noida', 'gurgaon'],
+  PK: ['pakistan', 'karachi', 'lahore', 'islamabad', 'rawalpindi', 'peshawar', 'faisalabad'],
+  BD: ['bangladesh', 'dhaka', 'chittagong', 'sylhet', 'rajshahi'],
+  LK: ['sri lanka', 'ceylon', 'colombo', 'kandy', 'galle'],
+  NP: ['nepal', 'kathmandu', 'pokhara', 'lalitpur'],
+  BT: ['bhutan', 'thimphu'],
+  MV: ['maldives', 'male', 'hulhumale'],
+  AF: ['afghanistan', 'kabul', 'kandahar', 'herat'],
+
+  // East & Southeast Asia
+  CN: ['prc', 'china', 'peoples republic of china', 'beijing', 'shanghai', 'shenzhen', 'guangzhou', 'chengdu', 'hangzhou', 'wuhan'],
+  JP: ['japan', 'nippon', 'nihon', 'tokyo', 'osaka', 'kyoto', 'yokohama', 'nagoya', 'sapporo'],
+  KR: ['korea', 'south korea', 'republic of korea', 'rok', 'seoul', 'busan', 'incheon', 'daegu'],
+  KP: ['north korea', 'dprk', 'pyongyang'],
+  TW: ['taiwan', 'chinese taipei', 'roc', 'taipei', 'kaohsiung', 'taichung'],
+  HK: ['hong kong', 'hk', 'kowloon'],
+  MO: ['macau', 'macao'],
+  SG: ['singapore', 'lion city'],
+  MY: ['malaysia', 'kuala lumpur', 'kl', 'penang', 'johor bahru', 'george town'],
+  ID: ['indonesia', 'jakarta', 'bali', 'surabaya', 'bandung', 'medan', 'yogyakarta'],
+  TH: ['thailand', 'siam', 'bangkok', 'phuket', 'chiang mai', 'pattaya'],
+  VN: ['vietnam', 'viet nam', 'hanoi', 'saigon', 'ho chi minh', 'da nang'],
+  PH: ['philippines', 'filipino', 'pilipinas', 'manila', 'cebu', 'davao', 'quezon city', 'makati'],
+  MM: ['burma', 'myanmar', 'yangon', 'rangoon', 'mandalay', 'naypyidaw'],
+  KH: ['cambodia', 'phnom penh', 'siem reap'],
+  LA: ['laos', 'lao pdr', 'vientiane', 'luang prabang'],
+  MN: ['mongolia', 'ulaanbaatar'],
+  BN: ['brunei', 'brunei darussalam', 'bandar seri begawan'],
+  TL: ['east timor', 'timor', 'timor leste', 'dili'],
+
+  // Central Asia
+  KZ: ['kazakhstan', 'almaty', 'astana', 'nur-sultan', 'shymkent'],
+  UZ: ['uzbekistan', 'tashkent', 'samarkand', 'bukhara'],
+  KG: ['kyrgyzstan', 'bishkek', 'osh'],
+  TJ: ['tajikistan', 'dushanbe'],
+  TM: ['turkmenistan', 'ashgabat'],
+
+  // Europe - Western & Central
+  GB: ['uk', 'united kingdom', 'great britain', 'britain', 'england', 'scotland', 'wales', 'northern ireland', 'london', 'manchester', 'birmingham', 'edinburgh', 'glasgow', 'cardiff', 'belfast', 'liverpool', 'leeds'],
+  FR: ['france', 'republique francaise', 'paris', 'marseille', 'lyon', 'toulouse', 'nice', 'bordeaux'],
+  DE: ['germany', 'deutschland', 'berlin', 'munich', 'münchen', 'frankfurt', 'hamburg', 'cologne', 'köln', 'stuttgart', 'düsseldorf'],
+  IT: ['italy', 'italia', 'rome', 'roma', 'milan', 'milano', 'naples', 'napoli', 'turin', 'torino', 'florence', 'firenze', 'venice'],
+  ES: ['spain', 'espana', 'españa', 'madrid', 'barcelona', 'valencia', 'seville', 'sevilla', 'malaga', 'bilbao'],
+  PT: ['portugal', 'lisbon', 'lisboa', 'porto', 'braga', 'faro'],
+  NL: ['holland', 'netherlands', 'the netherlands', 'amsterdam', 'rotterdam', 'the hague', 'den haag', 'utrecht', 'eindhoven'],
+  BE: ['belgium', 'belgique', 'belgie', 'brussels', 'bruxelles', 'antwerp', 'gent', 'bruges'],
+  CH: ['switzerland', 'swiss', 'helvetia', 'schweiz', 'suisse', 'svizzera', 'zurich', 'geneva', 'bern', 'basel', 'lausanne'],
+  AT: ['austria', 'oesterreich', 'österreich', 'vienna', 'wien', 'salzburg', 'innsbruck', 'graz'],
+  IE: ['ireland', 'eire', 'éire', 'republic of ireland', 'dublin', 'cork', 'galway', 'limerick'],
+  LU: ['luxembourg', 'luxembourg city'],
+  MC: ['monaco', 'monte carlo'],
+  LI: ['liechtenstein', 'vaduz'],
+  SM: ['san marino'],
+  VA: ['vatican', 'vatican city', 'holy see', 'the vatican'],
+  AD: ['andorra', 'andorra la vella'],
+  MT: ['malta', 'valletta', 'sliema'],
+
+  // Europe - Northern / Nordic
+  SE: ['sweden', 'sverige', 'stockholm', 'gothenburg', 'malmo', 'uppsala'],
+  NO: ['norway', 'norge', 'oslo', 'bergen', 'trondheim', 'stavanger'],
+  DK: ['denmark', 'danmark', 'copenhagen', 'københavn', 'aarhus', 'odense'],
+  FI: ['finland', 'suomi', 'helsinki', 'espoo', 'tampere', 'vantaa'],
+  IS: ['iceland', 'reykjavik'],
+
+  // Europe - Eastern & Baltic
+  PL: ['poland', 'polska', 'warsaw', 'warszawa', 'krakow', 'kraków', 'wroclaw', 'gdansk', 'poznan'],
+  UA: ['ukraine', 'kyiv', 'kiev', 'lviv', 'odessa', 'kharkiv', 'dnipro'],
+  CZ: ['czech', 'czech republic', 'czechia', 'prague', 'praha', 'brno', 'ostrava'],
+  SK: ['slovakia', 'bratislava', 'kosice'],
+  HU: ['hungary', 'magyarorszag', 'budapest', 'debrecen'],
+  RO: ['romania', 'bucharest', 'cluj', 'timisoara', 'iasi'],
+  BG: ['bulgaria', 'sofia', 'plovdiv', 'varna'],
+  GR: ['greece', 'hellas', 'athens', 'thessaloniki', 'patras', 'heraklion'],
+  CY: ['cyprus', 'nicosia', 'limassol', 'larnaca'],
+  TR: ['turkey', 'turkiye', 'türkiye', 'istanbul', 'ankara', 'izmir', 'antalya', 'bursa'],
+  RU: ['russia', 'russian federation', 'rf', 'moscow', 'saint petersburg', 'st petersburg', 'novosibirsk', 'yekaterinburg'],
+  BY: ['belarus', 'minsk'],
+  MD: ['moldova', 'republic of moldova', 'chisinau'],
+  EE: ['estonia', 'eesti', 'tallinn', 'tartu'],
+  LV: ['latvia', 'latvija', 'riga'],
+  LT: ['lithuania', 'lietuva', 'vilnius', 'kaunas'],
+
+  // Balkans & Caucasus
+  RS: ['serbia', 'belgrade', 'novi sad'],
+  HR: ['croatia', 'hrvatska', 'zagreb', 'split', 'dubrovnik', 'rijeka'],
+  BA: ['bosnia', 'herzegovina', 'bih', 'bosnia and herzegovina', 'sarajevo', 'banja luka', 'mostar'],
+  SI: ['slovenia', 'ljubljana', 'maribor'],
+  ME: ['montenegro', 'podgorica'],
+  AL: ['albania', 'shqiperia', 'tirana', 'durres'],
+  MK: ['macedonia', 'north macedonia', 'fyrom', 'skopje'],
+  XK: ['kosovo', 'pristina', 'prizren'],
+  GE: ['georgia', 'tbilisi', 'batumi'],
+  AM: ['armenia', 'yerevan'],
+  AZ: ['azerbaijan', 'baku'],
+
+  // Americas - North & Central
+  US: ['usa', 'america', 'united states', 'united states of america', 'us of a', 'u.s.', 'u.s.a.', 'new york', 'california', 'texas', 'florida', 'washington', 'chicago', 'los angeles', 'houston', 'miami', 'san francisco'],
+  CA: ['canada', 'ca', 'toronto', 'montreal', 'vancouver', 'ottawa', 'calgary', 'edmonton', 'quebec', 'winnipeg'],
+  MX: ['mexico', 'méxico', 'cdmx', 'guadalajara', 'monterrey', 'cancun', 'puebla', 'tijuana'],
+  GT: ['guatemala', 'guatemala city'],
+  BZ: ['belize', 'belmopan', 'belize city'],
+  SV: ['el salvador', 'san salvador'],
+  HN: ['honduras', 'tegucigalpa', 'san pedro sula'],
+  NI: ['nicaragua', 'managua'],
+  CR: ['costa rica', 'san jose'],
+  PA: ['panama', 'panama city'],
+
+  // Caribbean
+  CU: ['cuba', 'havana'],
+  DO: ['dominican republic', 'dominicana', 'santo domingo', 'punta cana'],
+  HT: ['haiti', 'port-au-prince'],
+  JM: ['jamaica', 'kingston', 'montego bay'],
+  TT: ['trinidad', 'tobago', 'trinidad and tobago', 'port of spain'],
+  BB: ['barbados', 'bridgetown'],
+  BS: ['bahamas', 'the bahamas', 'nassau'],
+  LC: ['st lucia', 'st. lucia', 'saint lucia', 'castries'],
+  VC: ['st vincent', 'st. vincent', 'saint vincent', 'saint vincent and the grenadines', 'kingstown'],
+  GD: ['grenada', 'st georges'],
+  AG: ['antigua', 'barbuda', 'antigua and barbuda', 'st johns'],
+  DM: ['dominica', 'roseau'],
+  KN: ['st kitts', 'st. kitts', 'saint kitts', 'st kitts and nevis', 'saint kitts and nevis', 'basseterre'],
+
+  // South America
+  BR: ['brazil', 'brasil', 'sao paulo', 'são paulo', 'rio', 'rio de janeiro', 'brasilia', 'salvador', 'fortaleza', 'belo horizonte'],
+  AR: ['argentina', 'buenos aires', 'cordoba', 'rosario', 'mendoza'],
+  CO: ['colombia', 'bogota', 'medellin', 'cali', 'barranquilla', 'cartagena'],
+  PE: ['peru', 'perú', 'lima', 'cusco', 'arequipa'],
+  CL: ['chile', 'santiago', 'valparaiso', 'concepcion'],
+  VE: ['venezuela', 'bolivarian republic of venezuela', 'caracas', 'maracaibo', 'valencia'],
+  EC: ['ecuador', 'quito', 'guayaquil', 'cuenca'],
+  BO: ['bolivia', 'plurinational state of bolivia', 'la paz', 'santa cruz', 'sucre', 'cochabamba'],
+  PY: ['paraguay', 'asuncion'],
+  UY: ['uruguay', 'montevideo'],
+  GY: ['guyana', 'georgetown'],
+  SR: ['suriname', 'paramaribo'],
+
+  // Oceania
+  AU: ['australia', 'aussie', 'oz', 'sydney', 'melbourne', 'brisbane', 'perth', 'adelaide', 'canberra', 'gold coast'],
+  NZ: ['new zealand', 'aotearoa', 'kiwi', 'auckland', 'wellington', 'christchurch', 'hamilton'],
+  FJ: ['fiji', 'suva', 'nadi'],
+  PG: ['png', 'papua new guinea', 'port moresby'],
+  SB: ['solomon islands', 'honiara'],
+  VU: ['vanuatu', 'port vila'],
+  WS: ['samoa', 'apia'],
+  TO: ['tonga', 'nukualofa'],
+  FM: ['micronesia', 'federated states of micronesia', 'palikir'],
+  PW: ['palau', 'ngerulmud', 'koror'],
+  MH: ['marshall islands', 'majuro'],
+  KI: ['kiribati', 'tarawa'],
+  NR: ['nauru', 'yaren'],
+  TV: ['tuvalu', 'funafuti'],
+
+  // Territories & Dependencies
+  PR: ['puerto rico', 'san juan'],
+  GU: ['guam', 'hagatna'],
+  VI: ['us virgin islands', 'usvi', 'charlotte amalie'],
+  AS: ['american samoa', 'pago pago'],
+  MP: ['saipan', 'northern mariana islands', 'cnmi'],
+  BM: ['bermuda', 'hamilton'],
+  KY: ['cayman islands', 'cayman', 'george town'],
+  TC: ['turks and caicos', 'tci', 'cockburn town'],
+  VG: ['british virgin islands', 'bvi', 'road town'],
+  AI: ['anguilla', 'the valley'],
+  MS: ['montserrat', 'brades'],
+  GI: ['gibraltar'],
+  FK: ['falkland islands', 'malvinas', 'stanley'],
+  NC: ['new caledonia', 'noumea'],
+  PF: ['french polynesia', 'tahiti', 'papeete'],
+  WF: ['wallis and futuna', 'mata-utu'],
+  YT: ['mayotte', 'mamoudzou'],
+  RE: ['reunion', 'réunion', 'saint-denis'],
+  GP: ['guadeloupe', 'basse-terre'],
+  MQ: ['martinique', 'fort-de-france'],
+  GF: ['french guiana', 'cayenne'],
+  BL: ['st barts', 'st. barts', 'st barthelemy', 'saint barthelemy', 'gustavia'],
+  MF: ['st martin', 'st. martin', 'saint martin', 'marigot'],
+  PM: ['st pierre', 'st. pierre', 'saint pierre', 'saint pierre and miquelon'],
+  AW: ['aruba', 'oranjestad'],
+  CW: ['curacao', 'curaçao', 'willemstad'],
+  SX: ['sint maarten', 'st maarten', 'philipsburg'],
+  BQ: ['bonaire', 'sint eustatius', 'saba', 'caribbean netherlands', 'kralendijk'],
+  GL: ['greenland', 'kalaallit nunaat', 'nuuk'],
+  FO: ['faeroe', 'faroe', 'faroe islands', 'torshavn'],
+  AX: ['aland', 'åland', 'aland islands', 'åland islands', 'mariehamn'],
+  SJ: ['svalbard', 'jan mayen', 'longyearbyen'],
+  IM: ['isle of man', 'mann', 'douglas'],
+  JE: ['jersey', 'st helier'],
+  GG: ['guernsey', 'alderney', 'sark', 'st peter port'],
+  SH: ['st helena', 'st. helena', 'saint helena', 'ascension', 'tristan da cunha', 'jamestown'],
+  IO: ['diego garcia', 'british indian ocean territory', 'biot'],
+  CK: ['cook islands', 'rarotonga'],
+  NU: ['niue', 'alofi'],
+  TK: ['tokelau'],
+};
+
+interface SearchableRegion {
+  region: RegionRecord;
+  normalizedName: string;
+  nameWords: string[];
+  cleanDialCode: string;
+  normalizedAlpha2: string;
+  normalizedAlpha3: string;
+  normalizedAliases: string[];
+}
+
+// Pre-index regions once at startup for sub-millisecond search performance
+const SEARCHABLE_REGIONS: SearchableRegion[] = ALL_REGIONS.map((region) => {
+  const normalizedName = normalizeForSearch(region.name);
+  const nameWords = normalizedName.split(/\s+/).filter(Boolean);
+  const cleanDialCode = region.dialCode.replace(/\D/g, '');
+  const normalizedAlpha2 = region.alpha2.toLowerCase();
+  const normalizedAlpha3 = region.alpha3.toLowerCase();
+  const rawAliases = COUNTRY_ALIASES[region.alpha2] || [];
+  const normalizedAliases = rawAliases.map(normalizeForSearch);
+
+  return {
+    region,
+    normalizedName,
+    nameWords,
+    cleanDialCode,
+    normalizedAlpha2,
+    normalizedAlpha3,
+    normalizedAliases,
+  };
+});
+
+/**
+ * Searches the registry by country name, ISO code, dialing code, common aliases, or pasted telephone number.
+ * Results are sorted by relevance match score.
  */
 export function searchRegions(
   query: string,
   options?: { unOnly?: boolean; territoryOnly?: boolean }
 ): RegionRecord[] {
-  const q = (query || '').trim().toLowerCase();
-  
-  return ALL_REGIONS.filter((region) => {
-    if (options?.unOnly && !region.isUnMember) return false;
-    if (options?.territoryOnly && !region.isTerritory) return false;
+  const raw = (query || '').trim();
 
-    if (!q) return true;
+  // If query is empty, filter by options and preserve standard order
+  if (!raw) {
+    return ALL_REGIONS.filter((region) => {
+      if (options?.unOnly && !region.isUnMember) return false;
+      if (options?.territoryOnly && !region.isTerritory) return false;
+      return true;
+    });
+  }
 
-    return (
-      region.name.toLowerCase().includes(q) ||
-      region.alpha2.toLowerCase().includes(q) ||
-      region.alpha3.toLowerCase().includes(q) ||
-      region.dialCode.includes(q) ||
-      region.dialCode.replace('+', '').includes(q)
-    );
+  const cleanText = normalizeForSearch(raw);
+  const cleanQueryLower = raw.toLowerCase();
+  const cleanDigits = raw.replace(/\D/g, '');
+  const isPhonePattern = raw.startsWith('+') || raw.startsWith('00') || /^\d+$/.test(raw);
+
+  const scored: { region: RegionRecord; score: number }[] = [];
+
+  for (let i = 0; i < SEARCHABLE_REGIONS.length; i++) {
+    const item = SEARCHABLE_REGIONS[i];
+    const { region } = item;
+
+    if (options?.unOnly && !region.isUnMember) continue;
+    if (options?.territoryOnly && !region.isTerritory) continue;
+
+    let score = 0;
+
+    // 1. Exact ISO code matches (highest priority)
+    if (cleanText === item.normalizedAlpha2) {
+      score = Math.max(score, 100);
+    } else if (cleanText === item.normalizedAlpha3) {
+      score = Math.max(score, 95);
+    }
+
+    // 2. Exact dial code match
+    if (item.cleanDialCode && (raw === region.dialCode || cleanDigits === item.cleanDialCode)) {
+      score = Math.max(score, 98);
+    }
+
+    // 3. Exact alias match (e.g. "uk" -> United Kingdom, "usa" -> United States)
+    if (item.normalizedAliases.some((a) => a === cleanText)) {
+      score = Math.max(score, 92);
+    }
+
+    // 4. Name starts with query
+    if (item.normalizedName.startsWith(cleanText)) {
+      score = Math.max(score, 88);
+    }
+
+    // 5. Any alias starts with query
+    if (item.normalizedAliases.some((a) => a.startsWith(cleanText))) {
+      score = Math.max(score, 82);
+    }
+
+    // 6. Pasted telephone number or partial dial code match
+    if (cleanDigits && item.cleanDialCode) {
+      // User typed or pasted a full phone number starting with the country's dial code
+      // (e.g., "+256772123456" or "256772123456" matches Uganda +256)
+      if (cleanDigits.length >= item.cleanDialCode.length && cleanDigits.startsWith(item.cleanDialCode)) {
+        let phoneMatchScore = 78;
+        // Disambiguate NANP (+1), +7, and +44 shared dial codes if full number is entered
+        if (item.cleanDialCode === '1' && cleanDigits.length >= 4) {
+          const areaCode = cleanDigits.slice(1, 4);
+          if (NANP_AREA_CODE_MAP[areaCode] === region.alpha2) {
+            phoneMatchScore = 96; // highly specific area code match (e.g. 242 Bahamas)
+          } else if (region.alpha2 === 'US') {
+            phoneMatchScore = 95; // primary sovereign NANP country
+          } else if (region.alpha2 === 'CA') {
+            phoneMatchScore = 94; // Canada
+          }
+        } else if (item.cleanDialCode === '7' && cleanDigits.length >= 2) {
+          const firstNsn = cleanDigits[1];
+          if ((firstNsn === '6' || firstNsn === '7') && region.alpha2 === 'KZ') {
+            phoneMatchScore = 96; // Kazakhstan
+          } else if (region.alpha2 === 'RU') {
+            phoneMatchScore = 95; // Russia
+          }
+        } else if (item.cleanDialCode === '44' && cleanDigits.length >= 4) {
+          if (region.alpha2 === 'GB') {
+            phoneMatchScore = 95; // United Kingdom primary
+          }
+        }
+        score = Math.max(score, phoneMatchScore);
+      }
+      // Partial dial code typed (e.g., "+25" or "25" matches "+254", "+256")
+      else if (item.cleanDialCode.startsWith(cleanDigits)) {
+        score = Math.max(score, 72);
+      }
+      // Query contains the dial code
+      else if (isPhonePattern && region.dialCode.includes(raw)) {
+        score = Math.max(score, 68);
+      }
+    }
+
+    // 7. Word in country name starts with query (e.g. "Kingdom" in "United Kingdom")
+    if (item.nameWords.some((w) => w.startsWith(cleanText))) {
+      score = Math.max(score, 65);
+    }
+
+    // 8. Name contains query substring
+    if (item.normalizedName.includes(cleanText) || region.name.toLowerCase().includes(cleanQueryLower)) {
+      score = Math.max(score, 55);
+    }
+
+    // 9. Alias contains query substring
+    if (item.normalizedAliases.some((a) => a.includes(cleanText))) {
+      score = Math.max(score, 45);
+    }
+
+    if (score > 0) {
+      // Sovereign UN states get a minor tiebreak priority over uninhabited dependencies
+      const tieBreak = region.isUnMember ? 1 : 0;
+      scored.push({ region, score: score + tieBreak });
+    }
+  }
+
+  // Sort descending by score, then alphabetically by country name
+  scored.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return a.region.name.localeCompare(b.region.name);
   });
+
+  return scored.map((s) => s.region);
 }
 
 /**

@@ -29,11 +29,17 @@ export type AggregateApiKey = {
 export type ApiKeyAvgAggregateOutputType = {
   rateLimit: number | null
   rateLimitWindow: number | null
+  quotaLimit: number | null
+  quotaUsed: number | null
+  alertThreshold: number | null
 }
 
 export type ApiKeySumAggregateOutputType = {
   rateLimit: number | null
   rateLimitWindow: number | null
+  quotaLimit: number | null
+  quotaUsed: number | null
+  alertThreshold: number | null
 }
 
 export type ApiKeyMinAggregateOutputType = {
@@ -42,11 +48,18 @@ export type ApiKeyMinAggregateOutputType = {
   clientId: string | null
   organizationId: string | null
   name: string | null
+  appName: string | null
+  environment: string | null
   keyPrefix: string | null
   keyHash: string | null
   status: $Enums.ApiKeyStatus | null
   rateLimit: number | null
   rateLimitWindow: number | null
+  quotaLimit: number | null
+  quotaPeriod: string | null
+  quotaUsed: number | null
+  quotaResetAt: Date | null
+  alertThreshold: number | null
   lastUsedAt: Date | null
   expiresAt: Date | null
   revokedAt: Date | null
@@ -60,11 +73,18 @@ export type ApiKeyMaxAggregateOutputType = {
   clientId: string | null
   organizationId: string | null
   name: string | null
+  appName: string | null
+  environment: string | null
   keyPrefix: string | null
   keyHash: string | null
   status: $Enums.ApiKeyStatus | null
   rateLimit: number | null
   rateLimitWindow: number | null
+  quotaLimit: number | null
+  quotaPeriod: string | null
+  quotaUsed: number | null
+  quotaResetAt: Date | null
+  alertThreshold: number | null
   lastUsedAt: Date | null
   expiresAt: Date | null
   revokedAt: Date | null
@@ -78,6 +98,8 @@ export type ApiKeyCountAggregateOutputType = {
   clientId: number
   organizationId: number
   name: number
+  appName: number
+  environment: number
   keyPrefix: number
   keyHash: number
   status: number
@@ -85,6 +107,11 @@ export type ApiKeyCountAggregateOutputType = {
   ipWhitelist: number
   rateLimit: number
   rateLimitWindow: number
+  quotaLimit: number
+  quotaPeriod: number
+  quotaUsed: number
+  quotaResetAt: number
+  alertThreshold: number
   lastUsedAt: number
   expiresAt: number
   revokedAt: number
@@ -97,11 +124,17 @@ export type ApiKeyCountAggregateOutputType = {
 export type ApiKeyAvgAggregateInputType = {
   rateLimit?: true
   rateLimitWindow?: true
+  quotaLimit?: true
+  quotaUsed?: true
+  alertThreshold?: true
 }
 
 export type ApiKeySumAggregateInputType = {
   rateLimit?: true
   rateLimitWindow?: true
+  quotaLimit?: true
+  quotaUsed?: true
+  alertThreshold?: true
 }
 
 export type ApiKeyMinAggregateInputType = {
@@ -110,11 +143,18 @@ export type ApiKeyMinAggregateInputType = {
   clientId?: true
   organizationId?: true
   name?: true
+  appName?: true
+  environment?: true
   keyPrefix?: true
   keyHash?: true
   status?: true
   rateLimit?: true
   rateLimitWindow?: true
+  quotaLimit?: true
+  quotaPeriod?: true
+  quotaUsed?: true
+  quotaResetAt?: true
+  alertThreshold?: true
   lastUsedAt?: true
   expiresAt?: true
   revokedAt?: true
@@ -128,11 +168,18 @@ export type ApiKeyMaxAggregateInputType = {
   clientId?: true
   organizationId?: true
   name?: true
+  appName?: true
+  environment?: true
   keyPrefix?: true
   keyHash?: true
   status?: true
   rateLimit?: true
   rateLimitWindow?: true
+  quotaLimit?: true
+  quotaPeriod?: true
+  quotaUsed?: true
+  quotaResetAt?: true
+  alertThreshold?: true
   lastUsedAt?: true
   expiresAt?: true
   revokedAt?: true
@@ -146,6 +193,8 @@ export type ApiKeyCountAggregateInputType = {
   clientId?: true
   organizationId?: true
   name?: true
+  appName?: true
+  environment?: true
   keyPrefix?: true
   keyHash?: true
   status?: true
@@ -153,6 +202,11 @@ export type ApiKeyCountAggregateInputType = {
   ipWhitelist?: true
   rateLimit?: true
   rateLimitWindow?: true
+  quotaLimit?: true
+  quotaPeriod?: true
+  quotaUsed?: true
+  quotaResetAt?: true
+  alertThreshold?: true
   lastUsedAt?: true
   expiresAt?: true
   revokedAt?: true
@@ -253,6 +307,8 @@ export type ApiKeyGroupByOutputType = {
   clientId: string | null
   organizationId: string | null
   name: string
+  appName: string
+  environment: string
   keyPrefix: string
   keyHash: string
   status: $Enums.ApiKeyStatus
@@ -260,6 +316,11 @@ export type ApiKeyGroupByOutputType = {
   ipWhitelist: string[]
   rateLimit: number
   rateLimitWindow: number
+  quotaLimit: number | null
+  quotaPeriod: string | null
+  quotaUsed: number
+  quotaResetAt: Date | null
+  alertThreshold: number | null
   lastUsedAt: Date | null
   expiresAt: Date | null
   revokedAt: Date | null
@@ -296,6 +357,8 @@ export type ApiKeyWhereInput = {
   clientId?: Prisma.StringNullableFilter<"ApiKey"> | string | null
   organizationId?: Prisma.StringNullableFilter<"ApiKey"> | string | null
   name?: Prisma.StringFilter<"ApiKey"> | string
+  appName?: Prisma.StringFilter<"ApiKey"> | string
+  environment?: Prisma.StringFilter<"ApiKey"> | string
   keyPrefix?: Prisma.StringFilter<"ApiKey"> | string
   keyHash?: Prisma.StringFilter<"ApiKey"> | string
   status?: Prisma.EnumApiKeyStatusFilter<"ApiKey"> | $Enums.ApiKeyStatus
@@ -303,6 +366,11 @@ export type ApiKeyWhereInput = {
   ipWhitelist?: Prisma.StringNullableListFilter<"ApiKey">
   rateLimit?: Prisma.IntFilter<"ApiKey"> | number
   rateLimitWindow?: Prisma.IntFilter<"ApiKey"> | number
+  quotaLimit?: Prisma.IntNullableFilter<"ApiKey"> | number | null
+  quotaPeriod?: Prisma.StringNullableFilter<"ApiKey"> | string | null
+  quotaUsed?: Prisma.IntFilter<"ApiKey"> | number
+  quotaResetAt?: Prisma.DateTimeNullableFilter<"ApiKey"> | Date | string | null
+  alertThreshold?: Prisma.IntNullableFilter<"ApiKey"> | number | null
   lastUsedAt?: Prisma.DateTimeNullableFilter<"ApiKey"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableFilter<"ApiKey"> | Date | string | null
   revokedAt?: Prisma.DateTimeNullableFilter<"ApiKey"> | Date | string | null
@@ -320,6 +388,8 @@ export type ApiKeyOrderByWithRelationInput = {
   clientId?: Prisma.SortOrderInput | Prisma.SortOrder
   organizationId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
+  appName?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
   keyPrefix?: Prisma.SortOrder
   keyHash?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -327,6 +397,11 @@ export type ApiKeyOrderByWithRelationInput = {
   ipWhitelist?: Prisma.SortOrder
   rateLimit?: Prisma.SortOrder
   rateLimitWindow?: Prisma.SortOrder
+  quotaLimit?: Prisma.SortOrderInput | Prisma.SortOrder
+  quotaPeriod?: Prisma.SortOrderInput | Prisma.SortOrder
+  quotaUsed?: Prisma.SortOrder
+  quotaResetAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  alertThreshold?: Prisma.SortOrderInput | Prisma.SortOrder
   lastUsedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   revokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -348,12 +423,19 @@ export type ApiKeyWhereUniqueInput = Prisma.AtLeast<{
   clientId?: Prisma.StringNullableFilter<"ApiKey"> | string | null
   organizationId?: Prisma.StringNullableFilter<"ApiKey"> | string | null
   name?: Prisma.StringFilter<"ApiKey"> | string
+  appName?: Prisma.StringFilter<"ApiKey"> | string
+  environment?: Prisma.StringFilter<"ApiKey"> | string
   keyPrefix?: Prisma.StringFilter<"ApiKey"> | string
   status?: Prisma.EnumApiKeyStatusFilter<"ApiKey"> | $Enums.ApiKeyStatus
   scopes?: Prisma.StringNullableListFilter<"ApiKey">
   ipWhitelist?: Prisma.StringNullableListFilter<"ApiKey">
   rateLimit?: Prisma.IntFilter<"ApiKey"> | number
   rateLimitWindow?: Prisma.IntFilter<"ApiKey"> | number
+  quotaLimit?: Prisma.IntNullableFilter<"ApiKey"> | number | null
+  quotaPeriod?: Prisma.StringNullableFilter<"ApiKey"> | string | null
+  quotaUsed?: Prisma.IntFilter<"ApiKey"> | number
+  quotaResetAt?: Prisma.DateTimeNullableFilter<"ApiKey"> | Date | string | null
+  alertThreshold?: Prisma.IntNullableFilter<"ApiKey"> | number | null
   lastUsedAt?: Prisma.DateTimeNullableFilter<"ApiKey"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableFilter<"ApiKey"> | Date | string | null
   revokedAt?: Prisma.DateTimeNullableFilter<"ApiKey"> | Date | string | null
@@ -371,6 +453,8 @@ export type ApiKeyOrderByWithAggregationInput = {
   clientId?: Prisma.SortOrderInput | Prisma.SortOrder
   organizationId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
+  appName?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
   keyPrefix?: Prisma.SortOrder
   keyHash?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -378,6 +462,11 @@ export type ApiKeyOrderByWithAggregationInput = {
   ipWhitelist?: Prisma.SortOrder
   rateLimit?: Prisma.SortOrder
   rateLimitWindow?: Prisma.SortOrder
+  quotaLimit?: Prisma.SortOrderInput | Prisma.SortOrder
+  quotaPeriod?: Prisma.SortOrderInput | Prisma.SortOrder
+  quotaUsed?: Prisma.SortOrder
+  quotaResetAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  alertThreshold?: Prisma.SortOrderInput | Prisma.SortOrder
   lastUsedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   revokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -399,6 +488,8 @@ export type ApiKeyScalarWhereWithAggregatesInput = {
   clientId?: Prisma.StringNullableWithAggregatesFilter<"ApiKey"> | string | null
   organizationId?: Prisma.StringNullableWithAggregatesFilter<"ApiKey"> | string | null
   name?: Prisma.StringWithAggregatesFilter<"ApiKey"> | string
+  appName?: Prisma.StringWithAggregatesFilter<"ApiKey"> | string
+  environment?: Prisma.StringWithAggregatesFilter<"ApiKey"> | string
   keyPrefix?: Prisma.StringWithAggregatesFilter<"ApiKey"> | string
   keyHash?: Prisma.StringWithAggregatesFilter<"ApiKey"> | string
   status?: Prisma.EnumApiKeyStatusWithAggregatesFilter<"ApiKey"> | $Enums.ApiKeyStatus
@@ -406,6 +497,11 @@ export type ApiKeyScalarWhereWithAggregatesInput = {
   ipWhitelist?: Prisma.StringNullableListFilter<"ApiKey">
   rateLimit?: Prisma.IntWithAggregatesFilter<"ApiKey"> | number
   rateLimitWindow?: Prisma.IntWithAggregatesFilter<"ApiKey"> | number
+  quotaLimit?: Prisma.IntNullableWithAggregatesFilter<"ApiKey"> | number | null
+  quotaPeriod?: Prisma.StringNullableWithAggregatesFilter<"ApiKey"> | string | null
+  quotaUsed?: Prisma.IntWithAggregatesFilter<"ApiKey"> | number
+  quotaResetAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ApiKey"> | Date | string | null
+  alertThreshold?: Prisma.IntNullableWithAggregatesFilter<"ApiKey"> | number | null
   lastUsedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ApiKey"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ApiKey"> | Date | string | null
   revokedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ApiKey"> | Date | string | null
@@ -416,6 +512,8 @@ export type ApiKeyScalarWhereWithAggregatesInput = {
 export type ApiKeyCreateInput = {
   id?: string
   name: string
+  appName?: string
+  environment?: string
   keyPrefix: string
   keyHash: string
   status?: $Enums.ApiKeyStatus
@@ -423,6 +521,11 @@ export type ApiKeyCreateInput = {
   ipWhitelist?: Prisma.ApiKeyCreateipWhitelistInput | string[]
   rateLimit?: number
   rateLimitWindow?: number
+  quotaLimit?: number | null
+  quotaPeriod?: string | null
+  quotaUsed?: number
+  quotaResetAt?: Date | string | null
+  alertThreshold?: number | null
   lastUsedAt?: Date | string | null
   expiresAt?: Date | string | null
   revokedAt?: Date | string | null
@@ -440,6 +543,8 @@ export type ApiKeyUncheckedCreateInput = {
   clientId?: string | null
   organizationId?: string | null
   name: string
+  appName?: string
+  environment?: string
   keyPrefix: string
   keyHash: string
   status?: $Enums.ApiKeyStatus
@@ -447,6 +552,11 @@ export type ApiKeyUncheckedCreateInput = {
   ipWhitelist?: Prisma.ApiKeyCreateipWhitelistInput | string[]
   rateLimit?: number
   rateLimitWindow?: number
+  quotaLimit?: number | null
+  quotaPeriod?: string | null
+  quotaUsed?: number
+  quotaResetAt?: Date | string | null
+  alertThreshold?: number | null
   lastUsedAt?: Date | string | null
   expiresAt?: Date | string | null
   revokedAt?: Date | string | null
@@ -458,6 +568,8 @@ export type ApiKeyUncheckedCreateInput = {
 export type ApiKeyUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  appName?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
   keyPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumApiKeyStatusFieldUpdateOperationsInput | $Enums.ApiKeyStatus
@@ -465,6 +577,11 @@ export type ApiKeyUpdateInput = {
   ipWhitelist?: Prisma.ApiKeyUpdateipWhitelistInput | string[]
   rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   rateLimitWindow?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quotaPeriod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quotaUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alertThreshold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -482,6 +599,8 @@ export type ApiKeyUncheckedUpdateInput = {
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  appName?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
   keyPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumApiKeyStatusFieldUpdateOperationsInput | $Enums.ApiKeyStatus
@@ -489,6 +608,11 @@ export type ApiKeyUncheckedUpdateInput = {
   ipWhitelist?: Prisma.ApiKeyUpdateipWhitelistInput | string[]
   rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   rateLimitWindow?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quotaPeriod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quotaUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alertThreshold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -503,6 +627,8 @@ export type ApiKeyCreateManyInput = {
   clientId?: string | null
   organizationId?: string | null
   name: string
+  appName?: string
+  environment?: string
   keyPrefix: string
   keyHash: string
   status?: $Enums.ApiKeyStatus
@@ -510,6 +636,11 @@ export type ApiKeyCreateManyInput = {
   ipWhitelist?: Prisma.ApiKeyCreateipWhitelistInput | string[]
   rateLimit?: number
   rateLimitWindow?: number
+  quotaLimit?: number | null
+  quotaPeriod?: string | null
+  quotaUsed?: number
+  quotaResetAt?: Date | string | null
+  alertThreshold?: number | null
   lastUsedAt?: Date | string | null
   expiresAt?: Date | string | null
   revokedAt?: Date | string | null
@@ -520,6 +651,8 @@ export type ApiKeyCreateManyInput = {
 export type ApiKeyUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  appName?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
   keyPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumApiKeyStatusFieldUpdateOperationsInput | $Enums.ApiKeyStatus
@@ -527,6 +660,11 @@ export type ApiKeyUpdateManyMutationInput = {
   ipWhitelist?: Prisma.ApiKeyUpdateipWhitelistInput | string[]
   rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   rateLimitWindow?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quotaPeriod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quotaUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alertThreshold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -540,6 +678,8 @@ export type ApiKeyUncheckedUpdateManyInput = {
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  appName?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
   keyPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumApiKeyStatusFieldUpdateOperationsInput | $Enums.ApiKeyStatus
@@ -547,6 +687,11 @@ export type ApiKeyUncheckedUpdateManyInput = {
   ipWhitelist?: Prisma.ApiKeyUpdateipWhitelistInput | string[]
   rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   rateLimitWindow?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quotaPeriod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quotaUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alertThreshold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -570,6 +715,8 @@ export type ApiKeyCountOrderByAggregateInput = {
   clientId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  appName?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
   keyPrefix?: Prisma.SortOrder
   keyHash?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -577,6 +724,11 @@ export type ApiKeyCountOrderByAggregateInput = {
   ipWhitelist?: Prisma.SortOrder
   rateLimit?: Prisma.SortOrder
   rateLimitWindow?: Prisma.SortOrder
+  quotaLimit?: Prisma.SortOrder
+  quotaPeriod?: Prisma.SortOrder
+  quotaUsed?: Prisma.SortOrder
+  quotaResetAt?: Prisma.SortOrder
+  alertThreshold?: Prisma.SortOrder
   lastUsedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   revokedAt?: Prisma.SortOrder
@@ -587,6 +739,9 @@ export type ApiKeyCountOrderByAggregateInput = {
 export type ApiKeyAvgOrderByAggregateInput = {
   rateLimit?: Prisma.SortOrder
   rateLimitWindow?: Prisma.SortOrder
+  quotaLimit?: Prisma.SortOrder
+  quotaUsed?: Prisma.SortOrder
+  alertThreshold?: Prisma.SortOrder
 }
 
 export type ApiKeyMaxOrderByAggregateInput = {
@@ -595,11 +750,18 @@ export type ApiKeyMaxOrderByAggregateInput = {
   clientId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  appName?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
   keyPrefix?: Prisma.SortOrder
   keyHash?: Prisma.SortOrder
   status?: Prisma.SortOrder
   rateLimit?: Prisma.SortOrder
   rateLimitWindow?: Prisma.SortOrder
+  quotaLimit?: Prisma.SortOrder
+  quotaPeriod?: Prisma.SortOrder
+  quotaUsed?: Prisma.SortOrder
+  quotaResetAt?: Prisma.SortOrder
+  alertThreshold?: Prisma.SortOrder
   lastUsedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   revokedAt?: Prisma.SortOrder
@@ -613,11 +775,18 @@ export type ApiKeyMinOrderByAggregateInput = {
   clientId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  appName?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
   keyPrefix?: Prisma.SortOrder
   keyHash?: Prisma.SortOrder
   status?: Prisma.SortOrder
   rateLimit?: Prisma.SortOrder
   rateLimitWindow?: Prisma.SortOrder
+  quotaLimit?: Prisma.SortOrder
+  quotaPeriod?: Prisma.SortOrder
+  quotaUsed?: Prisma.SortOrder
+  quotaResetAt?: Prisma.SortOrder
+  alertThreshold?: Prisma.SortOrder
   lastUsedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   revokedAt?: Prisma.SortOrder
@@ -628,6 +797,9 @@ export type ApiKeyMinOrderByAggregateInput = {
 export type ApiKeySumOrderByAggregateInput = {
   rateLimit?: Prisma.SortOrder
   rateLimitWindow?: Prisma.SortOrder
+  quotaLimit?: Prisma.SortOrder
+  quotaUsed?: Prisma.SortOrder
+  alertThreshold?: Prisma.SortOrder
 }
 
 export type ApiKeyScalarRelationFilter = {
@@ -800,6 +972,8 @@ export type ApiKeyUpdateOneRequiredWithoutApiRequestsNestedInput = {
 export type ApiKeyCreateWithoutUserInput = {
   id?: string
   name: string
+  appName?: string
+  environment?: string
   keyPrefix: string
   keyHash: string
   status?: $Enums.ApiKeyStatus
@@ -807,6 +981,11 @@ export type ApiKeyCreateWithoutUserInput = {
   ipWhitelist?: Prisma.ApiKeyCreateipWhitelistInput | string[]
   rateLimit?: number
   rateLimitWindow?: number
+  quotaLimit?: number | null
+  quotaPeriod?: string | null
+  quotaUsed?: number
+  quotaResetAt?: Date | string | null
+  alertThreshold?: number | null
   lastUsedAt?: Date | string | null
   expiresAt?: Date | string | null
   revokedAt?: Date | string | null
@@ -822,6 +1001,8 @@ export type ApiKeyUncheckedCreateWithoutUserInput = {
   clientId?: string | null
   organizationId?: string | null
   name: string
+  appName?: string
+  environment?: string
   keyPrefix: string
   keyHash: string
   status?: $Enums.ApiKeyStatus
@@ -829,6 +1010,11 @@ export type ApiKeyUncheckedCreateWithoutUserInput = {
   ipWhitelist?: Prisma.ApiKeyCreateipWhitelistInput | string[]
   rateLimit?: number
   rateLimitWindow?: number
+  quotaLimit?: number | null
+  quotaPeriod?: string | null
+  quotaUsed?: number
+  quotaResetAt?: Date | string | null
+  alertThreshold?: number | null
   lastUsedAt?: Date | string | null
   expiresAt?: Date | string | null
   revokedAt?: Date | string | null
@@ -872,6 +1058,8 @@ export type ApiKeyScalarWhereInput = {
   clientId?: Prisma.StringNullableFilter<"ApiKey"> | string | null
   organizationId?: Prisma.StringNullableFilter<"ApiKey"> | string | null
   name?: Prisma.StringFilter<"ApiKey"> | string
+  appName?: Prisma.StringFilter<"ApiKey"> | string
+  environment?: Prisma.StringFilter<"ApiKey"> | string
   keyPrefix?: Prisma.StringFilter<"ApiKey"> | string
   keyHash?: Prisma.StringFilter<"ApiKey"> | string
   status?: Prisma.EnumApiKeyStatusFilter<"ApiKey"> | $Enums.ApiKeyStatus
@@ -879,6 +1067,11 @@ export type ApiKeyScalarWhereInput = {
   ipWhitelist?: Prisma.StringNullableListFilter<"ApiKey">
   rateLimit?: Prisma.IntFilter<"ApiKey"> | number
   rateLimitWindow?: Prisma.IntFilter<"ApiKey"> | number
+  quotaLimit?: Prisma.IntNullableFilter<"ApiKey"> | number | null
+  quotaPeriod?: Prisma.StringNullableFilter<"ApiKey"> | string | null
+  quotaUsed?: Prisma.IntFilter<"ApiKey"> | number
+  quotaResetAt?: Prisma.DateTimeNullableFilter<"ApiKey"> | Date | string | null
+  alertThreshold?: Prisma.IntNullableFilter<"ApiKey"> | number | null
   lastUsedAt?: Prisma.DateTimeNullableFilter<"ApiKey"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableFilter<"ApiKey"> | Date | string | null
   revokedAt?: Prisma.DateTimeNullableFilter<"ApiKey"> | Date | string | null
@@ -889,6 +1082,8 @@ export type ApiKeyScalarWhereInput = {
 export type ApiKeyCreateWithoutOrganizationInput = {
   id?: string
   name: string
+  appName?: string
+  environment?: string
   keyPrefix: string
   keyHash: string
   status?: $Enums.ApiKeyStatus
@@ -896,6 +1091,11 @@ export type ApiKeyCreateWithoutOrganizationInput = {
   ipWhitelist?: Prisma.ApiKeyCreateipWhitelistInput | string[]
   rateLimit?: number
   rateLimitWindow?: number
+  quotaLimit?: number | null
+  quotaPeriod?: string | null
+  quotaUsed?: number
+  quotaResetAt?: Date | string | null
+  alertThreshold?: number | null
   lastUsedAt?: Date | string | null
   expiresAt?: Date | string | null
   revokedAt?: Date | string | null
@@ -911,6 +1111,8 @@ export type ApiKeyUncheckedCreateWithoutOrganizationInput = {
   userId: string
   clientId?: string | null
   name: string
+  appName?: string
+  environment?: string
   keyPrefix: string
   keyHash: string
   status?: $Enums.ApiKeyStatus
@@ -918,6 +1120,11 @@ export type ApiKeyUncheckedCreateWithoutOrganizationInput = {
   ipWhitelist?: Prisma.ApiKeyCreateipWhitelistInput | string[]
   rateLimit?: number
   rateLimitWindow?: number
+  quotaLimit?: number | null
+  quotaPeriod?: string | null
+  quotaUsed?: number
+  quotaResetAt?: Date | string | null
+  alertThreshold?: number | null
   lastUsedAt?: Date | string | null
   expiresAt?: Date | string | null
   revokedAt?: Date | string | null
@@ -955,6 +1162,8 @@ export type ApiKeyUpdateManyWithWhereWithoutOrganizationInput = {
 export type ApiKeyCreateWithoutClientInput = {
   id?: string
   name: string
+  appName?: string
+  environment?: string
   keyPrefix: string
   keyHash: string
   status?: $Enums.ApiKeyStatus
@@ -962,6 +1171,11 @@ export type ApiKeyCreateWithoutClientInput = {
   ipWhitelist?: Prisma.ApiKeyCreateipWhitelistInput | string[]
   rateLimit?: number
   rateLimitWindow?: number
+  quotaLimit?: number | null
+  quotaPeriod?: string | null
+  quotaUsed?: number
+  quotaResetAt?: Date | string | null
+  alertThreshold?: number | null
   lastUsedAt?: Date | string | null
   expiresAt?: Date | string | null
   revokedAt?: Date | string | null
@@ -977,6 +1191,8 @@ export type ApiKeyUncheckedCreateWithoutClientInput = {
   userId: string
   organizationId?: string | null
   name: string
+  appName?: string
+  environment?: string
   keyPrefix: string
   keyHash: string
   status?: $Enums.ApiKeyStatus
@@ -984,6 +1200,11 @@ export type ApiKeyUncheckedCreateWithoutClientInput = {
   ipWhitelist?: Prisma.ApiKeyCreateipWhitelistInput | string[]
   rateLimit?: number
   rateLimitWindow?: number
+  quotaLimit?: number | null
+  quotaPeriod?: string | null
+  quotaUsed?: number
+  quotaResetAt?: Date | string | null
+  alertThreshold?: number | null
   lastUsedAt?: Date | string | null
   expiresAt?: Date | string | null
   revokedAt?: Date | string | null
@@ -1021,6 +1242,8 @@ export type ApiKeyUpdateManyWithWhereWithoutClientInput = {
 export type ApiKeyCreateWithoutApiRequestsInput = {
   id?: string
   name: string
+  appName?: string
+  environment?: string
   keyPrefix: string
   keyHash: string
   status?: $Enums.ApiKeyStatus
@@ -1028,6 +1251,11 @@ export type ApiKeyCreateWithoutApiRequestsInput = {
   ipWhitelist?: Prisma.ApiKeyCreateipWhitelistInput | string[]
   rateLimit?: number
   rateLimitWindow?: number
+  quotaLimit?: number | null
+  quotaPeriod?: string | null
+  quotaUsed?: number
+  quotaResetAt?: Date | string | null
+  alertThreshold?: number | null
   lastUsedAt?: Date | string | null
   expiresAt?: Date | string | null
   revokedAt?: Date | string | null
@@ -1044,6 +1272,8 @@ export type ApiKeyUncheckedCreateWithoutApiRequestsInput = {
   clientId?: string | null
   organizationId?: string | null
   name: string
+  appName?: string
+  environment?: string
   keyPrefix: string
   keyHash: string
   status?: $Enums.ApiKeyStatus
@@ -1051,6 +1281,11 @@ export type ApiKeyUncheckedCreateWithoutApiRequestsInput = {
   ipWhitelist?: Prisma.ApiKeyCreateipWhitelistInput | string[]
   rateLimit?: number
   rateLimitWindow?: number
+  quotaLimit?: number | null
+  quotaPeriod?: string | null
+  quotaUsed?: number
+  quotaResetAt?: Date | string | null
+  alertThreshold?: number | null
   lastUsedAt?: Date | string | null
   expiresAt?: Date | string | null
   revokedAt?: Date | string | null
@@ -1077,6 +1312,8 @@ export type ApiKeyUpdateToOneWithWhereWithoutApiRequestsInput = {
 export type ApiKeyUpdateWithoutApiRequestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  appName?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
   keyPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumApiKeyStatusFieldUpdateOperationsInput | $Enums.ApiKeyStatus
@@ -1084,6 +1321,11 @@ export type ApiKeyUpdateWithoutApiRequestsInput = {
   ipWhitelist?: Prisma.ApiKeyUpdateipWhitelistInput | string[]
   rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   rateLimitWindow?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quotaPeriod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quotaUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alertThreshold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1100,6 +1342,8 @@ export type ApiKeyUncheckedUpdateWithoutApiRequestsInput = {
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  appName?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
   keyPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumApiKeyStatusFieldUpdateOperationsInput | $Enums.ApiKeyStatus
@@ -1107,6 +1351,11 @@ export type ApiKeyUncheckedUpdateWithoutApiRequestsInput = {
   ipWhitelist?: Prisma.ApiKeyUpdateipWhitelistInput | string[]
   rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   rateLimitWindow?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quotaPeriod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quotaUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alertThreshold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1119,6 +1368,8 @@ export type ApiKeyCreateManyUserInput = {
   clientId?: string | null
   organizationId?: string | null
   name: string
+  appName?: string
+  environment?: string
   keyPrefix: string
   keyHash: string
   status?: $Enums.ApiKeyStatus
@@ -1126,6 +1377,11 @@ export type ApiKeyCreateManyUserInput = {
   ipWhitelist?: Prisma.ApiKeyCreateipWhitelistInput | string[]
   rateLimit?: number
   rateLimitWindow?: number
+  quotaLimit?: number | null
+  quotaPeriod?: string | null
+  quotaUsed?: number
+  quotaResetAt?: Date | string | null
+  alertThreshold?: number | null
   lastUsedAt?: Date | string | null
   expiresAt?: Date | string | null
   revokedAt?: Date | string | null
@@ -1136,6 +1392,8 @@ export type ApiKeyCreateManyUserInput = {
 export type ApiKeyUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  appName?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
   keyPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumApiKeyStatusFieldUpdateOperationsInput | $Enums.ApiKeyStatus
@@ -1143,6 +1401,11 @@ export type ApiKeyUpdateWithoutUserInput = {
   ipWhitelist?: Prisma.ApiKeyUpdateipWhitelistInput | string[]
   rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   rateLimitWindow?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quotaPeriod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quotaUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alertThreshold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1158,6 +1421,8 @@ export type ApiKeyUncheckedUpdateWithoutUserInput = {
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  appName?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
   keyPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumApiKeyStatusFieldUpdateOperationsInput | $Enums.ApiKeyStatus
@@ -1165,6 +1430,11 @@ export type ApiKeyUncheckedUpdateWithoutUserInput = {
   ipWhitelist?: Prisma.ApiKeyUpdateipWhitelistInput | string[]
   rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   rateLimitWindow?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quotaPeriod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quotaUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alertThreshold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1178,6 +1448,8 @@ export type ApiKeyUncheckedUpdateManyWithoutUserInput = {
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  appName?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
   keyPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumApiKeyStatusFieldUpdateOperationsInput | $Enums.ApiKeyStatus
@@ -1185,6 +1457,11 @@ export type ApiKeyUncheckedUpdateManyWithoutUserInput = {
   ipWhitelist?: Prisma.ApiKeyUpdateipWhitelistInput | string[]
   rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   rateLimitWindow?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quotaPeriod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quotaUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alertThreshold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1197,6 +1474,8 @@ export type ApiKeyCreateManyOrganizationInput = {
   userId: string
   clientId?: string | null
   name: string
+  appName?: string
+  environment?: string
   keyPrefix: string
   keyHash: string
   status?: $Enums.ApiKeyStatus
@@ -1204,6 +1483,11 @@ export type ApiKeyCreateManyOrganizationInput = {
   ipWhitelist?: Prisma.ApiKeyCreateipWhitelistInput | string[]
   rateLimit?: number
   rateLimitWindow?: number
+  quotaLimit?: number | null
+  quotaPeriod?: string | null
+  quotaUsed?: number
+  quotaResetAt?: Date | string | null
+  alertThreshold?: number | null
   lastUsedAt?: Date | string | null
   expiresAt?: Date | string | null
   revokedAt?: Date | string | null
@@ -1214,6 +1498,8 @@ export type ApiKeyCreateManyOrganizationInput = {
 export type ApiKeyUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  appName?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
   keyPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumApiKeyStatusFieldUpdateOperationsInput | $Enums.ApiKeyStatus
@@ -1221,6 +1507,11 @@ export type ApiKeyUpdateWithoutOrganizationInput = {
   ipWhitelist?: Prisma.ApiKeyUpdateipWhitelistInput | string[]
   rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   rateLimitWindow?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quotaPeriod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quotaUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alertThreshold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1236,6 +1527,8 @@ export type ApiKeyUncheckedUpdateWithoutOrganizationInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  appName?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
   keyPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumApiKeyStatusFieldUpdateOperationsInput | $Enums.ApiKeyStatus
@@ -1243,6 +1536,11 @@ export type ApiKeyUncheckedUpdateWithoutOrganizationInput = {
   ipWhitelist?: Prisma.ApiKeyUpdateipWhitelistInput | string[]
   rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   rateLimitWindow?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quotaPeriod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quotaUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alertThreshold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1256,6 +1554,8 @@ export type ApiKeyUncheckedUpdateManyWithoutOrganizationInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  appName?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
   keyPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumApiKeyStatusFieldUpdateOperationsInput | $Enums.ApiKeyStatus
@@ -1263,6 +1563,11 @@ export type ApiKeyUncheckedUpdateManyWithoutOrganizationInput = {
   ipWhitelist?: Prisma.ApiKeyUpdateipWhitelistInput | string[]
   rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   rateLimitWindow?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quotaPeriod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quotaUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alertThreshold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1275,6 +1580,8 @@ export type ApiKeyCreateManyClientInput = {
   userId: string
   organizationId?: string | null
   name: string
+  appName?: string
+  environment?: string
   keyPrefix: string
   keyHash: string
   status?: $Enums.ApiKeyStatus
@@ -1282,6 +1589,11 @@ export type ApiKeyCreateManyClientInput = {
   ipWhitelist?: Prisma.ApiKeyCreateipWhitelistInput | string[]
   rateLimit?: number
   rateLimitWindow?: number
+  quotaLimit?: number | null
+  quotaPeriod?: string | null
+  quotaUsed?: number
+  quotaResetAt?: Date | string | null
+  alertThreshold?: number | null
   lastUsedAt?: Date | string | null
   expiresAt?: Date | string | null
   revokedAt?: Date | string | null
@@ -1292,6 +1604,8 @@ export type ApiKeyCreateManyClientInput = {
 export type ApiKeyUpdateWithoutClientInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  appName?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
   keyPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumApiKeyStatusFieldUpdateOperationsInput | $Enums.ApiKeyStatus
@@ -1299,6 +1613,11 @@ export type ApiKeyUpdateWithoutClientInput = {
   ipWhitelist?: Prisma.ApiKeyUpdateipWhitelistInput | string[]
   rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   rateLimitWindow?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quotaPeriod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quotaUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alertThreshold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1314,6 +1633,8 @@ export type ApiKeyUncheckedUpdateWithoutClientInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  appName?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
   keyPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumApiKeyStatusFieldUpdateOperationsInput | $Enums.ApiKeyStatus
@@ -1321,6 +1642,11 @@ export type ApiKeyUncheckedUpdateWithoutClientInput = {
   ipWhitelist?: Prisma.ApiKeyUpdateipWhitelistInput | string[]
   rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   rateLimitWindow?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quotaPeriod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quotaUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alertThreshold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1334,6 +1660,8 @@ export type ApiKeyUncheckedUpdateManyWithoutClientInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  appName?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.StringFieldUpdateOperationsInput | string
   keyPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumApiKeyStatusFieldUpdateOperationsInput | $Enums.ApiKeyStatus
@@ -1341,6 +1669,11 @@ export type ApiKeyUncheckedUpdateManyWithoutClientInput = {
   ipWhitelist?: Prisma.ApiKeyUpdateipWhitelistInput | string[]
   rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   rateLimitWindow?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quotaPeriod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quotaUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  quotaResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alertThreshold?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1385,6 +1718,8 @@ export type ApiKeySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   clientId?: boolean
   organizationId?: boolean
   name?: boolean
+  appName?: boolean
+  environment?: boolean
   keyPrefix?: boolean
   keyHash?: boolean
   status?: boolean
@@ -1392,6 +1727,11 @@ export type ApiKeySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   ipWhitelist?: boolean
   rateLimit?: boolean
   rateLimitWindow?: boolean
+  quotaLimit?: boolean
+  quotaPeriod?: boolean
+  quotaUsed?: boolean
+  quotaResetAt?: boolean
+  alertThreshold?: boolean
   lastUsedAt?: boolean
   expiresAt?: boolean
   revokedAt?: boolean
@@ -1410,6 +1750,8 @@ export type ApiKeySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   clientId?: boolean
   organizationId?: boolean
   name?: boolean
+  appName?: boolean
+  environment?: boolean
   keyPrefix?: boolean
   keyHash?: boolean
   status?: boolean
@@ -1417,6 +1759,11 @@ export type ApiKeySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   ipWhitelist?: boolean
   rateLimit?: boolean
   rateLimitWindow?: boolean
+  quotaLimit?: boolean
+  quotaPeriod?: boolean
+  quotaUsed?: boolean
+  quotaResetAt?: boolean
+  alertThreshold?: boolean
   lastUsedAt?: boolean
   expiresAt?: boolean
   revokedAt?: boolean
@@ -1433,6 +1780,8 @@ export type ApiKeySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   clientId?: boolean
   organizationId?: boolean
   name?: boolean
+  appName?: boolean
+  environment?: boolean
   keyPrefix?: boolean
   keyHash?: boolean
   status?: boolean
@@ -1440,6 +1789,11 @@ export type ApiKeySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   ipWhitelist?: boolean
   rateLimit?: boolean
   rateLimitWindow?: boolean
+  quotaLimit?: boolean
+  quotaPeriod?: boolean
+  quotaUsed?: boolean
+  quotaResetAt?: boolean
+  alertThreshold?: boolean
   lastUsedAt?: boolean
   expiresAt?: boolean
   revokedAt?: boolean
@@ -1456,6 +1810,8 @@ export type ApiKeySelectScalar = {
   clientId?: boolean
   organizationId?: boolean
   name?: boolean
+  appName?: boolean
+  environment?: boolean
   keyPrefix?: boolean
   keyHash?: boolean
   status?: boolean
@@ -1463,6 +1819,11 @@ export type ApiKeySelectScalar = {
   ipWhitelist?: boolean
   rateLimit?: boolean
   rateLimitWindow?: boolean
+  quotaLimit?: boolean
+  quotaPeriod?: boolean
+  quotaUsed?: boolean
+  quotaResetAt?: boolean
+  alertThreshold?: boolean
   lastUsedAt?: boolean
   expiresAt?: boolean
   revokedAt?: boolean
@@ -1470,7 +1831,7 @@ export type ApiKeySelectScalar = {
   updatedAt?: boolean
 }
 
-export type ApiKeyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "clientId" | "organizationId" | "name" | "keyPrefix" | "keyHash" | "status" | "scopes" | "ipWhitelist" | "rateLimit" | "rateLimitWindow" | "lastUsedAt" | "expiresAt" | "revokedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["apiKey"]>
+export type ApiKeyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "clientId" | "organizationId" | "name" | "appName" | "environment" | "keyPrefix" | "keyHash" | "status" | "scopes" | "ipWhitelist" | "rateLimit" | "rateLimitWindow" | "quotaLimit" | "quotaPeriod" | "quotaUsed" | "quotaResetAt" | "alertThreshold" | "lastUsedAt" | "expiresAt" | "revokedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["apiKey"]>
 export type ApiKeyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   client?: boolean | Prisma.ApiKey$clientArgs<ExtArgs>
@@ -1503,6 +1864,8 @@ export type $ApiKeyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     clientId: string | null
     organizationId: string | null
     name: string
+    appName: string
+    environment: string
     keyPrefix: string
     keyHash: string
     status: $Enums.ApiKeyStatus
@@ -1510,6 +1873,11 @@ export type $ApiKeyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     ipWhitelist: string[]
     rateLimit: number
     rateLimitWindow: number
+    quotaLimit: number | null
+    quotaPeriod: string | null
+    quotaUsed: number
+    quotaResetAt: Date | null
+    alertThreshold: number | null
     lastUsedAt: Date | null
     expiresAt: Date | null
     revokedAt: Date | null
@@ -1947,6 +2315,8 @@ export interface ApiKeyFieldRefs {
   readonly clientId: Prisma.FieldRef<"ApiKey", 'String'>
   readonly organizationId: Prisma.FieldRef<"ApiKey", 'String'>
   readonly name: Prisma.FieldRef<"ApiKey", 'String'>
+  readonly appName: Prisma.FieldRef<"ApiKey", 'String'>
+  readonly environment: Prisma.FieldRef<"ApiKey", 'String'>
   readonly keyPrefix: Prisma.FieldRef<"ApiKey", 'String'>
   readonly keyHash: Prisma.FieldRef<"ApiKey", 'String'>
   readonly status: Prisma.FieldRef<"ApiKey", 'ApiKeyStatus'>
@@ -1954,6 +2324,11 @@ export interface ApiKeyFieldRefs {
   readonly ipWhitelist: Prisma.FieldRef<"ApiKey", 'String[]'>
   readonly rateLimit: Prisma.FieldRef<"ApiKey", 'Int'>
   readonly rateLimitWindow: Prisma.FieldRef<"ApiKey", 'Int'>
+  readonly quotaLimit: Prisma.FieldRef<"ApiKey", 'Int'>
+  readonly quotaPeriod: Prisma.FieldRef<"ApiKey", 'String'>
+  readonly quotaUsed: Prisma.FieldRef<"ApiKey", 'Int'>
+  readonly quotaResetAt: Prisma.FieldRef<"ApiKey", 'DateTime'>
+  readonly alertThreshold: Prisma.FieldRef<"ApiKey", 'Int'>
   readonly lastUsedAt: Prisma.FieldRef<"ApiKey", 'DateTime'>
   readonly expiresAt: Prisma.FieldRef<"ApiKey", 'DateTime'>
   readonly revokedAt: Prisma.FieldRef<"ApiKey", 'DateTime'>

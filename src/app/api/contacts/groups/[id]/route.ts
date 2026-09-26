@@ -12,7 +12,7 @@ export async function GET(
     const session = await requirePermission('contacts.view');
     const { id } = await context.params;
 
-    const group = await prisma.contactGroup.findUnique({
+    const group = await prisma.contactGroup.findFirst({
       where: {
         id,
         userId: session.userId,
@@ -90,7 +90,7 @@ export async function PATCH(
     const updateSchema = contactGroupSchema.partial();
     const data = updateSchema.parse(body);
 
-    const existing = await prisma.contactGroup.findUnique({
+    const existing = await prisma.contactGroup.findFirst({
       where: {
         id,
         userId: session.userId,
@@ -156,7 +156,7 @@ export async function DELETE(
     const session = await requirePermission('contacts.manage');
     const { id } = await context.params;
 
-    const existing = await prisma.contactGroup.findUnique({
+    const existing = await prisma.contactGroup.findFirst({
       where: {
         id,
         userId: session.userId,

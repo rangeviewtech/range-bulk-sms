@@ -19,7 +19,7 @@ export function ThemeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full transition-transform active:scale-95">
+        <Button variant="ghost" size="icon" aria-label="Toggle theme" className="h-9 w-9 rounded-full transition-transform active:scale-95">
           {mounted && resolvedTheme === "dark" ? (
             <Moon className="h-[1.2rem] w-[1.2rem] transition-all" />
           ) : (

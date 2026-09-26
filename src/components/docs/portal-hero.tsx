@@ -14,40 +14,54 @@ export function PortalHero({ environment: _environment }: PortalHeroProps) {
   const [activeLang, setActiveLang] = React.useState<HeroLang>('curl');
   const [copied, setCopied] = React.useState(false);
 
-  const endpointUrl = 'https://api.range.co.ug/v1/wallet/balance';
+  const endpointUrl = 'https://api.range.co.ug/v1/sms/send';
 
   const snippets: Record<HeroLang, { lines: string[]; full: string }> = {
     curl: {
       lines: [
-        'curl -X GET \\',
+        'curl -X POST \\',
         `  ${endpointUrl} \\`,
-        '  -H "Authorization: Bearer YOUR_API_KEY"',
+        '  -H "Authorization: Bearer YOUR_API_KEY" \\',
+        '  -H "Content-Type: application/json" \\',
+        '  -d \'{"to": "+256700123456", "message": "Your OTP is 849201", "senderId": "RANGE"}\'',
       ],
-      full: `curl -X GET \\\n  ${endpointUrl} \\\n  -H "Authorization: Bearer YOUR_API_KEY"`,
+      full: `curl -X POST \\\n  ${endpointUrl} \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"to": "+256700123456", "message": "Your OTP is 849201", "senderId": "RANGE"}'`,
     },
     nodejs: {
       lines: [
-        `const res = await axios.get('${endpointUrl}', {`,
+        `const res = await axios.post('${endpointUrl}', {`,
+        "  to: '+256700123456',",
+        "  message: 'Your OTP is 849201',",
+        "  senderId: 'RANGE'",
+        '}, {',
         "  headers: { Authorization: 'Bearer YOUR_API_KEY' }",
         '});',
       ],
-      full: `const res = await axios.get('${endpointUrl}', {\n  headers: { Authorization: 'Bearer YOUR_API_KEY' }\n});`,
+      full: `const res = await axios.post('${endpointUrl}', {\n  to: '+256700123456',\n  message: 'Your OTP is 849201',\n  senderId: 'RANGE'\n}, {\n  headers: { Authorization: 'Bearer YOUR_API_KEY' }\n});`,
     },
     python: {
       lines: [
         'import requests',
-        `res = requests.get('${endpointUrl}',`,
-        "  headers={'Authorization': 'Bearer YOUR_API_KEY'})",
+        `res = requests.post('${endpointUrl}', json={`,
+        "  'to': '+256700123456',",
+        "  'message': 'Your OTP is 849201',",
+        "  'senderId': 'RANGE'",
+        "}, headers={'Authorization': 'Bearer YOUR_API_KEY'})",
       ],
-      full: `import requests\nres = requests.get('${endpointUrl}',\n  headers={'Authorization': 'Bearer YOUR_API_KEY'})`,
+      full: `import requests\nres = requests.post('${endpointUrl}', json={\n  'to': '+256700123456',\n  'message': 'Your OTP is 849201',\n  'senderId': 'RANGE'\n}, headers={'Authorization': 'Bearer YOUR_API_KEY'})`,
     },
     php: {
       lines: [
         `$ch = curl_init('${endpointUrl}');`,
-        "curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer YOUR_API_KEY']);",
+        'curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([',
+        "  'to' => '+256700123456', 'message' => 'Your OTP is 849201', 'senderId' => 'RANGE'",
+        ']));',
+        'curl_setopt($ch, CURLOPT_HTTPHEADER, [',
+        "  'Authorization: Bearer YOUR_API_KEY', 'Content-Type: application/json'",
+        ']);',
         '$response = curl_exec($ch);',
       ],
-      full: `$ch = curl_init('${endpointUrl}');\ncurl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer YOUR_API_KEY']);\n$response = curl_exec($ch);`,
+      full: `$ch = curl_init('${endpointUrl}');\ncurl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([\n  'to' => '+256700123456', 'message' => 'Your OTP is 849201', 'senderId' => 'RANGE'\n]));\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n  'Authorization: Bearer YOUR_API_KEY', 'Content-Type: application/json'\n]);\n$response = curl_exec($ch);`,
     },
   };
 

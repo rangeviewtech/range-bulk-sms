@@ -89,3 +89,100 @@ export function countSms(message: string, recipientCount: number = 1, costPerUni
     isMultipart,
   };
 }
+
+export function getNonGsmCharacters(message: string): string[] {
+  const gsmSet = getGsmCharacterSet();
+  const nonGsm = new Set<string>();
+  for (let i = 0; i < message.length; i++) {
+    const char = message[i];
+    if (!gsmSet.has(char)) {
+      nonGsm.add(char);
+    }
+  }
+  return Array.from(nonGsm);
+}
+
+export function cleanToGsm7(message: string): { cleaned: string; replacedCount: number } {
+  const map: Record<string, string> = {
+    '“': '"',
+    '”': '"',
+    '„': '"',
+    '«': '"',
+    '»': '"',
+    '‘': "'",
+    '’': "'",
+    '‚': "'",
+    '‹': "'",
+    '›': "'",
+    '`': "'",
+    '—': '-',
+    '–': '-',
+    '−': '-',
+    '…': '...',
+    '\u00A0': ' ',
+    '\u2002': ' ',
+    '\u2003': ' ',
+    '\u2009': ' ',
+    '\u200B': '',
+    '•': '*',
+    '·': '*',
+    '™': '(TM)',
+    '©': '(C)',
+    '®': '(R)',
+    'á': 'a',
+    'â': 'a',
+    'ã': 'a',
+    'ê': 'e',
+    'ë': 'e',
+    'í': 'i',
+    'î': 'i',
+    'ï': 'i',
+    'ó': 'o',
+    'ô': 'o',
+    'õ': 'o',
+    'ú': 'u',
+    'û': 'u',
+    'Á': 'A',
+    'À': 'A',
+    'Â': 'A',
+    'Ã': 'A',
+    'Ê': 'E',
+    'Ë': 'E',
+    'Í': 'I',
+    'Ì': 'I',
+    'Î': 'I',
+    'Ï': 'I',
+    'Ó': 'O',
+    'Ò': 'O',
+    'Ô': 'O',
+    'Õ': 'O',
+    'Ú': 'U',
+    'Ù': 'U',
+    'Û': 'U',
+  };
+
+  let replacedCount = 0;
+  let cleaned = '';
+  const gsmSet = getGsmCharacterSet();
+
+  for (let i = 0; i < message.length; i++) {
+    const char = message[i];
+    if (map[char] !== undefined) {
+      cleaned += map[char];
+      replacedCount++;
+    } else if (gsmSet.has(char)) {
+      cleaned += char;
+    } else {
+      const normalized = char.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+      if (normalized && normalized !== char && Array.from(normalized).every((c) => gsmSet.has(c))) {
+        cleaned += normalized;
+        replacedCount++;
+      } else {
+        cleaned += char;
+      }
+    }
+  }
+
+  return { cleaned, replacedCount };
+}
+

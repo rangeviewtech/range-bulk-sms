@@ -22,7 +22,7 @@ export async function GET(
     const search = searchParams.get('search')?.trim() || '';
 
     // Verify group belongs to user
-    const group = await prisma.contactGroup.findUnique({
+    const group = await prisma.contactGroup.findFirst({
       where: { id, userId: session.userId },
       select: { id: true, name: true },
     });
@@ -103,7 +103,7 @@ export async function POST(
     const body = await req.json();
     const data = addMembersSchema.parse(body);
 
-    const group = await prisma.contactGroup.findUnique({
+    const group = await prisma.contactGroup.findFirst({
       where: { id, userId: session.userId },
     });
 
@@ -168,7 +168,7 @@ export async function DELETE(
       return errorResponse(new Error('contactId parameter is required.'), 400);
     }
 
-    const group = await prisma.contactGroup.findUnique({
+    const group = await prisma.contactGroup.findFirst({
       where: { id, userId: session.userId },
     });
 

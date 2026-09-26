@@ -31,61 +31,6 @@ export interface EndpointItem {
 
 export const ENDPOINTS_DATA: EndpointItem[] = [
   {
-    id: 'WalletBalance',
-    name: 'WalletBalance',
-    method: 'GET',
-    path: '/api/v1/balance',
-    description: 'Check your account balance and view wallet information.',
-    category: 'Finance',
-    icon: Wallet,
-    requestSample: `curl -X GET https://api.range.co.ug/v1/balance \\\n  -H "Authorization: Bearer YOUR_API_KEY"`,
-    responseSample: `{\n  "data": {\n    "balance": 45000.0,\n    "currency": "UGX",\n    "status": "ACTIVE"\n  }\n}`,
-  },
-  {
-    id: 'Contact',
-    name: 'Contact',
-    method: 'POST',
-    path: '/api/v1/contacts',
-    description: 'Manage your contacts, add, update or delete recipients.',
-    category: 'Contacts',
-    icon: Users,
-    requestSample: `curl -X POST https://api.range.co.ug/v1/contacts \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "phone": "+256700123456",\n    "name": "Sarah Namubiru",\n    "email": "sarah@example.ug"\n  }'`,
-    responseSample: `{\n  "id": "7d34bc12-98aa-43e1-b45e-8490a0c4f821",\n  "phone": "+256700123456",\n  "name": "Sarah Namubiru",\n  "email": "sarah@example.ug",\n  "createdAt": "2026-09-18T18:00:00Z"\n}`,
-  },
-  {
-    id: 'SenderId',
-    name: 'SenderId',
-    method: 'POST',
-    path: '/api/v1/sender-ids',
-    description: 'Register and manage your Sender IDs for SMS campaigns.',
-    category: 'Messaging',
-    icon: Tag,
-    requestSample: `curl -X POST https://api.range.co.ug/v1/sender-ids \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "senderId": "RANGE",\n    "purpose": "Transactional verification notifications"\n  }'`,
-    responseSample: `{\n  "id": "sdr_01jabc89214",\n  "senderId": "RANGE",\n  "status": "APPROVED",\n  "purpose": "Transactional verification notifications",\n  "createdAt": "2026-09-18T18:00:00Z"\n}`,
-  },
-  {
-    id: 'WebhookSimulateRequest',
-    name: 'WebhookSimulateRequest',
-    method: 'POST',
-    path: '/api/v1/sandbox/simulate-delivery',
-    description: 'Simulate webhook requests for testing and integration.',
-    category: 'Webhooks',
-    icon: Share2,
-    requestSample: `curl -X POST https://api.range.co.ug/v1/sandbox/simulate-delivery \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "webhookUrl": "https://webhook.site/demo",\n    "status": "DELIVERED",\n    "recipientPhone": "+256700123456"\n  }'`,
-    responseSample: `{\n  "success": true,\n  "eventId": "evt_test_98f12a4b89c0",\n  "delivered": true,\n  "signature": "sha256=a89b..."\n}`,
-  },
-  {
-    id: 'WebhookDeliveryEvent',
-    name: 'WebhookDeliveryEvent',
-    method: 'GET',
-    path: '/api/webhooks/sms/delivery',
-    description: 'Receive and handle delivery events from our platform.',
-    category: 'Webhooks',
-    icon: BarChart3,
-    requestSample: `curl -X GET https://api.range.co.ug/api/webhooks/sms/delivery \\\n  -H "Authorization: Bearer YOUR_API_KEY"`,
-    responseSample: `{\n  "id": "evt_test_98f12a4b89c0",\n  "type": "message.delivered",\n  "createdAt": "2026-09-18T18:30:00Z",\n  "data": {\n    "messageId": "msg_01j7abc98124",\n    "recipient": "+256700123456",\n    "status": "DELIVERED",\n    "deliveredAt": "2026-09-18T18:30:01Z"\n  }\n}`,
-  },
-  {
     id: 'SingleSmsSend',
     name: 'Single SMS Dispatch',
     method: 'POST',
@@ -94,11 +39,11 @@ export const ENDPOINTS_DATA: EndpointItem[] = [
     category: 'Messaging',
     icon: Send,
     requestSample: `curl -X POST https://api.range.co.ug/v1/sms/send \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "to": "+256700123456",\n    "message": "Your verification code is 849201.",\n    "senderId": "RANGE"\n  }'`,
-    responseSample: `{\n  "success": true,\n  "messageId": "msg_01j7abc98124",\n  "status": "QUEUED",\n  "recipientCount": 1,\n  "cost": 10.0,\n  "currency": "UGX"\n}`,
+    responseSample: `{\n  "success": true,\n  "messageId": "msg_01j7abc98124",\n  "status": "QUEUED",\n  "recipientCount": 1,\n  "cost": 45.0,\n  "currency": "UGX"\n}`,
   },
   {
     id: 'BulkSmsSend',
-    name: 'Bulk SMS Dispatch',
+    name: 'Bulk SMS Broadcast',
     method: 'POST',
     path: '/api/v1/sms/bulk',
     description: 'Submit batch messages or announcements to multiple recipients simultaneously.',
@@ -118,6 +63,61 @@ export const ENDPOINTS_DATA: EndpointItem[] = [
     requestSample: `curl -X POST https://api.range.co.ug/v1/sms/schedule \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "to": "+256700123456",\n    "message": "Appointment reminder for tomorrow.",\n    "scheduledAt": "2026-09-19T09:00:00Z"\n  }'`,
     responseSample: `{\n  "success": true,\n  "scheduleId": "sch_01j8912401",\n  "scheduledAt": "2026-09-19T09:00:00Z",\n  "status": "SCHEDULED"\n}`,
   },
+  {
+    id: 'WalletBalance',
+    name: 'Wallet & Balance',
+    method: 'GET',
+    path: '/api/v1/balance',
+    description: 'Check your real-time prepaid account balance, credit limit, and SMS capacity.',
+    category: 'Finance',
+    icon: Wallet,
+    requestSample: `curl -X GET https://api.range.co.ug/v1/balance \\\n  -H "Authorization: Bearer YOUR_API_KEY"`,
+    responseSample: `{\n  "data": {\n    "balance": 2019540.0,\n    "currency": "UGX",\n    "smsCredits": 44878,\n    "status": "ACTIVE"\n  }\n}`,
+  },
+  {
+    id: 'SenderId',
+    name: 'Sender IDs Registry',
+    method: 'POST',
+    path: '/api/v1/sender-ids',
+    description: 'Register and manage approved alphanumeric Sender IDs for SMS broadcasts.',
+    category: 'Messaging',
+    icon: Tag,
+    requestSample: `curl -X POST https://api.range.co.ug/v1/sender-ids \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "senderId": "RANGE",\n    "purpose": "Transactional verification notifications"\n  }'`,
+    responseSample: `{\n  "id": "sdr_01jabc89214",\n  "senderId": "RANGE",\n  "status": "APPROVED",\n  "purpose": "Transactional verification notifications",\n  "createdAt": "2026-09-18T18:00:00Z"\n}`,
+  },
+  {
+    id: 'Contact',
+    name: 'Contacts & Address Book',
+    method: 'POST',
+    path: '/api/v1/contacts',
+    description: 'Create, query, update, or tag contacts and audience groups.',
+    category: 'Contacts',
+    icon: Users,
+    requestSample: `curl -X POST https://api.range.co.ug/v1/contacts \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "phone": "+256700123456",\n    "name": "Sarah Namubiru",\n    "email": "sarah@example.ug"\n  }'`,
+    responseSample: `{\n  "id": "7d34bc12-98aa-43e1-b45e-8490a0c4f821",\n  "phone": "+256700123456",\n  "name": "Sarah Namubiru",\n  "email": "sarah@example.ug",\n  "createdAt": "2026-09-18T18:00:00Z"\n}`,
+  },
+  {
+    id: 'WebhookDeliveryEvent',
+    name: 'Delivery Receipts (DLR)',
+    method: 'GET',
+    path: '/api/webhooks/sms/delivery',
+    description: 'Receive cryptographically signed delivery receipts and carrier status updates.',
+    category: 'Webhooks',
+    icon: BarChart3,
+    requestSample: `curl -X GET https://api.range.co.ug/api/webhooks/sms/delivery \\\n  -H "Authorization: Bearer YOUR_API_KEY"`,
+    responseSample: `{\n  "id": "evt_test_98f12a4b89c0",\n  "type": "message.delivered",\n  "createdAt": "2026-09-18T18:30:00Z",\n  "data": {\n    "messageId": "msg_01j7abc98124",\n    "recipient": "+256700123456",\n    "status": "DELIVERED",\n    "deliveredAt": "2026-09-18T18:30:01Z"\n  }\n}`,
+  },
+  {
+    id: 'WebhookSimulateRequest',
+    name: 'Sandbox Delivery Simulator',
+    method: 'POST',
+    path: '/api/v1/sandbox/simulate-delivery',
+    description: 'Simulate delivery events, network delays, and carrier failures in isolated sandbox.',
+    category: 'Webhooks',
+    icon: Share2,
+    requestSample: `curl -X POST https://api.range.co.ug/v1/sandbox/simulate-delivery \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "webhookUrl": "https://webhook.site/demo",\n    "status": "DELIVERED",\n    "recipientPhone": "+256700123456"\n  }'`,
+    responseSample: `{\n  "success": true,\n  "eventId": "evt_test_98f12a4b89c0",\n  "delivered": true,\n  "signature": "sha256=a89b..."\n}`,
+  },
 ];
 
 interface PortalEndpointsProps {
@@ -134,10 +134,9 @@ export function PortalEndpoints({
   const [selectedEndpoint, setSelectedEndpoint] = React.useState<EndpointItem | null>(null);
   const [copied, setCopied] = React.useState(false);
 
-  // Filter endpoints (shows primary 5 reference endpoints in default view, full set on filter/search)
+  // Filter endpoints (shows complete reference catalog in default view, full set on filter/search)
   const filtered = React.useMemo(() => {
-    const isDefaultView = selectedCategory === 'All Categories' && !searchQuery.trim();
-    const source = isDefaultView ? ENDPOINTS_DATA.slice(0, 5) : ENDPOINTS_DATA;
+    const source = ENDPOINTS_DATA;
     return source.filter((ep) => {
       const matchesCat =
         selectedCategory === 'All Categories' || ep.category === selectedCategory;

@@ -60,29 +60,31 @@ export function VariableDropdown({ onSelect }: VariableDropdownProps) {
 
   return (
     <>
-      <DropdownMenu open={open} onOpenChange={setOpen}>
-        <DropdownMenuTrigger asChild>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="h-8 px-3 text-xs font-medium gap-1.5 rounded-md transition-all"
+      <div className="relative inline-flex items-center">
+        <DropdownMenu open={open} onOpenChange={setOpen}>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-8 px-3 text-xs font-medium gap-1.5 rounded-md transition-all"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Insert Variable</span>
+              <ChevronDown className="w-3 h-3 ml-0.5 opacity-60" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent 
+            portalled={false}
+            align="end" 
+            className="w-80 p-1.5 rounded-xl border bg-popover text-popover-foreground shadow-xl z-50 flex flex-col"
           >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Insert Variable</span>
-            <ChevronDown className="w-3 h-3 ml-0.5 opacity-60" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent 
-          align="end" 
-          className="w-80 p-1.5 rounded-xl border bg-popover text-popover-foreground shadow-xl z-50 flex flex-col"
-        >
-          {/* Header & Search */}
-          <div className="flex items-center justify-between px-2 pt-1 pb-2">
-            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Variables</span>
-            <Link 
-              href="/sms/variables" 
-              target="_blank" 
+            {/* Header & Search */}
+            <div className="flex items-center justify-between px-2 pt-1 pb-2">
+              <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Variables</span>
+              <Link 
+                href="/sms/variables" 
+                target="_blank" 
               rel="noopener noreferrer" 
               className="text-secondary dark:text-primary hover:underline flex items-center gap-0.5 text-[10px] font-medium"
             >
@@ -206,6 +208,7 @@ export function VariableDropdown({ onSelect }: VariableDropdownProps) {
           </div>
         </DropdownMenuContent>
       </DropdownMenu>
+    </div>
 
       <QuickAddVariable 
         isOpen={showAddVar} 

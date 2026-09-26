@@ -63,4 +63,88 @@ describe('CountryPickerDropdown & Region Registry', () => {
     const results = searchRegions('XYZNONEXISTENTCOUNTRY999');
     expect(results).toHaveLength(0);
   });
+
+  it('matches countries by aliases like UK, USA, UAE, DRC in the dropdown search', () => {
+    const uk = searchRegions('UK');
+    expect(uk[0].alpha2).toBe('GB');
+
+    const usa = searchRegions('USA');
+    expect(usa[0].alpha2).toBe('US');
+
+    const uae = searchRegions('UAE');
+    expect(uae[0].alpha2).toBe('AE');
+
+    const drc = searchRegions('DRC');
+    expect(drc[0].alpha2).toBe('CD');
+  });
+
+  it('matches full pasted phone numbers and partial dial codes for instant country selection', () => {
+    const ugandaPhone = searchRegions('+256772123456');
+    expect(ugandaPhone[0].alpha2).toBe('UG');
+
+    const ukPhone = searchRegions('+447911123456');
+    expect(ukPhone.some(r => r.alpha2 === 'GB')).toBe(true);
+
+    const bahamasPhone = searchRegions('+12423591234');
+    expect(bahamasPhone[0].alpha2).toBe('BS');
+  });
+
+  it('matches diacritic-free queries against accented country names', () => {
+    const cote = searchRegions('cote divoire');
+    expect(cote.some(r => r.alpha2 === 'CI')).toBe(true);
+
+    const curacao = searchRegions('curacao');
+    expect(curacao.some(r => r.alpha2 === 'CW')).toBe(true);
+  });
+
+  it('matches countries by capital cities and major hubs', () => {
+    const kampala = searchRegions('Kampala');
+    expect(kampala[0].alpha2).toBe('UG');
+
+    const nairobi = searchRegions('Nairobi');
+    expect(nairobi[0].alpha2).toBe('KE');
+
+    const tokyo = searchRegions('Tokyo');
+    expect(tokyo[0].alpha2).toBe('JP');
+
+    const cairo = searchRegions('Cairo');
+    expect(cairo[0].alpha2).toBe('EG');
+
+    const lagos = searchRegions('Lagos');
+    expect(lagos[0].alpha2).toBe('NG');
+  });
+
+  it('matches countries by native and alternate names', () => {
+    const de = searchRegions('Deutschland');
+    expect(de[0].alpha2).toBe('DE');
+
+    const br = searchRegions('Brasil');
+    expect(br[0].alpha2).toBe('BR');
+
+    const inMatch = searchRegions('Bharat');
+    expect(inMatch[0].alpha2).toBe('IN');
+
+    const nl = searchRegions('Holland');
+    expect(nl[0].alpha2).toBe('NL');
+
+    const es = searchRegions('Espana');
+    expect(es[0].alpha2).toBe('ES');
+  });
+
+  it('disambiguates full numbers for shared dial codes (+1, +7, +44)', () => {
+    // US vs Caribbean in +1
+    const usNum = searchRegions('+14155552671');
+    expect(usNum[0].alpha2).toBe('US');
+
+    const bahamasNum = searchRegions('+12423591234');
+    expect(bahamasNum[0].alpha2).toBe('BS');
+
+    // Kazakhstan vs Russia in +7
+    const kzNum = searchRegions('+77011234567');
+    expect(kzNum[0].alpha2).toBe('KZ');
+
+    const ruNum = searchRegions('+79161234567');
+    expect(ruNum[0].alpha2).toBe('RU');
+  });
 });
+

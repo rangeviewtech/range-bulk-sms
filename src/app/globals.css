@@ -1153,4 +1153,48 @@ html[dir='ltr'] [data-sonner-toaster],
   transform: scale(0.92) !important;
 }
 
+/* ==========================================================================
+   Zero-Lag Synchronized Dropdowns, Popovers & Flyouts
+   Eliminates scroll lag and detachment by anchoring unportalled poppers directly
+   in the parent DOM compositor layer, enabling instant GPU synchronization and
+   instant boundary cropping on scroll.
+   ========================================================================== */
+
+[data-radix-popper-content-wrapper]:has([data-zero-lag="true"]),
+[data-radix-popper-content-wrapper]:has([data-unportalled="true"]),
+[data-radix-popper-content-wrapper][data-zero-lag-wrapper="true"] {
+  position: absolute !important;
+  left: 0 !important;
+  right: auto !important;
+  top: 100% !important;
+  bottom: auto !important;
+  transform: none !important;
+  margin-top: var(--popper-offset, 4px) !important;
+}
+
+[data-radix-popper-content-wrapper]:has([data-zero-lag="true"][data-align="end"]),
+[data-radix-popper-content-wrapper]:has([data-unportalled="true"][data-align="end"]),
+[data-radix-popper-content-wrapper][data-zero-lag-wrapper="true"][data-align="end"] {
+  left: auto !important;
+  right: 0 !important;
+}
+
+[data-radix-popper-content-wrapper]:has([data-zero-lag="true"][data-align="center"]),
+[data-radix-popper-content-wrapper]:has([data-unportalled="true"][data-align="center"]),
+[data-radix-popper-content-wrapper][data-zero-lag-wrapper="true"][data-align="center"] {
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+}
+
+[data-radix-popper-content-wrapper]:has([data-zero-lag="true"][data-side="top"]),
+[data-radix-popper-content-wrapper]:has([data-unportalled="true"][data-side="top"]),
+[data-radix-popper-content-wrapper][data-zero-lag-wrapper="true"][data-side="top"] {
+  top: auto !important;
+  bottom: 100% !important;
+  margin-top: 0 !important;
+  margin-bottom: var(--popper-offset, 4px) !important;
+}
+
+
 

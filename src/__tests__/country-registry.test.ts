@@ -172,5 +172,125 @@ describe('Global Country & Territory Registry', () => {
       expect(`https://flagcdn.com/24x18/${ke!.alpha2.toLowerCase()}.png`).toBe('https://flagcdn.com/24x18/ke.png');
     });
   });
+
+  describe('Enhanced Search & Alias Matching ("Match More")', () => {
+    it('matches countries by common colloquial acronyms and aliases', () => {
+      // UK -> United Kingdom (GB)
+      const ukResults = searchRegions('uk');
+      expect(ukResults.length).toBeGreaterThanOrEqual(1);
+      expect(ukResults[0].alpha2).toBe('GB');
+
+      // USA -> United States (US)
+      const usaResults = searchRegions('usa');
+      expect(usaResults.length).toBeGreaterThanOrEqual(1);
+      expect(usaResults[0].alpha2).toBe('US');
+
+      // America -> United States
+      const americaResults = searchRegions('america');
+      expect(americaResults.some((r) => r.alpha2 === 'US')).toBe(true);
+
+      // UAE -> United Arab Emirates (AE)
+      const uaeResults = searchRegions('uae');
+      expect(uaeResults.length).toBeGreaterThanOrEqual(1);
+      expect(uaeResults[0].alpha2).toBe('AE');
+
+      // DRC -> Democratic Republic of the Congo (CD)
+      const drcResults = searchRegions('drc');
+      expect(drcResults.length).toBeGreaterThanOrEqual(1);
+      expect(drcResults[0].alpha2).toBe('CD');
+
+      // Russia -> Russian Federation (RU)
+      const russiaResults = searchRegions('russia');
+      expect(russiaResults.length).toBeGreaterThanOrEqual(1);
+      expect(russiaResults[0].alpha2).toBe('RU');
+
+      // South Korea -> Republic of Korea (KR)
+      const skResults = searchRegions('south korea');
+      expect(skResults.length).toBeGreaterThanOrEqual(1);
+      expect(skResults[0].alpha2).toBe('KR');
+
+      // Vatican -> Holy See (VA)
+      const vaticanResults = searchRegions('vatican');
+      expect(vaticanResults.length).toBeGreaterThanOrEqual(1);
+      expect(vaticanResults[0].alpha2).toBe('VA');
+
+      // Holland -> Netherlands (NL)
+      const hollandResults = searchRegions('holland');
+      expect(hollandResults.length).toBeGreaterThanOrEqual(1);
+      expect(hollandResults[0].alpha2).toBe('NL');
+
+      // Burma -> Myanmar (MM)
+      const burmaResults = searchRegions('burma');
+      expect(burmaResults.length).toBeGreaterThanOrEqual(1);
+      expect(burmaResults[0].alpha2).toBe('MM');
+
+      // Czech Republic -> Czechia (CZ)
+      const czechResults = searchRegions('czech republic');
+      expect(czechResults.length).toBeGreaterThanOrEqual(1);
+      expect(czechResults[0].alpha2).toBe('CZ');
+
+      // Swaziland -> Eswatini (SZ)
+      const swazilandResults = searchRegions('swaziland');
+      expect(swazilandResults.length).toBeGreaterThanOrEqual(1);
+      expect(swazilandResults[0].alpha2).toBe('SZ');
+    });
+
+    it('matches countries with diacritics regardless of accents in query', () => {
+      // "cote divoire" without accent matches Côte d'Ivoire (CI)
+      const coteResults = searchRegions('cote divoire');
+      expect(coteResults.some((r) => r.alpha2 === 'CI')).toBe(true);
+
+      // "curacao" without cedilla matches Curaçao (CW)
+      const curacaoResults = searchRegions('curacao');
+      expect(curacaoResults.some((r) => r.alpha2 === 'CW')).toBe(true);
+
+      // "reunion" without acute accent matches Réunion (RE)
+      const reunionResults = searchRegions('reunion');
+      expect(reunionResults.some((r) => r.alpha2 === 'RE')).toBe(true);
+
+      // "sao tome" without tilde matches São Tomé and Príncipe (ST)
+      const saoTomeResults = searchRegions('sao tome');
+      expect(saoTomeResults.some((r) => r.alpha2 === 'ST')).toBe(true);
+
+      // "turkiye" matches Turkey (TR)
+      const turkiyeResults = searchRegions('turkiye');
+      expect(turkiyeResults.some((r) => r.alpha2 === 'TR')).toBe(true);
+    });
+
+    it('matches pasted full telephone numbers by dialing code prefix', () => {
+      // Pasted full Ugandan number: "+256772123456"
+      const ugResults = searchRegions('+256772123456');
+      expect(ugResults.length).toBeGreaterThanOrEqual(1);
+      expect(ugResults[0].alpha2).toBe('UG');
+
+      // Pasted raw digits without plus: "256772123456"
+      const ugRawResults = searchRegions('256772123456');
+      expect(ugRawResults.length).toBeGreaterThanOrEqual(1);
+      expect(ugRawResults[0].alpha2).toBe('UG');
+
+      // Pasted UK number: "+447911123456"
+      const ukPhoneResults = searchRegions('+447911123456');
+      expect(ukPhoneResults.some((r) => r.alpha2 === 'GB')).toBe(true);
+
+      // Pasted NANP Bahamas number: "+12423591234" (area code 242)
+      const bahamasResults = searchRegions('+12423591234');
+      expect(bahamasResults.length).toBeGreaterThanOrEqual(1);
+      expect(bahamasResults[0].alpha2).toBe('BS');
+    });
+
+    it('ranks exact and prefix matches higher than partial substrings', () => {
+      // Searching "ug" should put Uganda (UG) first
+      const ug = searchRegions('ug');
+      expect(ug[0].alpha2).toBe('UG');
+
+      // Searching "us" should put United States (US) first
+      const us = searchRegions('us');
+      expect(us[0].alpha2).toBe('US');
+
+      // Searching "+256" should put Uganda first
+      const dial256 = searchRegions('+256');
+      expect(dial256[0].alpha2).toBe('UG');
+    });
+  });
 });
 

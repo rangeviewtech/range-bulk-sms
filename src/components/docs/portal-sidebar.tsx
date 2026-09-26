@@ -16,6 +16,9 @@ import {
   Headphones,
   ExternalLink,
   X,
+  Send,
+  Layers,
+  Calendar,
 } from 'lucide-react';
 import { PORTAL_COLORS } from './portal-tokens';
 import { GuideTopic } from './portal-guides-modal';
@@ -37,11 +40,14 @@ export function PortalSidebar({
 }: PortalSidebarProps) {
   const apiItems = [
     { id: 'overview', label: 'Overview', icon: Home },
-    { id: 'WalletBalance', label: 'WalletBalance', icon: Wallet },
-    { id: 'Contact', label: 'Contact', icon: Users },
-    { id: 'SenderId', label: 'SenderId', icon: Tag },
-    { id: 'WebhookSimulateRequest', label: 'WebhookSimulateRequest', icon: Share2 },
-    { id: 'WebhookDeliveryEvent', label: 'WebhookDeliveryEvent', icon: BarChart3 },
+    { id: 'SingleSmsSend', label: 'Single SMS Dispatch', icon: Send },
+    { id: 'BulkSmsSend', label: 'Bulk SMS Broadcast', icon: Layers },
+    { id: 'ScheduleSms', label: 'Schedule SMS', icon: Calendar },
+    { id: 'WalletBalance', label: 'Wallet & Balance', icon: Wallet },
+    { id: 'SenderId', label: 'Sender IDs', icon: Tag },
+    { id: 'Contact', label: 'Contacts API', icon: Users },
+    { id: 'WebhookDeliveryEvent', label: 'Delivery Receipts (DLR)', icon: BarChart3 },
+    { id: 'WebhookSimulateRequest', label: 'Sandbox Simulator', icon: Share2 },
   ];
 
   const guideItems: { id: GuideTopic; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
