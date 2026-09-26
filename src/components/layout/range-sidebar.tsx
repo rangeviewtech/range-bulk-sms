@@ -34,6 +34,7 @@ import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
 import { NavWalletBadge } from "@/components/navigation/nav-wallet-badge";
+import { RangeAppsDropdown } from "@/components/navigation/range-apps-dropdown";
 import { computeFlyoutPosition } from "@/lib/flyout-position";
 
 // Navigation Hierarchy Type
@@ -1363,8 +1364,9 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
 
           <div className="hidden md:block" />
 
-          {/* Right Action Icons: Wallet Badge, Search & Theme Switcher */}
+          {/* Right Action Icons: Range View Apps (Waffle), Wallet Badge, Search & Theme Switcher */}
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+            <RangeAppsDropdown />
             <NavWalletBadge />
 
             <button
