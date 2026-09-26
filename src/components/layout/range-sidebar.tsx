@@ -90,12 +90,6 @@ export const RANGE_NAVIGATION: NavModule[] = [
           { title: "Delivery Reports", href: "/sms/delivery-reports" },
         ],
       },
-      {
-        title: "USSD Services",
-        items: [
-          { title: "Bulk USSD Portal", href: "/ussd" },
-        ],
-      },
     ],
   },
   {

@@ -1,7 +1,7 @@
 /**
  * Airtel Uganda Telecom Official Rate & Regulatory Specifications
  * 
- * Compliant with Airtel Bulk SMS & Bulk USSD Pricing Bands, 
+ * Compliant with Airtel Bulk SMS Pricing Bands, 
  * UCC (Uganda Communications Commission) Regulatory Requirements,
  * and SMPP v3.4 SMSC Gateway Direct Interconnect standards.
  */
@@ -84,69 +84,6 @@ export const AIRTEL_SMS_TIERS: AirtelVolumeTier[] = [
   },
 ];
 
-/**
- * Airtel Uganda Official Bulk USSD Pricing Bands (VAT Incl.)
- */
-export const AIRTEL_USSD_TIERS: AirtelVolumeTier[] = [
-  {
-    id: 'ussd-tier-1',
-    name: 'Up to 200,000',
-    minVolume: 1,
-    maxVolume: 200_000,
-    rateUgx: 25,
-  },
-  {
-    id: 'ussd-tier-2',
-    name: '200,001 - 500,000',
-    minVolume: 200_001,
-    maxVolume: 500_000,
-    rateUgx: 24,
-  },
-  {
-    id: 'ussd-tier-3',
-    name: '500,001 - 1,000,000',
-    minVolume: 500_001,
-    maxVolume: 1_000_000,
-    rateUgx: 23,
-  },
-  {
-    id: 'ussd-tier-4',
-    name: '1,000,001 - 4,000,000',
-    minVolume: 1_000_001,
-    maxVolume: 4_000_000,
-    rateUgx: 18,
-  },
-  {
-    id: 'ussd-tier-5',
-    name: '4,000,001 - 7,000,000',
-    minVolume: 4_000_001,
-    maxVolume: 7_000_000,
-    rateUgx: 16,
-  },
-  {
-    id: 'ussd-tier-6',
-    name: '7,000,001 - 15,000,000',
-    minVolume: 7_000_001,
-    maxVolume: 15_000_000,
-    rateUgx: 11,
-  },
-  {
-    id: 'ussd-tier-7',
-    name: '15,000,001 - 150,000,000',
-    minVolume: 15_000_001,
-    maxVolume: 150_000_000,
-    rateUgx: 6,
-  },
-  {
-    id: 'ussd-tier-8',
-    name: '150,000,001 - Above',
-    minVolume: 150_000_001,
-    maxVolume: null,
-    rateUgx: 2.5,
-    isNegotiable: true,
-  },
-];
-
 export interface AirtelRateCalculation {
   volume: number;
   ratePerUnit: number;
@@ -172,29 +109,6 @@ export function calculateAirtelSmsRate(volume: number): AirtelRateCalculation {
 
   return {
     volume: safeVolume,
-    ratePerUnit: tier.rateUgx,
-    totalCostUgx,
-    tier,
-    currency: 'UGX',
-    isNegotiable: Boolean(tier.isNegotiable),
-  };
-}
-
-/**
- * Calculates the applicable Bulk USSD session rate and total cost based on session volume.
- */
-export function calculateAirtelUssdRate(sessions: number): AirtelRateCalculation {
-  const safeSessions = Math.max(0, Math.floor(sessions));
-
-  const tier = AIRTEL_USSD_TIERS.find((t) => {
-    if (t.maxVolume === null) return safeSessions >= t.minVolume;
-    return safeSessions >= t.minVolume && safeSessions <= t.maxVolume;
-  }) || AIRTEL_USSD_TIERS[0];
-
-  const totalCostUgx = safeSessions * tier.rateUgx;
-
-  return {
-    volume: safeSessions,
     ratePerUnit: tier.rateUgx,
     totalCostUgx,
     tier,
@@ -316,7 +230,7 @@ export const AIRTEL_ONBOARDING_CHECKLIST = [
   {
     id: 'auth_letter',
     title: 'Appointment / Authorization Letter',
-    description: 'Formal company letter on official headed paper authorizing Airtel to host Bulk SMS / USSD account detailing business use case.',
+    description: 'Formal company letter on official headed paper authorizing Airtel to host Bulk SMS account detailing business use case.',
     required: true,
   },
   {

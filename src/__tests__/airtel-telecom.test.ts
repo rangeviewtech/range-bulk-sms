@@ -3,7 +3,6 @@ import {
   AIRTEL_SETUP_FEES,
   AIRTEL_ONBOARDING_CHECKLIST,
   calculateAirtelSmsRate,
-  calculateAirtelUssdRate,
   validateAirtelSenderId,
 } from '@/lib/telecom/airtel-rates';
 import { senderIdApplicationSchema } from '@/lib/validations/sender-id';
@@ -73,65 +72,6 @@ describe('Airtel Uganda Telecom Specifications & Rate Engine', () => {
       expect(result.ratePerUnit).toBe(0.5);
       expect(result.totalCostUgx).toBe(125_000_000);
       expect(result.tier.id).toBe('tier-8');
-      expect(result.isNegotiable).toBe(true);
-    });
-  });
-
-  describe('Bulk USSD Pricing Bands (VAT Incl.)', () => {
-    it('calculates USSD Tier 1 rate (Up to 200,000) at 25 UGX', () => {
-      const result = calculateAirtelUssdRate(100_000);
-      expect(result.ratePerUnit).toBe(25);
-      expect(result.totalCostUgx).toBe(2_500_000);
-      expect(result.tier.id).toBe('ussd-tier-1');
-    });
-
-    it('calculates USSD Tier 2 rate (200,001 - 500,000) at 24 UGX', () => {
-      const result = calculateAirtelUssdRate(400_000);
-      expect(result.ratePerUnit).toBe(24);
-      expect(result.totalCostUgx).toBe(9_600_000);
-      expect(result.tier.id).toBe('ussd-tier-2');
-    });
-
-    it('calculates USSD Tier 3 rate (500,001 - 1,000,000) at 23 UGX', () => {
-      const result = calculateAirtelUssdRate(800_000);
-      expect(result.ratePerUnit).toBe(23);
-      expect(result.totalCostUgx).toBe(18_400_000);
-      expect(result.tier.id).toBe('ussd-tier-3');
-    });
-
-    it('calculates USSD Tier 4 rate (1,000,001 - 4,000,000) at 18 UGX', () => {
-      const result = calculateAirtelUssdRate(2_500_000);
-      expect(result.ratePerUnit).toBe(18);
-      expect(result.totalCostUgx).toBe(45_000_000);
-      expect(result.tier.id).toBe('ussd-tier-4');
-    });
-
-    it('calculates USSD Tier 5 rate (4,000,001 - 7,000,000) at 16 UGX', () => {
-      const result = calculateAirtelUssdRate(6_000_000);
-      expect(result.ratePerUnit).toBe(16);
-      expect(result.totalCostUgx).toBe(96_000_000);
-      expect(result.tier.id).toBe('ussd-tier-5');
-    });
-
-    it('calculates USSD Tier 6 rate (7,000,001 - 15,000,000) at 11 UGX', () => {
-      const result = calculateAirtelUssdRate(12_000_000);
-      expect(result.ratePerUnit).toBe(11);
-      expect(result.totalCostUgx).toBe(132_000_000);
-      expect(result.tier.id).toBe('ussd-tier-6');
-    });
-
-    it('calculates USSD Tier 7 rate (15,000,001 - 150,000,000) at 6 UGX', () => {
-      const result = calculateAirtelUssdRate(50_000_000);
-      expect(result.ratePerUnit).toBe(6);
-      expect(result.totalCostUgx).toBe(300_000_000);
-      expect(result.tier.id).toBe('ussd-tier-7');
-    });
-
-    it('calculates USSD Tier 8 rate (150,000,001 - Above) at 2.5 UGX and flags negotiable', () => {
-      const result = calculateAirtelUssdRate(200_000_000);
-      expect(result.ratePerUnit).toBe(2.5);
-      expect(result.totalCostUgx).toBe(500_000_000);
-      expect(result.tier.id).toBe('ussd-tier-8');
       expect(result.isNegotiable).toBe(true);
     });
   });

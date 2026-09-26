@@ -19,16 +19,13 @@ import {
   ShieldCheck, 
   CheckCircle2, 
   MessageSquare, 
-  PhoneCall, 
   Layers
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AIRTEL_SMS_TIERS,
-  AIRTEL_USSD_TIERS,
   AIRTEL_SETUP_FEES,
   calculateAirtelSmsRate,
-  calculateAirtelUssdRate,
 } from '@/lib/telecom/airtel-rates';
 
 interface PricingItem {
@@ -48,12 +45,9 @@ export default function PricingPage() {
   const [refreshing, setRefreshing] = useState(false);
 
   // Telecom Volume Calculator State
-  const [calcService, setCalcService] = useState<'sms' | 'ussd'>('sms');
   const [calcVolume, setCalcVolume] = useState<number>(100000);
 
-  const calculatedRate = calcService === 'sms' 
-    ? calculateAirtelSmsRate(calcVolume) 
-    : calculateAirtelUssdRate(calcVolume);
+  const calculatedRate = calculateAirtelSmsRate(calcVolume);
 
   const fetchPricing = useCallback(async (query = search) => {
     try {
@@ -96,7 +90,7 @@ export default function PricingPage() {
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Telecom Rates & Pricing Bands</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Official Airtel Uganda bulk messaging volume tiers, USSD sessions, and global carrier coverage.
+            Official Airtel Uganda bulk messaging volume tiers and global carrier coverage.
           </p>
         </div>
 
@@ -127,14 +121,14 @@ export default function PricingPage() {
 
         <Card className="border-secondary/20 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Bulk USSD Direct</CardTitle>
-            <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
-              <PhoneCall className="h-4 w-4" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Direct SMSC Interconnect</CardTitle>
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+              <MessageSquare className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">From UGX 2.50 / Session</div>
-            <p className="text-xs text-muted-foreground mt-1">Interactive 2-way corporate menus</p>
+            <div className="text-2xl font-bold">SMPP v3.4 Direct</div>
+            <p className="text-xs text-muted-foreground mt-1">Direct telco route with zero hop</p>
           </CardContent>
         </Card>
 
@@ -174,29 +168,11 @@ export default function PricingPage() {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <Calculator className="h-5 w-5 text-primary" />
-                    <CardTitle className="text-lg">Interactive Volume & Rate Estimator</CardTitle>
+                    <CardTitle className="text-lg">Interactive Bulk SMS Volume & Rate Estimator</CardTitle>
                   </div>
                   <CardDescription>
                     Calculate exact cost according to official Airtel Uganda tiered regulatory bands.
                   </CardDescription>
-                </div>
-                <div className="flex items-center gap-1 bg-muted p-1 rounded-lg">
-                  <Button
-                    size="sm"
-                    variant={calcService === 'sms' ? 'default' : 'ghost'}
-                    className="h-8 text-xs font-semibold"
-                    onClick={() => setCalcService('sms')}
-                  >
-                    <MessageSquare className="h-3.5 w-3.5 mr-1" /> Bulk SMS
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={calcService === 'ussd' ? 'default' : 'ghost'}
-                    className="h-8 text-xs font-semibold"
-                    onClick={() => setCalcService('ussd')}
-                  >
-                    <PhoneCall className="h-3.5 w-3.5 mr-1" /> Bulk USSD
-                  </Button>
                 </div>
               </div>
             </CardHeader>
@@ -204,7 +180,7 @@ export default function PricingPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                 <div className="space-y-2 md:col-span-2">
                   <label htmlFor="volume-input" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Planned {calcService === 'sms' ? 'SMS Messages' : 'USSD Sessions'} Volume
+                    Planned Bulk SMS Messages Volume
                   </label>
                   <div className="flex items-center gap-2">
                     <Input
@@ -338,85 +314,6 @@ export default function PricingPage() {
                       {tier.isNegotiable && (
                         <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-[10px]">
                           Enterprise
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Bulk USSD Pricing Bands */}
-          <Card className="border-secondary/20 shadow-sm">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                    <PhoneCall className="h-5 w-5 text-secondary dark:text-primary" />
-                    Airtel Bulk USSD Session Pricing Bands (VAT Incl.)
-                  </CardTitle>
-                  <CardDescription>
-                    Interactive corporate USSD session rates for real-time mobile menu services.
-                  </CardDescription>
-                </div>
-                <Badge variant="secondary" className="font-mono text-xs">
-                  8 Session Tiers
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="p-0 sm:p-6">
-              {/* Desktop Table View */}
-              <div className="hidden md:block w-full overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Band / Tier</TableHead>
-                      <TableHead>Session Volume Range</TableHead>
-                      <TableHead>Rate Per Session (UGX)</TableHead>
-                      <TableHead>Terms & SLA</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {AIRTEL_USSD_TIERS.map((tier, idx) => (
-                      <TableRow key={tier.id}>
-                        <TableCell className="font-medium">
-                          USSD Tier {idx + 1}
-                        </TableCell>
-                        <TableCell className="font-mono text-xs">
-                          {tier.name}
-                        </TableCell>
-                        <TableCell className="font-bold text-foreground">
-                          UGX {tier.rateUgx.toFixed(2)}
-                        </TableCell>
-                        <TableCell>
-                          {tier.isNegotiable ? (
-                            <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-xs">
-                              Negotiable / High Volume
-                            </Badge>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">Standard Direct Gateway</span>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-
-              {/* Mobile Card Deck View */}
-              <div className="block md:hidden divide-y">
-                {AIRTEL_USSD_TIERS.map((tier, idx) => (
-                  <div key={tier.id} className="p-4 space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-sm">USSD Tier {idx + 1}</span>
-                      <span className="font-black text-secondary dark:text-primary text-base">UGX {tier.rateUgx.toFixed(2)}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>Sessions: {tier.name}</span>
-                      {tier.isNegotiable && (
-                        <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-[10px]">
-                          Negotiable
                         </Badge>
                       )}
                     </div>
