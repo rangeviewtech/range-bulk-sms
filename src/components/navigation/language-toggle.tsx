@@ -24,7 +24,6 @@ export function LanguageToggle({ className, align = "end" }: LanguageToggleProps
   const { language, setLanguage, currentLanguageMeta, dict } = useLanguage();
   const [open, setOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const isPointerDownRef = React.useRef(false);
   const [search, setSearch] = useState<string>('');
 
   React.useEffect(() => {
@@ -49,15 +48,7 @@ export function LanguageToggle({ className, align = "end" }: LanguageToggleProps
             "h-9 w-9 rounded-full transition-transform active:scale-95 text-muted-foreground hover:text-foreground",
             className
           )}
-          onPointerDown={() => {
-            isPointerDownRef.current = true;
-          }}
-          onClick={() => {
-            if (!isPointerDownRef.current) {
-              setOpen((prev) => !prev);
-            }
-            isPointerDownRef.current = false;
-          }}
+          onClick={() => setOpen((prev) => !prev)}
         >
           {currentLanguageMeta?.flag && !imageError ? (
             <img

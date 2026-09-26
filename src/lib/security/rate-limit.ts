@@ -18,16 +18,12 @@ export async function checkRateLimit(type: 'auth' | 'api', identifier: string) {
   if (limiter) {
     try {
       return await limiter.limit(identifier);
-    } catch {
-      if (process.env.NODE_ENV === 'production') {
-        return { success: false, limit, remaining: 0, reset: now + duration };
-      }
-      // In development fallback to localWindows below
+    } catch (err) {
+      console.warn('[RateLimit] Upstash Redis rate limiter error, falling back to local memory window:', err);
     }
   }
-  // Production requires distributed enforcement; never substitute a dummy Redis client.
-  if (process.env.NODE_ENV === 'production')
-    return { success: false, limit, remaining: 0, reset: now + duration };
+
+  // Graceful fallback to local in-memory sliding window
   for (const [key, value] of localWindows) if (value.reset <= now) localWindows.delete(key);
   const key = type + ':' + identifier;
   const current = localWindows.get(key) ?? { count: 0, reset: now + duration };

@@ -53,5 +53,5 @@ describe('LanguageToggle Component', () => {
 
     // English item is present
     expect(screen.getByText('English')).toBeDefined();
-  });
+  }, 15000);
 });

@@ -18,9 +18,12 @@ const protectedPrefixes = [
   '/contacts',
   '/campaigns',
   '/wallet',
+  '/billing',
   '/agent',
   '/developer',
   '/sender-ids',
+  '/gateways',
+  '/reports',
   '/support'
 ];
 
