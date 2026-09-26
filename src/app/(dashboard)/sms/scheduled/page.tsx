@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,6 +30,7 @@ import {
   Clock,
   AlertTriangle,
   Users,
+  Repeat,
 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -42,6 +43,11 @@ import {
   ScheduledMessageData,
 } from '@/components/sms/edit-scheduled-message-dialog';
 import { cn } from '@/lib/utils';
+import {
+  isScheduledViewItem,
+  describeRecurrence,
+  serializeRecurrence,
+} from '@/lib/sms/recurrence';
 
 interface ScheduledItem {
   id: string;
@@ -53,6 +59,8 @@ interface ScheduledItem {
   recipients: number;
   status: 'SCHEDULED' | 'PAUSED';
   isEditingPaused?: boolean;
+  isRecurring?: boolean;
+  cronExpression?: string | null;
 }
 
 export function formatScheduledTime(dateStr: string) {
@@ -65,21 +73,27 @@ export function formatScheduledTime(dateStr: string) {
 const INITIAL_SCHEDULED: ScheduledItem[] = [
   {
     id: '1',
-    name: 'Weekend Promo',
-    message: 'Hello {{firstName}}, enjoy 20% off all Range SMS packages this weekend! Use code WEEKEND20 at checkout.',
+    name: 'Weekly VIP Member Offer',
+    message: 'Hello {{firstName}}, enjoy 20% off all Range SMS packages this week! Use code WEEKLY20 at checkout.',
     senderName: 'RANGESMS',
-    scheduledAt: '2026-09-20T09:00:00.000Z',
+    scheduledAt: '2026-09-28T09:00:00.000Z',
     recipients: 1250,
     status: 'SCHEDULED',
+    isRecurring: true,
+    cronExpression: serializeRecurrence(
+      { frequency: 'WEEKLY', interval: 1, daysOfWeek: [1], endType: 'NEVER' },
+      '09:00'
+    ),
   },
   {
     id: '2',
-    name: 'Reminder: Webinar',
+    name: 'Reminder: Carrier Routing Webinar',
     message: 'Hi {{firstName}}, our live carrier routing webinar starts today at 2:30 PM. Join link: https://sms.rangeview.com/webinar',
     senderName: 'RANGENOTIF',
-    scheduledAt: '2026-09-22T14:30:00.000Z',
+    scheduledAt: '2026-10-01T14:30:00.000Z',
     recipients: 450,
     status: 'PAUSED',
+    isRecurring: false,
   },
   {
     id: '3',
@@ -89,24 +103,41 @@ const INITIAL_SCHEDULED: ScheduledItem[] = [
     scheduledAt: '2026-09-30T08:00:00.000Z',
     recipients: 5200,
     status: 'SCHEDULED',
+    isRecurring: false,
   },
   {
     id: '4',
-    name: 'System Maintenance Notice',
+    name: 'Daily System Health Summary',
+    message: 'System Status: All telecom gateway routes operating at 99.98% delivery rate. MTN, Airtel, and Safaricom active.',
+    senderName: 'RANGESMS',
+    scheduledAt: '2026-09-27T08:00:00.000Z',
+    recipients: 890,
+    status: 'SCHEDULED',
+    isRecurring: true,
+    cronExpression: serializeRecurrence(
+      { frequency: 'DAILY', interval: 1, endType: 'NEVER' },
+      '08:00'
+    ),
+  },
+  {
+    id: '5',
+    name: 'Telecom Gateway Maintenance Notice',
     message: 'Notice: Telecom gateway maintenance scheduled on Oct 2, 22:00-23:00 EAT. SMS delivery will queue automatically during this window.',
     senderName: 'RANGESMS',
     scheduledAt: '2026-10-02T22:00:00.000Z',
     recipients: 1800,
     status: 'SCHEDULED',
+    isRecurring: false,
   },
   {
-    id: '5',
-    name: 'VIP Loyalty Discount',
+    id: '6',
+    name: 'VIP Loyalty Bonus Alert',
     message: 'Exclusive VIP alert for {{company}}: Top up 1,000,000 UGX today and receive 100,000 UGX bonus credits instantly.',
     senderName: 'RANGEVIP',
     scheduledAt: '2026-10-05T11:30:00.000Z',
     recipients: 620,
     status: 'PAUSED',
+    isRecurring: false,
   },
 ];
 
@@ -136,6 +167,8 @@ export default function ScheduledSmsPage() {
             scheduledAt: string;
             recipientCount?: number;
             status?: string;
+            isRecurring?: boolean;
+            cronExpression?: string | null;
             senderId?: { id: string; senderId: string };
           }> = json.data || [];
 
@@ -148,6 +181,8 @@ export default function ScheduledSmsPage() {
               scheduledAt: new Date(item.scheduledAt).toISOString(),
               recipients: item.recipientCount || 0,
               status: item.status === 'PAUSED' ? 'PAUSED' : 'SCHEDULED',
+              isRecurring: Boolean(item.isRecurring),
+              cronExpression: item.cronExpression || null,
             }));
 
             setItems([...mapped, ...INITIAL_SCHEDULED.filter((is) => !mapped.some((m) => m.id === is.id))]);
@@ -159,6 +194,12 @@ export default function ScheduledSmsPage() {
     }
     loadScheduled();
   }, []);
+
+  // Filter items according to user requirement:
+  // "show only messages that are unsent, paused, or whose sending dates have not yet arrived, as well as recurring ones"
+  const visibleScheduledItems = useMemo(() => {
+    return items.filter((item) => isScheduledViewItem(item, now));
+  }, [items, now]);
 
   const {
     search,
@@ -177,16 +218,17 @@ export default function ScheduledSmsPage() {
     totalItems,
     paginatedData,
   } = useTableState<ScheduledItem>({
-    data: items,
+    data: visibleScheduledItems,
     searchFields: ['name', 'scheduledAt', (i) => i.recipients, 'status'],
     initialSortKey: 'scheduledAt',
     initialSortOrder: 'asc',
     initialPageSize: 10,
     filterFn: (item, currentFilters) => {
       const status = currentFilters.status;
-      if (status && status !== 'ALL') {
-        if (item.status !== status) return false;
-      }
+      if (!status || status === 'ALL') return true;
+      if (status === 'RECURRING') return Boolean(item.isRecurring);
+      if (status === 'SCHEDULED') return item.status === 'SCHEDULED' && !item.isRecurring;
+      if (status === 'PAUSED') return item.status === 'PAUSED';
       return true;
     },
     customSortFn: (a, b, key, order) => {
@@ -303,6 +345,8 @@ export default function ScheduledSmsPage() {
       recipients: item.recipients,
       status: 'PAUSED',
       isEditingPaused: true,
+      isRecurring: item.isRecurring,
+      cronExpression: item.cronExpression,
     });
     setIsEditDialogOpen(true);
   };
@@ -314,6 +358,8 @@ export default function ScheduledSmsPage() {
     scheduledAt: string;
     status: 'SCHEDULED' | 'PAUSED';
     senderId?: string;
+    isRecurring?: boolean;
+    cronExpression?: string | null;
   }) => {
     const res = await fetch('/api/sms/schedule', {
       method: 'PATCH',
@@ -324,6 +370,8 @@ export default function ScheduledSmsPage() {
         scheduledAt: updated.scheduledAt,
         status: updated.status,
         senderId: updated.senderId,
+        isRecurring: updated.isRecurring,
+        cronExpression: updated.cronExpression,
       }),
     });
 
@@ -347,6 +395,8 @@ export default function ScheduledSmsPage() {
             scheduledAt: formattedDate,
             status: updated.status,
             isEditingPaused: false,
+            isRecurring: updated.isRecurring,
+            cronExpression: updated.cronExpression,
           };
         }
         return i;
@@ -382,8 +432,8 @@ export default function ScheduledSmsPage() {
     const { id, name, nextStatus } = statusConfirm;
     const item = items.find((i) => i.id === id);
 
-    // If resuming, enforce future time rule
-    if (nextStatus === 'SCHEDULED' && item) {
+    // If resuming a non-recurring message, enforce future time rule
+    if (nextStatus === 'SCHEDULED' && item && !item.isRecurring) {
       const diffMs = new Date(item.scheduledAt).getTime() - now;
       if (diffMs < 10_000) {
         toast.error(
@@ -487,14 +537,15 @@ export default function ScheduledSmsPage() {
             value={filters.status || 'ALL'}
             onValueChange={(val) => setFilter('status', val)}
           >
-            <SelectTrigger className="w-full sm:w-[160px] h-9 text-xs">
+            <SelectTrigger className="w-full sm:w-[180px] h-9 text-xs">
               <Filter className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
-              <SelectValue placeholder="All Statuses" />
+              <SelectValue placeholder="All Active Queue" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All Statuses</SelectItem>
-              <SelectItem value="SCHEDULED">Scheduled</SelectItem>
-              <SelectItem value="PAUSED">Paused</SelectItem>
+              <SelectItem value="ALL">All Active Queue</SelectItem>
+              <SelectItem value="SCHEDULED">One-time Broadcasts</SelectItem>
+              <SelectItem value="RECURRING">Recurring Series</SelectItem>
+              <SelectItem value="PAUSED">Paused Messages</SelectItem>
             </SelectContent>
           </Select>
 
@@ -537,7 +588,7 @@ export default function ScheduledSmsPage() {
                   <TableHead className="w-[24%]">
                     <SortableHeader
                       column="scheduledAt"
-                      label="Scheduled Time"
+                      label="Scheduled / Recurrence"
                       currentSort={sortKey}
                       currentOrder={sortOrder}
                       onSort={toggleSort}
@@ -592,29 +643,44 @@ export default function ScheduledSmsPage() {
                           </div>
                         </TableCell>
 
-                        {/* Scheduled Time + Live relative countdown */}
+                        {/* Scheduled Time + Recurrence info */}
                         <TableCell className="text-muted-foreground">
-                          <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-1.5 text-xs text-foreground">
-                              <CalendarClock className="w-3.5 h-3.5 text-primary shrink-0" />
-                              <span>{formatScheduledTime(item.scheduledAt)}</span>
+                          {item.isRecurring ? (
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-1.5 text-xs text-foreground">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 font-semibold text-[11px] border border-indigo-500/20">
+                                  <Repeat className="w-3 h-3 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                                  {describeRecurrence(item.cronExpression)}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                                <CalendarClock className="w-3 h-3 text-muted-foreground/70 shrink-0" />
+                                <span>Next: {formatScheduledTime(item.scheduledAt)}</span>
+                              </div>
                             </div>
-                            <div className="flex items-center gap-1">
-                              {timeMeta.isPast ? (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-destructive dark:text-red-400">
-                                  <AlertTriangle className="w-3 h-3" /> Past Due
-                                </span>
-                              ) : timeMeta.isLocked ? (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-600 dark:text-amber-400">
-                                  <Lock className="w-3 h-3" /> {timeMeta.text}
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
-                                  <Clock className="w-3 h-3 text-muted-foreground/70" /> {timeMeta.text}
-                                </span>
-                              )}
+                          ) : (
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-1.5 text-xs text-foreground">
+                                <CalendarClock className="w-3.5 h-3.5 text-primary shrink-0" />
+                                <span>{formatScheduledTime(item.scheduledAt)}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                {timeMeta.isPast ? (
+                                  <span className="inline-flex items-center gap-1 text-[10px] font-medium text-destructive dark:text-red-400">
+                                    <AlertTriangle className="w-3 h-3" /> Past Due
+                                  </span>
+                                ) : timeMeta.isLocked ? (
+                                  <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-600 dark:text-amber-400">
+                                    <Lock className="w-3 h-3" /> {timeMeta.text}
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
+                                    <Clock className="w-3 h-3 text-muted-foreground/70" /> {timeMeta.text}
+                                  </span>
+                                )}
+                              </div>
                             </div>
-                          </div>
+                          )}
                         </TableCell>
 
                         {/* Recipients */}
@@ -625,17 +691,28 @@ export default function ScheduledSmsPage() {
                         {/* Status Badge */}
                         <TableCell>
                           <div className="flex flex-col gap-1 items-start">
-                            <Badge
-                              variant={item.status === 'SCHEDULED' ? 'default' : 'secondary'}
-                              className={cn(
-                                'font-medium text-xs',
-                                item.status === 'SCHEDULED'
-                                  ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20'
-                                  : 'bg-muted text-muted-foreground'
-                              )}
-                            >
-                              {item.status}
-                            </Badge>
+                            {item.status === 'PAUSED' ? (
+                              <Badge
+                                variant="secondary"
+                                className="font-medium text-xs bg-muted text-muted-foreground"
+                              >
+                                PAUSED
+                              </Badge>
+                            ) : item.isRecurring ? (
+                              <Badge
+                                variant="outline"
+                                className="font-semibold text-[11px] bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30 gap-1"
+                              >
+                                <Repeat className="w-2.5 h-2.5" /> RECURRING
+                              </Badge>
+                            ) : (
+                              <Badge
+                                variant="default"
+                                className="font-medium text-xs bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20"
+                              >
+                                SCHEDULED
+                              </Badge>
+                            )}
                             {item.isEditingPaused && (
                               <span className="text-[9px] font-medium text-amber-600 dark:text-amber-400">
                                 (Editing)
@@ -724,9 +801,16 @@ export default function ScheduledSmsPage() {
                     {/* Header Row: Title & Status */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-bold text-foreground truncate">
-                          {item.name}
-                        </h4>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <h4 className="text-sm font-bold text-foreground truncate">
+                            {item.name}
+                          </h4>
+                          {item.isRecurring && (
+                            <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 rounded shrink-0">
+                              <Repeat className="w-2.5 h-2.5" /> Recurring
+                            </span>
+                          )}
+                        </div>
                         {item.message && (
                           <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5 font-mono">
                             {item.message}
@@ -737,9 +821,11 @@ export default function ScheduledSmsPage() {
                         variant={item.status === 'SCHEDULED' ? 'default' : 'secondary'}
                         className={cn(
                           'font-medium text-[11px] shrink-0',
-                          item.status === 'SCHEDULED'
-                            ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20'
-                            : 'bg-muted text-muted-foreground'
+                          item.status === 'PAUSED'
+                            ? 'bg-muted text-muted-foreground'
+                            : item.isRecurring
+                            ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30'
+                            : 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20'
                         )}
                       >
                         {item.status}
@@ -758,9 +844,14 @@ export default function ScheduledSmsPage() {
                       </div>
                     </div>
 
-                    {/* Relative Time Alert / Pill */}
-                    <div className="flex items-center gap-1.5 pt-0.5">
-                      {timeMeta.isPast ? (
+                    {/* Relative Time Alert / Recurrence Pill */}
+                    <div className="flex items-center gap-1.5 pt-0.5 flex-wrap">
+                      {item.isRecurring ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-[11px] font-medium border border-indigo-500/20">
+                          <Repeat className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
+                          {describeRecurrence(item.cronExpression)}
+                        </span>
+                      ) : timeMeta.isPast ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-[11px] font-medium">
                           <AlertTriangle className="w-3 h-3" /> Past Due — Rescheduling Required
                         </span>

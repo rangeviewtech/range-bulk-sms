@@ -40,6 +40,12 @@ import { PhoneRecipientsInput, type PhoneRecipientsInputHandle, getCachedBadgeMe
 import { CountryPickerDropdown } from '@/components/sms/country-picker-dropdown';
 import { NetworkBadge } from '@/components/sms/carrier-badge';
 import { Badge } from '@/components/ui/badge';
+import { RecurrencePicker } from '@/components/sms/recurrence-picker';
+import {
+  type RecurrenceRule,
+  serializeRecurrence,
+  describeRecurrence,
+} from '@/lib/sms/recurrence';
 import {
   CheckCircle2,
   Sparkles,
@@ -204,6 +210,13 @@ function SendSmsContent() {
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [scheduleDate, setScheduleDate] = useState('');
   const [scheduleError, setScheduleError] = useState('');
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [recurrenceRule, setRecurrenceRule] = useState<RecurrenceRule>({
+    frequency: 'WEEKLY',
+    interval: 1,
+    daysOfWeek: [1], // Monday
+    endType: 'NEVER',
+  });
 
   // Drafts Drawer State
   const [draftsDrawerOpen, setDraftsDrawerOpen] = useState(false);
@@ -863,6 +876,9 @@ function SendSmsContent() {
         ? personalizedList.map((p) => p.phone)
         : await resolveRecipients();
 
+      const timeStr = scheduleDate ? new Date(scheduleDate).toTimeString().slice(0, 5) : '09:00';
+      const cronExpression = isRecurring ? serializeRecurrence(recurrenceRule, timeStr) : undefined;
+
       const res = await fetch('/api/sms/schedule', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -872,6 +888,8 @@ function SendSmsContent() {
           message: msgToUse,
           flash: isFlashSms,
           scheduledAt: new Date(scheduleDate).toISOString(),
+          isRecurring,
+          cronExpression,
           personalizedMessages: personalizedList && personalizedList.length > 0 ? personalizedList : undefined,
         }),
       });
@@ -883,11 +901,16 @@ function SendSmsContent() {
         return;
       }
 
-      toast.success(`Message scheduled for delivery on ${new Date(scheduleDate).toLocaleString()}!`);
+      toast.success(
+        isRecurring
+          ? `Recurring message schedule created (${describeRecurrence(recurrenceRule, timeStr)})!`
+          : `Message scheduled for delivery on ${new Date(scheduleDate).toLocaleString()}!`
+      );
       notifyWalletUpdated();
       setScheduleOpen(false);
       setScheduleDate('');
       setScheduleError('');
+      setIsRecurring(false);
       setManualRecipients('');
       setMessage('');
       setImportFilename(null);
@@ -2068,6 +2091,15 @@ function SendSmsContent() {
               />
               {scheduleError && <InputError id="schedule-time-error" message={scheduleError} />}
             </div>
+
+            {/* Recurrence Configuration */}
+            <RecurrencePicker
+              isRecurring={isRecurring}
+              onIsRecurringChange={setIsRecurring}
+              rule={recurrenceRule}
+              onRuleChange={setRecurrenceRule}
+              timeStr={scheduleDate ? new Date(scheduleDate).toTimeString().slice(0, 5) : '09:00'}
+            />
 
             <div className="p-3 bg-muted/30 rounded-lg border text-xs text-muted-foreground space-y-1">
               <div className="flex items-center justify-between font-medium text-foreground">

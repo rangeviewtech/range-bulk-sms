@@ -29,6 +29,12 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { RecurrencePicker } from '@/components/sms/recurrence-picker';
+import {
+  type RecurrenceRule,
+  parseRecurrence,
+  serializeRecurrence,
+} from '@/lib/sms/recurrence';
 
 export interface ScheduledMessageData {
   id: string;
@@ -40,6 +46,8 @@ export interface ScheduledMessageData {
   scheduledAt: string; // ISO or YYYY-MM-DD HH:mm
   status: 'SCHEDULED' | 'PAUSED';
   isEditingPaused?: boolean;
+  isRecurring?: boolean;
+  cronExpression?: string | null;
 }
 
 export interface EditScheduledMessageDialogProps {
@@ -52,6 +60,8 @@ export interface EditScheduledMessageDialogProps {
     scheduledAt: string;
     status: 'SCHEDULED' | 'PAUSED';
     senderId?: string;
+    isRecurring?: boolean;
+    cronExpression?: string | null;
   }) => Promise<void>;
 }
 
@@ -69,6 +79,13 @@ export function EditScheduledMessageDialog({
   const [targetStatus, setTargetStatus] = useState<'SCHEDULED' | 'PAUSED'>('SCHEDULED');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [now, setNow] = useState(() => Date.now());
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [recurrenceRule, setRecurrenceRule] = useState<RecurrenceRule>({
+    frequency: 'WEEKLY',
+    interval: 1,
+    daysOfWeek: [1],
+    endType: 'NEVER',
+  });
 
   // Keep a 1-second ticker to accurately compute the 10-second rule and remaining time
   useEffect(() => {
@@ -84,6 +101,19 @@ export function EditScheduledMessageDialog({
       setMessage(item.message || '');
       setSenderId(item.senderName || item.senderId || 'RANGESMS');
       setTargetStatus('SCHEDULED');
+
+      if (item.isRecurring) {
+        setIsRecurring(true);
+        setRecurrenceRule(parseRecurrence(item.cronExpression));
+      } else {
+        setIsRecurring(false);
+        setRecurrenceRule({
+          frequency: 'WEEKLY',
+          interval: 1,
+          daysOfWeek: [1],
+          endType: 'NEVER',
+        });
+      }
 
       const dt = new Date(item.scheduledAt);
       if (!isNaN(dt.getTime())) {
@@ -182,12 +212,15 @@ export function EditScheduledMessageDialog({
 
     setIsSubmitting(true);
     try {
+      const cronExpression = isRecurring ? serializeRecurrence(recurrenceRule, scheduleTime) : null;
       await onSave({
         id: item.id,
         message: message.trim(),
         scheduledAt: candidateDateTime.toISOString(),
         status: finalStatus,
         senderId,
+        isRecurring,
+        cronExpression,
       });
 
       onOpenChange(false);
@@ -415,6 +448,15 @@ export function EditScheduledMessageDialog({
                     />
                   </div>
                 </div>
+
+                {/* Recurrence Configuration */}
+                <RecurrencePicker
+                  isRecurring={isRecurring}
+                  onIsRecurringChange={setIsRecurring}
+                  rule={recurrenceRule}
+                  onRuleChange={setRecurrenceRule}
+                  timeStr={scheduleTime}
+                />
               </div>
             </div>
 

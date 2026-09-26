@@ -12,10 +12,17 @@ export async function GET(req: Request) {
     const page = parseInt(searchParams.get('page') || '1', 10);
     const limit = parseInt(searchParams.get('limit') || '50', 10);
     const status = searchParams.get('status');
+    const recurringOnly = searchParams.get('recurring') === 'true';
 
     const where: Prisma.ScheduledMessageWhereInput = { userId: session.userId };
-    if (status) {
+    if (status && status !== 'ALL') {
       where.status = status;
+    } else {
+      where.status = { notIn: ['COMPLETED', 'CANCELLED'] };
+    }
+
+    if (recurringOnly) {
+      where.isRecurring = true;
     }
 
     const [scheduled, total] = await Promise.all([
@@ -184,7 +191,16 @@ export async function PATCH(req: Request) {
   try {
     const session = await requirePermission('sms.schedule');
     const body = await req.json().catch(() => ({}));
-    const { id, action, message, scheduledAt, senderId, status: targetStatusParam } = body;
+    const {
+      id,
+      action,
+      message,
+      scheduledAt,
+      senderId,
+      status: targetStatusParam,
+      isRecurring,
+      cronExpression,
+    } = body;
 
     if (!id || typeof id !== 'string') {
       return NextResponse.json(
@@ -350,6 +366,8 @@ export async function PATCH(req: Request) {
         senderIdId: validSenderIdId,
         encoding,
         segmentCount,
+        ...(typeof isRecurring === 'boolean' ? { isRecurring } : {}),
+        ...(cronExpression !== undefined ? { cronExpression } : {}),
       },
       include: {
         senderId: {
