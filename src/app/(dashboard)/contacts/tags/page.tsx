@@ -348,7 +348,7 @@ export default function ContactTagsPage() {
 
       {/* Create Tag Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
+        <DialogContent className="w-[calc(100%-2rem)] sm:max-w-xl md:max-w-2xl p-0 overflow-hidden shadow-2xl">
           <DialogHeader>
             <DialogTitle>Create New Tag</DialogTitle>
             <DialogDescription>Add a customized tag identifier to group and label contacts.</DialogDescription>

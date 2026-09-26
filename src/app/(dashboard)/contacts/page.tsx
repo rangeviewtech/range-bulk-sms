@@ -613,18 +613,18 @@ export default function ContactsPage() {
                   Add Contact
                 </Button>
               </DialogTrigger>
-              <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
-                <DialogHeader>
-                  <DialogTitle>Add New Contact</DialogTitle>
-                  <DialogDescription>
+              <DialogContent className="w-[calc(100%-2rem)] sm:max-w-xl md:max-w-2xl p-0 overflow-hidden shadow-2xl">
+                <DialogHeader className="px-6 py-5 border-b border-border bg-muted/20">
+                  <DialogTitle className="text-lg font-bold">Add New Contact</DialogTitle>
+                  <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
                     Store contact identity and phone number for SMS dispatches.
                   </DialogDescription>
                 </DialogHeader>
 
                 <form onSubmit={handleAddContact} noValidate className="flex flex-col flex-1 min-h-0 overflow-hidden">
-                  <DialogBody>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1">
+                  <DialogBody className="p-6 space-y-4 sm:space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
                         <Label htmlFor="contactFirst">First Name</Label>
                         <Input
                           id="contactFirst"
@@ -639,7 +639,7 @@ export default function ContactsPage() {
                           <InputError id="contactFirst-error" message={contactErrors.firstName} />
                         )}
                       </div>
-                      <div className="space-y-1">
+                      <div className="space-y-1.5">
                         <Label htmlFor="contactLast">Last Name</Label>
                         <Input
                           id="contactLast"
@@ -656,7 +656,7 @@ export default function ContactsPage() {
                       </div>
                     </div>
 
-                    <div className="space-y-1">
+                    <div className="space-y-1.5">
                       <Label htmlFor="contactPhone" required>Phone Number</Label>
                       <SinglePhoneInput
                         id="contactPhone"
@@ -672,7 +672,7 @@ export default function ContactsPage() {
                       )}
                     </div>
 
-                    <div className="space-y-1">
+                    <div className="space-y-1.5">
                       <Label htmlFor="contactEmail">Email Address</Label>
                       <Input
                         id="contactEmail"
@@ -697,7 +697,7 @@ export default function ContactsPage() {
                       </div>
                     )}
                   </DialogBody>
-                  <DialogFooter>
+                  <DialogFooter className="px-6 py-4 border-t border-border bg-muted/20 flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5">
                     <Button
                       type="button"
                       variant="outline"
@@ -715,7 +715,7 @@ export default function ContactsPage() {
                     <Button
                       type="submit"
                       disabled={submitting}
-                      className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90"
+                      className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90 shadow-sm"
                     >
                       {submitting ? 'Saving...' : 'Save Contact'}
                     </Button>
@@ -1303,15 +1303,15 @@ export default function ContactsPage() {
           }
         }}
       >
-        <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
-          <DialogHeader>
+        <DialogContent className="w-[calc(100%-2rem)] sm:max-w-xl md:max-w-2xl p-0 overflow-hidden shadow-2xl">
+          <DialogHeader className="px-6 py-5 border-b border-border bg-muted/20">
             <div className="flex items-center gap-2.5">
               <div className="p-2 rounded-lg bg-primary/10 text-primary">
                 <Pencil className="w-4 h-4" />
               </div>
               <div>
-                <DialogTitle>Edit Contact</DialogTitle>
-                <DialogDescription>
+                <DialogTitle className="text-lg font-bold">Edit Contact</DialogTitle>
+                <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
                   Update contact identity, phone number, and subscription status.
                 </DialogDescription>
               </div>
@@ -1319,9 +1319,9 @@ export default function ContactsPage() {
           </DialogHeader>
 
           <form onSubmit={handleSaveEdit} noValidate className="flex flex-col flex-1 min-h-0 overflow-hidden">
-            <DialogBody className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
+            <DialogBody className="p-6 space-y-4 sm:space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
                   <Label htmlFor="editContactFirst">First Name</Label>
                   <Input
                     id="editContactFirst"
@@ -1337,7 +1337,7 @@ export default function ContactsPage() {
                   )}
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                   <Label htmlFor="editContactLast">Last Name</Label>
                   <Input
                     id="editContactLast"
@@ -1354,7 +1354,7 @@ export default function ContactsPage() {
                 </div>
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label htmlFor="editContactPhone" required>Phone Number</Label>
                 <SinglePhoneInput
                   id="editContactPhone"
@@ -1373,7 +1373,7 @@ export default function ContactsPage() {
                 </p>
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label htmlFor="editContactEmail">Email Address</Label>
                 <Input
                   id="editContactEmail"
@@ -1391,7 +1391,7 @@ export default function ContactsPage() {
               </div>
 
               {/* Status Selector */}
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label htmlFor="editContactStatus">Subscription Status</Label>
                 <Select
                   value={editValues.status}
@@ -1429,7 +1429,7 @@ export default function ContactsPage() {
               )}
             </DialogBody>
 
-            <DialogFooter className="border-t border-border pt-3">
+            <DialogFooter className="px-6 py-4 border-t border-border bg-muted/20 flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5">
               <Button
                 type="button"
                 variant="outline"
@@ -1446,7 +1446,7 @@ export default function ContactsPage() {
               <Button
                 type="submit"
                 disabled={editSubmitting}
-                className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90"
+                className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90 shadow-sm"
               >
                 {editSubmitting ? (
                   <div className="flex items-center gap-1.5">

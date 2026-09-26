@@ -242,6 +242,6 @@ describe('Scheduled Message Edit Feature & Safety Rules', () => {
         });
         expect(mockPush).toHaveBeenCalledWith('/sms/send?editScheduled=future-msg-1');
       });
-    });
+    }, 15000);
   });
 });

@@ -937,7 +937,7 @@ export default function ContactGroupsPage() {
               Create Group
             </Button>
           </DialogTrigger>
-          <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
+          <DialogContent className="w-[calc(100%-2rem)] sm:max-w-xl md:max-w-2xl p-0 overflow-hidden shadow-2xl">
             <DialogHeader>
               <div className="flex items-center gap-2.5">
                 <div
@@ -1812,7 +1812,7 @@ export default function ContactGroupsPage() {
           }
         }}
       >
-        <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
+        <DialogContent className="w-[calc(100%-2rem)] sm:max-w-xl md:max-w-2xl p-0 overflow-hidden shadow-2xl">
           {editGroup && (
             <>
               <DialogHeader>
