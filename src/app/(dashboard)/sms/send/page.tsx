@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo, useCallback, Suspense } from 'react';
 import dynamic from 'next/dynamic';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { extractVariablesFromText, renderPreviewWithSamples } from '@/lib/sms/custom-variables';
 import { useSmsDraft } from '@/hooks/use-sms-draft';
 import { DraftsDrawer } from '@/components/sms/drafts-drawer';
@@ -45,6 +45,7 @@ import {
   type RecurrenceRule,
   serializeRecurrence,
   describeRecurrence,
+  parseRecurrence,
 } from '@/lib/sms/recurrence';
 import {
   CheckCircle2,
@@ -72,6 +73,8 @@ import {
   Signal,
   Download,
   Trash2,
+  CalendarClock,
+  PauseCircle,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { Button } from '@/components/ui/button';
@@ -166,8 +169,20 @@ function SendSmsSkeleton() {
 }
 
 function SendSmsContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const draftQueryId = searchParams.get('draft');
+  const editScheduledId = searchParams.get('editScheduled');
+  const isEditingScheduled = Boolean(editScheduledId);
+
+  const [editingScheduledItem, setEditingScheduledItem] = useState<{
+    id: string;
+    name: string;
+    scheduledAt: string;
+    status: string;
+    isRecurring?: boolean;
+    cronExpression?: string | null;
+  } | null>(null);
 
   const [senderId, setSenderId] = useState('RANGESMS');
   const [senderOptions, setSenderOptions] = useState<SenderOption[]>([]);
@@ -182,6 +197,7 @@ function SendSmsContent() {
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [scheduling, setScheduling] = useState(false);
+  const [savingScheduled, setSavingScheduled] = useState(false);
   const [showVariableModal, setShowVariableModal] = useState(false);
   const [detectedVariables, setDetectedVariables] = useState<string[]>([]);
   const [pendingAction, setPendingAction] = useState<'send' | 'schedule' | null>(null);
@@ -217,6 +233,124 @@ function SendSmsContent() {
     daysOfWeek: [1], // Monday
     endType: 'NEVER',
   });
+
+  const [now, setNow] = useState<number>(() => Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(Date.now());
+    }, 10_000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const isSchedulePastDue = useMemo(() => {
+    if (!scheduleDate) return false;
+    const timeMs = new Date(scheduleDate).getTime();
+    return isNaN(timeMs) || timeMs <= now + 10_000;
+  }, [scheduleDate, now]);
+
+  // Quick Reschedule Presets
+  const handleApplyReschedulePreset = (type: '15m' | '1h' | 'tomorrow9am') => {
+    const next = new Date();
+    if (type === '15m') {
+      next.setMinutes(next.getMinutes() + 15);
+    } else if (type === '1h') {
+      next.setHours(next.getHours() + 1);
+    } else if (type === 'tomorrow9am') {
+      next.setDate(next.getDate() + 1);
+      next.setHours(9, 0, 0, 0);
+    }
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const localIso = `${next.getFullYear()}-${pad(next.getMonth() + 1)}-${pad(next.getDate())}T${pad(next.getHours())}:${pad(next.getMinutes())}`;
+    setScheduleDate(localIso);
+    toast.info(`Updated schedule time to ${next.toLocaleString()}`);
+  };
+
+  // Hydrate scheduled project if editScheduledId is present in URL
+  useEffect(() => {
+    if (!editScheduledId) return;
+
+    // 1. Instant hydration from sessionStorage
+    try {
+      const stored = sessionStorage.getItem(`edit_scheduled_${editScheduledId}`);
+      if (stored) {
+        const item = JSON.parse(stored);
+        setEditingScheduledItem({
+          id: item.id,
+          name: item.name || 'Scheduled Broadcast',
+          scheduledAt: item.scheduledAt,
+          status: item.status || 'PAUSED',
+          isRecurring: Boolean(item.isRecurring),
+          cronExpression: item.cronExpression,
+        });
+
+        if (item.message) setMessage(item.message);
+        if (item.senderName) setSenderId(item.senderName);
+        if (item.scheduledAt) {
+          const dt = new Date(item.scheduledAt);
+          if (!isNaN(dt.getTime())) {
+            const pad = (n: number) => String(n).padStart(2, '0');
+            const localIso = `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+            setScheduleDate(localIso);
+          }
+        }
+        if (item.isRecurring) {
+          setIsRecurring(true);
+          if (item.cronExpression) {
+            setRecurrenceRule(parseRecurrence(item.cronExpression));
+          }
+        }
+      }
+    } catch {
+      // Ignore
+    }
+
+    // 2. Fetch authoritative project from API
+    async function loadScheduledFromApi() {
+      try {
+        const res = await fetch(`/api/sms/schedule?id=${editScheduledId}`);
+        if (res.ok) {
+          const json = await res.json();
+          const item = json.data;
+          if (item) {
+            setEditingScheduledItem({
+              id: item.id,
+              name: item.message?.slice(0, 30) || 'Scheduled Broadcast',
+              scheduledAt: item.scheduledAt,
+              status: item.status,
+              isRecurring: Boolean(item.isRecurring),
+              cronExpression: item.cronExpression,
+            });
+
+            if (item.message) setMessage(item.message);
+            if (item.senderId?.senderId) setSenderId(item.senderId.senderId);
+            if (item.scheduledAt) {
+              const dt = new Date(item.scheduledAt);
+              if (!isNaN(dt.getTime())) {
+                const pad = (n: number) => String(n).padStart(2, '0');
+                const localIso = `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+                setScheduleDate(localIso);
+              }
+            }
+            if (item.isRecurring) {
+              setIsRecurring(true);
+              if (item.cronExpression) {
+                setRecurrenceRule(parseRecurrence(item.cronExpression));
+              }
+            }
+            if (Array.isArray(item.recipients) && item.recipients.length > 0) {
+              setDeliveryMode('manual');
+              setManualRecipients(item.recipients.join(', '));
+            }
+          }
+        }
+      } catch {
+        // Fallback
+      }
+    }
+
+    loadScheduledFromApi();
+  }, [editScheduledId]);
 
   // Drafts Drawer State
   const [draftsDrawerOpen, setDraftsDrawerOpen] = useState(false);
@@ -925,6 +1059,98 @@ function SendSmsContent() {
     }
   };
 
+  const handleSaveScheduledProject = async (targetStatus: 'SCHEDULED' | 'PAUSED') => {
+    recipientsInputRef.current?.commit();
+    setRecipientsTouched(true);
+    setMessageTouched(true);
+
+    if (totalRecipients === 0) {
+      toast.error('Please specify at least one recipient for this scheduled message.');
+      return;
+    }
+    if (recipientsError) {
+      toast.error(recipientsError);
+      return;
+    }
+
+    const msgToUse = effectiveMessage.trim();
+    if (!msgToUse) {
+      toast.error('Please enter your SMS message content.');
+      return;
+    }
+    if (messageError) {
+      toast.error(messageError);
+      return;
+    }
+
+    if (targetStatus === 'SCHEDULED') {
+      if (!scheduleDate) {
+        toast.error('Please set a scheduled transmission date and time.');
+        return;
+      }
+      const timeMs = new Date(scheduleDate).getTime();
+      if (isNaN(timeMs) || timeMs <= Date.now() + 10_000) {
+        toast.error(
+          'Scheduled transmission date and time has passed. Please select a future date and time to reschedule.'
+        );
+        return;
+      }
+    }
+
+    setSavingScheduled(true);
+    try {
+      const recipientsToSend = await resolveRecipients();
+      const timeStr = scheduleDate ? new Date(scheduleDate).toTimeString().slice(0, 5) : '09:00';
+      const cronExpression = isRecurring ? serializeRecurrence(recurrenceRule, timeStr) : null;
+
+      const res = await fetch('/api/sms/schedule', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editScheduledId,
+          senderId,
+          recipients: recipientsToSend,
+          message: msgToUse,
+          flash: isFlashSms,
+          scheduledAt: scheduleDate ? new Date(scheduleDate).toISOString() : new Date().toISOString(),
+          status: targetStatus,
+          isRecurring,
+          cronExpression,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        toast.error(data.error || 'Failed to update scheduled message');
+        return;
+      }
+
+      // Clear session cache
+      try {
+        sessionStorage.removeItem(`edit_scheduled_${editScheduledId}`);
+      } catch {
+        // Ignore
+      }
+
+      if (targetStatus === 'SCHEDULED') {
+        toast.success(`Campaign rescheduled for ${new Date(scheduleDate).toLocaleString()}!`, {
+          description: isRecurring ? `Recurring: ${describeRecurrence(recurrenceRule, timeStr)}` : 'Queued for automated dispatch.',
+        });
+      } else {
+        toast.success('Campaign changes saved as PAUSED.', {
+          description: 'The campaign remains on hold until you reschedule it.',
+        });
+      }
+
+      router.push('/sms/scheduled');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Error updating scheduled project');
+    } finally {
+      setSavingScheduled(false);
+    }
+  };
+
   const handleResetForm = () => {
     if (isDirty || message.trim() || manualRecipients.trim()) {
       setConfirmClearOpen(true);
@@ -1024,6 +1250,48 @@ function SendSmsContent() {
           </Button>
         </div>
       </PageHeader>
+
+      {/* Editing Scheduled Campaign Safety Banner */}
+      {isEditingScheduled && (
+        <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-start sm:items-center gap-3">
+              <div className="p-2 rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-400 shrink-0">
+                <PauseCircle className="w-5 h-5 animate-pulse" />
+              </div>
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-semibold text-sm sm:text-base text-amber-900 dark:text-amber-200">
+                    Editing Scheduled Campaign: {editingScheduledItem?.name || 'Scheduled Broadcast'}
+                  </h3>
+                  <Badge variant="outline" className="text-[11px] font-mono border-amber-500/40 bg-amber-500/15 text-amber-800 dark:text-amber-300">
+                    PAUSED FOR EDITING
+                  </Badge>
+                </div>
+                <p className="text-xs text-amber-800/80 dark:text-amber-300/80">
+                  This campaign is temporarily held from transmission while you edit its content, recipients, and timing in SMS Studio.
+                </p>
+                {isSchedulePastDue && (
+                  <p className="text-xs font-semibold text-red-600 dark:text-red-400 flex items-center gap-1.5 pt-0.5">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    Original scheduled transmission time has passed. You must pick a future date and time before rescheduling.
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.push('/sms/scheduled')}
+                className="h-8 px-3 text-xs border-amber-500/30 hover:bg-amber-500/20 text-amber-900 dark:text-amber-200"
+              >
+                Back to Queue
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 lg:items-stretch">
         {/* Left Column: Primary Message Details & Composer (2 columns on desktop) */}
@@ -1621,6 +1889,92 @@ function SendSmsContent() {
                 </div>
               </div>
 
+              {/* Scheduled Transmission & Recurrence Section (Visible when editing a scheduled project) */}
+              {isEditingScheduled && (
+                <div className="p-4 bg-muted/30 rounded-xl border border-border/80 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-border/50 gap-2">
+                    <div className="flex items-center gap-2">
+                      <CalendarClock className="w-4 h-4 text-primary" />
+                      <Label className="text-sm font-bold">Scheduled Transmission & Recurrence</Label>
+                    </div>
+                    {isSchedulePastDue ? (
+                      <Badge variant="outline" className="text-[11px] border-red-500/40 text-red-600 dark:text-red-400 bg-red-500/10">
+                        Time Passed — Update Required
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-[11px] border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10">
+                        Future Dispatch Ready
+                      </Badge>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <div>
+                      <Label htmlFor="edit-schedule-date" className="text-xs font-medium text-muted-foreground">
+                        Scheduled Delivery Date & Time (Local Time)
+                      </Label>
+                      <div className="flex flex-col sm:flex-row gap-2 mt-1">
+                        <Input
+                          id="edit-schedule-date"
+                          type="datetime-local"
+                          value={scheduleDate}
+                          onChange={(e) => setScheduleDate(e.target.value)}
+                          className={cn(
+                            'w-full sm:w-72 text-xs font-mono',
+                            isSchedulePastDue && 'border-red-500 focus-visible:ring-red-500'
+                          )}
+                        />
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-9 px-2.5 text-xs font-medium"
+                            onClick={() => handleApplyReschedulePreset('15m')}
+                          >
+                            +15m
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-9 px-2.5 text-xs font-medium"
+                            onClick={() => handleApplyReschedulePreset('1h')}
+                          >
+                            +1 Hour
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-9 px-2.5 text-xs font-medium"
+                            onClick={() => handleApplyReschedulePreset('tomorrow9am')}
+                          >
+                            Tomorrow 9 AM
+                          </Button>
+                        </div>
+                      </div>
+                      {isSchedulePastDue && (
+                        <p className="text-xs text-red-600 dark:text-red-400 mt-1.5 font-medium">
+                          The previously configured time has already passed. Please select a future time above or click a quick preset to reschedule.
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Recurrence Settings directly in studio */}
+                    <div className="pt-2 border-t border-border/40">
+                      <RecurrencePicker
+                        isRecurring={isRecurring}
+                        onIsRecurringChange={setIsRecurring}
+                        rule={recurrenceRule}
+                        onRuleChange={setRecurrenceRule}
+                        timeStr={scheduleDate ? new Date(scheduleDate).toTimeString().slice(0, 5) : '09:00'}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* SMS Telemetry & Segment Meter */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 bg-muted/40 rounded-xl border text-xs">
                 <div>
@@ -1672,33 +2026,89 @@ function SendSmsContent() {
                 Preview Handset
               </Button>
 
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
-                <Button
-                  variant="secondary"
-                  className="w-full sm:w-auto h-10"
-                  onClick={() => setScheduleOpen(true)}
-                >
-                  <Clock className="w-4 h-4 mr-2" />
-                  Schedule Dispatch
-                </Button>
-                <Button
-                  onClick={handleSendNow}
-                  disabled={sending}
-                  className="w-full sm:w-auto h-10 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-xs"
-                >
-                  {sending ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Dispatching SMS...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4 mr-2" />
-                      Send Now ({totalRecipients})
-                    </>
-                  )}
-                </Button>
-              </div>
+              {isEditingScheduled ? (
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full sm:w-auto h-10"
+                    onClick={() => router.push('/sms/scheduled')}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="w-full sm:w-auto h-10"
+                    onClick={() => handleSaveScheduledProject('PAUSED')}
+                    disabled={savingScheduled}
+                  >
+                    {savingScheduled ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <PauseCircle className="w-4 h-4 mr-2" />
+                        Save as Paused
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => handleSaveScheduledProject('SCHEDULED')}
+                    disabled={savingScheduled || isSchedulePastDue}
+                    className={cn(
+                      'w-full sm:w-auto h-10 font-semibold shadow-xs',
+                      isSchedulePastDue
+                        ? 'opacity-60 cursor-not-allowed bg-muted text-muted-foreground'
+                        : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                    )}
+                    title={isSchedulePastDue ? 'Please update scheduled date/time to a future time' : 'Reschedule Campaign'}
+                  >
+                    {savingScheduled ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Rescheduling...
+                      </>
+                    ) : (
+                      <>
+                        <CalendarClock className="w-4 h-4 mr-2" />
+                        Update &amp; Reschedule
+                      </>
+                    )}
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+                  <Button
+                    variant="secondary"
+                    className="w-full sm:w-auto h-10"
+                    onClick={() => setScheduleOpen(true)}
+                  >
+                    <Clock className="w-4 h-4 mr-2" />
+                    Schedule Dispatch
+                  </Button>
+                  <Button
+                    onClick={handleSendNow}
+                    disabled={sending}
+                    className="w-full sm:w-auto h-10 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-xs"
+                  >
+                    {sending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Dispatching SMS...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4 mr-2" />
+                        Send Now ({totalRecipients})
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
             </CardFooter>
           </Card>
         </div>

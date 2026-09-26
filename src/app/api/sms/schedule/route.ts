@@ -9,6 +9,26 @@ export async function GET(req: Request) {
   try {
     const session = await requirePermission('sms.view');
     const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+
+    if (id) {
+      const single = await prisma.scheduledMessage.findFirst({
+        where: { id, userId: session.userId },
+        include: {
+          senderId: {
+            select: { id: true, senderId: true },
+          },
+        },
+      });
+      if (!single) {
+        return NextResponse.json(
+          { success: false, error: 'Scheduled message not found' },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json({ success: true, data: single });
+    }
+
     const page = parseInt(searchParams.get('page') || '1', 10);
     const limit = parseInt(searchParams.get('limit') || '50', 10);
     const status = searchParams.get('status');
@@ -200,6 +220,7 @@ export async function PATCH(req: Request) {
       status: targetStatusParam,
       isRecurring,
       cronExpression,
+      recipients,
     } = body;
 
     if (!id || typeof id !== 'string') {
@@ -366,6 +387,11 @@ export async function PATCH(req: Request) {
         senderIdId: validSenderIdId,
         encoding,
         segmentCount,
+        ...(Array.isArray(recipients) ? {
+          recipients,
+          recipientCount: recipients.length,
+          totalUnits: recipients.length,
+        } : {}),
         ...(typeof isRecurring === 'boolean' ? { isRecurring } : {}),
         ...(cronExpression !== undefined ? { cronExpression } : {}),
       },

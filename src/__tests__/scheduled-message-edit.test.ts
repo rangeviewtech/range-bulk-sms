@@ -5,6 +5,18 @@ import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/re
 import { EditScheduledMessageDialog, ScheduledMessageData } from '@/components/sms/edit-scheduled-message-dialog';
 import ScheduledSmsPage from '@/app/(dashboard)/sms/scheduled/page';
 
+const mockPush = vi.fn();
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: mockPush,
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+  }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => '/sms/scheduled',
+}));
+
 describe('Scheduled Message Edit Feature & Safety Rules', () => {
   const mockFutureItem: ScheduledMessageData = {
     id: 'test-1',
@@ -180,7 +192,7 @@ describe('Scheduled Message Edit Feature & Safety Rules', () => {
       expect(lockedEditBtns[0].hasAttribute('disabled')).toBe(true);
     });
 
-    it('automatically pauses message when editing a valid future scheduled broadcast', async () => {
+    it('automatically pauses message and navigates to SMS send studio when editing', async () => {
       const futureTime = new Date(Date.now() + 7200 * 1000).toISOString();
       let patchPayload: Record<string, unknown> | null = null;
 
@@ -220,7 +232,7 @@ describe('Scheduled Message Edit Feature & Safety Rules', () => {
       expect(editBtns.length).toBeGreaterThan(0);
       expect(editBtns[0].hasAttribute('disabled')).toBe(false);
 
-      // Clicking Edit should fire auto-pause
+      // Clicking Edit should fire auto-pause and navigate to /sms/send?editScheduled=future-msg-1
       fireEvent.click(editBtns[0]);
 
       await waitFor(() => {
@@ -228,10 +240,8 @@ describe('Scheduled Message Edit Feature & Safety Rules', () => {
           id: 'future-msg-1',
           action: 'pause_for_edit',
         });
+        expect(mockPush).toHaveBeenCalledWith('/sms/send?editScheduled=future-msg-1');
       });
-
-      // And open the edit dialog
-      expect(screen.getAllByText('Edit Scheduled Message')[0]).toBeDefined();
     });
   });
 });

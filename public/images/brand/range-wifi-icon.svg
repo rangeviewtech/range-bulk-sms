@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" role="img" aria-labelledby="rangeWifiTitle">
+  <title id="rangeWifiTitle">Range Wifi Billing Platform</title>
+  <defs>
+    <linearGradient id="wifi-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#057aab" />
+      <stop offset="50%" stop-color="#04648C" />
+      <stop offset="100%" stop-color="#02425d" />
+    </linearGradient>
+    <linearGradient id="wifi-yellow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd52c" />
+      <stop offset="60%" stop-color="#FBCA07" />
+      <stop offset="100%" stop-color="#e5b400" />
+    </linearGradient>
+    <filter id="wifi-shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Router / Transmitter Base in Range Blue -->
+  <g filter="url(#wifi-shadow)">
+    <rect x="80" y="340" width="352" height="110" rx="36" fill="url(#wifi-blue)" stroke="rgba(255,255,255,0.15)" stroke-width="4" />
+    <!-- Indicator LEDs -->
+    <circle cx="140" cy="395" r="10" fill="#FBCA07" />
+    <circle cx="180" cy="395" r="10" fill="#10b981" />
+    <circle cx="220" cy="395" r="10" fill="#10b981" />
+    <rect x="330" y="388" width="60" height="14" rx="7" fill="rgba(255,255,255,0.3)" />
+  </g>
+
+  <!-- Radiating Wifi Waves in Range Yellow & Blue -->
+  <g filter="url(#wifi-shadow)">
+    <!-- Outer Wave -->
+    <path d="M 106 140 C 190 60, 322 60, 406 140" fill="none" stroke="url(#wifi-yellow)" stroke-width="32" stroke-linecap="round" />
+    <!-- Middle Wave -->
+    <path d="M 156 200 C 215 140, 297 140, 356 200" fill="none" stroke="url(#wifi-yellow)" stroke-width="28" stroke-linecap="round" />
+    <!-- Inner Wave -->
+    <path d="M 206 260 C 235 230, 277 230, 306 260" fill="none" stroke="url(#wifi-yellow)" stroke-width="24" stroke-linecap="round" />
+    <!-- Wifi Dot / Hotspot Origin -->
+    <circle cx="256" cy="310" r="22" fill="url(#wifi-yellow)" />
+  </g>
+</svg>

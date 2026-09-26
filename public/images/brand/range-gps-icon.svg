@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" role="img" aria-labelledby="rangeGpsTitle">
+  <title id="rangeGpsTitle">Range GPS Tracking Platform</title>
+  <defs>
+    <linearGradient id="gps-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#057aab" />
+      <stop offset="50%" stop-color="#04648C" />
+      <stop offset="100%" stop-color="#02425d" />
+    </linearGradient>
+    <linearGradient id="gps-yellow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd52c" />
+      <stop offset="60%" stop-color="#FBCA07" />
+      <stop offset="100%" stop-color="#e5b400" />
+    </linearGradient>
+    <filter id="gps-shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Concentric Radar / Compass Rings in Range Blue -->
+  <g filter="url(#gps-shadow)">
+    <!-- Base Map Grid Plate -->
+    <ellipse cx="256" cy="420" rx="180" ry="60" fill="url(#gps-blue)" opacity="0.4" />
+    <ellipse cx="256" cy="420" rx="120" ry="40" fill="none" stroke="#FBCA07" stroke-width="6" opacity="0.6" stroke-dasharray="10 6" />
+    <ellipse cx="256" cy="420" rx="60" ry="20" fill="none" stroke="#FBCA07" stroke-width="6" opacity="0.8" />
+  </g>
+
+  <!-- Big Bold GPS Location Pin in Range Yellow & Blue -->
+  <g filter="url(#gps-shadow)">
+    <!-- Pin Body -->
+    <path
+      d="M 256 50
+         C 156 50, 76 130, 76 230
+         C 76 340, 230 435, 256 450
+         C 282 435, 436 340, 436 230
+         C 436 130, 356 50, 256 50
+         Z"
+      fill="url(#gps-yellow)"
+      stroke="rgba(255,255,255,0.3)"
+      stroke-width="4"
+    />
+    <!-- Inner Lens / Compass Aperture in Range Blue -->
+    <circle cx="256" cy="220" r="74" fill="url(#gps-blue)" />
+    <!-- Reticle Crosshair / Satellite Symbol -->
+    <circle cx="256" cy="220" r="30" fill="none" stroke="#FBCA07" stroke-width="8" />
+    <circle cx="256" cy="220" r="12" fill="#FBCA07" />
+  </g>
+</svg>

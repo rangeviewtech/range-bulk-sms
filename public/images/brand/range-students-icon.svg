@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" role="img" aria-labelledby="rangeStudentsTitle">
+  <title id="rangeStudentsTitle">Range Students Platform</title>
+  <defs>
+    <linearGradient id="students-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#057aab" />
+      <stop offset="50%" stop-color="#04648C" />
+      <stop offset="100%" stop-color="#02425d" />
+    </linearGradient>
+    <linearGradient id="students-yellow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd52c" />
+      <stop offset="60%" stop-color="#FBCA07" />
+      <stop offset="100%" stop-color="#e5b400" />
+    </linearGradient>
+    <filter id="students-shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Open Book Base in Range Blue -->
+  <g filter="url(#students-shadow)">
+    <path d="M 80 340 C 140 320, 220 320, 256 345 C 292 320, 372 320, 432 340 L 432 420 C 372 400, 292 400, 256 425 C 220 400, 140 400, 80 420 Z" fill="url(#students-blue)" stroke="rgba(255,255,255,0.2)" stroke-width="4" />
+    <line x1="256" y1="345" x2="256" y2="425" stroke="rgba(255,255,255,0.4)" stroke-width="4" />
+  </g>
+
+  <!-- Mortarboard / Graduation Cap in Range Yellow & Blue -->
+  <g filter="url(#students-shadow)">
+    <!-- Cap Diamond -->
+    <polygon points="256,70 460,175 256,280 52,175" fill="url(#students-yellow)" />
+    <!-- Cap Skull Base -->
+    <path d="M 130 220 L 130 295 C 130 350, 382 350, 382 295 L 382 220 C 342 245, 298 258, 256 258 C 214 258, 170 245, 130 220 Z" fill="url(#students-blue)" />
+    <!-- Tassel Button & String -->
+    <circle cx="256" cy="175" r="14" fill="#04648C" />
+    <path d="M 256 175 Q 400 200 420 280" fill="none" stroke="#04648C" stroke-width="8" stroke-linecap="round" />
+    <rect x="410" y="275" width="20" height="40" rx="6" fill="#04648C" />
+  </g>
+</svg>

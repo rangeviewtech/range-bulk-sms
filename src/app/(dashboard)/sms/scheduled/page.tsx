@@ -33,15 +33,12 @@ import {
   Repeat,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { ConfirmationDialog } from '@/components/feedback/confirmation-dialog';
 import { Pagination } from '@/components/ui/pagination';
 import { SortableHeader } from '@/components/ui/sortable-header';
 import { useTableState } from '@/hooks/use-table-state';
-import {
-  EditScheduledMessageDialog,
-  ScheduledMessageData,
-} from '@/components/sms/edit-scheduled-message-dialog';
 import { cn } from '@/lib/utils';
 import {
   isScheduledViewItem,
@@ -142,12 +139,9 @@ const INITIAL_SCHEDULED: ScheduledItem[] = [
 ];
 
 export default function ScheduledSmsPage() {
+  const router = useRouter();
   const [items, setItems] = useState<ScheduledItem[]>(INITIAL_SCHEDULED);
   const [now, setNow] = useState(() => Date.now());
-
-  // Editing state
-  const [editingItem, setEditingItem] = useState<ScheduledMessageData | null>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   // 1-second ticker for real-time countdowns and 10s rule check
   useEffect(() => {
@@ -298,6 +292,7 @@ export default function ScheduledSmsPage() {
   };
 
   // Handle Edit Action
+  // Handle Edit Action - Navigates directly to /sms/send to edit the project in SMS Studio
   const handleEditClick = async (item: ScheduledItem) => {
     const diffMs = new Date(item.scheduledAt).getTime() - now;
 
@@ -330,84 +325,33 @@ export default function ScheduledSmsPage() {
           i.id === item.id ? { ...i, status: 'PAUSED', isEditingPaused: true } : i
         )
       );
-
-      toast.info(`Campaign "${item.name}" paused for safe editing.`, {
-        description: 'Transmission has been held so it will not send while you make changes.',
-      });
     }
 
-    setEditingItem({
-      id: item.id,
-      name: item.name,
-      message: item.message || item.name,
-      senderName: item.senderName || 'RANGESMS',
-      scheduledAt: item.scheduledAt,
-      recipients: item.recipients,
-      status: 'PAUSED',
-      isEditingPaused: true,
-      isRecurring: item.isRecurring,
-      cronExpression: item.cronExpression,
-    });
-    setIsEditDialogOpen(true);
-  };
-
-  // Handle Save in Edit Modal
-  const handleSaveEdit = async (updated: {
-    id: string;
-    message: string;
-    scheduledAt: string;
-    status: 'SCHEDULED' | 'PAUSED';
-    senderId?: string;
-    isRecurring?: boolean;
-    cronExpression?: string | null;
-  }) => {
-    const res = await fetch('/api/sms/schedule', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: updated.id,
-        message: updated.message,
-        scheduledAt: updated.scheduledAt,
-        status: updated.status,
-        senderId: updated.senderId,
-        isRecurring: updated.isRecurring,
-        cronExpression: updated.cronExpression,
-      }),
-    });
-
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      throw new Error(json.error || 'Failed to update scheduled message.');
+    // Persist full project payload in sessionStorage so /sms/send can immediately load all fields
+    try {
+      sessionStorage.setItem(
+        `edit_scheduled_${item.id}`,
+        JSON.stringify({
+          id: item.id,
+          name: item.name,
+          message: item.message || item.name,
+          senderName: item.senderName || 'RANGESMS',
+          scheduledAt: item.scheduledAt,
+          recipients: item.recipients,
+          status: 'PAUSED',
+          isRecurring: item.isRecurring,
+          cronExpression: item.cronExpression,
+        })
+      );
+    } catch {
+      // Best-effort sessionStorage
     }
 
-    const formattedDate = new Date(updated.scheduledAt)
-      .toISOString()
-      .replace('T', ' ')
-      .slice(0, 16);
+    toast.info(`Opening campaign "${item.name}" in SMS Studio...`, {
+      description: 'Transmission has been safely paused while you make changes.',
+    });
 
-    setItems((prev) =>
-      prev.map((i) => {
-        if (i.id === updated.id) {
-          return {
-            ...i,
-            message: updated.message,
-            name: updated.message.slice(0, 30) || i.name,
-            scheduledAt: formattedDate,
-            status: updated.status,
-            isEditingPaused: false,
-            isRecurring: updated.isRecurring,
-            cronExpression: updated.cronExpression,
-          };
-        }
-        return i;
-      })
-    );
-
-    toast.success(
-      updated.status === 'SCHEDULED'
-        ? `Scheduled message updated and queued for ${formattedDate}.`
-        : 'Scheduled message updated and kept paused.'
-    );
+    router.push(`/sms/send?editScheduled=${encodeURIComponent(item.id)}`);
   };
 
   const [statusConfirm, setStatusConfirm] = useState<{
@@ -934,13 +878,6 @@ export default function ScheduledSmsPage() {
         </CardContent>
       </Card>
 
-      {/* Edit Scheduled Message Dialog */}
-      <EditScheduledMessageDialog
-        open={isEditDialogOpen}
-        onOpenChange={setIsEditDialogOpen}
-        item={editingItem}
-        onSave={handleSaveEdit}
-      />
 
       {/* Confirmation Dialog for Scheduled Broadcast Cancellation */}
       <ConfirmationDialog

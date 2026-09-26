@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" role="img" aria-labelledby="rangeMarketTitle">
+  <title id="rangeMarketTitle">Range Market Platform</title>
+  <defs>
+    <linearGradient id="market-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#057aab" />
+      <stop offset="50%" stop-color="#04648C" />
+      <stop offset="100%" stop-color="#02425d" />
+    </linearGradient>
+    <linearGradient id="market-yellow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd52c" />
+      <stop offset="60%" stop-color="#FBCA07" />
+      <stop offset="100%" stop-color="#e5b400" />
+    </linearGradient>
+    <filter id="market-shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Shopping Bag Body in Range Blue -->
+  <g filter="url(#market-shadow)">
+    <!-- Bag Handle -->
+    <path d="M 180 170 C 180 100, 332 100, 332 170" fill="none" stroke="url(#market-yellow)" stroke-width="26" stroke-linecap="round" />
+    <!-- Bag Outer -->
+    <rect x="96" y="150" width="320" height="310" rx="42" fill="url(#market-blue)" stroke="rgba(255,255,255,0.15)" stroke-width="4" />
+  </g>
+
+  <!-- Front Accent Tag: Range Yellow Storefront / Cart Symbol -->
+  <g filter="url(#market-shadow)">
+    <circle cx="256" cy="305" r="76" fill="url(#market-yellow)" />
+    <!-- Storefront awning icon -->
+    <path d="M 215 285 L 297 285 L 305 325 L 207 325 Z" fill="#04648C" />
+    <path d="M 225 325 L 225 345 L 287 345 L 287 325" fill="none" stroke="#04648C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+</svg>

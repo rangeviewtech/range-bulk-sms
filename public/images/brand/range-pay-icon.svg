@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" role="img" aria-labelledby="rangePayTitle">
+  <title id="rangePayTitle">Range Pay Platform</title>
+  <defs>
+    <linearGradient id="pay-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#057aab" />
+      <stop offset="50%" stop-color="#04648C" />
+      <stop offset="100%" stop-color="#02425d" />
+    </linearGradient>
+    <linearGradient id="pay-yellow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd52c" />
+      <stop offset="60%" stop-color="#FBCA07" />
+      <stop offset="100%" stop-color="#e5b400" />
+    </linearGradient>
+    <filter id="pay-shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Slanted Modern Payment Card in Range Blue -->
+  <g filter="url(#pay-shadow)">
+    <rect x="76" y="110" width="360" height="230" rx="36" fill="url(#pay-blue)" stroke="rgba(255,255,255,0.2)" stroke-width="4" />
+    <!-- Chip Contact -->
+    <rect x="126" y="156" width="60" height="50" rx="12" fill="#FBCA07" />
+    <!-- Contactless Wave Waves -->
+    <path d="M 230 166 C 240 176, 240 196, 230 206" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="6" stroke-linecap="round" />
+    <path d="M 245 156 C 265 176, 265 206, 245 226" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="6" stroke-linecap="round" />
+  </g>
+
+  <!-- High-Gloss Range Yellow Floating Wallet / Coin Badge -->
+  <g filter="url(#pay-shadow)">
+    <circle cx="360" cy="340" r="95" fill="url(#pay-yellow)" />
+    <!-- Inner Ring -->
+    <circle cx="360" cy="340" r="80" fill="none" stroke="#04648C" stroke-width="6" />
+    <!-- Currency / Check Badge -->
+    <text x="360" y="365" font-family="system-ui, -apple-system, sans-serif" font-size="76" font-weight="900" fill="#04648C" text-anchor="middle">R</text>
+  </g>
+</svg>
