@@ -1364,9 +1364,8 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
 
           <div className="hidden md:block" />
 
-          {/* Right Action Icons: Range View Apps (Waffle), Wallet Badge, Search & Theme Switcher */}
+          {/* Right Action Icons: Wallet Badge, Search, Theme Switcher & Range View Apps (Waffle) */}
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-            <RangeAppsDropdown />
             <NavWalletBadge />
 
             <button
@@ -1381,6 +1380,8 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
             </button>
 
             <ThemeToggle />
+
+            <RangeAppsDropdown />
           </div>
         </header>
       )}

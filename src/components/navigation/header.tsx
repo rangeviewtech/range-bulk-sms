@@ -17,11 +17,11 @@ export function Header({ className, user: _user, ...props }: HeaderProps) {
       )}
       {...props}
     >
-      <RangeAppsDropdown />
       <div className="cursor-pointer">
         <Search className="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors" strokeWidth={1.5} />
       </div>
       <NotificationBell />
+      <RangeAppsDropdown />
     </header>
   );
 }
