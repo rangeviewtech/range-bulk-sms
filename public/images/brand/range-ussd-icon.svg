@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" role="img" aria-labelledby="rangeUssdTitle">
+  <title id="rangeUssdTitle">Range Bulk USSD Platform</title>
+  <defs>
+    <filter id="ussd-shadow" x="-10%" y="-10%" width="120%" height="125%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#04648C" flood-opacity="0.25" />
+    </filter>
+    <linearGradient id="ussd-screen-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#04648C" />
+      <stop offset="100%" stop-color="#023b54" />
+    </linearGradient>
+  </defs>
+
+  <!-- Base Ambient Glow -->
+  <circle cx="256" cy="256" r="220" fill="#04648C" fill-opacity="0.04" />
+
+  <!-- Lower Shape: Range View Primary Yellow (#FBCA07) Overlapping Session Prompt Bubble with signature 3 dots -->
+  <g transform="translate(0, 20)">
+    <!-- Yellow Session Bubble Body -->
+    <path
+      d="M 170 230
+         C 170 210, 190 200, 230 200
+         L 410 200
+         C 455 200, 480 225, 480 270
+         L 480 370
+         C 480 415, 455 440, 410 440
+         L 360 440
+         L 395 485
+         C 402 495, 396 502, 384 496
+         L 310 440
+         L 230 440
+         C 185 440, 170 415, 170 370
+         Z"
+      fill="#FBCA07"
+    />
+    <!-- 3 Circular Holes/Dots in Yellow Bubble (Range Deep Teal #04648C) -->
+    <circle cx="280" cy="325" r="24" fill="#04648C" />
+    <circle cx="345" cy="325" r="24" fill="#04648C" />
+    <circle cx="410" cy="325" r="24" fill="#04648C" />
+  </g>
+
+  <!-- Upper Shape: Range View Deep Blue/Teal (#04648C) GSM Handset & USSD Interactive Session Terminal -->
+  <g filter="url(#ussd-shadow)">
+    <!-- Device Outer Body (Smartphone Silhouette) -->
+    <rect
+      x="56"
+      y="32"
+      width="240"
+      height="380"
+      rx="48"
+      ry="48"
+      fill="#04648C"
+    />
+
+    <!-- Device Inner Screen Surface -->
+    <rect
+      x="74"
+      y="64"
+      width="204"
+      height="316"
+      rx="32"
+      ry="32"
+      fill="#062238"
+    />
+
+    <!-- Speaker Ear Bar -->
+    <rect
+      x="146"
+      y="48"
+      width="60"
+      height="6"
+      rx="3"
+      fill="#FFFFFF"
+      fill-opacity="0.5"
+    />
+
+    <!-- Interactive USSD Dialog Card on Screen -->
+    <rect
+      x="88"
+      y="88"
+      width="176"
+      height="230"
+      rx="20"
+      ry="20"
+      fill="#083850"
+      stroke="#04648C"
+      stroke-width="2"
+    />
+
+    <!-- USSD Protocol Header Badge: *144# -->
+    <rect
+      x="102"
+      y="104"
+      width="148"
+      height="40"
+      rx="10"
+      ry="10"
+      fill="#FBCA07"
+    />
+    <!-- * 1 4 4 # Text Iconography -->
+    <text
+      x="176"
+      y="131"
+      font-family="system-ui, -apple-system, sans-serif"
+      font-size="20"
+      font-weight="900"
+      fill="#04648C"
+      text-anchor="middle"
+      letter-spacing="2"
+    >*144#</text>
+
+    <!-- USSD Interactive Session Menu Lines -->
+    <!-- Menu Option 1 -->
+    <rect x="106" y="160" width="22" height="14" rx="4" fill="#FBCA07" fill-opacity="0.9" />
+    <rect x="134" y="162" width="108" height="10" rx="5" fill="#FFFFFF" fill-opacity="0.85" />
+
+    <!-- Menu Option 2 -->
+    <rect x="106" y="186" width="22" height="14" rx="4" fill="#FBCA07" fill-opacity="0.9" />
+    <rect x="134" y="188" width="94" height="10" rx="5" fill="#FFFFFF" fill-opacity="0.85" />
+
+    <!-- Menu Option 3 -->
+    <rect x="106" y="212" width="22" height="14" rx="4" fill="#FBCA07" fill-opacity="0.9" />
+    <rect x="134" y="214" width="80" height="10" rx="5" fill="#FFFFFF" fill-opacity="0.85" />
+
+    <!-- USSD Send / Reply Button on Handset Dialog -->
+    <rect
+      x="106"
+      y="244"
+      width="140"
+      height="26"
+      rx="8"
+      fill="#04648C"
+      stroke="#38bdf8"
+      stroke-width="1.5"
+    />
+    <rect x="126" y="254" width="70" height="6" rx="3" fill="#FFFFFF" fill-opacity="0.9" />
+    <polygon points="230,257 222,252 222,262" fill="#FBCA07" />
+
+    <!-- Handset Bottom Home Indicator -->
+    <rect
+      x="142"
+      y="392"
+      width="68"
+      height="5"
+      rx="2.5"
+      fill="#FFFFFF"
+      fill-opacity="0.4"
+    />
+  </g>
+</svg>

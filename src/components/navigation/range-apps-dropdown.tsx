@@ -2,8 +2,9 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ExternalLink, Sparkles, ArrowUpRight } from "lucide-react";
+import { ExternalLink, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface RangeApp {
@@ -14,14 +15,16 @@ export interface RangeApp {
   description: string;
   isCurrentApp?: boolean;
   isExternal?: boolean;
-  accentGradient: string;
-  accentShadow: string;
-  icon: React.ReactNode;
+  logoSrc: string;
+  logoAlt: string;
+  accentGradient?: string;
+  accentShadow?: string;
+  icon?: React.ReactNode;
 }
 
 /**
  * 9-Dot Waffle Grid Icon
- * Faithfully matches Google Apps launcher icon (Image 1) with exact 3x3 circular dot matrix.
+ * Faithfully matches Google Apps launcher icon with exact 3x3 circular dot matrix.
  */
 export function WaffleGridIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
@@ -46,6 +49,7 @@ export function WaffleGridIcon({ className = "w-5 h-5" }: { className?: string }
 
 /**
  * Range View Official Apps List
+ * Configured with actual production logos and domains
  */
 export const RANGE_APPS: RangeApp[] = [
   {
@@ -56,15 +60,8 @@ export const RANGE_APPS: RangeApp[] = [
     description: "Enterprise A2P Messaging, Campaigns & Delivery Logs",
     isCurrentApp: true,
     isExternal: false,
-    accentGradient: "bg-gradient-to-br from-[#0284c7] via-[#0284c7] to-[#38bdf8]",
-    accentShadow: "shadow-sky-500/25",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-white" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" fill="currentColor" fillOpacity={0.2} />
-        <path d="M8 10h8" />
-        <path d="M8 14h5" />
-      </svg>
-    ),
+    logoSrc: "/images/brand/range-icon-transparent.svg",
+    logoAlt: "Range Bulk SMS Logo",
   },
   {
     id: "range-bulk-ussd",
@@ -74,17 +71,8 @@ export const RANGE_APPS: RangeApp[] = [
     description: "Real-time GSM USSD Menu Sessions & Gateway Dispatch",
     isCurrentApp: false,
     isExternal: true,
-    accentGradient: "bg-gradient-to-br from-[#6366f1] via-[#8b5cf6] to-[#d946ef]",
-    accentShadow: "shadow-purple-500/25",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-white" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-        <rect width="14" height="20" x="5" y="2" rx="2" ry="2" fill="currentColor" fillOpacity={0.2} />
-        <path d="M12 18h.01" />
-        <path d="M9 6h6" />
-        <path d="M9 10h6" />
-        <path d="M9 14h6" />
-      </svg>
-    ),
+    logoSrc: "/images/brand/range-ussd-icon.svg",
+    logoAlt: "Range Bulk USSD Logo",
   },
 ];
 
@@ -99,7 +87,7 @@ interface RangeAppsDropdownProps {
  * Modeled directly after the Google Apps (9-dot waffle) launcher:
  * - Hover tooltip: "Range View apps"
  * - Rounded elevation card with smooth dark/light mode surface
- * - 2-column app tiles with vibrant branded app squircles
+ * - 2-column app tiles with actual official full-color product logos
  * - Production URLs: www.sms.rangeview.com and www.ussd.rangeview.com
  * - Bottom "More from Range View" link to root corporate portal
  */
@@ -131,11 +119,17 @@ export function RangeAppsDropdown({ className, align = "end" }: RangeAppsDropdow
         collisionPadding={12}
         className="w-[calc(100vw-24px)] max-w-[340px] sm:w-[350px] p-0 rounded-3xl border border-border/80 bg-popover/95 dark:bg-[#1a1b1e]/95 backdrop-blur-xl shadow-2xl z-50 overflow-hidden animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
       >
-        {/* Top Header */}
+        {/* Top Header with official Range logo */}
         <div className="px-4 py-3.5 border-b border-border/40 flex items-center justify-between bg-muted/20">
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-md bg-primary/20 flex items-center justify-center text-primary">
-              <Sparkles className="w-3 h-3" />
+            <div className="w-5 h-5 rounded-md flex items-center justify-center">
+              <Image
+                src="/images/brand/range-icon-transparent.svg"
+                alt="Range View"
+                width={16}
+                height={16}
+                className="w-4 h-4 object-contain shrink-0"
+              />
             </div>
             <span className="text-xs font-semibold text-foreground tracking-tight">Range View Apps</span>
           </div>
@@ -166,19 +160,20 @@ export function RangeAppsDropdown({ className, align = "end" }: RangeAppsDropdow
                   </span>
                 )}
 
-                {/* App Icon Tile */}
-                <div
-                  className={cn(
-                    "w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-md transition-transform duration-200 group-hover:scale-105",
-                    app.accentGradient,
-                    app.accentShadow
-                  )}
-                >
-                  {app.icon}
+                {/* Actual App Logo Container */}
+                <div className="w-14 h-14 rounded-2xl bg-white dark:bg-white/10 shadow-sm border border-slate-200/80 dark:border-white/10 flex items-center justify-center p-2.5 transition-all duration-200 group-hover:scale-105 group-hover:shadow-md group-hover:border-primary/40 shrink-0">
+                  <Image
+                    src={app.logoSrc}
+                    alt={app.logoAlt}
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-contain select-none"
+                    draggable={false}
+                  />
                 </div>
 
                 {/* App Name */}
-                <div className="mt-2.5 text-xs font-bold text-foreground group-hover:text-primary transition-colors tracking-tight">
+                <div className="mt-2 text-xs sm:text-[13px] font-semibold text-foreground group-hover:text-primary transition-colors tracking-tight">
                   {app.name}
                 </div>
 

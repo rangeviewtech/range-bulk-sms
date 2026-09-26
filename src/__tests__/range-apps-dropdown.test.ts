@@ -19,6 +19,10 @@ describe('RangeAppsDropdown Component (Google-Style App Switcher)', () => {
     expect(ussdApp?.domain).toBe('www.ussd.rangeview.com');
     expect(ussdApp?.url).toBe('https://www.ussd.rangeview.com');
     expect(ussdApp?.isExternal).toBe(true);
+
+    // Verify official brand logo asset paths
+    expect(smsApp?.logoSrc).toBe('/images/brand/range-icon-transparent.svg');
+    expect(ussdApp?.logoSrc).toBe('/images/brand/range-ussd-icon.svg');
   });
 
   it('renders the 9-dot WaffleGridIcon with 9 circular dots', () => {
@@ -36,7 +40,7 @@ describe('RangeAppsDropdown Component (Google-Style App Switcher)', () => {
     expect(trigger?.getAttribute('title')).toBe('Range View apps');
   });
 
-  it('opens the dropdown on click and displays both apps with production domains and footer link', () => {
+  it('opens the dropdown on click and displays both apps with actual logos, production domains and footer link', () => {
     render(React.createElement(RangeAppsDropdown));
 
     const trigger = document.getElementById('top-nav-range-apps-trigger')!;
@@ -45,6 +49,15 @@ describe('RangeAppsDropdown Component (Google-Style App Switcher)', () => {
     // Header
     expect(screen.getByText('Range View Apps')).toBeDefined();
     expect(screen.getByText('Ecosystem')).toBeDefined();
+
+    // Actual Brand Logos
+    const smsLogo = screen.getByAltText('Range Bulk SMS Logo') as HTMLImageElement;
+    expect(smsLogo).toBeDefined();
+    expect(smsLogo.getAttribute('src')).toBe('/images/brand/range-icon-transparent.svg');
+
+    const ussdLogo = screen.getByAltText('Range Bulk USSD Logo') as HTMLImageElement;
+    expect(ussdLogo).toBeDefined();
+    expect(ussdLogo.getAttribute('src')).toBe('/images/brand/range-ussd-icon.svg');
 
     // App Names
     expect(screen.getByText('Range Bulk SMS')).toBeDefined();
