@@ -194,25 +194,19 @@ export function RangeAppsDropdown({ className, align = "end" }: RangeAppsDropdow
                 </div>
 
                 {/* App Name */}
-                <div className="mt-2.5 text-xs sm:text-[13px] font-bold text-foreground group-hover:text-primary transition-colors tracking-tight text-center">
+                <div className="mt-3 text-xs sm:text-[13px] font-bold text-foreground group-hover:text-primary transition-colors tracking-tight text-center leading-snug">
                   {app.name}
                 </div>
 
                 {/* App Category Description */}
-                <div className="mt-0.5 text-[10px] text-muted-foreground/80 font-medium text-center">
+                <div className="mt-0.5 text-[11px] text-muted-foreground/80 font-medium text-center leading-snug">
                   {isSms ? "A2P & OTP Messaging" : "GSM Interactive Menus"}
-                </div>
-
-                {/* Production Domain Tag */}
-                <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-background/80 dark:bg-white/[0.04] border border-border/50 text-[10px] font-mono text-muted-foreground group-hover:text-foreground group-hover:border-primary/30 transition-all duration-200">
-                  <span className={cn("w-1 h-1 rounded-full", isSms ? "bg-emerald-500" : "bg-indigo-400")} />
-                  <span>{app.domain}</span>
                 </div>
               </>
             );
 
             const tileClassName = cn(
-              "relative flex flex-col items-center justify-center p-3.5 pt-6 rounded-2xl text-center transition-all duration-200 cursor-pointer group active:scale-95 border",
+              "relative flex flex-col items-center justify-center p-3.5 pt-6 pb-5 rounded-2xl text-center transition-all duration-200 cursor-pointer group active:scale-95 border",
               app.isCurrentApp
                 ? "bg-gradient-to-b from-primary/[0.08] via-background/60 to-background/30 dark:from-primary/[0.06] dark:via-white/[0.02] dark:to-transparent border-primary/30 shadow-[0_4px_20px_-6px_rgba(251,202,7,0.12)] hover:border-primary/50"
                 : "bg-muted/20 dark:bg-white/[0.02] hover:bg-muted/50 dark:hover:bg-white/[0.05] border-border/50 dark:border-white/5 hover:border-border hover:shadow-md"

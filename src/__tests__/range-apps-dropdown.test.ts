@@ -40,7 +40,7 @@ describe('RangeAppsDropdown Component (Google-Style App Switcher)', () => {
     expect(trigger?.getAttribute('title')).toBe('Range View apps');
   });
 
-  it('opens the dropdown on click and displays both apps with actual logos, production domains and footer link', () => {
+  it('opens the dropdown on click and displays both apps with actual logos without exposing URLs on tile faces', () => {
     render(React.createElement(RangeAppsDropdown));
 
     const trigger = document.getElementById('top-nav-range-apps-trigger')!;
@@ -63,9 +63,22 @@ describe('RangeAppsDropdown Component (Google-Style App Switcher)', () => {
     expect(screen.getByText('Range Bulk SMS')).toBeDefined();
     expect(screen.getByText('Range Bulk USSD')).toBeDefined();
 
-    // App Domains
-    expect(screen.getByText('www.sms.rangeview.com')).toBeDefined();
-    expect(screen.getByText('www.ussd.rangeview.com')).toBeDefined();
+    // App category descriptions
+    expect(screen.getByText('A2P & OTP Messaging')).toBeDefined();
+    expect(screen.getByText('GSM Interactive Menus')).toBeDefined();
+
+    // Explicitly verify URLs are NOT displayed on the face of the tiles
+    expect(screen.queryByText('www.sms.rangeview.com')).toBeNull();
+    expect(screen.queryByText('www.ussd.rangeview.com')).toBeNull();
+
+    // Accessible titles and destinations are preserved
+    const smsTile = screen.getByTitle('Range Bulk SMS (www.sms.rangeview.com)');
+    expect(smsTile).toBeDefined();
+
+    const ussdTile = screen.getByTitle('Range Bulk USSD (www.ussd.rangeview.com)');
+    expect(ussdTile).toBeDefined();
+    expect(ussdTile.getAttribute('href')).toBe('https://www.ussd.rangeview.com');
+    expect(ussdTile.getAttribute('target')).toBe('_blank');
 
     // Active pill for current app
     expect(screen.getByText('Active')).toBeDefined();
