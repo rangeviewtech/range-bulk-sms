@@ -16,6 +16,8 @@ import { SUPPORTED_LANGUAGES, LanguageCode } from "@/lib/i18n";
 
 export function LanguageToggle() {
   const { language, setLanguage, currentLanguageMeta, dict } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const isPointerDownRef = React.useRef(false);
   const [search, setSearch] = useState<string>('');
 
   const filtered = SUPPORTED_LANGUAGES.filter((l) =>
@@ -24,13 +26,24 @@ export function LanguageToggle() {
   );
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 rounded-full transition-transform active:scale-95"
+          id="top-nav-language-toggle-trigger"
           aria-label="Select language"
+          title="Select language"
+          className="h-9 w-9 rounded-full transition-transform active:scale-95 text-muted-foreground hover:text-foreground"
+          onPointerDown={() => {
+            isPointerDownRef.current = true;
+          }}
+          onClick={() => {
+            if (!isPointerDownRef.current) {
+              setOpen((prev) => !prev);
+            }
+            isPointerDownRef.current = false;
+          }}
         >
           {currentLanguageMeta.flag ? (
             <img
@@ -56,7 +69,7 @@ export function LanguageToggle() {
             placeholder={dict.common.searchPlaceholder || "Search language..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg bg-muted/60 py-1.5 pl-8 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-[#04648C] dark:focus:ring-[#FBCA07] focus:bg-muted transition-all"
+            className="w-full rounded-lg bg-muted/60 py-1.5 pl-8 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-primary focus:bg-muted transition-all"
             onClick={(e) => e.stopPropagation()}
             onKeyDown={(e) => e.stopPropagation()}
           />
@@ -90,7 +103,7 @@ export function LanguageToggle() {
                       <span className="h-3 w-4 rounded-[2px] bg-muted inline-block" />
                     )}
                     <div className="flex flex-col text-left">
-                      <span className={`font-medium ${isSelected ? 'text-[#04648C] dark:text-[#FBCA07]' : 'text-foreground'}`}>
+                      <span className={`font-medium ${isSelected ? 'text-primary' : 'text-foreground'}`}>
                         {l.name}
                       </span>
                       {l.nativeName && l.nativeName !== l.name && (
@@ -100,7 +113,7 @@ export function LanguageToggle() {
                       )}
                     </div>
                   </div>
-                  {isSelected && <Check className="h-4 w-4 text-[#04648C] dark:text-[#FBCA07]" />}
+                  {isSelected && <Check className="h-4 w-4 text-primary" />}
                 </DropdownMenuItem>
               );
             })

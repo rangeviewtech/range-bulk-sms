@@ -2,6 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { NotificationBell } from "@/components/notifications/notification-bell";
+import { LanguageToggle } from "@/components/navigation/language-toggle";
 import { RangeAppsDropdown } from "@/components/navigation/range-apps-dropdown";
 
 export interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
@@ -21,6 +22,7 @@ export function Header({ className, user: _user, ...props }: HeaderProps) {
         <Search className="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors" strokeWidth={1.5} />
       </div>
       <NotificationBell />
+      <LanguageToggle />
       <RangeAppsDropdown />
     </header>
   );

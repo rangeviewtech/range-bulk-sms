@@ -3,8 +3,15 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ExternalLink, ArrowUpRight } from "lucide-react";
+import { Check, ExternalLink, ArrowUpRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 export interface RangeApp {
@@ -24,7 +31,7 @@ export interface RangeApp {
 
 /**
  * 9-Dot Waffle Grid Icon
- * Faithfully matches Google Apps launcher icon with exact 3x3 circular dot matrix.
+ * Matches Google Apps launcher icon with 3x3 circular dot matrix.
  */
 export function WaffleGridIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
@@ -49,7 +56,7 @@ export function WaffleGridIcon({ className = "w-5 h-5" }: { className?: string }
 
 /**
  * Range View Official Apps List
- * Configured with actual production logos and domains
+ * Configured with production logos and domains
  */
 export const RANGE_APPS: RangeApp[] = [
   {
@@ -82,61 +89,71 @@ interface RangeAppsDropdownProps {
 }
 
 /**
- * Google-Style Range View Apps Launcher Dropdown
+ * Range View Apps Launcher Dropdown
  * 
- * Modeled directly after the Google Apps (9-dot waffle) launcher:
- * - Hover tooltip: "Range View apps"
- * - Rounded elevation card with smooth dark/light mode surface
- * - 2-column app tiles with actual official full-color product logos
- * - Production URLs: www.sms.rangeview.com and www.ussd.rangeview.com
- * - Bottom "More from Range View" link to root corporate portal
+ * Modeled directly after the system design language and Language Switcher dropdown:
+ * - High-density Radix DropdownMenu with clean elevation and popover styling
+ * - Trigger button with 9-dot waffle grid icon matching system round buttons
+ * - Refined list items with official product logos, titles, and descriptions
+ * - Active checkmark indicator for the current app
+ * - External link portal indicator for other ecosystem applications
+ * - Corporate suite link footer to rangeview.com
  */
 export function RangeAppsDropdown({ className, align = "end" }: RangeAppsDropdownProps) {
   const [open, setOpen] = React.useState(false);
+  const isPointerDownRef = React.useRef(false);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
           id="top-nav-range-apps-trigger"
           aria-label="Range View apps"
           title="Range View apps"
+          onPointerDown={() => {
+            isPointerDownRef.current = true;
+          }}
+          onClick={() => {
+            if (!isPointerDownRef.current) {
+              setOpen((prev) => !prev);
+            }
+            isPointerDownRef.current = false;
+          }}
           className={cn(
-            "h-9 w-9 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent/80 transition-all duration-200 cursor-pointer active:scale-95 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
-            open && "bg-accent text-foreground ring-2 ring-primary/20",
+            "h-9 w-9 rounded-full transition-transform active:scale-95 text-muted-foreground hover:text-foreground hover:bg-accent/80",
+            open && "bg-accent text-foreground",
             className
           )}
         >
           <WaffleGridIcon className="w-[18px] h-[18px]" />
-        </button>
-      </PopoverTrigger>
+          <span className="sr-only">Range View apps</span>
+        </Button>
+      </DropdownMenuTrigger>
 
-      <PopoverContent
+      <DropdownMenuContent
         align={align}
-        side="bottom"
-        sideOffset={8}
-        collisionPadding={12}
-        className="w-[calc(100vw-24px)] max-w-[380px] sm:w-[390px] p-0 rounded-3xl border border-border/80 dark:border-white/10 bg-popover/98 dark:bg-[#14161c]/98 backdrop-blur-2xl shadow-[0_24px_60px_-10px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.06)] z-50 overflow-hidden animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
+        className="w-72 sm:w-80 p-1.5 rounded-xl border bg-popover text-popover-foreground shadow-xl z-50"
       >
-        {/* Top Header with official Range logo & live status */}
-        <div className="px-4 py-3 border-b border-border/40 flex items-center justify-between bg-muted/20">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/25 flex items-center justify-center shadow-xs">
+        {/* Header */}
+        <div className="px-2.5 py-2 flex items-center justify-between border-b border-border/50 mb-1">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
               <Image
                 src="/images/brand/range-icon-transparent.svg"
                 alt="Range View"
-                width={18}
-                height={18}
-                className="w-4.5 h-4.5 object-contain shrink-0"
+                width={14}
+                height={14}
+                className="w-3.5 h-3.5 object-contain"
               />
             </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-bold text-foreground tracking-tight leading-tight">Range View Apps</span>
-              <span className="text-[10px] text-muted-foreground font-medium">Enterprise Ecosystem</span>
+            <div className="flex flex-col text-left">
+              <span className="text-xs font-semibold text-foreground leading-tight">Range View Apps</span>
+              <span className="text-[10px] text-muted-foreground">Enterprise Ecosystem</span>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/25 text-[10px] font-mono font-semibold text-primary uppercase tracking-wider">
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/25 text-[10px] font-mono font-semibold text-primary uppercase tracking-wider">
             <span className="relative flex h-1.5 w-1.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
@@ -145,125 +162,129 @@ export function RangeAppsDropdown({ className, align = "end" }: RangeAppsDropdow
           </div>
         </div>
 
-        {/* Apps Grid */}
-        <div className="p-3.5 sm:p-4 grid grid-cols-2 gap-3">
+        {/* Apps List (Matching Language Switcher list design) */}
+        <div className="space-y-0.5">
           {RANGE_APPS.map((app) => {
             const isLocal = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
             const href = app.isCurrentApp && isLocal ? "/dashboard" : app.url;
             const isSms = app.id === "range-bulk-sms";
+            const categoryDesc = isSms ? "A2P & OTP Messaging" : "GSM Interactive Menus";
 
-            const tileContent = (
+            const itemContent = (
               <>
-                {/* Active indicator badge with radar pulse */}
-                {app.isCurrentApp && (
-                  <span className="absolute top-2.5 right-2.5 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 backdrop-blur-md shadow-xs">
-                    <span className="relative flex h-1.5 w-1.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div
+                    className={cn(
+                      "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 p-1 transition-all border",
+                      app.isCurrentApp
+                        ? "bg-primary/10 border-primary/25 shadow-xs"
+                        : "bg-muted/80 border-border/60"
+                    )}
+                  >
+                    <Image
+                      src={app.logoSrc}
+                      alt={app.logoAlt}
+                      width={24}
+                      height={24}
+                      className="w-5 h-5 object-contain"
+                    />
+                  </div>
+                  <div className="flex flex-col text-left min-w-0">
+                    <span
+                      className={cn(
+                        "text-xs truncate font-medium",
+                        app.isCurrentApp ? "text-primary font-semibold" : "text-foreground"
+                      )}
+                    >
+                      {app.name}
                     </span>
-                    Active
-                  </span>
+                    <span className="text-[10px] text-muted-foreground truncate">
+                      {categoryDesc}
+                    </span>
+                  </div>
+                </div>
+
+                {app.isCurrentApp ? (
+                  <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
+                      Active
+                    </span>
+                    <Check className="h-4 w-4 text-primary" />
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 shrink-0 ml-2 text-muted-foreground">
+                    <span className="text-[10px] font-medium opacity-70">Portal</span>
+                    <ArrowUpRight className="h-3.5 w-3.5 opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </div>
                 )}
-
-                {/* External Portal Badge */}
-                {app.isExternal && (
-                  <span className="absolute top-2.5 right-2.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-medium text-muted-foreground group-hover:text-foreground bg-muted/60 dark:bg-white/5 border border-border/40 transition-colors">
-                    <span>Portal</span>
-                    <ArrowUpRight className="w-3 h-3 opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </span>
-                )}
-
-                {/* Luminous App Icon Squircle */}
-                <div
-                  className={cn(
-                    "w-16 h-16 rounded-[20px] p-2.5 flex items-center justify-center transition-all duration-300 group-hover:scale-105 shrink-0",
-                    isSms
-                      ? "bg-gradient-to-br from-[#0c2e59] via-[#071d38] to-[#041122] shadow-[0_10px_25px_-5px_rgba(4,100,140,0.5),inset_0_1px_1px_rgba(255,255,255,0.3)] border border-sky-500/35 group-hover:shadow-[0_14px_30px_-4px_rgba(4,100,140,0.7)] group-hover:border-sky-400/60"
-                      : "bg-gradient-to-br from-[#241752] via-[#170e38] to-[#0d0722] shadow-[0_10px_25px_-5px_rgba(139,92,246,0.45),inset_0_1px_1px_rgba(255,255,255,0.25)] border border-purple-500/35 group-hover:shadow-[0_14px_30px_-4px_rgba(139,92,246,0.65)] group-hover:border-purple-400/60"
-                  )}
-                >
-                  <Image
-                    src={app.logoSrc}
-                    alt={app.logoAlt}
-                    width={52}
-                    height={52}
-                    className="w-full h-full object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] select-none"
-                    draggable={false}
-                    priority
-                  />
-                </div>
-
-                {/* App Name */}
-                <div className="mt-3 text-xs sm:text-[13px] font-bold text-foreground group-hover:text-primary transition-colors tracking-tight text-center leading-snug">
-                  {app.name}
-                </div>
-
-                {/* App Category Description */}
-                <div className="mt-0.5 text-[11px] text-muted-foreground/80 font-medium text-center leading-snug">
-                  {isSms ? "A2P & OTP Messaging" : "GSM Interactive Menus"}
-                </div>
               </>
             );
 
-            const tileClassName = cn(
-              "relative flex flex-col items-center justify-center p-3.5 pt-6 pb-5 rounded-2xl text-center transition-all duration-200 cursor-pointer group active:scale-95 border",
-              app.isCurrentApp
-                ? "bg-gradient-to-b from-primary/[0.08] via-background/60 to-background/30 dark:from-primary/[0.06] dark:via-white/[0.02] dark:to-transparent border-primary/30 shadow-[0_4px_20px_-6px_rgba(251,202,7,0.12)] hover:border-primary/50"
-                : "bg-muted/20 dark:bg-white/[0.02] hover:bg-muted/50 dark:hover:bg-white/[0.05] border-border/50 dark:border-white/5 hover:border-border hover:shadow-md"
-            );
+            const itemClassName =
+              "flex items-center justify-between rounded-lg px-2.5 py-2 text-xs cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground group";
 
             if (app.isCurrentApp && isLocal) {
               return (
-                <Link
+                <DropdownMenuItem
                   key={app.id}
-                  href={href}
-                  onClick={() => setOpen(false)}
-                  className={tileClassName}
-                  title={`${app.name} (${app.domain})`}
+                  asChild
+                  className={itemClassName}
                 >
-                  {tileContent}
-                </Link>
+                  <Link
+                    href={href}
+                    onClick={() => setOpen(false)}
+                    title={`${app.name} (${app.domain})`}
+                  >
+                    {itemContent}
+                  </Link>
+                </DropdownMenuItem>
               );
             }
 
             return (
-              <a
+              <DropdownMenuItem
                 key={app.id}
-                href={href}
-                target={app.isExternal ? "_blank" : undefined}
-                rel={app.isExternal ? "noopener noreferrer" : undefined}
-                onClick={() => setOpen(false)}
-                className={tileClassName}
-                title={`${app.name} (${app.domain})`}
+                asChild
+                className={itemClassName}
               >
-                {tileContent}
-              </a>
+                <a
+                  href={href}
+                  target={app.isExternal ? "_blank" : undefined}
+                  rel={app.isExternal ? "noopener noreferrer" : undefined}
+                  onClick={() => setOpen(false)}
+                  title={`${app.name} (${app.domain})`}
+                >
+                  {itemContent}
+                </a>
+              </DropdownMenuItem>
             );
           })}
         </div>
 
-        {/* Enterprise Corporate Suite Footer */}
-        <div className="p-2 bg-muted/30 border-t border-border/40">
+        {/* Footer */}
+        <DropdownMenuSeparator className="-mx-1 my-1 h-px bg-border/50" />
+        <DropdownMenuItem
+          asChild
+          className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground group"
+        >
           <a
             href="https://www.rangeview.com"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setOpen(false)}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-2xl text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-background/80 dark:hover:bg-white/5 border border-transparent hover:border-border/50 transition-all duration-200 group"
+            className="w-full flex items-center justify-between text-muted-foreground hover:text-foreground"
           >
             <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                <ExternalLink className="w-3 h-3" />
-              </div>
-              <span className="font-semibold text-foreground/90">More from Range View</span>
+              <ExternalLink className="h-3.5 w-3.5 text-primary group-hover:scale-110 transition-transform" />
+              <span className="font-semibold text-foreground/90 text-xs">More from Range View</span>
             </div>
-            <span className="text-[11px] font-mono text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
+            <span className="text-[10px] font-mono text-muted-foreground flex items-center gap-0.5 group-hover:text-primary transition-colors">
               rangeview.com
-              <ArrowUpRight className="w-3 h-3 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <ArrowUpRight className="h-3 w-3 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </span>
           </a>
-        </div>
-      </PopoverContent>
-    </Popover>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

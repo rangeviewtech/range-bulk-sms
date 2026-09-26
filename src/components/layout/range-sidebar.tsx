@@ -33,6 +33,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
+import { LanguageToggle } from "@/components/navigation/language-toggle";
 import { NavWalletBadge } from "@/components/navigation/nav-wallet-badge";
 import { RangeAppsDropdown } from "@/components/navigation/range-apps-dropdown";
 import { computeFlyoutPosition } from "@/lib/flyout-position";
@@ -1380,6 +1381,8 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
             </button>
 
             <ThemeToggle />
+
+            <LanguageToggle />
 
             <RangeAppsDropdown />
           </div>
