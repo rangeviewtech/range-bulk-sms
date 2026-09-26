@@ -179,3 +179,196 @@ export async function DELETE(req: Request) {
     );
   }
 }
+
+export async function PATCH(req: Request) {
+  try {
+    const session = await requirePermission('sms.schedule');
+    const body = await req.json().catch(() => ({}));
+    const { id, action, message, scheduledAt, senderId, status: targetStatusParam } = body;
+
+    if (!id || typeof id !== 'string') {
+      return NextResponse.json(
+        { success: false, error: 'Scheduled message ID is required' },
+        { status: 400 }
+      );
+    }
+
+    const scheduled = await prisma.scheduledMessage.findFirst({
+      where: { id, userId: session.userId },
+      include: {
+        senderId: {
+          select: { id: true, senderId: true },
+        },
+      },
+    });
+
+    if (!scheduled) {
+      return NextResponse.json(
+        { success: false, error: 'Scheduled message not found or unauthorized' },
+        { status: 404 }
+      );
+    }
+
+    if (scheduled.status === 'COMPLETED' || scheduled.status === 'CANCELLED') {
+      return NextResponse.json(
+        { success: false, error: `Cannot modify a message that is already ${scheduled.status.toLowerCase()}` },
+        { status: 400 }
+      );
+    }
+
+    const now = Date.now();
+    const scheduledTimeMs = new Date(scheduled.scheduledAt).getTime();
+    const msUntilScheduled = scheduledTimeMs - now;
+
+    // Action 1: 'pause_for_edit'
+    // While the user is editing, safely pause the message to prevent accidental dispatch
+    if (action === 'pause_for_edit') {
+      // 10-second rule: editing only allowed when at least 10s before scheduled time (if status is SCHEDULED)
+      if (scheduled.status === 'SCHEDULED' && msUntilScheduled < 10_000) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Cannot edit message within 10 seconds of scheduled transmission. The dispatch window has already started.',
+            code: 'TRANSMISSION_WINDOW_LOCKED',
+          },
+          { status: 400 }
+        );
+      }
+
+      // If scheduled, set to PAUSED so background dispatchers won't transmit
+      const updated = scheduled.status === 'SCHEDULED'
+        ? await prisma.scheduledMessage.update({
+            where: { id },
+            data: { status: 'PAUSED' },
+            include: { senderId: { select: { id: true, senderId: true } } },
+          })
+        : scheduled;
+
+      return NextResponse.json({
+        success: true,
+        message: 'Message paused for editing to prevent accidental transmission.',
+        data: updated,
+      });
+    }
+
+    // Action 2: 'toggle_status' (Manual Pause or Resume)
+    if (action === 'toggle_status') {
+      const nextStatus = scheduled.status === 'SCHEDULED' ? 'PAUSED' : 'SCHEDULED';
+      if (nextStatus === 'SCHEDULED') {
+        // If resuming, must verify scheduled time hasn't passed and is at least 10s in the future
+        if (msUntilScheduled < 10_000) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: 'Cannot resume message whose scheduled time has passed or is within 10 seconds. Please edit and update the scheduled time first.',
+              code: 'SCHEDULED_TIME_PASSED',
+            },
+            { status: 400 }
+          );
+        }
+      }
+
+      const updated = await prisma.scheduledMessage.update({
+        where: { id },
+        data: { status: nextStatus },
+        include: { senderId: { select: { id: true, senderId: true } } },
+      });
+
+      return NextResponse.json({
+        success: true,
+        status: nextStatus,
+        data: updated,
+      });
+    }
+
+    // Action 3: Edit message and/or reschedule time
+    // If original status was SCHEDULED, enforce 10s cutoff rule
+    if (scheduled.status === 'SCHEDULED' && msUntilScheduled < 10_000) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Cannot edit message within 10 seconds of scheduled transmission.',
+          code: 'TRANSMISSION_WINDOW_LOCKED',
+        },
+        { status: 400 }
+      );
+    }
+
+    const targetScheduledAt = scheduledAt ? new Date(scheduledAt) : scheduled.scheduledAt;
+    const targetScheduledMs = targetScheduledAt.getTime();
+
+    if (isNaN(targetScheduledMs)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid scheduled date and time format' },
+        { status: 400 }
+      );
+    }
+
+    const targetStatus = targetStatusParam || 'SCHEDULED';
+
+    // If saving with status SCHEDULED, enforce that targetScheduledAt must be at least 10 seconds in the future
+    if (targetStatus === 'SCHEDULED') {
+      if (targetScheduledMs <= now + 10_000) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'The scheduled time has passed or is within 10 seconds. You are required to update the time and date to a future time before scheduling.',
+            code: 'TIME_UPDATE_REQUIRED',
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    let validSenderIdId = scheduled.senderIdId;
+    if (senderId && senderId !== scheduled.senderIdId) {
+      const validSender = await prisma.senderId.findFirst({
+        where: {
+          OR: [{ id: senderId }, { senderId }],
+          userId: session.userId,
+          status: 'APPROVED',
+        },
+      });
+      if (validSender) {
+        validSenderIdId = validSender.id;
+      }
+    }
+
+    const updatedMessage = typeof message === 'string' && message.trim() ? message.trim() : scheduled.message;
+    const charCount = updatedMessage.length;
+    const isUnicode = /[^\x00-\x7F]/.test(updatedMessage);
+    const maxPerSegment = isUnicode ? 70 : 160;
+    const segmentCount = charCount > 0 ? Math.ceil(charCount / maxPerSegment) : 1;
+    const encoding = isUnicode ? 'UCS-2' : 'GSM-7';
+
+    const updated = await prisma.scheduledMessage.update({
+      where: { id },
+      data: {
+        message: updatedMessage,
+        scheduledAt: targetScheduledAt,
+        status: targetStatus,
+        senderIdId: validSenderIdId,
+        encoding,
+        segmentCount,
+      },
+      include: {
+        senderId: {
+          select: { id: true, senderId: true },
+        },
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: targetStatus === 'SCHEDULED'
+        ? 'Scheduled message updated and queued for delivery.'
+        : 'Scheduled message updated and kept paused.',
+      data: updated,
+    });
+  } catch (error) {
+    const status = error instanceof AppError ? error.statusCode : 500;
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
+    return NextResponse.json({ success: false, error: message }, { status });
+  }
+}
+

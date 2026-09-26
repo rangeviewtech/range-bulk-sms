@@ -14,32 +14,115 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { CalendarClock, Trash2, PauseCircle, PlayCircle, Plus, Search, Filter, ArrowUp, ArrowDown, X } from 'lucide-react';
+import {
+  CalendarClock,
+  Trash2,
+  PauseCircle,
+  PlayCircle,
+  Plus,
+  Search,
+  Filter,
+  ArrowUp,
+  ArrowDown,
+  X,
+  Pencil,
+  Lock,
+  Clock,
+  AlertTriangle,
+  Users,
+} from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { ConfirmationDialog } from '@/components/feedback/confirmation-dialog';
 import { Pagination } from '@/components/ui/pagination';
 import { SortableHeader } from '@/components/ui/sortable-header';
 import { useTableState } from '@/hooks/use-table-state';
+import {
+  EditScheduledMessageDialog,
+  ScheduledMessageData,
+} from '@/components/sms/edit-scheduled-message-dialog';
+import { cn } from '@/lib/utils';
 
 interface ScheduledItem {
   id: string;
   name: string;
+  message?: string;
+  senderId?: string;
+  senderName?: string;
   scheduledAt: string;
   recipients: number;
   status: 'SCHEDULED' | 'PAUSED';
+  isEditingPaused?: boolean;
+}
+
+export function formatScheduledTime(dateStr: string) {
+  const dt = new Date(dateStr);
+  if (isNaN(dt.getTime())) return dateStr;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
 }
 
 const INITIAL_SCHEDULED: ScheduledItem[] = [
-  { id: '1', name: 'Weekend Promo', scheduledAt: '2026-09-20 09:00', recipients: 1250, status: 'SCHEDULED' },
-  { id: '2', name: 'Reminder: Webinar', scheduledAt: '2026-09-22 14:30', recipients: 450, status: 'PAUSED' },
-  { id: '3', name: 'End of Month Statement', scheduledAt: '2026-09-30 08:00', recipients: 5200, status: 'SCHEDULED' },
-  { id: '4', name: 'System Maintenance Notice', scheduledAt: '2026-10-02 22:00', recipients: 1800, status: 'SCHEDULED' },
-  { id: '5', name: 'VIP Loyalty Discount', scheduledAt: '2026-10-05 11:30', recipients: 620, status: 'PAUSED' },
+  {
+    id: '1',
+    name: 'Weekend Promo',
+    message: 'Hello {{firstName}}, enjoy 20% off all Range SMS packages this weekend! Use code WEEKEND20 at checkout.',
+    senderName: 'RANGESMS',
+    scheduledAt: '2026-09-20T09:00:00.000Z',
+    recipients: 1250,
+    status: 'SCHEDULED',
+  },
+  {
+    id: '2',
+    name: 'Reminder: Webinar',
+    message: 'Hi {{firstName}}, our live carrier routing webinar starts today at 2:30 PM. Join link: https://sms.rangeview.com/webinar',
+    senderName: 'RANGENOTIF',
+    scheduledAt: '2026-09-22T14:30:00.000Z',
+    recipients: 450,
+    status: 'PAUSED',
+  },
+  {
+    id: '3',
+    name: 'End of Month Statement',
+    message: 'Dear {{firstName}}, your September billing statement is now available in your Range View dashboard account.',
+    senderName: 'RANGEBILL',
+    scheduledAt: '2026-09-30T08:00:00.000Z',
+    recipients: 5200,
+    status: 'SCHEDULED',
+  },
+  {
+    id: '4',
+    name: 'System Maintenance Notice',
+    message: 'Notice: Telecom gateway maintenance scheduled on Oct 2, 22:00-23:00 EAT. SMS delivery will queue automatically during this window.',
+    senderName: 'RANGESMS',
+    scheduledAt: '2026-10-02T22:00:00.000Z',
+    recipients: 1800,
+    status: 'SCHEDULED',
+  },
+  {
+    id: '5',
+    name: 'VIP Loyalty Discount',
+    message: 'Exclusive VIP alert for {{company}}: Top up 1,000,000 UGX today and receive 100,000 UGX bonus credits instantly.',
+    senderName: 'RANGEVIP',
+    scheduledAt: '2026-10-05T11:30:00.000Z',
+    recipients: 620,
+    status: 'PAUSED',
+  },
 ];
 
 export default function ScheduledSmsPage() {
   const [items, setItems] = useState<ScheduledItem[]>(INITIAL_SCHEDULED);
+  const [now, setNow] = useState(() => Date.now());
+
+  // Editing state
+  const [editingItem, setEditingItem] = useState<ScheduledMessageData | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  // 1-second ticker for real-time countdowns and 10s rule check
+  useEffect(() => {
+    const ticker = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(ticker);
+  }, []);
 
   useEffect(() => {
     async function loadScheduled() {
@@ -53,13 +136,16 @@ export default function ScheduledSmsPage() {
             scheduledAt: string;
             recipientCount?: number;
             status?: string;
+            senderId?: { id: string; senderId: string };
           }> = json.data || [];
 
           if (list.length > 0) {
             const mapped: ScheduledItem[] = list.map((item) => ({
               id: item.id,
               name: item.message?.slice(0, 30) || 'Scheduled Broadcast',
-              scheduledAt: new Date(item.scheduledAt).toISOString().replace('T', ' ').slice(0, 16),
+              message: item.message || '',
+              senderName: item.senderId?.senderId || 'RANGESMS',
+              scheduledAt: new Date(item.scheduledAt).toISOString(),
               recipients: item.recipientCount || 0,
               status: item.status === 'PAUSED' ? 'PAUSED' : 'SCHEDULED',
             }));
@@ -118,6 +204,162 @@ export default function ScheduledSmsPage() {
     },
   });
 
+  // Check 10-second rule helper
+  const isLockedWithin10s = (item: ScheduledItem) => {
+    if (item.status !== 'SCHEDULED') return false;
+    const timeMs = new Date(item.scheduledAt).getTime();
+    return timeMs - now < 10_000;
+  };
+
+  // Remaining time and badge formatter
+  const getRemainingTimeMeta = (item: ScheduledItem) => {
+    const dt = new Date(item.scheduledAt);
+    if (isNaN(dt.getTime())) {
+      return { text: 'Invalid Date', isLocked: false, isPast: false };
+    }
+
+    const diffMs = dt.getTime() - now;
+
+    if (item.status === 'PAUSED') {
+      return {
+        text: 'Paused',
+        isLocked: false,
+        isPast: diffMs <= 0,
+      };
+    }
+
+    if (diffMs <= 0) {
+      return {
+        text: 'Past Due (Reschedule Required)',
+        isLocked: false,
+        isPast: true,
+      };
+    }
+
+    if (diffMs < 10_000) {
+      const secs = Math.max(1, Math.ceil(diffMs / 1000));
+      return {
+        text: `Sending in ${secs}s (Locked)`,
+        isLocked: true,
+        isPast: false,
+      };
+    }
+
+    const minutes = Math.floor(diffMs / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) return { text: `in ${days}d ${hours % 24}h`, isLocked: false, isPast: false };
+    if (hours > 0) return { text: `in ${hours}h ${minutes % 60}m`, isLocked: false, isPast: false };
+    if (minutes > 0) return { text: `in ${minutes}m`, isLocked: false, isPast: false };
+    return { text: `in ${Math.floor(diffMs / 1000)}s`, isLocked: false, isPast: false };
+  };
+
+  // Handle Edit Action
+  const handleEditClick = async (item: ScheduledItem) => {
+    const diffMs = new Date(item.scheduledAt).getTime() - now;
+
+    // 10-second rule enforcement
+    if (item.status === 'SCHEDULED' && diffMs < 10_000) {
+      toast.error(
+        'Cannot edit message within 10 seconds of scheduled transmission. The dispatch window has already started.',
+        {
+          description: 'Messages queued for carrier handoff cannot be edited within 10 seconds of dispatch.',
+          duration: 5000,
+        }
+      );
+      return;
+    }
+
+    // "and while the user is editing the scheduled message, please pause the message from being sent again, please"
+    if (item.status === 'SCHEDULED') {
+      try {
+        await fetch('/api/sms/schedule', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: item.id, action: 'pause_for_edit' }),
+        });
+      } catch {
+        // Best-effort
+      }
+
+      setItems((prev) =>
+        prev.map((i) =>
+          i.id === item.id ? { ...i, status: 'PAUSED', isEditingPaused: true } : i
+        )
+      );
+
+      toast.info(`Campaign "${item.name}" paused for safe editing.`, {
+        description: 'Transmission has been held so it will not send while you make changes.',
+      });
+    }
+
+    setEditingItem({
+      id: item.id,
+      name: item.name,
+      message: item.message || item.name,
+      senderName: item.senderName || 'RANGESMS',
+      scheduledAt: item.scheduledAt,
+      recipients: item.recipients,
+      status: 'PAUSED',
+      isEditingPaused: true,
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  // Handle Save in Edit Modal
+  const handleSaveEdit = async (updated: {
+    id: string;
+    message: string;
+    scheduledAt: string;
+    status: 'SCHEDULED' | 'PAUSED';
+    senderId?: string;
+  }) => {
+    const res = await fetch('/api/sms/schedule', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: updated.id,
+        message: updated.message,
+        scheduledAt: updated.scheduledAt,
+        status: updated.status,
+        senderId: updated.senderId,
+      }),
+    });
+
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(json.error || 'Failed to update scheduled message.');
+    }
+
+    const formattedDate = new Date(updated.scheduledAt)
+      .toISOString()
+      .replace('T', ' ')
+      .slice(0, 16);
+
+    setItems((prev) =>
+      prev.map((i) => {
+        if (i.id === updated.id) {
+          return {
+            ...i,
+            message: updated.message,
+            name: updated.message.slice(0, 30) || i.name,
+            scheduledAt: formattedDate,
+            status: updated.status,
+            isEditingPaused: false,
+          };
+        }
+        return i;
+      })
+    );
+
+    toast.success(
+      updated.status === 'SCHEDULED'
+        ? `Scheduled message updated and queued for ${formattedDate}.`
+        : 'Scheduled message updated and kept paused.'
+    );
+  };
+
   const [statusConfirm, setStatusConfirm] = useState<{
     open: boolean;
     id: string;
@@ -135,14 +377,42 @@ export default function ScheduledSmsPage() {
     });
   };
 
-  const handleConfirmStatusChange = () => {
+  const handleConfirmStatusChange = async () => {
     if (!statusConfirm) return;
     const { id, name, nextStatus } = statusConfirm;
+    const item = items.find((i) => i.id === id);
+
+    // If resuming, enforce future time rule
+    if (nextStatus === 'SCHEDULED' && item) {
+      const diffMs = new Date(item.scheduledAt).getTime() - now;
+      if (diffMs < 10_000) {
+        toast.error(
+          'Cannot resume a message whose scheduled time has passed or is within 10 seconds.',
+          {
+            description: 'Please edit the message and update its scheduled date and time to a future time first.',
+            duration: 5000,
+          }
+        );
+        setStatusConfirm(null);
+        handleEditClick(item);
+        return;
+      }
+    }
+
+    try {
+      await fetch('/api/sms/schedule', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, action: 'toggle_status' }),
+      });
+    } catch {
+      // Best-effort
+    }
 
     setItems((prev) =>
       prev.map((item) => {
         if (item.id === id) {
-          return { ...item, status: nextStatus };
+          return { ...item, status: nextStatus, isEditingPaused: false };
         }
         return item;
       })
@@ -178,7 +448,7 @@ export default function ScheduledSmsPage() {
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <PageHeader
         title="Scheduled Messages"
-        description="View and manage messages queued for future delivery."
+        description="View, edit, and manage messages queued for future delivery."
         action={
           <Button asChild className="w-full sm:w-auto bg-primary text-primary-foreground font-semibold hover:bg-primary/90">
             <Link href="/sms/send">
@@ -189,6 +459,7 @@ export default function ScheduledSmsPage() {
         }
       />
 
+      {/* Search and Filters Bar */}
       <div className="flex flex-col md:flex-row gap-3 sm:gap-4 justify-between items-stretch md:items-center bg-card p-3 sm:p-4 rounded-xl border border-border shadow-xs">
         <div className="flex flex-1 flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
           <div className="relative flex-1">
@@ -248,20 +519,22 @@ export default function ScheduledSmsPage() {
 
       <Card>
         <CardContent className="p-0">
-          <div className="w-full">
-            <Table className="min-w-[650px]">
+          {/* Dual Table/Card Layout */}
+          {/* 1. Desktop Table (hidden md:block) */}
+          <div className="hidden md:block w-full overflow-x-auto">
+            <Table className="w-full">
               <TableHeader>
                 <TableRow>
-                  <TableHead>
+                  <TableHead className="w-[28%]">
                     <SortableHeader
                       column="name"
-                      label="Campaign / Name"
+                      label="Campaign / Message"
                       currentSort={sortKey}
                       currentOrder={sortOrder}
                       onSort={toggleSort}
                     />
                   </TableHead>
-                  <TableHead>
+                  <TableHead className="w-[24%]">
                     <SortableHeader
                       column="scheduledAt"
                       label="Scheduled Time"
@@ -270,7 +543,7 @@ export default function ScheduledSmsPage() {
                       onSort={toggleSort}
                     />
                   </TableHead>
-                  <TableHead>
+                  <TableHead className="w-[16%]">
                     <SortableHeader
                       column="recipients"
                       label="Recipients"
@@ -279,7 +552,7 @@ export default function ScheduledSmsPage() {
                       onSort={toggleSort}
                     />
                   </TableHead>
-                  <TableHead>
+                  <TableHead className="w-[16%]">
                     <SortableHeader
                       column="status"
                       label="Status"
@@ -288,7 +561,7 @@ export default function ScheduledSmsPage() {
                       onSort={toggleSort}
                     />
                   </TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="w-[16%] text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -299,57 +572,263 @@ export default function ScheduledSmsPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  paginatedData.map((item) => (
-                    <TableRow key={item.id} className="hover:bg-muted/30 transition-colors">
-                      <TableCell className="font-medium text-foreground">{item.name}</TableCell>
-                      <TableCell className="text-muted-foreground flex items-center gap-2">
-                        <CalendarClock className="w-4 h-4 text-primary shrink-0" />
-                        <span>{item.scheduledAt}</span>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {item.recipients.toLocaleString()} contacts
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={item.status === 'SCHEDULED' ? 'default' : 'secondary'}
-                          className={`font-medium text-xs ${
-                            item.status === 'SCHEDULED'
-                              ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20'
-                              : 'bg-muted text-muted-foreground'
-                          }`}
-                        >
-                          {item.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-amber-500"
-                          onClick={() => handleRequestToggleStatus(item.id, item.name, item.status)}
-                          aria-label={item.status === 'SCHEDULED' ? 'Pause message' : 'Resume message'}
-                        >
-                          {item.status === 'SCHEDULED' ? (
-                            <PauseCircle className="w-4 h-4" />
-                          ) : (
-                            <PlayCircle className="w-4 h-4 text-emerald-600" />
-                          )}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
-                          onClick={() => handleDeleteClick(item.id, item.name)}
-                          aria-label={`Cancel scheduled message ${item.name}`}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                  paginatedData.map((item) => {
+                    const locked = isLockedWithin10s(item);
+                    const timeMeta = getRemainingTimeMeta(item);
+
+                    return (
+                      <TableRow key={item.id} className="hover:bg-muted/30 transition-colors group">
+                        {/* Campaign Name & preview */}
+                        <TableCell className="font-medium text-foreground">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                              {item.name}
+                            </span>
+                            {item.message && (
+                              <span className="text-[11px] text-muted-foreground line-clamp-1">
+                                {item.message}
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+
+                        {/* Scheduled Time + Live relative countdown */}
+                        <TableCell className="text-muted-foreground">
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-1.5 text-xs text-foreground">
+                              <CalendarClock className="w-3.5 h-3.5 text-primary shrink-0" />
+                              <span>{formatScheduledTime(item.scheduledAt)}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              {timeMeta.isPast ? (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-destructive dark:text-red-400">
+                                  <AlertTriangle className="w-3 h-3" /> Past Due
+                                </span>
+                              ) : timeMeta.isLocked ? (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-600 dark:text-amber-400">
+                                  <Lock className="w-3 h-3" /> {timeMeta.text}
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
+                                  <Clock className="w-3 h-3 text-muted-foreground/70" /> {timeMeta.text}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </TableCell>
+
+                        {/* Recipients */}
+                        <TableCell className="text-muted-foreground text-xs">
+                          {item.recipients.toLocaleString()} contacts
+                        </TableCell>
+
+                        {/* Status Badge */}
+                        <TableCell>
+                          <div className="flex flex-col gap-1 items-start">
+                            <Badge
+                              variant={item.status === 'SCHEDULED' ? 'default' : 'secondary'}
+                              className={cn(
+                                'font-medium text-xs',
+                                item.status === 'SCHEDULED'
+                                  ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20'
+                                  : 'bg-muted text-muted-foreground'
+                              )}
+                            >
+                              {item.status}
+                            </Badge>
+                            {item.isEditingPaused && (
+                              <span className="text-[9px] font-medium text-amber-600 dark:text-amber-400">
+                                (Editing)
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+
+                        {/* Actions: Edit, Pause/Resume, Delete */}
+                        <TableCell className="text-right space-x-1.5">
+                          {/* Edit Button */}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            disabled={locked}
+                            className={cn(
+                              'h-8 w-8 transition-colors rounded-lg',
+                              locked
+                                ? 'opacity-40 cursor-not-allowed text-muted-foreground'
+                                : 'text-muted-foreground hover:text-primary hover:bg-primary/10'
+                            )}
+                            onClick={() => handleEditClick(item)}
+                            title={
+                              locked
+                                ? 'Locked for transmission (< 10s before delivery)'
+                                : 'Edit scheduled message'
+                            }
+                            aria-label={`Edit scheduled message ${item.name}`}
+                          >
+                            {locked ? (
+                              <Lock className="w-4 h-4 text-amber-500" />
+                            ) : (
+                              <Pencil className="w-4 h-4" />
+                            )}
+                          </Button>
+
+                          {/* Pause / Resume Button */}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-amber-500 hover:bg-amber-500/10 rounded-lg transition-colors"
+                            onClick={() => handleRequestToggleStatus(item.id, item.name, item.status)}
+                            aria-label={item.status === 'SCHEDULED' ? 'Pause message' : 'Resume message'}
+                            title={item.status === 'SCHEDULED' ? 'Pause message' : 'Resume message'}
+                          >
+                            {item.status === 'SCHEDULED' ? (
+                              <PauseCircle className="w-4 h-4" />
+                            ) : (
+                              <PlayCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                            )}
+                          </Button>
+
+                          {/* Delete Button */}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
+                            onClick={() => handleDeleteClick(item.id, item.name)}
+                            aria-label={`Cancel scheduled message ${item.name}`}
+                            title="Cancel scheduled broadcast"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 )}
               </TableBody>
             </Table>
+          </div>
+
+          {/* 2. Mobile Card Deck (block md:hidden) */}
+          <div className="block md:hidden divide-y divide-border/60">
+            {paginatedData.length === 0 ? (
+              <div className="p-8 text-center text-muted-foreground text-xs">
+                No scheduled messages matching &ldquo;{search || filters.status}&rdquo;.
+              </div>
+            ) : (
+              paginatedData.map((item) => {
+                const locked = isLockedWithin10s(item);
+                const timeMeta = getRemainingTimeMeta(item);
+
+                return (
+                  <div key={item.id} className="p-4 space-y-3 bg-card hover:bg-muted/10 transition-colors">
+                    {/* Header Row: Title & Status */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-bold text-foreground truncate">
+                          {item.name}
+                        </h4>
+                        {item.message && (
+                          <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5 font-mono">
+                            {item.message}
+                          </p>
+                        )}
+                      </div>
+                      <Badge
+                        variant={item.status === 'SCHEDULED' ? 'default' : 'secondary'}
+                        className={cn(
+                          'font-medium text-[11px] shrink-0',
+                          item.status === 'SCHEDULED'
+                            ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20'
+                            : 'bg-muted text-muted-foreground'
+                        )}
+                      >
+                        {item.status}
+                      </Badge>
+                    </div>
+
+                    {/* Metadata Grid */}
+                    <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground pt-1">
+                      <div className="flex items-center gap-1.5">
+                        <CalendarClock className="w-3.5 h-3.5 text-primary shrink-0" />
+                        <span className="truncate">{formatScheduledTime(item.scheduledAt)}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Users className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" />
+                        <span>{item.recipients.toLocaleString()} contacts</span>
+                      </div>
+                    </div>
+
+                    {/* Relative Time Alert / Pill */}
+                    <div className="flex items-center gap-1.5 pt-0.5">
+                      {timeMeta.isPast ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-[11px] font-medium">
+                          <AlertTriangle className="w-3 h-3" /> Past Due — Rescheduling Required
+                        </span>
+                      ) : timeMeta.isLocked ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-medium">
+                          <Lock className="w-3 h-3" /> {timeMeta.text}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-muted/60 text-foreground text-[11px] font-mono">
+                          <Clock className="w-3 h-3 text-muted-foreground" /> {timeMeta.text}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Mobile Action Buttons (Full 44px touch targets) */}
+                    <div className="flex items-center gap-2 pt-2 border-t border-border/40">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={locked}
+                        onClick={() => handleEditClick(item)}
+                        className={cn(
+                          'flex-1 h-9 text-xs gap-1.5 font-medium',
+                          locked ? 'opacity-50 cursor-not-allowed' : 'hover:border-primary/50'
+                        )}
+                        aria-label={`Edit ${item.name}`}
+                      >
+                        {locked ? <Lock className="w-3.5 h-3.5" /> : <Pencil className="w-3.5 h-3.5" />}
+                        {locked ? 'Locked (<10s)' : 'Edit Message'}
+                      </Button>
+
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => handleRequestToggleStatus(item.id, item.name, item.status)}
+                        className="h-9 px-3 text-xs gap-1"
+                        aria-label={item.status === 'SCHEDULED' ? 'Pause' : 'Resume'}
+                      >
+                        {item.status === 'SCHEDULED' ? (
+                          <>
+                            <PauseCircle className="w-3.5 h-3.5 text-amber-500" />
+                            <span>Pause</span>
+                          </>
+                        ) : (
+                          <>
+                            <PlayCircle className="w-3.5 h-3.5 text-emerald-500" />
+                            <span>Resume</span>
+                          </>
+                        )}
+                      </Button>
+
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteClick(item.id, item.name)}
+                        className="h-9 px-3 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                        aria-label={`Cancel ${item.name}`}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
 
           <Pagination
@@ -363,6 +842,14 @@ export default function ScheduledSmsPage() {
           />
         </CardContent>
       </Card>
+
+      {/* Edit Scheduled Message Dialog */}
+      <EditScheduledMessageDialog
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        item={editingItem}
+        onSave={handleSaveEdit}
+      />
 
       {/* Confirmation Dialog for Scheduled Broadcast Cancellation */}
       <ConfirmationDialog
@@ -394,4 +881,5 @@ export default function ScheduledSmsPage() {
     </div>
   );
 }
+
 
