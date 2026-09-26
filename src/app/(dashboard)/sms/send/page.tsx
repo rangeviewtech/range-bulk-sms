@@ -2424,66 +2424,66 @@ function SendSmsContent() {
 
       {/* Schedule Dispatch Modal with Quick Presets */}
       <Dialog open={scheduleOpen} onOpenChange={setScheduleOpen}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
-          <DialogHeader className="p-4 sm:p-6 pb-2">
-            <DialogTitle className="text-base sm:text-lg flex items-center gap-2">
-              <Clock className="w-4 h-4 text-primary" />
+        <DialogContent className="w-[calc(100%-2rem)] sm:max-w-2xl md:max-w-3xl p-0 overflow-hidden shadow-2xl">
+          <DialogHeader className="p-4 sm:p-6 pb-3 border-b bg-muted/20">
+            <DialogTitle className="text-base sm:text-lg font-bold flex items-center gap-2">
+              <Clock className="w-5 h-5 text-primary" />
               Schedule Broadcast Dispatch
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
               Pick a future date and time when our automated queue will deliver this broadcast.
             </DialogDescription>
           </DialogHeader>
-          <DialogBody className="p-4 sm:p-6 pt-2 space-y-4">
-            {/* Quick Presets */}
+          <DialogBody className="p-4 sm:p-6 pt-4 space-y-4 max-h-[calc(88dvh-130px)] overflow-y-auto">
+            {/* Quick Presets in 4-column responsive grid */}
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Quick Presets</Label>
-              <div className="grid grid-cols-2 gap-2">
+              <Label className="text-xs font-semibold text-muted-foreground">Quick Presets</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="h-8 text-xs justify-start px-2.5 font-normal"
+                  className="h-8.5 text-xs justify-start px-2.5 font-normal hover:bg-primary/10 hover:border-primary/40 transition-colors"
                   onClick={() => setPresetSchedule(1)}
                 >
-                  <Clock className="w-3 h-3 mr-1.5 text-primary" />
+                  <Clock className="w-3.5 h-3.5 mr-1.5 text-primary" />
                   In 1 Hour
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="h-8 text-xs justify-start px-2.5 font-normal"
+                  className="h-8.5 text-xs justify-start px-2.5 font-normal hover:bg-primary/10 hover:border-primary/40 transition-colors"
                   onClick={() => setPresetSchedule(3)}
                 >
-                  <Clock className="w-3 h-3 mr-1.5 text-primary" />
+                  <Clock className="w-3.5 h-3.5 mr-1.5 text-primary" />
                   In 3 Hours
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="h-8 text-xs justify-start px-2.5 font-normal"
+                  className="h-8.5 text-xs justify-start px-2.5 font-normal hover:bg-primary/10 hover:border-primary/40 transition-colors"
                   onClick={() => setPresetSchedule(undefined, 9)}
                 >
-                  <Clock className="w-3 h-3 mr-1.5 text-primary" />
+                  <Clock className="w-3.5 h-3.5 mr-1.5 text-primary" />
                   Tomorrow 9:00 AM
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="h-8 text-xs justify-start px-2.5 font-normal"
+                  className="h-8.5 text-xs justify-start px-2.5 font-normal hover:bg-primary/10 hover:border-primary/40 transition-colors"
                   onClick={() => setPresetSchedule(undefined, 14)}
                 >
-                  <Clock className="w-3 h-3 mr-1.5 text-primary" />
+                  <Clock className="w-3.5 h-3.5 mr-1.5 text-primary" />
                   Tomorrow 2:00 PM
                 </Button>
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="schedule-time" required>Custom Delivery Date &amp; Time</Label>
+              <Label htmlFor="schedule-time" required className="text-xs font-semibold">Custom Delivery Date &amp; Time</Label>
               <Input
                 id="schedule-time"
                 type="datetime-local"
@@ -2497,7 +2497,7 @@ function SendSmsContent() {
                 }}
                 error={!!scheduleError}
                 aria-describedby={scheduleError ? 'schedule-time-error' : undefined}
-                className="h-10 text-xs sm:text-sm"
+                className="h-10 text-xs sm:text-sm font-mono"
               />
               {scheduleError && <InputError id="schedule-time-error" message={scheduleError} />}
             </div>
@@ -2511,34 +2511,39 @@ function SendSmsContent() {
               timeStr={scheduleDate ? new Date(scheduleDate).toTimeString().slice(0, 5) : '09:00'}
             />
 
-            <div className="p-3 bg-muted/30 rounded-lg border text-xs text-muted-foreground space-y-1">
+            <div className="p-3 bg-muted/30 rounded-xl border text-xs text-muted-foreground space-y-1">
               <div className="flex items-center justify-between font-medium text-foreground">
-                <span>Dispatch Summary</span>
-                <span>{totalRecipients} recipient(s)</span>
+                <span className="font-semibold">Dispatch Summary</span>
+                <span className="font-mono text-primary font-bold">{totalRecipients} recipient(s)</span>
               </div>
               <p className="text-[11px]">
                 Credits are reserved when scheduled and deducted when delivery begins.
               </p>
             </div>
           </DialogBody>
-          <DialogFooter className="p-4 sm:p-6 pt-2 border-t gap-2 flex-col sm:flex-row">
-            <Button variant="outline" onClick={() => setScheduleOpen(false)} className="w-full sm:w-auto h-9">
-              Cancel
-            </Button>
-            <Button
-              onClick={handleConfirmSchedule}
-              disabled={scheduling}
-              className="w-full sm:w-auto h-9 bg-primary text-primary-foreground font-semibold"
-            >
-              {scheduling ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Scheduling...
-                </>
-              ) : (
-                'Confirm Schedule'
-              )}
-            </Button>
+          <DialogFooter className="p-4 sm:p-6 pt-3 border-t gap-2 flex-col sm:flex-row justify-between sm:items-center bg-muted/10">
+            <div className="text-xs text-muted-foreground hidden sm:block">
+              <span className="text-foreground font-semibold">{totalRecipients}</span> recipient(s) queued for scheduled dispatch
+            </div>
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+              <Button variant="outline" onClick={() => setScheduleOpen(false)} className="w-full sm:w-auto h-9">
+                Cancel
+              </Button>
+              <Button
+                onClick={handleConfirmSchedule}
+                disabled={scheduling}
+                className="w-full sm:w-auto h-9 bg-primary text-primary-foreground font-semibold px-4"
+              >
+                {scheduling ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Scheduling...
+                  </>
+                ) : (
+                  'Confirm Schedule'
+                )}
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>

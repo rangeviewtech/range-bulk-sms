@@ -171,7 +171,7 @@ export function RecurrencePicker({
               <Label className="text-[11px] font-medium text-muted-foreground">
                 Repeat On Days
               </Label>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
                 {DAY_NAMES_SHORT.map((name, idx) => {
                   const isSelected = (rule.daysOfWeek || [1]).includes(idx);
                   return (
@@ -180,7 +180,7 @@ export function RecurrencePicker({
                       type="button"
                       onClick={() => toggleDayOfWeek(idx)}
                       className={cn(
-                        "h-7 min-w-9 px-2 rounded-md text-[11px] font-medium transition-all cursor-pointer border",
+                        "h-8 w-full rounded-lg text-xs font-medium transition-all cursor-pointer border flex items-center justify-center",
                         isSelected
                           ? "bg-primary text-primary-foreground border-primary shadow-xs font-semibold"
                           : "bg-background text-muted-foreground border-border hover:bg-accent hover:text-foreground"
