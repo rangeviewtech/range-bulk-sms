@@ -1,145 +1,169 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" role="img" aria-labelledby="rangeUssdTitle">
   <title id="rangeUssdTitle">Range Bulk USSD Platform</title>
   <defs>
-    <filter id="ussd-shadow" x="-10%" y="-10%" width="120%" height="125%" filterUnits="userSpaceOnUse">
-      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#04648C" flood-opacity="0.25" />
-    </filter>
-    <linearGradient id="ussd-screen-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#04648C" />
-      <stop offset="100%" stop-color="#023b54" />
+    <linearGradient id="ussd-phone-body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#057aab" />
+      <stop offset="50%" stop-color="#04648C" />
+      <stop offset="100%" stop-color="#02425d" />
     </linearGradient>
+    <linearGradient id="ussd-screen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#071d2e" />
+      <stop offset="100%" stop-color="#030e18" />
+    </linearGradient>
+    <linearGradient id="ussd-yellow-bubble" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd52c" />
+      <stop offset="60%" stop-color="#FBCA07" />
+      <stop offset="100%" stop-color="#e5b400" />
+    </linearGradient>
+    <filter id="ussd-depth" x="-15%" y="-15%" width="130%" height="135%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000000" flood-opacity="0.3" />
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#04648C" flood-opacity="0.4" />
+    </filter>
   </defs>
 
-  <!-- Base Ambient Glow -->
-  <circle cx="256" cy="256" r="220" fill="#04648C" fill-opacity="0.04" />
-
-  <!-- Lower Shape: Range View Primary Yellow (#FBCA07) Overlapping Session Prompt Bubble with signature 3 dots -->
-  <g transform="translate(0, 20)">
-    <!-- Yellow Session Bubble Body -->
+  <!-- LOWER ELEMENT: Range Yellow (#FBCA07) Session Response Bubble with 3 circular dots -->
+  <g filter="url(#ussd-depth)">
+    <!-- Yellow Speech Bubble Body (matching Range SMS lower bubble curve) -->
     <path
-      d="M 170 230
-         C 170 210, 190 200, 230 200
-         L 410 200
-         C 455 200, 480 225, 480 270
-         L 480 370
-         C 480 415, 455 440, 410 440
-         L 360 440
-         L 395 485
-         C 402 495, 396 502, 384 496
-         L 310 440
-         L 230 440
-         C 185 440, 170 415, 170 370
+      d="M 210 240
+         C 210 215, 230 195, 265 195
+         L 425 195
+         C 465 195, 492 222, 492 262
+         L 492 375
+         C 492 415, 465 442, 425 442
+         L 370 442
+         L 410 488
+         C 416 495, 410 502, 400 496
+         L 325 442
+         L 265 442
+         C 225 442, 210 415, 210 375
          Z"
-      fill="#FBCA07"
+      fill="url(#ussd-yellow-bubble)"
     />
-    <!-- 3 Circular Holes/Dots in Yellow Bubble (Range Deep Teal #04648C) -->
-    <circle cx="280" cy="325" r="24" fill="#04648C" />
-    <circle cx="345" cy="325" r="24" fill="#04648C" />
-    <circle cx="410" cy="325" r="24" fill="#04648C" />
+    <!-- 3 Signature Range Circular Cutouts in Deep Blue -->
+    <circle cx="305" cy="328" r="22" fill="#04648C" />
+    <circle cx="365" cy="328" r="22" fill="#04648C" />
+    <circle cx="425" cy="328" r="22" fill="#04648C" />
   </g>
 
-  <!-- Upper Shape: Range View Deep Blue/Teal (#04648C) GSM Handset & USSD Interactive Session Terminal -->
-  <g filter="url(#ussd-shadow)">
-    <!-- Device Outer Body (Smartphone Silhouette) -->
+  <!-- UPPER ELEMENT: Range Deep Blue (#04648C) Modern GSM Interactive Session Handset -->
+  <g filter="url(#ussd-depth)">
+    <!-- Smartphone Outer Bezel -->
     <rect
-      x="56"
-      y="32"
+      x="36"
+      y="20"
       width="240"
-      height="380"
-      rx="48"
-      ry="48"
-      fill="#04648C"
-    />
-
-    <!-- Device Inner Screen Surface -->
-    <rect
-      x="74"
-      y="64"
-      width="204"
-      height="316"
-      rx="32"
-      ry="32"
-      fill="#062238"
-    />
-
-    <!-- Speaker Ear Bar -->
-    <rect
-      x="146"
-      y="48"
-      width="60"
-      height="6"
-      rx="3"
-      fill="#FFFFFF"
-      fill-opacity="0.5"
-    />
-
-    <!-- Interactive USSD Dialog Card on Screen -->
-    <rect
-      x="88"
-      y="88"
-      width="176"
-      height="230"
-      rx="20"
-      ry="20"
-      fill="#083850"
-      stroke="#04648C"
+      height="390"
+      rx="46"
+      ry="46"
+      fill="url(#ussd-phone-body)"
+      stroke="rgba(255,255,255,0.2)"
       stroke-width="2"
     />
 
-    <!-- USSD Protocol Header Badge: *144# -->
+    <!-- Device Screen Canvas -->
     <rect
-      x="102"
-      y="104"
-      width="148"
-      height="40"
-      rx="10"
-      ry="10"
-      fill="#FBCA07"
+      x="52"
+      y="48"
+      width="208"
+      height="334"
+      rx="34"
+      ry="34"
+      fill="url(#ussd-screen)"
+      stroke="rgba(4,100,140,0.5)"
+      stroke-width="1.5"
     />
-    <!-- * 1 4 4 # Text Iconography -->
+
+    <!-- Speaker Bar -->
+    <rect
+      x="126"
+      y="32"
+      width="60"
+      height="5"
+      rx="2.5"
+      fill="#FFFFFF"
+      fill-opacity="0.4"
+    />
+
+    <!-- Front Camera Dot -->
+    <circle cx="98" cy="34" r="3.5" fill="#022738" />
+    <circle cx="98" cy="34" r="1.5" fill="#00c6ff" fill-opacity="0.6" />
+
+    <!-- USSD Interactive Session Card (The active menu prompt) -->
+    <rect
+      x="64"
+      y="76"
+      width="184"
+      height="235"
+      rx="22"
+      ry="22"
+      fill="#0a2a40"
+      stroke="#0e4b6c"
+      stroke-width="1.5"
+    />
+
+    <!-- USSD Code Banner: *144# -->
+    <rect
+      x="78"
+      y="92"
+      width="156"
+      height="42"
+      rx="12"
+      ry="12"
+      fill="url(#ussd-yellow-bubble)"
+    />
     <text
-      x="176"
-      y="131"
-      font-family="system-ui, -apple-system, sans-serif"
-      font-size="20"
+      x="156"
+      y="120"
+      font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+      font-size="22"
       font-weight="900"
       fill="#04648C"
       text-anchor="middle"
       letter-spacing="2"
     >*144#</text>
 
-    <!-- USSD Interactive Session Menu Lines -->
-    <!-- Menu Option 1 -->
-    <rect x="106" y="160" width="22" height="14" rx="4" fill="#FBCA07" fill-opacity="0.9" />
-    <rect x="134" y="162" width="108" height="10" rx="5" fill="#FFFFFF" fill-opacity="0.85" />
+    <!-- USSD Session Menu Items -->
+    <!-- 1. Balance -->
+    <g transform="translate(80, 150)">
+      <circle cx="10" cy="7" r="7" fill="#FBCA07" />
+      <text x="10" y="11" font-size="10" font-weight="900" fill="#04648C" text-anchor="middle">1</text>
+      <rect x="26" y="2" width="112" height="10" rx="5" fill="#FFFFFF" fill-opacity="0.9" />
+    </g>
 
-    <!-- Menu Option 2 -->
-    <rect x="106" y="186" width="22" height="14" rx="4" fill="#FBCA07" fill-opacity="0.9" />
-    <rect x="134" y="188" width="94" height="10" rx="5" fill="#FFFFFF" fill-opacity="0.85" />
+    <!-- 2. Bundles -->
+    <g transform="translate(80, 178)">
+      <circle cx="10" cy="7" r="7" fill="#FBCA07" />
+      <text x="10" y="11" font-size="10" font-weight="900" fill="#04648C" text-anchor="middle">2</text>
+      <rect x="26" y="2" width="96" height="10" rx="5" fill="#FFFFFF" fill-opacity="0.75" />
+    </g>
 
-    <!-- Menu Option 3 -->
-    <rect x="106" y="212" width="22" height="14" rx="4" fill="#FBCA07" fill-opacity="0.9" />
-    <rect x="134" y="214" width="80" height="10" rx="5" fill="#FFFFFF" fill-opacity="0.85" />
+    <!-- 3. Banking -->
+    <g transform="translate(80, 206)">
+      <circle cx="10" cy="7" r="7" fill="#FBCA07" />
+      <text x="10" y="11" font-size="10" font-weight="900" fill="#04648C" text-anchor="middle">3</text>
+      <rect x="26" y="2" width="78" height="10" rx="5" fill="#FFFFFF" fill-opacity="0.6" />
+    </g>
 
-    <!-- USSD Send / Reply Button on Handset Dialog -->
+    <!-- Interactive Reply Action Button -->
     <rect
-      x="106"
-      y="244"
-      width="140"
-      height="26"
-      rx="8"
+      x="80"
+      y="242"
+      width="152"
+      height="28"
+      rx="9"
       fill="#04648C"
       stroke="#38bdf8"
       stroke-width="1.5"
     />
-    <rect x="126" y="254" width="70" height="6" rx="3" fill="#FFFFFF" fill-opacity="0.9" />
-    <polygon points="230,257 222,252 222,262" fill="#FBCA07" />
+    <rect x="98" y="253" width="70" height="6" rx="3" fill="#FFFFFF" fill-opacity="0.9" />
+    <path d="M 210 256 L 218 256 M 215 252 L 219 256 L 215 260" stroke="#FBCA07" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
 
-    <!-- Handset Bottom Home Indicator -->
+    <!-- Bottom Home Indicator Pill -->
     <rect
-      x="142"
-      y="392"
-      width="68"
+      x="126"
+      y="398"
+      width="60"
       height="5"
       rx="2.5"
       fill="#FFFFFF"
