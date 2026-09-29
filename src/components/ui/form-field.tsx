@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
 
 export interface FormFieldProps {
   id: string;
@@ -31,17 +32,9 @@ export function FormField({
 
   return (
     <div className={cn("grid gap-1.5", className)}>
-      <label htmlFor={id} className="text-sm font-medium text-foreground">
+      <Label htmlFor={id} required={required} error={Boolean(error)}>
         {label}
-        {required ? (
-          <>
-            <span aria-hidden="true" className="ml-1 text-destructive font-bold">
-              *
-            </span>
-            <span className="sr-only"> required</span>
-          </>
-        ) : null}
-      </label>
+      </Label>
 
       {React.cloneElement(children, {
         id: children.props.id || id,
@@ -50,13 +43,13 @@ export function FormField({
       })}
 
       {description ? (
-        <p id={descriptionId} className="text-xs text-muted-foreground">
+        <p id={descriptionId} className="text-[13px] text-muted-foreground">
           {description}
         </p>
       ) : null}
 
       {error ? (
-        <p id={errorId} className="text-xs font-medium text-destructive">
+        <p id={errorId} className="text-[13px] font-medium text-destructive">
           {error}
         </p>
       ) : null}

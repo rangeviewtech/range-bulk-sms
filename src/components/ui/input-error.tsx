@@ -13,7 +13,7 @@ export function InputError({ message, className, id, ...props }: InputErrorProps
       id={id}
       role="alert"
       className={cn(
-        "text-[11.5px] font-medium text-destructive mt-1 leading-tight animate-in fade-in slide-in-from-top-1 duration-150",
+        "text-[13px] font-medium text-destructive mt-1 leading-tight animate-in fade-in slide-in-from-top-1 duration-150",
         className
       )}
       {...props}

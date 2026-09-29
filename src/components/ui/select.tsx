@@ -16,7 +16,16 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-10 w-full items-center justify-between whitespace-nowrap rounded-2xl border border-input/50 bg-muted/20 px-4 py-2 text-sm shadow-none placeholder:text-muted-foreground outline-none hover:border-ring/60 focus:border-ring focus:outline-none focus:ring-0 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 transition-colors cursor-pointer",
+      "flex h-10 w-full items-center justify-between whitespace-nowrap rounded-xl border border-input/60 bg-background px-3 py-2 text-sm shadow-sm outline-none transition-colors cursor-pointer",
+      "placeholder:text-muted-foreground",
+      "hover:border-input",
+      "focus:outline-none focus:ring-0",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/20 focus-visible:border-brand-blue",
+      "dark:focus-visible:ring-brand-yellow/20 dark:focus-visible:border-brand-yellow",
+      "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted/50",
+      "aria-[invalid=true]:border-destructive aria-[invalid=true]:hover:border-destructive aria-[invalid=true]:focus-visible:border-destructive aria-[invalid=true]:focus-visible:ring-destructive/20",
+      "dark:aria-[invalid=true]:focus-visible:border-destructive dark:aria-[invalid=true]:focus-visible:ring-destructive/20",
+      "[&>span]:line-clamp-1",
       className
     )}
     {...props}
