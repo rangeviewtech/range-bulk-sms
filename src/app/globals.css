@@ -47,6 +47,7 @@
   --color-brand-blue: #04648C;
   --color-brand-blue-medium: #67A0AF;
   --color-brand-blue-light: #A6CBD8;
+  --color-brand-navy: #07163D;
   --color-brand-dark: #554C3B;
   --color-brand-navy: #07163D;
 
@@ -89,14 +90,14 @@
   --input: 214 32% 91%;
   --ring: 198 94% 28%; /* Brand Blue #04648C for crisp focus states */
   
-  --sidebar-background: 225 79% 13%; /* #07163D */
-  --sidebar-foreground: 0 0% 100%;
-  --sidebar-primary: 48 98% 51%; /* Yellow indicator */
-  --sidebar-primary-foreground: 218 30% 12%;
-  --sidebar-accent: 198 94% 28%;
-  --sidebar-accent-foreground: 0 0% 100%;
-  --sidebar-border: 225 60% 18%;
-  --sidebar-ring: 48 98% 51%;
+  --sidebar-background: 210 20% 98%;
+  --sidebar-foreground: 218 30% 12%;
+  --sidebar-primary: 198 94% 28%; /* #04648C */
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 210 20% 95%;
+  --sidebar-accent-foreground: 198 94% 28%;
+  --sidebar-border: 214 32% 91%;
+  --sidebar-ring: 198 94% 28%;
   
   --radius: 0.625rem;
 
@@ -177,13 +178,13 @@
   --input: 223 30% 20%;
   --ring: 48 98% 51%;
 
-  --sidebar-background: 222 47% 9%;
+  --sidebar-background: 225 79% 13%; /* #07163D Deep Brand Navy */
   --sidebar-foreground: 210 40% 98%;
   --sidebar-primary: 48 98% 51%;
   --sidebar-primary-foreground: 218 30% 12%;
   --sidebar-accent: 198 94% 28%;
   --sidebar-accent-foreground: 0 0% 100%;
-  --sidebar-border: 223 30% 18%;
+  --sidebar-border: 225 60% 18%;
   --sidebar-ring: 48 98% 51%;
   
   --chart-1: 48 98% 51%;
@@ -314,7 +315,7 @@
 }
 
 @utility focus-ring {
-  @apply outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  @apply outline-none focus:outline-none focus-visible:outline-none hover:border-ring/60 focus:border-ring focus-visible:border-ring focus:ring-0 focus-visible:ring-0 ring-0 ring-offset-0;
 }
 
 @keyframes caret-blink {
@@ -354,10 +355,18 @@
     background: transparent;
   }
   .sidebar-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(0, 0, 0, 0.15);
     border-radius: 9999px;
   }
   .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+  :is(.dark *) .sidebar-scrollbar::-webkit-scrollbar-thumb,
+  .dark .sidebar-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+  }
+  :is(.dark *) .sidebar-scrollbar::-webkit-scrollbar-thumb:hover,
+  .dark .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.38);
   }
   .sidebar-scrollbar::-webkit-scrollbar-corner {
@@ -367,6 +376,10 @@
   @supports not (-webkit-appearance: none) {
     .sidebar-scrollbar {
       scrollbar-width: thin;
+      scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+    }
+    :is(.dark *) .sidebar-scrollbar,
+    .dark .sidebar-scrollbar {
       scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
     }
   }
@@ -561,32 +574,85 @@ input:-webkit-autofill:active {
   animation: authSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both;
 }
 
-/* Universal Form Control Clickability, Focus & Interaction Rules */
-input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="range"]):not([type="color"]):not([type="file"]),
-textarea {
+/* ==========================================================================
+   Universal Cursor States Engine: Clickables vs Inactive Clickables
+   Ensures consistent hand (pointer) on all interactive elements and circle-slash
+   (not-allowed) on all disabled / inactive controls across the platform.
+   ========================================================================== */
+
+/* Universal Enabled Clickables */
+button:not(:disabled):not([aria-disabled="true"]),
+[role="button"]:not([aria-disabled="true"]):not([disabled]):not([data-disabled]),
+a[href]:not([aria-disabled="true"]):not([disabled]):not([data-disabled]),
+summary,
+select:not(:disabled),
+label:not([aria-disabled="true"]):not([data-disabled]):not(:has(input:disabled)),
+input[type="checkbox"]:not(:disabled),
+input[type="radio"]:not(:disabled),
+input[type="button"]:not(:disabled),
+input[type="submit"]:not(:disabled),
+input[type="reset"]:not(:disabled),
+input[type="file"]:not(:disabled),
+[role="checkbox"]:not([aria-disabled="true"]):not([data-disabled]),
+[role="radio"]:not([aria-disabled="true"]):not([data-disabled]),
+[role="switch"]:not([aria-disabled="true"]):not([data-disabled]),
+[role="tab"]:not([aria-disabled="true"]):not([data-disabled]),
+[role="menuitem"]:not([aria-disabled="true"]):not([data-disabled]),
+[role="option"]:not([aria-disabled="true"]):not([data-disabled]),
+[data-radix-collection-item]:not([data-disabled]),
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+/* Universal Text Inputs (Enabled) */
+input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="range"]):not([type="color"]):not([type="file"]):not(:disabled),
+textarea:not(:disabled) {
   pointer-events: auto !important;
   cursor: text !important;
   user-select: text !important;
   -webkit-user-select: text !important;
 }
 
-select {
-  cursor: pointer !important;
-  pointer-events: auto !important;
-}
-
+/* Universal Inactive / Disabled Clickables & Form Controls */
+button:disabled,
+button[disabled],
+button[aria-disabled="true"],
+[role="button"][aria-disabled="true"],
+[role="button"][disabled],
+[role="button"][data-disabled],
+a[aria-disabled="true"],
+a[disabled],
+a.disabled,
 input:disabled,
+input[disabled],
+input[aria-disabled="true"],
 textarea:disabled,
-select:disabled {
+textarea[disabled],
+textarea[aria-disabled="true"],
+select:disabled,
+select[disabled],
+select[aria-disabled="true"],
+[aria-disabled="true"],
+[data-disabled="true"],
+[data-disabled],
+[role="checkbox"][aria-disabled="true"],
+[role="checkbox"][data-disabled],
+[role="radio"][aria-disabled="true"],
+[role="radio"][data-disabled],
+[role="switch"][aria-disabled="true"],
+[role="switch"][data-disabled],
+[role="tab"][aria-disabled="true"],
+[role="tab"][data-disabled],
+[role="menuitem"][aria-disabled="true"],
+[role="menuitem"][data-disabled],
+[role="option"][aria-disabled="true"],
+[role="option"][data-disabled],
+label:has(input:disabled),
+.cursor-not-allowed {
   cursor: not-allowed !important;
-  pointer-events: none !important;
+  pointer-events: auto !important;
   user-select: none !important;
   -webkit-user-select: none !important;
-}
-
-label {
-  cursor: pointer;
-  pointer-events: auto;
 }
 
 .auth-input,
@@ -610,16 +676,16 @@ input.auth-input {
 .auth-input:focus-visible,
 .auth-input:active {
   border-color: #04648C !important;
-  box-shadow: 0 0 0 2px rgba(4, 100, 140, 0.25), 0 0 0 1px #04648C !important;
-  outline: 2px solid transparent !important;
-  outline-offset: 2px !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 .dark .auth-input:focus,
 .dark .auth-input:focus-visible,
 .dark .auth-input:active {
-  border-color: #38bdf8 !important;
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.28), 0 0 0 1px #38bdf8 !important;
+  border-color: #FBCA07 !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 /* Hide Microsoft Edge native clear / reveal buttons to prevent overlay clashes */

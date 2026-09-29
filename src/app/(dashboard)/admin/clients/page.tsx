@@ -605,7 +605,7 @@ export default function ClientsPage() {
                       <TableRow key={client.id}>
                         <TableCell>
                           <div className="flex items-start gap-3">
-                            <div className="p-2 rounded-lg bg-primary/10 text-primary mt-0.5">
+                            <div className="p-2 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow mt-0.5">
                               <Building2 className="w-4 h-4" />
                             </div>
                             <div>

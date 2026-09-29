@@ -58,7 +58,7 @@ export function ChangelogPanel() {
     <div className="w-full space-y-6 py-6">
       <div>
         <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <GitBranch className="h-5 w-5 text-[#04648C] dark:text-[#FBCA07]" />
+          <GitBranch className="h-5 w-5 text-brand-blue dark:text-brand-yellow" />
           API Changelog & Versioning Policy
         </h2>
         <p className="text-xs text-muted-foreground">
@@ -85,7 +85,7 @@ export function ChangelogPanel() {
           >
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
               <div className="flex items-center gap-2">
-                <Tag className="h-4 w-4 text-[#04648C] dark:text-[#FBCA07]" />
+                <Tag className="h-4 w-4 text-brand-blue dark:text-brand-yellow" />
                 <span className="text-base font-bold text-foreground">{release.version}</span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                   {release.status}

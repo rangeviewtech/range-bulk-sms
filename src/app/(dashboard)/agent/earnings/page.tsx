@@ -280,11 +280,11 @@ export default function EarningsPage() {
 
       {/* KPI Balances */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-        <Card className="border-secondary/20 shadow-sm relative overflow-hidden">
+        <Card className="border-secondary/20 shadow-none relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Available for Payout</CardTitle>
-            <div className="p-2 rounded-lg bg-primary/20 text-primary-foreground">
+            <div className="p-2 rounded-2xl bg-primary/20 text-primary-foreground">
               <DollarSign className="h-4 w-4 text-foreground" />
             </div>
           </CardHeader>
@@ -302,10 +302,10 @@ export default function EarningsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Lifetime Paid</CardTitle>
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600">
+            <div className="p-2 rounded-2xl bg-emerald-500/10 text-emerald-600">
               <CheckCircle className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -325,7 +325,7 @@ export default function EarningsPage() {
       </div>
 
       {/* Payout History Card */}
-      <Card className="border-secondary/20 shadow-sm">
+      <Card className="border-secondary/20 shadow-none">
         <CardHeader>
           <CardTitle>Disbursed Payouts History</CardTitle>
           <CardDescription>

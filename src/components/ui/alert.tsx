@@ -10,12 +10,12 @@ const alertVariants = cva(
       variant: {
         default: "bg-background text-foreground",
         destructive:
-          "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
+          "border-destructive/50 text-destructive bg-destructive/10 dark:border-destructive dark:bg-destructive/20 [&>svg]:text-destructive",
         success:
-          "border-green-500/50 text-green-600 dark:text-green-400 dark:border-green-500 [&>svg]:text-green-600 dark:[&>svg]:text-green-400",
+          "border-green-500/50 text-green-700 bg-green-50 dark:text-green-400 dark:border-green-500/60 dark:bg-green-950/40 [&>svg]:text-green-600 dark:[&>svg]:text-green-400",
         warning:
-          "border-yellow-500/50 text-yellow-600 dark:text-yellow-400 dark:border-yellow-500 [&>svg]:text-yellow-600 dark:[&>svg]:text-yellow-400",
-        info: "border-blue-500/50 text-blue-600 dark:text-sky-400 dark:border-blue-500 [&>svg]:text-blue-600 dark:[&>svg]:text-sky-400",
+          "border-yellow-500/50 text-yellow-800 bg-yellow-50 dark:text-yellow-400 dark:border-yellow-500/60 dark:bg-yellow-950/40 [&>svg]:text-yellow-600 dark:[&>svg]:text-yellow-400",
+        info: "border-brand-blue/50 text-brand-blue bg-sky-50 dark:text-brand-blue-light dark:border-brand-blue/60 dark:bg-sky-950/40 [&>svg]:text-brand-blue dark:[&>svg]:text-brand-blue-light",
       },
     },
     defaultVariants: {

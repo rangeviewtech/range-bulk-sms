@@ -313,7 +313,7 @@ export default function NewCampaignPage() {
                   </Select>
                 </div>
 
-                <div className="p-4 bg-muted/40 rounded-xl border border-border space-y-2">
+                <div className="p-4 bg-muted/40 rounded-2xl border border-border space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Target Audience:</span>
                     <span className="font-semibold text-foreground">{selectedGroup.name}</span>
@@ -369,14 +369,14 @@ export default function NewCampaignPage() {
                     onBlur={() => setMessageTouched(true)}
                     className={cn(
                       'resize-y min-h-[120px]',
-                      messageError && 'border-destructive focus-visible:ring-destructive'
+                      messageError && 'border-destructive hover:border-destructive focus-visible:border-destructive'
                     )}
                     required
                   />
                   {messageError && <InputError id="message-body-error" message={messageError} />}
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 bg-muted/30 rounded-lg border text-xs">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 bg-muted/30 rounded-2xl border text-xs">
                   <div>
                     <span className="text-muted-foreground block">Characters</span>
                     <span className="font-semibold text-sm">{charCount}</span>
@@ -398,7 +398,7 @@ export default function NewCampaignPage() {
             )}
 
             {step === 4 && (
-              <div className="space-y-4 bg-muted/20 p-5 rounded-xl border border-border">
+              <div className="space-y-4 bg-muted/20 p-5 rounded-2xl border border-border">
                 <h3 className="font-semibold text-lg pb-2 border-b border-border">
                   Campaign Order Summary
                 </h3>
@@ -442,7 +442,7 @@ export default function NewCampaignPage() {
                         {selectedGroup.count.toLocaleString()} recipients × {segments} segment{segments > 1 ? 's' : ''} × {ratePerSms} UGX
                       </span>
                     </div>
-                    <span className="text-2xl font-extrabold text-[#04648C] dark:text-[#FBCA07]">
+                    <span className="text-2xl font-extrabold text-brand-blue dark:text-brand-yellow">
                       {estimatedCost.toLocaleString()} UGX
                     </span>
                   </div>

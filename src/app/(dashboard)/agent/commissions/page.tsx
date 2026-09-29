@@ -121,10 +121,10 @@ export default function CommissionsPage() {
 
       {/* Summary KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Pending / Approved</CardTitle>
-            <div className="p-2 rounded-lg bg-primary/20 text-primary-foreground">
+            <div className="p-2 rounded-2xl bg-primary/20 text-primary-foreground">
               <Clock className="h-4 w-4 text-foreground" />
             </div>
           </CardHeader>
@@ -136,10 +136,10 @@ export default function CommissionsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Lifetime Paid</CardTitle>
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600">
+            <div className="p-2 rounded-2xl bg-emerald-500/10 text-emerald-600">
               <CheckCircle2 className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -153,14 +153,14 @@ export default function CommissionsPage() {
       </div>
 
       {/* Main Ledger Card */}
-      <Card className="border-secondary/20 shadow-sm">
+      <Card className="border-secondary/20 shadow-none">
         <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <CardTitle>Commission Records ({commissions.length})</CardTitle>
             <CardDescription>Filtered by payout lifecycle status.</CardDescription>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 bg-muted/40 p-1 rounded-lg border">
+          <div className="flex flex-wrap items-center gap-1.5 bg-muted/40 p-1 rounded-2xl border">
             {['ALL', 'PENDING', 'APPROVED', 'PAID'].map((s) => (
               <Button
                 key={s}

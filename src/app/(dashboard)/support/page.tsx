@@ -364,10 +364,10 @@ export default function SupportPage() {
 
       {/* KPI Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Active Tickets</CardTitle>
-            <div className="p-2 rounded-lg bg-primary/20 text-primary-foreground">
+            <div className="p-2 rounded-2xl bg-primary/20 text-primary-foreground">
               <LifeBuoy className="h-4 w-4 text-foreground" />
             </div>
           </CardHeader>
@@ -379,10 +379,10 @@ export default function SupportPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Avg Response Time</CardTitle>
-            <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+            <div className="p-2 rounded-2xl bg-secondary/10 text-secondary">
               <Clock className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -392,10 +392,10 @@ export default function SupportPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Resolved Tickets</CardTitle>
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600">
+            <div className="p-2 rounded-2xl bg-emerald-500/10 text-emerald-600">
               <CheckCircle className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -409,14 +409,14 @@ export default function SupportPage() {
       </div>
 
       {/* Main Tickets Table Card */}
-      <Card className="border-secondary/20 shadow-sm">
+      <Card className="border-secondary/20 shadow-none">
         <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <CardTitle>Ticket Queue</CardTitle>
             <CardDescription>Track status and updates on your inquiries.</CardDescription>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 bg-muted/40 p-1 rounded-lg border">
+          <div className="flex flex-wrap items-center gap-1.5 bg-muted/40 p-1 rounded-2xl border">
             {['ALL', 'OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'].map((s) => (
               <Button
                 key={s}
@@ -440,7 +440,7 @@ export default function SupportPage() {
               ))}
             </div>
           ) : filteredTickets.length === 0 ? (
-            <div className="text-center py-12 m-4 sm:m-0 border border-dashed rounded-lg">
+            <div className="text-center py-12 m-4 sm:m-0 border border-dashed rounded-2xl">
               <LifeBuoy className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
               <p className="text-sm font-medium text-foreground">No support tickets found</p>
               <p className="text-xs text-muted-foreground mt-1 mb-4">
@@ -544,7 +544,7 @@ export default function SupportPage() {
                       }`}
                     >
                       <div
-                        className={`max-w-[85%] rounded-xl p-3 shadow-xs space-y-1 ${
+                        className={`max-w-[85%] rounded-2xl p-3 shadow-xs space-y-1 ${
                           isAdmin
                             ? 'bg-secondary/10 border border-secondary/20 text-foreground'
                             : 'bg-muted border text-foreground'

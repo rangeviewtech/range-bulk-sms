@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0",
   {
     variants: {
       variant: {
@@ -17,9 +17,9 @@ const badgeVariants = cva(
         "brand-yellow":
           "border-transparent bg-primary text-primary-foreground font-bold shadow-xs hover:bg-primary/90",
         "light-blue":
-          "border border-[#67A0AF]/30 bg-[#A6CBD8]/20 text-[#04648C] dark:border-[#67A0AF]/40 dark:bg-[#A6CBD8]/15 dark:text-[#A6CBD8] font-medium",
+          "border border-brand-blue-medium/30 bg-brand-blue-light/20 text-brand-blue dark:border-brand-blue-medium/40 dark:bg-brand-blue-light/15 dark:text-brand-blue-light font-medium",
         "light-yellow":
-          "border border-[#FBCA07]/40 bg-[#FBE392]/30 text-[#554C3B] dark:border-[#FBCA07]/30 dark:bg-[#FBE392]/15 dark:text-[#FBE392] font-semibold",
+          "border border-brand-yellow/40 bg-brand-yellow-light/30 text-brand-dark dark:border-brand-yellow/30 dark:bg-brand-yellow-light/15 dark:text-brand-yellow-light font-semibold",
         destructive:
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80 font-medium",
         error:
@@ -27,11 +27,11 @@ const badgeVariants = cva(
         outline: "border border-border bg-background text-foreground font-medium",
         neutral: "border border-border bg-muted/60 text-muted-foreground font-medium",
         success:
-          "border-transparent bg-green-500 text-white hover:bg-green-600 font-medium",
+          "border-transparent bg-emerald-600 text-white hover:bg-emerald-700 font-medium",
         warning:
           "border border-amber-500/30 bg-amber-50 text-amber-800 dark:border-amber-500/30 dark:bg-amber-950/40 dark:text-amber-300 font-medium",
         info:
-          "border border-[#67A0AF]/30 bg-sky-50 text-[#04648C] dark:border-[#67A0AF]/30 dark:bg-sky-950/40 dark:text-[#A6CBD8] font-medium",
+          "border border-brand-blue-medium/30 bg-sky-50 text-brand-blue dark:border-brand-blue-medium/30 dark:bg-sky-950/40 dark:text-brand-blue-light font-medium",
       },
     },
     defaultVariants: {

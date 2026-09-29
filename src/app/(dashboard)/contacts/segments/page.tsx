@@ -277,9 +277,9 @@ export default function SegmentsPage() {
             </div>
           ) : segments.length === 0 ? (
             <div className="text-center p-12 space-y-3">
-              <Filter className="mx-auto h-10 w-10 text-muted-foreground/50" />
+              <Filter className="mx-auto h-10 w-10 text-muted-foreground" />
               <h3 className="font-semibold text-base">No Dynamic Segments Yet</h3>
-              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+              <p className="text-sm text-muted-foreground w-full">
                 Build segments using rules like &quot;City is Kampala&quot; or &quot;Consent Given is true&quot; to target specific demographics without managing static lists.
               </p>
               <Button onClick={() => setBuilderOpen(true)} variant="outline" size="sm">
@@ -386,7 +386,7 @@ export default function SegmentsPage() {
               {/* Group Operator */}
               <div className="flex items-center gap-3 pt-2">
                 <span className="text-xs font-medium text-muted-foreground">Match contacts where:</span>
-                <div className="flex items-center border rounded-lg p-0.5 bg-muted/40">
+                <div className="flex items-center border rounded-2xl p-0.5 bg-muted/40">
                   <button
                     type="button"
                     onClick={() => setGroupOperator('AND')}
@@ -417,7 +417,7 @@ export default function SegmentsPage() {
                 {rules.map((rule) => (
                   <div
                     key={rule.id}
-                    className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-3 bg-muted/30 border rounded-xl"
+                    className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-3 bg-muted/30 border rounded-2xl"
                   >
                     <div className="sm:w-[150px]">
                       <Select
@@ -504,7 +504,7 @@ export default function SegmentsPage() {
               </div>
 
               {/* Real-Time Live Audience Evaluation */}
-              <div className="p-3 bg-secondary/5 dark:bg-primary/5 rounded-xl border border-secondary/20 dark:border-primary/20 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="p-3 bg-secondary/5 dark:bg-primary/5 rounded-2xl border border-secondary/20 dark:border-primary/20 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div>
                   <span className="text-xs font-medium text-muted-foreground block">Audience Estimation</span>
                   <div className="text-sm font-semibold">
@@ -529,7 +529,7 @@ export default function SegmentsPage() {
                   {evaluating ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
                   ) : (
-                    <Play className="w-3.5 h-3.5 mr-1.5 text-secondary dark:text-primary" />
+                    <Play className="w-3.5 h-3.5 mr-1.5 text-brand-blue dark:text-brand-yellow" />
                   )}
                   Evaluate Audience
                 </Button>

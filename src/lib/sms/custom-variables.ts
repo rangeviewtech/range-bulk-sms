@@ -350,7 +350,7 @@ export function renderTemplateWithVariables(
 }
 
 /**
- * Render full preview text with sample variable substitutions for live handset simulators.
+ * Render full preview text with sample variable substitutions for live simulators.
  */
 export function renderPreviewWithSamples(
   template: string,

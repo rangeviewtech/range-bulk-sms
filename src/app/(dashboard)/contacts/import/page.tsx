@@ -981,7 +981,7 @@ export default function ContactImportPage() {
                 onClick={handleDownloadSampleToast}
                 title="Download standard sample CSV template"
               >
-                <Download className="w-4 h-4 text-primary" />
+                <Download className="w-4 h-4 text-brand-blue dark:text-brand-yellow" />
                 <span>Download Sample CSV</span>
               </a>
             </Button>
@@ -1034,9 +1034,9 @@ export default function ContactImportPage() {
                         isCompleted
                           ? 'text-foreground font-bold'
                           : isCurrent
-                            ? 'text-primary font-bold'
+                            ? 'text-brand-blue font-bold dark:text-brand-yellow'
                             : 'text-muted-foreground',
-                        isClickable && 'group-hover:text-primary'
+                        isClickable && 'group-hover:text-brand-blue dark:group-hover:text-brand-yellow'
                       )}
                     >
                       {isCompleted && s.id === 3 ? 'Import Completed' : s.label}
@@ -1109,13 +1109,13 @@ export default function ContactImportPage() {
             className={cn(
               'group relative overflow-hidden rounded-2xl border-2 border-dashed transition-all duration-300',
               isDragging
-                ? 'border-primary bg-primary/10 shadow-lg scale-[1.005]'
-                : 'border-border/80 hover:border-primary/50 bg-gradient-to-b from-card/90 via-card/60 to-card/90 hover:shadow-md'
+                ? 'border-primary bg-primary/10 shadow-none scale-[1.005]'
+                : 'border-border/80 hover:border-primary/50 bg-gradient-to-b from-card/90 via-card/60 to-card/90 hover:shadow-none'
             )}
           >
             <CardContent className="flex flex-col items-center justify-center py-12 sm:py-16 text-center px-4">
               {/* Elevated Floating Upload Icon */}
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-primary/10 border border-primary/25 text-primary flex items-center justify-center mb-5 shadow-sm transition-transform duration-300 group-hover:scale-105">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-brand-blue/10 border border-brand-blue/25 text-brand-blue dark:bg-brand-yellow/15 dark:border-brand-yellow/30 dark:text-brand-yellow flex items-center justify-center mb-5 shadow-none transition-transform duration-300 group-hover:scale-105">
                 <Upload className="w-8 h-8 sm:w-9 sm:h-9" />
               </div>
 
@@ -1130,7 +1130,7 @@ export default function ContactImportPage() {
               {/* Single Clear Primary Action */}
               <Button
                 size="lg"
-                className="font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm px-8 h-11 text-sm rounded-lg"
+                className="font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-none px-8 h-11 text-sm rounded-2xl"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <Upload className="w-4 h-4 mr-2" />
@@ -1144,9 +1144,9 @@ export default function ContactImportPage() {
                 <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono text-[11px] font-semibold border border-emerald-500/25">.xlsx</span>
                 <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono text-[11px] font-semibold border border-emerald-500/25">.xls</span>
                 <span className="px-2 py-0.5 rounded-md bg-muted/80 text-foreground font-mono text-[11px] font-medium border border-border">.txt</span>
-                <span className="text-muted-foreground/60">•</span>
+                <span className="text-muted-foreground">•</span>
                 <span>Max 10MB</span>
-                <span className="text-muted-foreground/60">•</span>
+                <span className="text-muted-foreground">•</span>
                 <span>Header row required</span>
               </div>
             </CardContent>
@@ -1158,7 +1158,7 @@ export default function ContactImportPage() {
             <Card className="lg:col-span-2 border border-border bg-card shadow-xs">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                  <div className="p-2 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow">
                     <FileSpreadsheet className="w-4 h-4" />
                   </div>
                   <div>
@@ -1170,7 +1170,7 @@ export default function ContactImportPage() {
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="rounded-lg border border-border overflow-x-auto">
+                <div className="rounded-2xl border border-border overflow-x-auto">
                   <Table className="text-xs">
                     <TableHeader>
                       <TableRow className="bg-muted/40">
@@ -1201,7 +1201,7 @@ export default function ContactImportPage() {
             <Card className="border border-border bg-card shadow-xs">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                  <div className="p-2 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div>
@@ -1214,7 +1214,7 @@ export default function ContactImportPage() {
               </CardHeader>
               <CardContent className="pt-0 space-y-3.5">
                 {IMPORT_GUIDELINES.map((item, idx) => (
-                  <div key={idx} className="p-3 rounded-lg border border-border/70 bg-muted/20 space-y-1">
+                  <div key={idx} className="p-3 rounded-2xl border border-border/70 bg-muted/20 space-y-1">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-semibold text-foreground">{item.title}</span>
                       <Badge variant={item.badgeVariant} className="text-[10px] px-1.5 py-0">
@@ -1239,7 +1239,7 @@ export default function ContactImportPage() {
           <Card className="border border-border bg-card shadow-xs">
             <CardContent className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3.5">
-                <div className="p-3 rounded-xl bg-primary/10 text-primary">
+                <div className="p-3 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow">
                   <FileSpreadsheet className="w-6 h-6" />
                 </div>
                 <div>
@@ -1272,7 +1272,7 @@ export default function ContactImportPage() {
           {validationSummary && (
             <div
               className={cn(
-                'p-4 rounded-xl border text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs',
+                'p-4 rounded-2xl border text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs',
                 validationSummary.invalidCount > 0
                   ? 'border-amber-500/40 bg-amber-500/10 text-foreground'
                   : 'border-emerald-500/40 bg-emerald-500/10 text-foreground'
@@ -1332,7 +1332,7 @@ export default function ContactImportPage() {
                     Match fields from your spreadsheet to contact directory fields.
                   </CardDescription>
                 </div>
-                <div className="hidden sm:flex items-center gap-1.5 text-xs text-primary font-medium">
+                <div className="hidden sm:flex items-center gap-1.5 text-xs text-brand-blue dark:text-brand-yellow font-semibold">
                   <Sparkles className="w-3.5 h-3.5" />
                   Auto-mapped from headers
                 </div>
@@ -1341,7 +1341,7 @@ export default function ContactImportPage() {
             <CardContent className="space-y-4 pt-1">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Phone Column (Required) */}
-                <div className="space-y-1.5 p-3.5 rounded-xl border border-primary/30 bg-primary/5">
+                <div className="space-y-1.5 p-3.5 rounded-2xl border border-primary/30 bg-primary/5">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="mapPhone" className="text-xs font-semibold flex items-center gap-1 text-foreground">
                       Phone Number Column <span className="text-destructive">*</span>
@@ -1365,7 +1365,7 @@ export default function ContactImportPage() {
                 </div>
 
                 {/* First Name Column */}
-                <div className="space-y-1.5 p-3.5 rounded-xl border border-border/80 bg-muted/20">
+                <div className="space-y-1.5 p-3.5 rounded-2xl border border-border/80 bg-muted/20">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="mapFirst" className="text-xs font-semibold text-foreground">
                       First Name Column
@@ -1392,7 +1392,7 @@ export default function ContactImportPage() {
                 </div>
 
                 {/* Last Name Column */}
-                <div className="space-y-1.5 p-3.5 rounded-xl border border-border/80 bg-muted/20">
+                <div className="space-y-1.5 p-3.5 rounded-2xl border border-border/80 bg-muted/20">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="mapLast" className="text-xs font-semibold text-foreground">
                       Last Name Column
@@ -1419,7 +1419,7 @@ export default function ContactImportPage() {
                 </div>
 
                 {/* Email Column */}
-                <div className="space-y-1.5 p-3.5 rounded-xl border border-border/80 bg-muted/20">
+                <div className="space-y-1.5 p-3.5 rounded-2xl border border-border/80 bg-muted/20">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="mapEmail" className="text-xs font-semibold text-foreground">
                       Email Address Column
@@ -1452,7 +1452,7 @@ export default function ContactImportPage() {
           <Card className="border border-border bg-card shadow-xs">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                <div className="p-2 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow">
                   <Users className="w-4 h-4" />
                 </div>
                 <div>
@@ -1466,10 +1466,10 @@ export default function ContactImportPage() {
             <CardContent className="space-y-4 pt-1">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* 1. Target Broadcast Group Selection */}
-                <div className="p-3.5 rounded-xl border border-primary/20 bg-primary/5 space-y-2">
+                <div className="p-3.5 rounded-2xl border border-primary/20 bg-primary/5 space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="assignGroup" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                      <Users className="w-3.5 h-3.5 text-primary" />
+                      <Users className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
                       Target Broadcast Group
                     </Label>
                     <Badge variant="secondary" className="text-[10px]">
@@ -1495,7 +1495,7 @@ export default function ContactImportPage() {
                 </div>
 
                 {/* 2. Initial Subscription Status Selection */}
-                <div className="p-3.5 rounded-xl border border-emerald-500/25 bg-emerald-500/5 space-y-2">
+                <div className="p-3.5 rounded-2xl border border-emerald-500/25 bg-emerald-500/5 space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="assignStatus" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
@@ -1555,7 +1555,7 @@ export default function ContactImportPage() {
 
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="secondary" className="text-xs gap-1">
-                    <Users className="w-3 h-3 text-primary" />
+                    <Users className="w-3 h-3 text-brand-blue dark:text-brand-yellow" />
                     {selectedGroup === 'NONE'
                       ? 'Directory Only'
                       : availableGroups.find((g) => g.id === selectedGroup)?.name || 'Selected Group'}
@@ -1616,7 +1616,7 @@ export default function ContactImportPage() {
                   >
                     <SelectTrigger className="h-9 text-xs w-full sm:w-[170px] bg-muted/30">
                       <div className="flex items-center gap-1.5 truncate">
-                        <Radio className="w-3.5 h-3.5 text-primary shrink-0" />
+                        <Radio className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow shrink-0" />
                         <span className="truncate">
                           {previewNetworkFilter === 'ALL'
                             ? `All Networks (${parsedRows.length})`
@@ -1647,7 +1647,7 @@ export default function ContactImportPage() {
                   >
                     <SelectTrigger className="h-9 text-xs w-full sm:w-[175px] bg-muted/30">
                       <div className="flex items-center gap-1.5 truncate">
-                        <Filter className="w-3.5 h-3.5 text-primary shrink-0" />
+                        <Filter className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow shrink-0" />
                         <span className="truncate">
                           {previewStatusFilter === 'ALL'
                             ? `All Statuses (${statusCounts.total})`
@@ -1665,7 +1665,7 @@ export default function ContactImportPage() {
                   </Select>
 
                   {/* Dual Valid / Invalid Section Quick Toggle Pills */}
-                  <div className="hidden md:flex items-center p-0.5 rounded-lg bg-muted/40 border border-border shrink-0">
+                  <div className="hidden md:flex items-center p-0.5 rounded-2xl bg-muted/40 border border-border shrink-0">
                     <button
                       type="button"
                       onClick={() => {
@@ -1737,7 +1737,7 @@ export default function ContactImportPage() {
 
               {/* Danger Stripes Alert Banner when invalid contacts are present */}
               {statusCounts.invalid > 0 && (
-                <div className="mt-3 p-3 rounded-xl border border-destructive/30 bg-[repeating-linear-gradient(-45deg,rgba(239,68,68,0.05),rgba(239,68,68,0.05)_10px,transparent_10px,transparent_20px)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+                <div className="mt-3 p-3 rounded-2xl border border-destructive/30 bg-[repeating-linear-gradient(-45deg,rgba(239,68,68,0.05),rgba(239,68,68,0.05)_10px,transparent_10px,transparent_20px)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
                   <div className="flex items-center gap-2 text-xs">
                     <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
                     <span>
@@ -1784,7 +1784,7 @@ export default function ContactImportPage() {
                 <Table className="text-xs">
                   <TableHeader>
                     <TableRow className="bg-muted/40">
-                      <TableHead className="font-semibold text-primary w-[240px]">
+                      <TableHead className="font-semibold text-brand-blue dark:text-brand-yellow w-[240px]">
                         Phone ({phoneColumn || 'Not mapped'})
                       </TableHead>
                       <TableHead className="font-semibold text-foreground w-[150px]">
@@ -1815,7 +1815,7 @@ export default function ContactImportPage() {
                           <Button
                             variant="link"
                             size="sm"
-                            className="text-xs text-primary mt-1"
+                            className="text-xs text-brand-blue dark:text-brand-yellow font-semibold mt-1"
                             onClick={() => {
                               setPreviewSearch('');
                               setPreviewNetworkFilter('ALL');
@@ -1860,8 +1860,8 @@ export default function ContactImportPage() {
                                     className={cn(
                                       'h-8 text-xs font-mono bg-card',
                                       activeEditCarrier?.isValid
-                                        ? 'border-emerald-500/50 focus-visible:ring-emerald-500/20'
-                                        : 'border-destructive focus-visible:ring-destructive/20'
+                                        ? 'border-emerald-500/50 hover:border-emerald-500 focus-visible:border-emerald-500'
+                                        : 'border-destructive hover:border-destructive focus-visible:border-destructive'
                                     )}
                                     placeholder="e.g. +256700123456"
                                     autoFocus
@@ -2022,7 +2022,7 @@ export default function ContactImportPage() {
                                       'h-8 text-xs bg-card',
                                       editValues.email &&
                                         !isValidEmail(editValues.email) &&
-                                        'border-destructive focus-visible:ring-destructive/20'
+                                        'border-destructive hover:border-destructive focus-visible:border-destructive'
                                     )}
                                     placeholder="email@example.com"
                                     onKeyDown={(e) => {
@@ -2087,7 +2087,7 @@ export default function ContactImportPage() {
                                     variant="outline"
                                     size="sm"
                                     onClick={() => handleStartEditing(item.originalIndex)}
-                                    className="h-7 px-2 text-xs gap-1 hover:border-primary hover:text-primary transition-colors"
+                                    className="h-7 px-2 text-xs gap-1 hover:border-brand-blue hover:text-brand-blue dark:hover:border-brand-yellow dark:hover:text-brand-yellow transition-colors"
                                     title="Inline edit contact before importing"
                                   >
                                     <Pencil className="w-3 h-3" />
@@ -2148,7 +2148,7 @@ export default function ContactImportPage() {
               type="button"
               onClick={handleExecuteImport}
               disabled={isImporting || !phoneColumn}
-              className="w-full sm:w-auto font-bold bg-primary hover:bg-primary/90 text-primary-foreground gap-2 h-10 px-6 shadow-sm"
+              className="w-full sm:w-auto font-bold bg-primary hover:bg-primary/90 text-primary-foreground gap-2 h-10 px-6 shadow-none"
             >
               {isImporting ? (
                 <>
@@ -2169,7 +2169,7 @@ export default function ContactImportPage() {
       {/* STEP 3: IMPORT COMPLETE & INVALID RECOVERY */}
       {step === 3 && importResults && (
         <div className="space-y-4 sm:space-y-6">
-          <Card className="border border-border bg-card shadow-sm rounded-2xl">
+          <Card className="border border-border bg-card shadow-none rounded-2xl">
             <CardContent className="flex flex-col items-center justify-center py-10 sm:py-14 text-center px-4">
               <div className="w-16 h-16 sm:w-20 sm:h-20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mb-5 ring-8 ring-emerald-500/5">
                 <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10" />
@@ -2192,19 +2192,19 @@ export default function ContactImportPage() {
                     : 'grid grid-cols-3 max-w-xl'
                 )}
               >
-                <div className="p-4 rounded-xl border border-border bg-muted/20 text-center">
+                <div className="p-4 rounded-2xl border border-border bg-muted/20 text-center">
                   <div className="text-2xl sm:text-3xl font-bold text-foreground">{importResults.total}</div>
                   <div className="text-xs text-muted-foreground mt-1 font-medium">Processed</div>
                 </div>
 
-                <div className="p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 text-center">
+                <div className="p-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 text-center">
                   <div className="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400">
                     {importResults.imported}
                   </div>
                   <div className="text-xs text-emerald-600/80 dark:text-emerald-400/80 mt-1 font-medium">Added</div>
                 </div>
 
-                <div className="p-4 rounded-xl border border-border bg-muted/20 text-center">
+                <div className="p-4 rounded-2xl border border-border bg-muted/20 text-center">
                   <div className="text-2xl sm:text-3xl font-bold text-muted-foreground">
                     {importResults.duplicates}
                   </div>
@@ -2212,7 +2212,7 @@ export default function ContactImportPage() {
                 </div>
 
                 {editableInvalidContacts.length > 0 && (
-                  <div className="p-4 rounded-xl border border-rose-500/30 bg-rose-500/5 text-center">
+                  <div className="p-4 rounded-2xl border border-rose-500/30 bg-rose-500/5 text-center">
                     <div className="text-2xl sm:text-3xl font-bold text-rose-600 dark:text-rose-400">
                       {editableInvalidContacts.length}
                     </div>
@@ -2225,7 +2225,7 @@ export default function ContactImportPage() {
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                <Button asChild size="lg" className="w-full sm:w-auto font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm">
+                <Button asChild size="lg" className="w-full sm:w-auto font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-none">
                   <Link href="/contacts">
                     View Contacts Directory
                   </Link>
@@ -2245,11 +2245,11 @@ export default function ContactImportPage() {
 
           {/* INVALID CONTACTS RECOVERY: Inline Edit & Instant Import OR Download CSV */}
           {editableInvalidContacts.length > 0 && (
-            <Card className="border border-rose-500/30 bg-card shadow-sm rounded-2xl">
+            <Card className="border border-rose-500/30 bg-card shadow-none rounded-2xl">
               <CardHeader className="pb-3 border-b border-border/60">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-start gap-3">
-                    <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 mt-0.5">
+                    <div className="p-2.5 rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400 mt-0.5">
                       <AlertTriangle className="w-5 h-5" />
                     </div>
                     <div>
@@ -2279,7 +2279,7 @@ export default function ContactImportPage() {
                 </div>
               </CardHeader>
               <CardContent className="pt-4 space-y-4">
-                <div className="rounded-xl border border-border overflow-x-auto">
+                <div className="rounded-2xl border border-border overflow-x-auto">
                   <Table className="text-xs">
                     <TableHeader>
                       <TableRow className="bg-muted/40">
@@ -2318,8 +2318,8 @@ export default function ContactImportPage() {
                                     className={cn(
                                       'h-8 text-xs font-mono max-w-[200px]',
                                       isNowValid
-                                        ? 'border-emerald-500 focus-visible:ring-emerald-500 bg-emerald-500/5'
-                                        : 'border-rose-500/60 focus-visible:ring-rose-500 bg-rose-500/5'
+                                        ? 'border-emerald-500 hover:border-emerald-500 focus-visible:border-emerald-500 bg-emerald-500/5'
+                                        : 'border-rose-500/60 hover:border-rose-500 focus-visible:border-rose-500 bg-rose-500/5'
                                     )}
                                   />
                                   {isNowValid && (
@@ -2368,7 +2368,7 @@ export default function ContactImportPage() {
                       type="button"
                       onClick={handleImportCorrectedContacts}
                       disabled={correctedValidCount === 0 || isFixingAndImporting}
-                      className="w-full sm:w-auto font-bold bg-primary hover:bg-primary/90 text-primary-foreground gap-2 h-9 text-xs shadow-sm"
+                      className="w-full sm:w-auto font-bold bg-primary hover:bg-primary/90 text-primary-foreground gap-2 h-9 text-xs shadow-none"
                     >
                       {isFixingAndImporting ? (
                         <>
@@ -2392,7 +2392,7 @@ export default function ContactImportPage() {
           {importResults.invalid > 0 && editableInvalidContacts.length === 0 && (
             <Card className="border border-emerald-500/30 bg-emerald-500/5 shadow-xs rounded-2xl">
               <CardContent className="p-4 sm:p-5 flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <div className="p-2 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                   <CheckCircle2 className="w-5 h-5" />
                 </div>
                 <div>

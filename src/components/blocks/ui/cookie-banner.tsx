@@ -51,7 +51,7 @@ export function CookieBanner() {
   return (
     <div
       dir={isRtl ? 'rtl' : 'ltr'}
-      className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 md:left-24 z-40 border border-border shadow-2xl p-4 rounded-lg flex flex-col gap-3.5 max-w-xs transition-all duration-300 animate-in fade-in slide-in-from-bottom-5 pointer-events-auto"
+      className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 md:left-24 z-40 border border-border shadow-2xl p-4 rounded-2xl flex flex-col gap-3.5 max-w-xs transition-all duration-300 animate-in fade-in slide-in-from-bottom-5 pointer-events-auto"
       style={{
         fontFamily: FONT_STACK,
         width: '300px',
@@ -63,7 +63,7 @@ export function CookieBanner() {
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <div
-            className="w-9 h-9 shrink-0 rounded-lg flex items-center justify-center border border-brand-blue/25 dark:border-brand-yellow/25 text-brand-blue dark:text-brand-yellow bg-brand-blue/10 dark:bg-brand-yellow/10"
+            className="w-9 h-9 shrink-0 rounded-2xl flex items-center justify-center border border-brand-blue/25 dark:border-brand-yellow/25 text-brand-blue dark:text-brand-yellow bg-brand-blue/10 dark:bg-brand-yellow/10"
           >
             <Cookie size={20} />
           </div>

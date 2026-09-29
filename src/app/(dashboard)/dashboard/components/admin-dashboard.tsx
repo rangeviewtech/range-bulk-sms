@@ -15,17 +15,22 @@ export async function AdminDashboard() {
     totalMessages,
     deliveredMessages,
     smsSentToday,
+    failedMessagesToday,
     walletAggregate,
     providers,
     recentCampaigns,
     dailyMessages,
     dailyTransactions,
+    pendingSenderIds,
+    openTickets,
+    recentSenderIds,
   ] = await Promise.all([
     prisma.client.count(),
     prisma.agent.count({ where: { status: 'ACTIVE' } }),
     prisma.message.count(),
     prisma.message.count({ where: { status: 'DELIVERED' } }),
     prisma.message.count({ where: { createdAt: { gte: todayStart } } }),
+    prisma.message.count({ where: { createdAt: { gte: todayStart }, status: 'FAILED' } }),
     prisma.wallet.aggregate({ _sum: { balance: true } }),
     prisma.smsProvider.findMany({
       orderBy: { priority: 'asc' },
@@ -53,6 +58,16 @@ export async function AdminDashboard() {
     prisma.transaction.findMany({
       where: { createdAt: { gte: sevenDaysAgo }, type: 'DEPOSIT' },
       select: { createdAt: true, amount: true },
+    }),
+    prisma.senderId.count({ where: { status: 'PENDING' } }),
+    prisma.supportTicket.count({ where: { status: 'OPEN' } }),
+    prisma.senderId.findMany({
+      where: { status: 'PENDING' },
+      take: 5,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        client: { select: { companyName: true } },
+      },
     }),
   ]);
 
@@ -110,6 +125,13 @@ export async function AdminDashboard() {
     createdAt: c.createdAt.toISOString(),
   }));
 
+  const formattedSenderIds = recentSenderIds.map((s) => ({
+    id: s.id,
+    senderId: s.senderId,
+    clientName: s.client?.companyName || 'Unknown Client',
+    createdAt: s.createdAt.toISOString(),
+  }));
+
   const data: AdminDashboardData = {
     metrics: {
       totalClients,
@@ -117,13 +139,17 @@ export async function AdminDashboard() {
       smsSentToday,
       totalMessages,
       deliveryRate,
+      failedMessagesToday,
       totalWalletBalance,
       activeProvidersCount,
       totalProvidersCount: providers.length,
+      pendingSenderIds,
+      openTickets,
     },
     volumeTrends,
     revenueTrends,
     recentCampaigns: formattedCampaigns,
+    recentSenderIds: formattedSenderIds,
     providers: providers.map((p) => ({
       id: p.id,
       name: p.name,

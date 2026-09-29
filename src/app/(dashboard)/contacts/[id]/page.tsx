@@ -91,7 +91,7 @@ export default function ContactDetailPage({ params: _params }: { params: Promise
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                <div className="flex gap-4 p-4 border rounded-lg bg-muted/20">
+                <div className="flex gap-4 p-4 border rounded-2xl bg-muted/20">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <Badge className="bg-green-500/10 text-green-600 hover:bg-green-500/20">Delivered</Badge>
@@ -100,7 +100,7 @@ export default function ContactDetailPage({ params: _params }: { params: Promise
                     <p className="text-sm">Hello John, your reservation for tomorrow at 8 PM is confirmed.</p>
                   </div>
                 </div>
-                <div className="flex gap-4 p-4 border rounded-lg bg-muted/20">
+                <div className="flex gap-4 p-4 border rounded-2xl bg-muted/20">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <Badge className="bg-green-500/10 text-green-600 hover:bg-green-500/20">Delivered</Badge>

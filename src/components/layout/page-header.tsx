@@ -21,16 +21,16 @@ export function PageHeader({
   const displayHeading = heading ?? title;
   return (
     <div
-      className={cn("flex flex-col gap-3 sm:gap-4 pb-6 sm:pb-8 md:flex-row md:items-center md:justify-between", className)}
+      className={cn("flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between pb-6 border-b border-border/40", className)}
       {...props}
     >
-      <div className="flex-1 space-y-1 sm:space-y-1.5">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{displayHeading}</h1>
+      <div className="flex-1 space-y-3">
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">{displayHeading}</h1>
         {description && (
-          <p className="text-sm sm:text-base text-muted-foreground">{description}</p>
+          <p className="text-base text-muted-foreground leading-relaxed">{description}</p>
         )}
       </div>
-      {(children || action) && <div className="flex flex-wrap items-center gap-2">{children ?? action}</div>}
+      {(children || action) && <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto shrink-0">{children ?? action}</div>}
     </div>
   );
 }

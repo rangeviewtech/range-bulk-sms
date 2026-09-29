@@ -26,10 +26,10 @@ export function MinimalAuth() {
     });
 
   return (
-    <div className="flex min-h-[600px] h-full w-full flex-col items-center justify-center bg-background p-4 rounded-xl border">
+    <div className="flex min-h-[600px] h-full w-full flex-col items-center justify-center bg-background p-4 rounded-2xl border">
       <div className="w-full max-w-sm space-y-8">
         <div className="flex flex-col items-center text-center space-y-4">
-          <Hexagon className="w-10 h-10 text-primary" />
+          <Hexagon className="w-10 h-10 text-brand-blue dark:text-brand-yellow" />
           <div className="space-y-1">
             <h1 className="text-2xl font-semibold tracking-tight">Log in to Template</h1>
             <p className="text-muted-foreground text-sm">

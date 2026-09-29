@@ -263,7 +263,7 @@ export default function WebhooksPage() {
       <Card className="border-primary/20 bg-primary/5">
         <CardContent className="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
           <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-primary/20 text-foreground mt-0.5">
+            <div className="p-2 rounded-2xl bg-primary/20 text-foreground mt-0.5">
               <Webhook className="h-5 w-5" />
             </div>
             <div>
@@ -298,7 +298,7 @@ export default function WebhooksPage() {
             <div className="text-center p-12 space-y-3">
               <Webhook className="mx-auto h-10 w-10 text-muted-foreground/50" />
               <h3 className="font-semibold text-base">No Webhook Endpoints</h3>
-              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+              <p className="text-sm text-muted-foreground w-full">
                 Add an HTTPS endpoint to automatically receive delivery notifications when your SMS messages reach recipient handsets.
               </p>
               <Button onClick={() => setAddDialogOpen(true)} variant="outline" size="sm">
@@ -500,7 +500,7 @@ export default function WebhooksPage() {
 
               <div className="space-y-2">
                 <Label>Subscribed Events</Label>
-                <div className="space-y-2 border rounded-lg p-3 bg-muted/20">
+                <div className="space-y-2 border rounded-2xl p-3 bg-muted/20">
                   {WEBHOOK_EVENTS.map((event) => (
                     <div key={event.id} className="flex items-start space-x-2.5">
                       <Checkbox

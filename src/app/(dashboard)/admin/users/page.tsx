@@ -423,6 +423,8 @@ export default function UsersPage() {
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
               <Input
+                id="admin-users-search"
+                name="admin-users-search"
                 placeholder="Search by name, email, role, status, ID..."
                 className="pl-9 pr-8"
                 value={search}
@@ -445,10 +447,11 @@ export default function UsersPage() {
               {/* Role filter */}
               <div className="w-36">
                 <Select
+                  name="filter-user-role"
                   value={filters.role || "ALL"}
                   onValueChange={(val) => setFilter("role", val)}
                 >
-                  <SelectTrigger className="h-9 text-xs" aria-label="Filter by role">
+                  <SelectTrigger id="filter-user-role" className="h-9 text-xs" aria-label="Filter by role">
                     <SelectValue placeholder="All Roles" />
                   </SelectTrigger>
                   <SelectContent>
@@ -463,10 +466,11 @@ export default function UsersPage() {
               {/* Status filter */}
               <div className="w-36">
                 <Select
+                  name="filter-user-status"
                   value={filters.status || "ALL"}
                   onValueChange={(val) => setFilter("status", val)}
                 >
-                  <SelectTrigger className="h-9 text-xs" aria-label="Filter by status">
+                  <SelectTrigger id="filter-user-status" className="h-9 text-xs" aria-label="Filter by status">
                     <SelectValue placeholder="All Statuses" />
                   </SelectTrigger>
                   <SelectContent>
@@ -584,7 +588,7 @@ export default function UsersPage() {
                     <TableRow key={u.id}>
                       <TableCell>
                         <div className="flex items-start gap-2.5">
-                          <div className="p-1.5 rounded bg-primary/10 text-primary mt-0.5">
+                          <div className="p-1.5 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow mt-0.5">
                             <User className="w-4 h-4" />
                           </div>
                           <div>

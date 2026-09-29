@@ -97,7 +97,7 @@ const SinglePhoneCountryItem = React.memo(function SinglePhoneCountryItem({
       key={`${region.alpha2}-${region.id}`}
       onClick={() => onSelect(region)}
       className={cn(
-        'flex items-center justify-between rounded-lg px-2.5 py-2 text-xs cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground contain-content',
+        'flex items-center justify-between rounded-2xl px-2.5 py-2 text-xs cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground contain-content',
         isSelected && 'bg-primary/10 font-medium'
       )}
     >
@@ -122,7 +122,7 @@ const SinglePhoneCountryItem = React.memo(function SinglePhoneCountryItem({
           <span
             className={cn(
               'truncate',
-              isSelected ? 'text-[#04648C] dark:text-[#FBCA07] font-semibold' : 'text-foreground'
+              isSelected ? 'text-brand-blue dark:text-brand-yellow font-semibold' : 'text-foreground'
             )}
           >
             {region.name}
@@ -138,7 +138,7 @@ const SinglePhoneCountryItem = React.memo(function SinglePhoneCountryItem({
           {region.dialCode}
         </span>
         {isSelected && (
-          <Check className="h-4 w-4 text-[#04648C] dark:text-[#FBCA07]" />
+          <Check className="h-4 w-4 text-brand-blue dark:text-brand-yellow" />
         )}
       </div>
     </DropdownMenuItem>
@@ -367,7 +367,7 @@ export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneIn
                 size="sm"
                 disabled={disabled}
                 className={cn(
-                  'absolute left-1 z-10 h-8 px-2 py-0 gap-1.5 rounded-md text-xs font-medium border-r border-border/50 hover:bg-muted/80 shrink-0 text-muted-foreground hover:text-foreground transition-colors'
+                  'absolute left-1 z-10 h-8 px-2 py-0 gap-1.5 rounded-xl text-xs font-medium border-r border-border/50 hover:bg-muted/80 shrink-0 text-muted-foreground hover:text-foreground transition-colors'
                 )}
                 title={`Country: ${activeRegion.name} (${activeRegion.dialCode})`}
                 aria-label={`Select country code. Current: ${activeRegion.name} ${activeRegion.dialCode}`}
@@ -384,12 +384,12 @@ export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneIn
                     onError={() => setFlagError(true)}
                   />
                 ) : (
-                  <Globe className="w-3.5 h-3.5 text-primary shrink-0" />
+                  <Globe className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow shrink-0" />
                 )}
                 <span className="font-mono text-[11px] font-semibold text-foreground">
                   {activeRegion.dialCode}
                 </span>
-                <ChevronDown className="w-3 h-3 text-muted-foreground/70 shrink-0" />
+                <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
               </Button>
             </DropdownMenuTrigger>
 
@@ -397,7 +397,7 @@ export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneIn
               portalled={false}
               align="start"
               sideOffset={6}
-              className="w-72 sm:w-80 p-1.5 rounded-xl border bg-popover text-popover-foreground shadow-xl z-[150]"
+              className="w-72 sm:w-80 p-1.5 rounded-2xl border bg-popover text-popover-foreground shadow-xl z-[150]"
             >
               {/* Search Header - Matching language-toggle.tsx */}
               <div className="relative px-1 pt-1 pb-2">
@@ -407,7 +407,7 @@ export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneIn
                   placeholder="Search country, alias, or +CC..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-lg bg-muted/60 py-1.5 pl-8 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-[#04648C] dark:focus:ring-[#FBCA07] focus:bg-muted transition-all"
+                  className="w-full rounded-2xl border border-input/50 bg-muted/20 py-1.5 pl-8 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground outline-none hover:border-ring/60 focus:border-ring focus:outline-none focus:ring-0 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-0 transition-colors"
                   onClick={(e) => e.stopPropagation()}
                   onKeyDown={(e) => e.stopPropagation()}
                   autoFocus
@@ -454,8 +454,8 @@ export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneIn
             aria-describedby={ariaDescribedBy}
             className={cn(
               'pl-22 pr-8 h-10 font-mono text-sm transition-all',
-              isValid && 'border-emerald-500/50 focus-visible:ring-emerald-500/30',
-              error && 'border-destructive focus-visible:ring-destructive/30',
+              isValid && 'border-emerald-500/60 hover:border-emerald-500 focus-visible:border-emerald-500',
+              error && 'border-destructive hover:border-destructive focus-visible:border-destructive',
               className
             )}
           />

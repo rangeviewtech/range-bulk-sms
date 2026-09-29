@@ -454,7 +454,7 @@ export default function VariablesPage() {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="space-y-1.5 flex-1">
               <div className="flex flex-wrap items-center gap-2.5">
-                <div className="p-2 rounded-lg bg-secondary/10 text-secondary dark:bg-primary/15 dark:text-primary">
+                <div className="p-2 rounded-2xl bg-secondary/10 text-secondary dark:bg-primary/15 dark:text-primary">
                   <Braces className="w-5 h-5" />
                 </div>
                 <div>
@@ -508,7 +508,7 @@ export default function VariablesPage() {
 
             {/* Quick Metrics Badges */}
             <div className="flex flex-wrap items-center gap-2 pt-2 lg:pt-0">
-              <div className="px-3.5 py-2 rounded-lg bg-muted/40 border text-left min-w-[120px]">
+              <div className="px-3.5 py-2 rounded-2xl bg-muted/40 border text-left min-w-[120px]">
                 <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                   System Built-in
                 </div>
@@ -516,7 +516,7 @@ export default function VariablesPage() {
                   {SYSTEM_VARIABLES.length}
                 </div>
               </div>
-              <div className="px-3.5 py-2 rounded-lg bg-muted/40 border text-left min-w-[120px]">
+              <div className="px-3.5 py-2 rounded-2xl bg-muted/40 border text-left min-w-[120px]">
                 <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                   Custom Active
                 </div>
@@ -524,7 +524,7 @@ export default function VariablesPage() {
                   {customCount} <span className="text-xs font-normal text-muted-foreground">/ {MAX_CUSTOM_VARIABLES}</span>
                 </div>
               </div>
-              <div className="px-3.5 py-2 rounded-lg bg-muted/40 border text-left min-w-[120px]">
+              <div className="px-3.5 py-2 rounded-2xl bg-muted/40 border text-left min-w-[120px]">
                 <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                   Total Available
                 </div>
@@ -537,7 +537,7 @@ export default function VariablesPage() {
 
           {/* Quota reached warning alert */}
           {isQuotaReached && (
-            <div className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs flex items-center gap-2">
+            <div className="mt-4 p-3 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-xs flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>
                 You have reached your limit of <strong>{MAX_CUSTOM_VARIABLES} custom variables</strong>. To add a new variable, please edit or delete an existing one.
@@ -555,7 +555,7 @@ export default function VariablesPage() {
             <CardHeader className="p-4 sm:p-6 pb-4 border-b border-border">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 {/* Tabs */}
-                <div className="inline-flex p-1 bg-muted rounded-lg border border-border/70 text-xs font-medium self-start">
+                <div className="inline-flex p-1 bg-muted rounded-2xl border border-border/70 text-xs font-medium self-start">
                   <button
                     type="button"
                     onClick={() => {
@@ -605,8 +605,8 @@ export default function VariablesPage() {
 
                 {/* Filters */}
                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <Select value={typeFilter} onValueChange={setTypeFilter}>
-                    <SelectTrigger className="h-9 w-full sm:w-[140px] text-xs">
+                  <Select name="filter-type" value={typeFilter} onValueChange={setTypeFilter}>
+                    <SelectTrigger id="filter-type" name="filter-type" className="h-9 w-full sm:w-[140px] text-xs" aria-label="Filter by variable type">
                       <SlidersHorizontal className="w-3.5 h-3.5 mr-1 text-muted-foreground" />
                       <SelectValue placeholder="All Types" />
                     </SelectTrigger>
@@ -628,6 +628,7 @@ export default function VariablesPage() {
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none z-10" />
                 <Input
                   id="variables-search"
+                  name="variables-search"
                   placeholder="Search variables by name, key, or description..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -781,7 +782,7 @@ export default function VariablesPage() {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
+                                    className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-2xl"
                                     onClick={() => handleDeleteClick(v)}
                                     aria-label={`Delete ${v.label}`}
                                   >
@@ -821,7 +822,7 @@ export default function VariablesPage() {
           <Card className="border-border bg-card shadow-xs sticky top-20">
             <CardHeader className="p-4 sm:p-5 border-b border-border pb-3">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-secondary/10 text-secondary dark:bg-primary/15 dark:text-primary">
+                <div className="p-1.5 rounded-2xl bg-secondary/10 text-secondary dark:bg-primary/15 dark:text-primary">
                   <Smartphone className="w-4 h-4" />
                 </div>
                 <div>
@@ -859,6 +860,7 @@ export default function VariablesPage() {
                 <VariableTextarea
                   ref={simTextareaRef}
                   id="sim-msg"
+                  name="sim-msg"
                   rows={4}
                   value={simulatorMessage}
                   onChange={setSimulatorMessage}
@@ -901,7 +903,7 @@ export default function VariablesPage() {
               </div>
 
               {/* Detected Variables Breakdown */}
-              <div className="p-3 rounded-lg bg-muted/40 border space-y-1 text-xs">
+              <div className="p-3 rounded-2xl bg-muted/40 border space-y-1 text-xs">
                 <div className="flex items-center justify-between font-medium">
                   <span className="text-muted-foreground">Detected Tags:</span>
                   <span className="font-semibold text-foreground">
@@ -945,17 +947,17 @@ export default function VariablesPage() {
               {/* Handset Recipient Live Preview */}
               <div className="space-y-1 pt-1">
                 <div className="flex items-center justify-between text-xs">
-                  <Label className="font-semibold text-foreground flex items-center gap-1.5">
+                  <span className="font-semibold text-foreground flex items-center gap-1.5">
                     <Smartphone className="w-3.5 h-3.5 text-secondary dark:text-primary" />
                     Handset Recipient Output
-                  </Label>
+                  </span>
                   <span className="font-mono text-muted-foreground text-[11px]">
                     {simulatorCharCount} chars • {simulatorSegments} part{simulatorSegments > 1 ? 's' : ''} ({isUnicode ? 'Unicode' : 'GSM-7'})
                   </span>
                 </div>
 
-                <div className="p-4 rounded-xl border bg-muted/30 dark:bg-slate-950/40 flex flex-col items-start">
-                  <div className="max-w-[95%] p-3.5 rounded-2xl rounded-bl-xs bg-primary text-primary-foreground shadow-sm text-xs sm:text-sm whitespace-pre-wrap leading-relaxed">
+                <div className="p-4 rounded-2xl border bg-muted/30 dark:bg-slate-950/40 flex flex-col items-start">
+                  <div className="max-w-[95%] p-3.5 rounded-2xl rounded-bl-xs bg-primary text-primary-foreground shadow-none text-xs sm:text-sm whitespace-pre-wrap leading-relaxed">
                     {simulatorMessage ? (
                       <TemplateHighlighter text={simulatorMessage} variant="on-primary" resolveSampleValues />
                     ) : (
@@ -991,7 +993,7 @@ export default function VariablesPage() {
         <DialogContent className="w-[calc(100%-2rem)] max-w-xl p-0 overflow-hidden">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-secondary/10 text-secondary dark:bg-primary/15 dark:text-primary">
+              <div className="p-1.5 rounded-2xl bg-secondary/10 text-secondary dark:bg-primary/15 dark:text-primary">
                 <Braces className="w-5 h-5" />
               </div>
               <div>
@@ -1006,7 +1008,7 @@ export default function VariablesPage() {
           <form onSubmit={handleCreateSubmit} noValidate className="flex flex-col flex-1 min-h-0">
             <DialogBody className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
               {/* Variable Tag Preview */}
-              <div className="p-3 rounded-lg bg-muted/40 border flex items-center justify-between">
+              <div className="p-3 rounded-2xl bg-muted/40 border flex items-center justify-between">
                 <div>
                   <span className="text-xs font-semibold text-muted-foreground block">Tag Syntax Preview</span>
                   <span className="font-mono text-sm font-bold text-amber-900 dark:text-primary">
@@ -1025,6 +1027,7 @@ export default function VariablesPage() {
                 </Label>
                 <Input
                   id="create-var-label"
+                  name="label"
                   placeholder="e.g. Purchase Order ID, Appointment Date"
                   value={createForm.label}
                   onChange={(e) => {
@@ -1077,6 +1080,7 @@ export default function VariablesPage() {
                 </div>
                 <Input
                   id="create-var-key"
+                  name="key"
                   placeholder="Auto-generated e.g. purchaseOrderId"
                   value={createForm.key}
                   readOnly
@@ -1117,10 +1121,11 @@ export default function VariablesPage() {
               <div className="space-y-1">
                 <Label htmlFor="create-var-type">Data Type</Label>
                 <Select
+                  name="dataType"
                   value={createForm.dataType}
                   onValueChange={(val) => setCreateField('dataType', val as VariableDataType)}
                 >
-                  <SelectTrigger id="create-var-type">
+                  <SelectTrigger id="create-var-type" name="dataType">
                     <SelectValue placeholder="Select Data Type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -1142,6 +1147,7 @@ export default function VariablesPage() {
                   </Label>
                   <Input
                     id="create-var-sample"
+                    name="sampleValue"
                     placeholder="e.g. ORD-98231"
                     value={createForm.sampleValue}
                     onChange={(e) => setCreateField('sampleValue', e.target.value)}
@@ -1161,6 +1167,7 @@ export default function VariablesPage() {
                   </Label>
                   <Input
                     id="create-var-fallback"
+                    name="fallbackValue"
                     placeholder="e.g. your purchase"
                     value={createForm.fallbackValue}
                     onChange={(e) => setCreateField('fallbackValue', e.target.value)}
@@ -1173,6 +1180,7 @@ export default function VariablesPage() {
                 <Label htmlFor="create-var-desc">Usage Notes / Description</Label>
                 <Input
                   id="create-var-desc"
+                  name="description"
                   placeholder="e.g. Injected from customer Shopify or POS order reference"
                   value={createForm.description}
                   onChange={(e) => setCreateField('description', e.target.value)}
@@ -1226,7 +1234,7 @@ export default function VariablesPage() {
         <DialogContent className="w-[calc(100%-2rem)] max-w-xl p-0 overflow-hidden">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-secondary/10 text-secondary dark:bg-primary/15 dark:text-primary">
+              <div className="p-1.5 rounded-2xl bg-secondary/10 text-secondary dark:bg-primary/15 dark:text-primary">
                 <Pencil className="w-5 h-5" />
               </div>
               <div>
@@ -1242,7 +1250,7 @@ export default function VariablesPage() {
             <form onSubmit={handleEditSubmit} className="flex flex-col flex-1 min-h-0">
               <DialogBody className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
                 {/* Immutable Variable Tag */}
-                <div className="p-3 rounded-lg bg-muted/40 border flex items-center justify-between">
+                <div className="p-3 rounded-2xl bg-muted/40 border flex items-center justify-between">
                   <div>
                     <span className="text-xs font-semibold text-muted-foreground block">Variable Key</span>
                     <span className="font-mono text-sm font-bold text-foreground">
@@ -1261,6 +1269,7 @@ export default function VariablesPage() {
                   </Label>
                   <Input
                     id="edit-var-label"
+                    name="label"
                     value={editingVariable.label}
                     onChange={(e) =>
                       setEditingVariable({ ...editingVariable, label: e.target.value })
@@ -1281,12 +1290,13 @@ export default function VariablesPage() {
                 <div className="space-y-1">
                   <Label htmlFor="edit-var-type">Data Type</Label>
                   <Select
+                    name="dataType"
                     value={editingVariable.dataType}
                     onValueChange={(val) =>
                       setEditingVariable({ ...editingVariable, dataType: val as VariableDataType })
                     }
                   >
-                    <SelectTrigger id="edit-var-type">
+                    <SelectTrigger id="edit-var-type" name="dataType">
                       <SelectValue placeholder="Select Data Type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -1308,6 +1318,7 @@ export default function VariablesPage() {
                     </Label>
                     <Input
                       id="edit-var-sample"
+                      name="sampleValue"
                       value={editingVariable.sampleValue}
                       onChange={(e) =>
                         setEditingVariable({ ...editingVariable, sampleValue: e.target.value })
@@ -1322,6 +1333,7 @@ export default function VariablesPage() {
                     </Label>
                     <Input
                       id="edit-var-fallback"
+                      name="fallbackValue"
                       value={editingVariable.fallbackValue || ''}
                       onChange={(e) =>
                         setEditingVariable({ ...editingVariable, fallbackValue: e.target.value })
@@ -1335,6 +1347,7 @@ export default function VariablesPage() {
                   <Label htmlFor="edit-var-desc">Usage Notes / Description</Label>
                   <Input
                     id="edit-var-desc"
+                    name="description"
                     value={editingVariable.description || ''}
                     onChange={(e) =>
                       setEditingVariable({ ...editingVariable, description: e.target.value })

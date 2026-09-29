@@ -67,7 +67,7 @@ export function VariableDropdown({ onSelect }: VariableDropdownProps) {
               type="button"
               variant="outline"
               size="sm"
-              className="h-8 px-3 text-xs font-medium gap-1.5 rounded-md transition-all"
+              className="h-9 px-3.5 text-xs font-semibold gap-1.5 rounded-full border-border/60 hover:bg-muted/40 shadow-none transition-all duration-150"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>Insert Variable</span>
@@ -77,7 +77,7 @@ export function VariableDropdown({ onSelect }: VariableDropdownProps) {
           <DropdownMenuContent 
             portalled={false}
             align="end" 
-            className="w-80 p-1.5 rounded-xl border bg-popover text-popover-foreground shadow-xl z-50 flex flex-col"
+            className="w-80 p-1.5 rounded-2xl border bg-popover text-popover-foreground shadow-xl z-50 flex flex-col"
           >
             {/* Header & Search */}
             <div className="flex items-center justify-between px-2 pt-1 pb-2">
@@ -86,7 +86,7 @@ export function VariableDropdown({ onSelect }: VariableDropdownProps) {
                 href="/sms/variables" 
                 target="_blank" 
               rel="noopener noreferrer" 
-              className="text-secondary dark:text-primary hover:underline flex items-center gap-0.5 text-[10px] font-medium"
+              className="text-brand-blue dark:text-brand-yellow hover:underline flex items-center gap-0.5 text-[10px] font-semibold"
             >
               Manage all <ExternalLink className="w-2.5 h-2.5" />
             </Link>
@@ -101,7 +101,7 @@ export function VariableDropdown({ onSelect }: VariableDropdownProps) {
               onChange={(e) => setSearch(e.target.value)}
               onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => e.stopPropagation()}
-              className="w-full rounded-lg bg-muted/60 py-1.5 pl-8 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-[#04648C] dark:focus:ring-[#FBCA07] focus:bg-muted transition-all"
+              className="w-full rounded-2xl border border-input/50 bg-muted/20 py-1.5 pl-8 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground outline-none hover:border-ring/60 focus:border-ring focus:outline-none focus:ring-0 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-0 transition-colors"
             />
           </div>
 
@@ -115,7 +115,7 @@ export function VariableDropdown({ onSelect }: VariableDropdownProps) {
               <>
                 {builtIn.length > 0 && (
                   <>
-                    <div className="px-2 py-1 mt-1 text-[10px] font-bold text-foreground/40 uppercase tracking-wider">
+                    <div className="px-2 py-1 mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                       Built-in
                     </div>
                     {builtIn.map((v) => {
@@ -127,7 +127,7 @@ export function VariableDropdown({ onSelect }: VariableDropdownProps) {
                             onSelect(v.key);
                             setOpen(false);
                           }}
-                          className="flex items-center justify-between gap-2.5 rounded-lg px-2.5 py-1.5 cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground group"
+                          className="flex items-center justify-between gap-2.5 rounded-2xl px-2.5 py-1.5 cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground group"
                           title={`${v.label} ({{${v.key}}})${v.sampleValue ? ` · e.g. ${v.sampleValue}` : ''}`}
                         >
                           <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -139,7 +139,7 @@ export function VariableDropdown({ onSelect }: VariableDropdownProps) {
                             </span>
                           </div>
                           {v.sampleValue && (
-                            <span className="text-[10px] text-muted-foreground/60 font-mono shrink-0 hidden sm:inline-block max-w-[70px] truncate">
+                            <span className="text-[10px] text-muted-foreground font-mono shrink-0 hidden sm:inline-block max-w-[70px] truncate">
                               {v.sampleValue}
                             </span>
                           )}
@@ -155,7 +155,7 @@ export function VariableDropdown({ onSelect }: VariableDropdownProps) {
 
                 {custom.length > 0 && (
                   <>
-                    <div className="px-2 py-1 mt-1 text-[10px] font-bold text-foreground/40 uppercase tracking-wider">
+                    <div className="px-2 py-1 mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                       Custom
                     </div>
                     {custom.map((v) => {
@@ -167,7 +167,7 @@ export function VariableDropdown({ onSelect }: VariableDropdownProps) {
                             onSelect(v.key);
                             setOpen(false);
                           }}
-                          className="flex items-center justify-between gap-2.5 rounded-lg px-2.5 py-1.5 cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground group"
+                          className="flex items-center justify-between gap-2.5 rounded-2xl px-2.5 py-1.5 cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground group"
                           title={`${v.label} ({{${v.key}}})${v.sampleValue ? ` · e.g. ${v.sampleValue}` : ''}`}
                         >
                           <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -200,7 +200,7 @@ export function VariableDropdown({ onSelect }: VariableDropdownProps) {
                 setShowAddVar(true);
                 setOpen(false);
               }}
-              className="text-[11.5px] font-sans text-secondary dark:text-primary cursor-pointer flex items-center justify-center gap-1.5 py-2 font-semibold w-full rounded-lg hover:bg-secondary/10 dark:hover:bg-primary/10 focus:bg-secondary/10 dark:focus:bg-primary/10 transition-colors"
+              className="text-[11.5px] font-sans text-brand-blue dark:text-brand-yellow cursor-pointer flex items-center justify-center gap-1.5 py-2 font-semibold w-full rounded-2xl hover:bg-brand-blue/10 dark:hover:bg-brand-yellow/15 focus:bg-brand-blue/10 dark:focus:bg-brand-yellow/15 transition-colors"
             >
               <Plus className="w-4 h-4" />
               <span>Create Custom Variable</span>

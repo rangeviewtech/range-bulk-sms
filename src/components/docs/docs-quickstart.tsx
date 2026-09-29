@@ -36,7 +36,7 @@ export function DocsQuickStart({
       <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-[#04648C]/10 via-background to-[#FBCA07]/10 p-6 sm:p-8">
         <div className="relative z-10 max-w-3xl space-y-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#FBCA07] text-[#141B2D]">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-yellow text-[#141B2D]">
               <Zap className="h-3.5 w-3.5" /> High-Throughput Messaging
             </span>
             <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground border">
@@ -60,7 +60,7 @@ export function DocsQuickStart({
           <div className="pt-2 flex flex-wrap items-center gap-4">
             <a
               href="#/SMS/sendSingleSms"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#04648C] hover:bg-[#034f6f] text-white font-medium text-sm transition-all shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-blue hover:bg-[#034f6f] text-white font-medium text-sm transition-all shadow-sm"
             >
               Explore API Reference <ArrowRight className="h-4 w-4" />
             </a>
@@ -77,15 +77,15 @@ export function DocsQuickStart({
       {/* 4-Step Quick Start Guide */}
       <div className="space-y-4">
         <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <Terminal className="h-5 w-5 text-[#04648C] dark:text-[#FBCA07]" />
+          <Terminal className="h-5 w-5 text-brand-blue dark:text-brand-yellow" />
           Send Your First SMS in 5 Minutes
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Step 1 */}
           <div className="p-5 rounded-xl border border-border bg-card shadow-xs space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#04648C] dark:text-[#FBCA07] uppercase tracking-wider">
-              <span className="h-6 w-6 rounded-full bg-[#04648C]/10 dark:bg-[#FBCA07]/20 flex items-center justify-center font-bold">1</span>
+            <div className="flex items-center gap-2 text-xs font-bold text-brand-blue dark:text-brand-yellow uppercase tracking-wider">
+              <span className="h-6 w-6 rounded-full bg-brand-blue/10 dark:bg-brand-yellow/20 flex items-center justify-center font-bold">1</span>
               Obtain API Key
             </div>
             <h3 className="font-semibold text-foreground text-sm">Generate your developer credentials</h3>
@@ -96,8 +96,8 @@ export function DocsQuickStart({
 
           {/* Step 2 */}
           <div className="p-5 rounded-xl border border-border bg-card shadow-xs space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#04648C] dark:text-[#FBCA07] uppercase tracking-wider">
-              <span className="h-6 w-6 rounded-full bg-[#04648C]/10 dark:bg-[#FBCA07]/20 flex items-center justify-center font-bold">2</span>
+            <div className="flex items-center gap-2 text-xs font-bold text-brand-blue dark:text-brand-yellow uppercase tracking-wider">
+              <span className="h-6 w-6 rounded-full bg-brand-blue/10 dark:bg-brand-yellow/20 flex items-center justify-center font-bold">2</span>
               Select Test Environment
             </div>
             <h3 className="font-semibold text-foreground text-sm">Safe isolated execution</h3>
@@ -108,8 +108,8 @@ export function DocsQuickStart({
 
           {/* Step 3 */}
           <div className="p-5 rounded-xl border border-border bg-card shadow-xs space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#04648C] dark:text-[#FBCA07] uppercase tracking-wider">
-              <span className="h-6 w-6 rounded-full bg-[#04648C]/10 dark:bg-[#FBCA07]/20 flex items-center justify-center font-bold">3</span>
+            <div className="flex items-center gap-2 text-xs font-bold text-brand-blue dark:text-brand-yellow uppercase tracking-wider">
+              <span className="h-6 w-6 rounded-full bg-brand-blue/10 dark:bg-brand-yellow/20 flex items-center justify-center font-bold">3</span>
               Dispatch Outbound SMS
             </div>
             <h3 className="font-semibold text-foreground text-sm">Submit POST /api/v1/sms/send</h3>
@@ -120,8 +120,8 @@ export function DocsQuickStart({
 
           {/* Step 4 */}
           <div className="p-5 rounded-xl border border-border bg-card shadow-xs space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#04648C] dark:text-[#FBCA07] uppercase tracking-wider">
-              <span className="h-6 w-6 rounded-full bg-[#04648C]/10 dark:bg-[#FBCA07]/20 flex items-center justify-center font-bold">4</span>
+            <div className="flex items-center gap-2 text-xs font-bold text-brand-blue dark:text-brand-yellow uppercase tracking-wider">
+              <span className="h-6 w-6 rounded-full bg-brand-blue/10 dark:bg-brand-yellow/20 flex items-center justify-center font-bold">4</span>
               Verify Delivery Receipt
             </div>
             <h3 className="font-semibold text-foreground text-sm">Inspect status & Webhook callbacks</h3>
@@ -161,7 +161,7 @@ export function DocsQuickStart({
           </button>
         </div>
 
-        <div className="p-4 rounded-xl bg-[#07163D] text-slate-100 font-mono text-xs overflow-x-auto shadow-inner border border-border">
+        <div className="p-4 rounded-xl bg-brand-navy text-slate-100 font-mono text-xs overflow-x-auto shadow-inner border border-border">
           <pre className="whitespace-pre">{sampleCurl}</pre>
         </div>
       </div>
@@ -170,7 +170,7 @@ export function DocsQuickStart({
       <div className="space-y-3 pt-2">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-            <Shield className="h-4 w-4 text-[#04648C] dark:text-[#FBCA07]" />
+            <Shield className="h-4 w-4 text-brand-blue dark:text-brand-yellow" />
             Deterministic Sandbox Test Phone Numbers (Reserved Non-Routable)
           </h3>
         </div>
@@ -187,37 +187,37 @@ export function DocsQuickStart({
             </thead>
             <tbody className="divide-y divide-border font-mono">
               <tr>
-                <td className="p-3 font-bold text-[#04648C] dark:text-[#FBCA07]">{DETERMINISTIC_TEST_NUMBERS.DELIVERED}</td>
+                <td className="p-3 font-bold text-brand-blue dark:text-brand-yellow">{DETERMINISTIC_TEST_NUMBERS.DELIVERED}</td>
                 <td className="p-3 text-emerald-600 dark:text-emerald-400 font-sans">DELIVERED (Instant successful handset receipt)</td>
                 <td className="p-3">201 Created</td>
                 <td className="p-3 font-sans text-muted-foreground">None (0 UGX)</td>
               </tr>
               <tr>
-                <td className="p-3 font-bold text-[#04648C] dark:text-[#FBCA07]">{DETERMINISTIC_TEST_NUMBERS.REJECTED}</td>
+                <td className="p-3 font-bold text-brand-blue dark:text-brand-yellow">{DETERMINISTIC_TEST_NUMBERS.REJECTED}</td>
                 <td className="p-3 text-rose-600 dark:text-rose-400 font-sans">REJECTED (Carrier firewall / blacklisted recipient)</td>
                 <td className="p-3">201 Created</td>
                 <td className="p-3 font-sans text-muted-foreground">None (0 UGX)</td>
               </tr>
               <tr>
-                <td className="p-3 font-bold text-[#04648C] dark:text-[#FBCA07]">{DETERMINISTIC_TEST_NUMBERS.UNDELIVERED}</td>
+                <td className="p-3 font-bold text-brand-blue dark:text-brand-yellow">{DETERMINISTIC_TEST_NUMBERS.UNDELIVERED}</td>
                 <td className="p-3 text-amber-600 dark:text-amber-400 font-sans">UNDELIVERED (Network timeout / handset switched off)</td>
                 <td className="p-3">201 Created</td>
                 <td className="p-3 font-sans text-muted-foreground">None (0 UGX)</td>
               </tr>
               <tr>
-                <td className="p-3 font-bold text-[#04648C] dark:text-[#FBCA07]">{DETERMINISTIC_TEST_NUMBERS.INSUFFICIENT_BALANCE}</td>
+                <td className="p-3 font-bold text-brand-blue dark:text-brand-yellow">{DETERMINISTIC_TEST_NUMBERS.INSUFFICIENT_BALANCE}</td>
                 <td className="p-3 text-rose-600 dark:text-rose-400 font-sans">INSUFFICIENT_BALANCE (Low wallet credit simulation)</td>
                 <td className="p-3 text-rose-600">402 Payment Required</td>
                 <td className="p-3 font-sans text-muted-foreground">None (0 UGX)</td>
               </tr>
               <tr>
-                <td className="p-3 font-bold text-[#04648C] dark:text-[#FBCA07]">{DETERMINISTIC_TEST_NUMBERS.INVALID_SENDER}</td>
+                <td className="p-3 font-bold text-brand-blue dark:text-brand-yellow">{DETERMINISTIC_TEST_NUMBERS.INVALID_SENDER}</td>
                 <td className="p-3 text-rose-600 dark:text-rose-400 font-sans">INVALID_SENDER (Unapproved sender ID error)</td>
                 <td className="p-3 text-rose-600">400 Bad Request</td>
                 <td className="p-3 font-sans text-muted-foreground">None (0 UGX)</td>
               </tr>
               <tr>
-                <td className="p-3 font-bold text-[#04648C] dark:text-[#FBCA07]">{DETERMINISTIC_TEST_NUMBERS.QUEUED_THEN_DELIVERED}</td>
+                <td className="p-3 font-bold text-brand-blue dark:text-brand-yellow">{DETERMINISTIC_TEST_NUMBERS.QUEUED_THEN_DELIVERED}</td>
                 <td className="p-3 text-blue-600 dark:text-blue-400 font-sans">QUEUED → SUBMITTED → DELIVERED (Lifecycle progression)</td>
                 <td className="p-3">201 Created</td>
                 <td className="p-3 font-sans text-muted-foreground">None (0 UGX)</td>

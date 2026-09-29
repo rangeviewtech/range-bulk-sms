@@ -690,7 +690,7 @@ export default function ContactsPage() {
                     </div>
 
                     {contactServerErrors.length > 0 && (
-                      <div className="p-2.5 rounded-lg bg-destructive/10 border border-destructive/20 text-xs text-destructive space-y-1">
+                      <div className="p-2.5 rounded-2xl bg-destructive/10 border border-destructive/20 text-xs text-destructive space-y-1">
                         {contactServerErrors.map((err, i) => (
                           <p key={i}>• {err}</p>
                         ))}
@@ -715,7 +715,7 @@ export default function ContactsPage() {
                     <Button
                       type="submit"
                       disabled={submitting}
-                      className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90 shadow-sm"
+                      className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90 shadow-none"
                     >
                       {submitting ? 'Saving...' : 'Save Contact'}
                     </Button>
@@ -728,11 +728,13 @@ export default function ContactsPage() {
       />
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row gap-3 sm:gap-4 justify-between items-stretch md:items-center bg-card p-3 sm:p-4 rounded-xl border border-border shadow-xs">
+      <div className="flex flex-col md:flex-row gap-3 sm:gap-4 justify-between items-stretch md:items-center bg-card p-3 sm:p-4 rounded-2xl border border-border shadow-xs">
         <div className="flex flex-1 flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
             <Input
+              id="contacts-search"
+              name="contacts-search"
               placeholder="Search by name, phone, network, email, or group..."
               className="pl-9 pr-8 w-full"
               value={search}
@@ -752,10 +754,11 @@ export default function ContactsPage() {
 
           {/* Group Filter */}
           <Select
+            name="filter-group"
             value={filters.group || 'ALL'}
             onValueChange={(val) => setFilter('group', val)}
           >
-            <SelectTrigger className="w-full sm:w-[170px] h-9 text-xs">
+            <SelectTrigger id="filter-group" aria-label="Filter contacts by group" className="w-full sm:w-[170px] h-9 text-xs">
               <Filter className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
               <SelectValue placeholder="All Groups" />
             </SelectTrigger>
@@ -771,10 +774,11 @@ export default function ContactsPage() {
 
           {/* Status Filter */}
           <Select
+            name="filter-status"
             value={filters.status || 'ALL'}
             onValueChange={(val) => setFilter('status', val)}
           >
-            <SelectTrigger className="w-full sm:w-[140px] h-9 text-xs">
+            <SelectTrigger id="filter-status" aria-label="Filter contacts by status" className="w-full sm:w-[140px] h-9 text-xs">
               <Filter className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
               <SelectValue placeholder="All Statuses" />
             </SelectTrigger>
@@ -788,10 +792,11 @@ export default function ContactsPage() {
           {/* Country Filter */}
           {availableCountries.length > 0 && (
             <Select
+              name="filter-country"
               value={filters.country || 'ALL'}
               onValueChange={(val) => setFilter('country', val)}
             >
-              <SelectTrigger className="w-full sm:w-[150px] h-9 text-xs">
+              <SelectTrigger id="filter-country" aria-label="Filter contacts by country" className="w-full sm:w-[150px] h-9 text-xs">
                 <Globe className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
                 <SelectValue placeholder="All Countries" />
               </SelectTrigger>
@@ -809,10 +814,11 @@ export default function ContactsPage() {
           {/* Network / Carrier Filter */}
           {availableNetworks.length > 0 && (
             <Select
+              name="filter-network"
               value={filters.network || 'ALL'}
               onValueChange={(val) => setFilter('network', val)}
             >
-              <SelectTrigger className="w-full sm:w-[150px] h-9 text-xs">
+              <SelectTrigger id="filter-network" aria-label="Filter contacts by network" className="w-full sm:w-[150px] h-9 text-xs">
                 <Filter className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
                 <SelectValue placeholder="All Networks" />
               </SelectTrigger>
@@ -837,9 +843,9 @@ export default function ContactsPage() {
             title={`Sort Order: ${sortOrder === 'asc' ? 'Ascending' : 'Descending'}`}
           >
             {sortOrder === 'asc' ? (
-              <ArrowUp className="w-3.5 h-3.5 text-primary" />
+              <ArrowUp className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
             ) : (
-              <ArrowDown className="w-3.5 h-3.5 text-primary" />
+              <ArrowDown className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
             )}
             <span className="text-xs uppercase font-medium">{sortOrder}</span>
           </Button>
@@ -928,7 +934,7 @@ export default function ContactsPage() {
                       {/* Top Row: Avatar + Name + Status Pill */}
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="p-1.5 rounded-lg bg-primary/10 text-primary shrink-0">
+                          <div className="p-1.5 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow shrink-0">
                             <User className="w-4 h-4" />
                           </div>
                           <span className="font-semibold text-foreground text-sm line-clamp-1">
@@ -960,7 +966,7 @@ export default function ContactsPage() {
                       </div>
 
                       {/* Phone & Network */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 bg-muted/40 p-2.5 rounded-lg border border-border/50">
+                      <div className="flex flex-wrap items-center justify-between gap-2 bg-muted/40 p-2.5 rounded-2xl border border-border/50">
                         <CountryFlagPhone phone={c.phone} asLink className="text-xs font-mono text-foreground" />
                         <CarrierBadge phone={c.phone} showIcon={false} size="sm" />
                       </div>
@@ -974,13 +980,13 @@ export default function ContactsPage() {
                               href={`mailto:${c.email}`}
                               title={`Send email to ${c.email}`}
                               aria-label={`Send email to ${c.email}`}
-                              className="hover:underline hover:text-primary transition-colors cursor-pointer"
+                              className="hover:underline hover:text-brand-blue dark:hover:text-brand-yellow transition-colors cursor-pointer"
                             >
                               {c.email}
                             </a>
                           </div>
                         ) : (
-                          <span className="text-muted-foreground/60 italic text-[11px]">No email</span>
+                          <span className="text-muted-foreground italic text-[11px]">No email</span>
                         )}
 
                         <div className="flex flex-wrap gap-1">
@@ -1004,7 +1010,7 @@ export default function ContactsPage() {
                           asChild
                           variant="outline"
                           size="sm"
-                          className="h-8 text-xs gap-1.5 flex-1 text-primary hover:text-primary"
+                          className="h-8 text-xs gap-1.5 flex-1 text-brand-blue hover:text-brand-blue hover:bg-brand-blue/10 dark:text-brand-yellow dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/15"
                         >
                           <Link
                             href={`/sms/send?deliveryMode=manual&recipients=${encodeURIComponent(c.phone)}`}
@@ -1034,7 +1040,7 @@ export default function ContactsPage() {
                           variant="ghost"
                           size="icon"
                           className={cn(
-                            'h-8 w-8 rounded-lg transition-colors border',
+                            'h-8 w-8 rounded-2xl transition-colors border',
                             (c.status || 'ACTIVE') === 'ACTIVE'
                               ? 'text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-amber-500/10 hover:text-amber-600'
                               : 'text-amber-600 dark:text-amber-400 border-amber-500/20 hover:bg-emerald-500/10 hover:text-emerald-600'
@@ -1053,7 +1059,7 @@ export default function ContactsPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
+                          className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-2xl"
                           onClick={() => handleDeleteContact(c.id, fullName)}
                           title={`Delete ${fullName}`}
                           aria-label={`Delete ${fullName}`}
@@ -1136,7 +1142,7 @@ export default function ContactsPage() {
                         <TableRow key={c.id} className="hover:bg-muted/30 transition-colors">
                           <TableCell>
                             <div className="flex items-center gap-2.5">
-                              <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                              <div className="p-1.5 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow">
                                 <User className="w-4 h-4" />
                               </div>
                               <span className="font-semibold text-foreground text-sm">{fullName}</span>
@@ -1156,7 +1162,7 @@ export default function ContactsPage() {
                                   href={`mailto:${c.email}`}
                                   title={`Send email to ${c.email}`}
                                   aria-label={`Send email to ${c.email}`}
-                                  className="hover:underline hover:text-primary transition-colors cursor-pointer focus:outline-hidden focus-visible:ring-1 focus-visible:ring-primary rounded-xs"
+                                  className="hover:underline hover:text-brand-blue dark:hover:text-brand-yellow transition-colors cursor-pointer outline-none focus:outline-none focus-visible:outline-none focus-visible:underline rounded-xs"
                                 >
                                   {c.email}
                                 </a>
@@ -1212,7 +1218,7 @@ export default function ContactsPage() {
                                 variant="ghost"
                                 size="icon"
                                 className={cn(
-                                  'h-8 w-8 rounded-lg transition-colors',
+                                  'h-8 w-8 rounded-2xl transition-colors',
                                   (c.status || 'ACTIVE') === 'ACTIVE'
                                     ? 'text-emerald-600 dark:text-emerald-400 hover:text-amber-600 hover:bg-amber-500/10'
                                     : 'text-amber-600 dark:text-amber-400 hover:text-emerald-600 hover:bg-emerald-500/10'
@@ -1233,7 +1239,7 @@ export default function ContactsPage() {
                                 type="button"
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                                className="h-8 w-8 text-foreground/80 hover:text-foreground bg-muted/40 dark:bg-muted/15 border border-border/50 hover:bg-muted/70 rounded-2xl transition-colors"
                                 onClick={() => handleOpenEdit(c)}
                                 title={`Edit ${fullName}`}
                                 aria-label={`Edit ${fullName}`}
@@ -1246,7 +1252,7 @@ export default function ContactsPage() {
                                 type="button"
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                className="h-8 w-8 text-foreground/80 hover:text-brand-blue dark:hover:text-brand-yellow hover:border-brand-blue/40 dark:hover:border-brand-yellow/40 bg-muted/40 dark:bg-muted/15 border border-border/50 hover:bg-muted/70 rounded-2xl transition-colors"
                                 asChild
                               >
                                 <Link
@@ -1262,7 +1268,7 @@ export default function ContactsPage() {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
+                                className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-2xl"
                                 onClick={() => handleDeleteContact(c.id, fullName)}
                                 title={`Delete ${fullName}`}
                                 aria-label={`Delete ${fullName}`}
@@ -1306,7 +1312,7 @@ export default function ContactsPage() {
         <DialogContent className="w-[calc(100%-2rem)] sm:max-w-xl md:max-w-2xl p-0 overflow-hidden shadow-2xl">
           <DialogHeader className="px-6 py-5 border-b border-border bg-muted/20">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-lg bg-primary/10 text-primary">
+              <div className="p-2 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow">
                 <Pencil className="w-4 h-4" />
               </div>
               <div>
@@ -1421,7 +1427,7 @@ export default function ContactsPage() {
               </div>
 
               {editServerErrors.length > 0 && (
-                <div className="p-2.5 rounded-lg bg-destructive/10 border border-destructive/20 text-xs text-destructive space-y-1">
+                <div className="p-2.5 rounded-2xl bg-destructive/10 border border-destructive/20 text-xs text-destructive space-y-1">
                   {editServerErrors.map((err, i) => (
                     <p key={i}>• {err}</p>
                   ))}
@@ -1446,7 +1452,7 @@ export default function ContactsPage() {
               <Button
                 type="submit"
                 disabled={editSubmitting}
-                className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90 shadow-sm"
+                className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90 shadow-none"
               >
                 {editSubmitting ? (
                   <div className="flex items-center gap-1.5">

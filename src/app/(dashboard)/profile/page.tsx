@@ -12,7 +12,7 @@ export default async function ProfilePage() {
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 animate-in fade-in duration-300">
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2.5">
-          <User className="w-6 h-6 text-[#04648C] dark:text-[#FBCA07]" />
+          <User className="w-6 h-6 text-brand-blue dark:text-brand-yellow" />
           Account Profile & Credentials
         </h1>
         <p className="text-xs text-muted-foreground mt-0.5">
@@ -20,9 +20,9 @@ export default async function ProfilePage() {
         </p>
       </div>
       
-      <div className="bg-card rounded-xl border border-border p-4 sm:p-6 shadow-sm space-y-6">
+      <div className="bg-card rounded-2xl border border-border p-4 sm:p-6 shadow-none space-y-6">
         <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 border-b border-border pb-5">
-          <div className="w-16 h-16 rounded-full bg-[#04648C] text-white flex items-center justify-center text-xl font-bold border-2 border-[#FBCA07] shrink-0">
+          <div className="w-16 h-16 rounded-full bg-brand-blue text-white flex items-center justify-center text-xl font-bold border-2 border-brand-yellow shrink-0">
             {user.name?.[0] || 'A'}
           </div>
           <div>
@@ -35,19 +35,19 @@ export default async function ProfilePage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div className="p-3.5 bg-muted/40 rounded-lg border border-border">
+          <div className="p-3.5 bg-muted/40 rounded-2xl border border-border">
             <div className="text-muted-foreground text-[11px]">User Account Email</div>
             <div className="text-sm font-semibold text-foreground mt-0.5">{user.email}</div>
           </div>
-          <div className="p-3.5 bg-muted/40 rounded-lg border border-border">
+          <div className="p-3.5 bg-muted/40 rounded-2xl border border-border">
             <div className="text-muted-foreground text-[11px]">Assigned Role</div>
             <div className="text-sm font-semibold text-foreground mt-0.5">{roleNames}</div>
           </div>
-          <div className="p-3.5 bg-muted/40 rounded-lg border border-border">
+          <div className="p-3.5 bg-muted/40 rounded-2xl border border-border">
             <div className="text-muted-foreground text-[11px]">Active Session Status</div>
             <div className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5">Authenticated (2FA Verified)</div>
           </div>
-          <div className="p-3.5 bg-muted/40 rounded-lg border border-border">
+          <div className="p-3.5 bg-muted/40 rounded-2xl border border-border">
             <div className="text-muted-foreground text-[11px]">Default Fleet Tenant</div>
             <div className="text-sm font-semibold text-foreground mt-0.5">Not configured</div>
           </div>

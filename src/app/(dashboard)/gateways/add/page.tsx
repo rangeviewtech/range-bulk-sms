@@ -184,7 +184,7 @@ export default function AddGatewayPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6 pt-4">
-            <div className="flex flex-col items-center justify-center p-4 sm:p-8 bg-muted/40 rounded-xl border border-dashed border-border">
+            <div className="flex flex-col items-center justify-center p-4 sm:p-8 bg-muted/40 rounded-2xl border border-dashed border-border">
               <span className="text-xs sm:text-sm text-muted-foreground font-medium mb-2 uppercase tracking-widest">
                 Pairing Code
               </span>

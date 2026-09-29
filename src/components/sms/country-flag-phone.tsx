@@ -118,7 +118,7 @@ export function CountryFlagPhone({
           href={telHref}
           title={`Call ${phone}`}
           aria-label={`Call ${phone}`}
-          className="hover:underline hover:text-primary transition-colors cursor-pointer focus:outline-hidden focus-visible:ring-1 focus-visible:ring-primary rounded-xs"
+          className="hover:underline hover:text-primary transition-colors cursor-pointer outline-none focus:outline-none focus-visible:outline-none focus-visible:underline rounded-xs"
           onClick={(e) => e.stopPropagation()}
         >
           {phone}

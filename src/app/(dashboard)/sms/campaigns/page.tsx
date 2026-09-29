@@ -550,6 +550,8 @@ export default function CampaignsPage() {
           <div className="relative flex-1 md:w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <Input
+              id="campaigns-search"
+              name="campaigns-search"
               placeholder="Search campaigns..."
               className="pl-9 pr-8"
               value={search}
@@ -632,7 +634,7 @@ export default function CampaignsPage() {
                     </div>
 
                     {/* Progress Bar */}
-                    <div className="space-y-1.5 bg-muted/40 p-2.5 rounded-lg border border-border/50">
+                    <div className="space-y-1.5 bg-muted/40 p-2.5 rounded-2xl border border-border/50">
                       <div className="flex justify-between text-xs text-muted-foreground">
                         <span>Progress ({camp.sent.toLocaleString()} / {camp.recipients.toLocaleString()})</span>
                         <span className="font-semibold text-foreground">{camp.progress}%</span>
@@ -872,7 +874,7 @@ export default function CampaignsPage() {
                                 asChild
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                className="h-8 w-8 text-foreground/80 hover:text-brand-blue dark:hover:text-brand-yellow hover:border-brand-blue/40 dark:hover:border-brand-yellow/40 bg-muted/40 dark:bg-muted/15 border border-border/50 hover:bg-muted/70 rounded-2xl transition-colors"
                               >
                                 <Link
                                   href={`/sms/campaigns/${camp.id}`}
@@ -887,7 +889,7 @@ export default function CampaignsPage() {
                                 asChild
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                className="h-8 w-8 text-foreground/80 hover:text-brand-blue dark:hover:text-brand-yellow hover:border-brand-blue/40 dark:hover:border-brand-yellow/40 bg-muted/40 dark:bg-muted/15 border border-border/50 hover:bg-muted/70 rounded-2xl transition-colors"
                               >
                                 <Link
                                   href={`/sms/campaigns/${camp.id}`}
@@ -904,7 +906,7 @@ export default function CampaignsPage() {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                className="h-8 w-8 text-foreground/80 hover:text-brand-blue dark:hover:text-brand-yellow hover:border-brand-blue/40 dark:hover:border-brand-yellow/40 bg-muted/40 dark:bg-muted/15 border border-border/50 hover:bg-muted/70 rounded-2xl transition-colors"
                                 onClick={() => handleOpenEdit(camp)}
                                 title="Edit campaign"
                                 aria-label={`Edit ${camp.name}`}
@@ -915,7 +917,7 @@ export default function CampaignsPage() {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-muted-foreground/50 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                                className="h-8 w-8 text-foreground/80 hover:text-brand-blue dark:hover:text-brand-yellow hover:border-brand-blue/40 dark:hover:border-brand-yellow/40 bg-muted/40 dark:bg-muted/15 border border-border/50 hover:bg-muted/70 rounded-2xl transition-colors"
                                 onClick={() => handleDuplicate(camp)}
                                 title="Sent campaigns cannot be edited. Click to duplicate as a new draft."
                                 aria-label={`Duplicate ${camp.name}`}
@@ -928,7 +930,7 @@ export default function CampaignsPage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50/60 dark:bg-red-500/10 border border-red-200/50 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
+                              className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50/60 dark:bg-red-500/10 border border-red-200/50 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-2xl"
                               onClick={() => handleDeleteClick(camp)}
                               title="Delete campaign"
                               aria-label={`Delete ${camp.name}`}
@@ -942,7 +944,7 @@ export default function CampaignsPage() {
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                                  className="h-8 w-8 text-foreground/80 hover:text-foreground bg-muted/40 dark:bg-muted/15 border border-border/50 hover:bg-muted/70 rounded-2xl transition-colors"
                                   title="More options"
                                   aria-label="More campaign options"
                                 >

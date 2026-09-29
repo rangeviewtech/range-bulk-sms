@@ -56,8 +56,8 @@ export function SocialFirstAuth() {
     });
 
   return (
-    <div className="flex min-h-[600px] h-full w-full items-center justify-center bg-muted/30 p-4 rounded-xl border shadow-inner">
-      <div className="w-full max-w-md bg-card p-8 rounded-xl border shadow-sm space-y-6">
+    <div className="flex min-h-[600px] h-full w-full items-center justify-center bg-muted/30 p-4 rounded-2xl border shadow-inner">
+      <div className="w-full max-w-md bg-card p-8 rounded-2xl border shadow-none space-y-6">
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-bold tracking-tight">Create an account</h1>
           <p className="text-muted-foreground text-sm">

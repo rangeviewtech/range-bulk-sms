@@ -99,13 +99,13 @@ export default function DeveloperPage() {
 
         <div className="flex items-center gap-2">
           <Link href="/api/docs" target="_blank">
-            <Button variant="outline" size="sm" className="gap-1.5">
+            <Button variant="outline" size="md" className="gap-1.5">
               <span>Public Docs</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </Button>
           </Link>
           <Link href="/developer/api-keys">
-            <Button size="sm" className="gap-1.5">
+            <Button size="md" className="gap-1.5">
               <KeyRound className="w-3.5 h-3.5" />
               <span>Create API Key</span>
             </Button>
@@ -115,7 +115,7 @@ export default function DeveloperPage() {
 
       {/* Gateway Environment Bar */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="p-4 rounded-xl border border-border/80 bg-card shadow-xs flex items-center justify-between">
+        <div className="p-4 rounded-2xl border border-border/80 bg-card shadow-xs flex items-center justify-between">
           <div className="space-y-0.5">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Sandbox Gateway</span>
@@ -132,7 +132,7 @@ export default function DeveloperPage() {
           </Badge>
         </div>
 
-        <div className="p-4 rounded-xl border border-border/80 bg-card shadow-xs flex items-center justify-between">
+        <div className="p-4 rounded-2xl border border-border/80 bg-card shadow-xs flex items-center justify-between">
           <div className="space-y-0.5">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Production Gateway</span>
@@ -156,17 +156,17 @@ export default function DeveloperPage() {
           const Icon = item.icon;
           return (
             <Link key={item.title} href={item.href} className="group">
-              <Card className="h-full bg-card border-border/80 hover:border-primary/50 transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer flex flex-col justify-between">
+              <Card className="h-full bg-card border-border/80 hover:border-primary/50 transition-all duration-200 shadow-xs hover:shadow-none cursor-pointer flex flex-col justify-between">
                 <CardHeader className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <div className={`p-2.5 rounded-xl border ${item.color}`}>
+                    <div className={`p-2.5 rounded-2xl border ${item.color}`}>
                       <Icon className="w-5 h-5" />
                     </div>
                     <Badge variant="outline" className="text-[10px]">
                       {item.badge}
                     </Badge>
                   </div>
-                  <CardTitle className="text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                  <CardTitle className="text-base font-bold text-foreground group-hover:text-brand-blue dark:group-hover:text-brand-yellow transition-colors">
                     {item.title}
                   </CardTitle>
                   <CardDescription className="text-xs leading-relaxed">
@@ -174,7 +174,7 @@ export default function DeveloperPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <div className="flex items-center text-xs font-semibold text-primary group-hover:translate-x-0.5 transition-transform gap-1">
+                  <div className="flex items-center text-xs font-semibold text-brand-blue dark:text-brand-yellow group-hover:translate-x-0.5 transition-transform gap-1">
                     <span>Manage</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </div>
@@ -192,7 +192,7 @@ export default function DeveloperPage() {
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                <div className="p-1.5 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow">
                   <Terminal className="w-4 h-4" />
                 </div>
                 <div>
@@ -215,7 +215,7 @@ export default function DeveloperPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="p-4 rounded-xl bg-muted/60 border border-border/60 font-mono text-xs text-foreground overflow-x-auto">
+            <div className="p-4 rounded-2xl bg-muted/60 border border-border/60 font-mono text-xs text-foreground overflow-x-auto">
               <pre className="whitespace-pre">{quickSnippet}</pre>
             </div>
           </CardContent>
@@ -261,7 +261,7 @@ export default function DeveloperPage() {
             </div>
 
             <div className="pt-2 border-t border-border/60">
-              <Link href="/api/docs" className="text-primary hover:underline font-semibold flex items-center gap-1">
+              <Link href="/api/docs" className="text-brand-blue dark:text-brand-yellow hover:underline font-semibold flex items-center gap-1">
                 <span>Explore complete API documentation &rarr;</span>
               </Link>
             </div>

@@ -128,6 +128,8 @@ export function MfaActionForm({ mfaEnabled, isMandatoryRole, action }: MfaAction
 
   return (
     <form action={action} onSubmit={handleSubmit} noValidate className="space-y-4">
+      {/* Hidden username field for browser accessibility and password manager compliance */}
+      <input type="text" name="username" autoComplete="username" className="hidden" aria-hidden="true" tabIndex={-1} />
       <div className="space-y-1">
         <Label htmlFor="mfa-password" required>Current Password</Label>
         <Input
@@ -229,6 +231,8 @@ export function ScreenLockPinForm({ action }: ScreenLockPinFormProps) {
 
   return (
     <form action={action} onSubmit={handleSubmit} noValidate className="space-y-4">
+      {/* Hidden username field for browser accessibility and password manager compliance */}
+      <input type="text" name="username" autoComplete="username" className="hidden" aria-hidden="true" tabIndex={-1} />
       <div className="space-y-1">
         <Label htmlFor="pin-password" required>Current Password</Label>
         <Input

@@ -94,10 +94,13 @@ export function Pagination({
           <div className="flex items-center gap-2">
             <span className="text-xs hidden md:inline">Per page:</span>
             <Select
+              name="pagination-per-page"
               value={String(pageSize)}
               onValueChange={(val) => onPageSizeChange(Number(val))}
             >
               <SelectTrigger
+                id="pagination-per-page"
+                name="pagination-per-page"
                 className="h-8 w-[72px] text-xs"
                 aria-label="Select number of entries per page"
               >

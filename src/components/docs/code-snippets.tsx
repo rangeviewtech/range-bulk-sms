@@ -498,7 +498,7 @@ $response | Format-List`;
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <Code2 className="h-5 w-5 text-[#04648C] dark:text-[#FBCA07]" />
+            <Code2 className="h-5 w-5 text-brand-blue dark:text-brand-yellow" />
             Multi-Language SDKs & Code Snippets
           </h2>
           <p className="text-xs text-muted-foreground">
@@ -512,7 +512,7 @@ $response | Format-List`;
           <select
             value={selectedLang}
             onChange={(e) => setSelectedLang(e.target.value as SupportedLanguage)}
-            className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-border bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-[#04648C]"
+            className="px-3 py-1.5 text-xs font-semibold rounded-2xl border border-input/50 bg-card text-foreground outline-none hover:border-ring/60 focus:border-ring focus:outline-none focus:ring-0 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-0 transition-colors cursor-pointer"
             aria-label="Select Programming Language"
           >
             {LANGUAGES.map((lang) => (
@@ -533,7 +533,7 @@ $response | Format-List`;
             onClick={() => setSelectedLang(lang.id)}
             className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
               selectedLang === lang.id
-                ? 'bg-[#04648C] text-white font-semibold shadow-xs dark:bg-[#FBCA07] dark:text-[#141B2D]'
+                ? 'bg-brand-blue text-white font-semibold shadow-xs dark:bg-brand-yellow dark:text-[#141B2D]'
                 : 'bg-muted/70 hover:bg-muted text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -543,11 +543,11 @@ $response | Format-List`;
       </div>
 
       {/* Code Display Box */}
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-[#07163D] shadow-xl">
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-brand-navy shadow-xl">
         {/* Top bar */}
         <div className="flex items-center justify-between px-4 py-2.5 bg-[#03102E] border-b border-border/40 text-xs text-slate-300">
           <div className="flex items-center gap-2 font-mono">
-            <Terminal className="h-4 w-4 text-[#FBCA07]" />
+            <Terminal className="h-4 w-4 text-brand-yellow" />
             <span>
               send_sms.{LANGUAGES.find((l) => l.id === selectedLang)?.extension || 'txt'}
             </span>

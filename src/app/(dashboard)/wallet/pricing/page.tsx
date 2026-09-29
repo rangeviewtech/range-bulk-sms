@@ -77,7 +77,7 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 w-full">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -97,7 +97,7 @@ export default function PricingPage() {
         <div className="flex items-center gap-2">
           <Link href="/sender-ids/apply">
             <Button size="sm" variant="outline" className="text-xs">
-              <ShieldCheck className="h-3.5 w-3.5 mr-1.5 text-primary" />
+              <ShieldCheck className="h-3.5 w-3.5 mr-1.5 text-brand-blue dark:text-brand-yellow" />
               Register Sender ID
             </Button>
           </Link>
@@ -106,11 +106,11 @@ export default function PricingPage() {
 
       {/* Highlights Banner */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Airtel High Volume SMS</CardTitle>
-            <div className="p-2 rounded-lg bg-primary/20 text-primary-foreground">
-              <Sparkles className="h-4 w-4 text-foreground" />
+            <div className="p-2 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow">
+              <Sparkles className="h-4 w-4" />
             </div>
           </CardHeader>
           <CardContent>
@@ -119,10 +119,10 @@ export default function PricingPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Direct SMSC Interconnect</CardTitle>
-            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+            <div className="p-2 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow">
               <MessageSquare className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -132,10 +132,10 @@ export default function PricingPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Sender ID Setup</CardTitle>
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600">
+            <div className="p-2 rounded-2xl bg-emerald-500/10 text-emerald-600">
               <ShieldCheck className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -162,12 +162,12 @@ export default function PricingPage() {
         {/* TAB 1: Airtel Official Volume Tiers & Calculator */}
         <TabsContent value="airtel" className="space-y-6">
           {/* Interactive Tier Calculator */}
-          <Card className="border-primary/20 shadow-sm bg-gradient-to-br from-card to-muted/30">
+          <Card className="border-primary/20 shadow-none bg-gradient-to-br from-card to-muted/30">
             <CardHeader>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <Calculator className="h-5 w-5 text-primary" />
+                    <Calculator className="h-5 w-5 text-brand-blue dark:text-brand-yellow" />
                     <CardTitle className="text-lg">Interactive Bulk SMS Volume & Rate Estimator</CardTitle>
                   </div>
                   <CardDescription>
@@ -209,9 +209,9 @@ export default function PricingPage() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl border bg-background/80 shadow-sm space-y-1 text-center md:text-right">
+                <div className="p-4 rounded-2xl border bg-background/80 shadow-none space-y-1 text-center md:text-right">
                   <span className="text-xs text-muted-foreground">Applicable Unit Rate</span>
-                  <div className="text-2xl sm:text-3xl font-black text-primary">
+                  <div className="text-2xl sm:text-3xl font-black text-brand-blue dark:text-brand-yellow">
                     UGX {calculatedRate.ratePerUnit.toFixed(2)}
                   </div>
                   <Badge variant="outline" className="text-[10px] uppercase font-mono">
@@ -220,7 +220,7 @@ export default function PricingPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-lg bg-muted/40 border text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-2xl bg-muted/40 border text-xs">
                 <div>
                   <span className="text-muted-foreground">Total Estimated Cost (VAT Incl.):</span>
                   <p className="text-base font-bold text-foreground mt-0.5">
@@ -245,12 +245,12 @@ export default function PricingPage() {
           </Card>
 
           {/* Bulk SMS Pricing Bands */}
-          <Card className="border-secondary/20 shadow-sm">
+          <Card className="border-secondary/20 shadow-none">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                    <MessageSquare className="h-5 w-5 text-primary" />
+                    <MessageSquare className="h-5 w-5 text-brand-blue dark:text-brand-yellow" />
                     Airtel Bulk SMS Pricing Bands (VAT Incl.)
                   </CardTitle>
                   <CardDescription>
@@ -276,7 +276,7 @@ export default function PricingPage() {
                   </TableHeader>
                   <TableBody>
                     {AIRTEL_SMS_TIERS.map((tier, idx) => (
-                      <TableRow key={tier.id} className={calculatedRate.tier.id === tier.id ? 'bg-primary/5 font-semibold' : ''}>
+                      <TableRow key={tier.id} className={calculatedRate.tier.id === tier.id ? 'bg-brand-blue/5 dark:bg-brand-yellow/10 font-semibold' : ''}>
                         <TableCell className="font-medium">
                           Tier {idx + 1}
                         </TableCell>
@@ -304,10 +304,10 @@ export default function PricingPage() {
               {/* Mobile Card Deck View (Zero horizontal scroll down to 320px) */}
               <div className="block md:hidden divide-y">
                 {AIRTEL_SMS_TIERS.map((tier, idx) => (
-                  <div key={tier.id} className={`p-4 space-y-1.5 ${calculatedRate.tier.id === tier.id ? 'bg-primary/5' : ''}`}>
+                  <div key={tier.id} className={`p-4 space-y-1.5 ${calculatedRate.tier.id === tier.id ? 'bg-brand-blue/5 dark:bg-brand-yellow/10' : ''}`}>
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-sm">Tier {idx + 1}</span>
-                      <span className="font-black text-primary text-base">UGX {tier.rateUgx.toFixed(2)}</span>
+                      <span className="font-black text-brand-blue dark:text-brand-yellow text-base">UGX {tier.rateUgx.toFixed(2)}</span>
                     </div>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span>Volume: {tier.name}</span>
@@ -326,7 +326,7 @@ export default function PricingPage() {
 
         {/* TAB 2: Global Carrier Coverage */}
         <TabsContent value="global" className="space-y-6">
-          <Card className="border-secondary/20 shadow-sm">
+          <Card className="border-secondary/20 shadow-none">
             <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <CardTitle>Global Coverage & Carrier Routes</CardTitle>
@@ -366,7 +366,7 @@ export default function PricingPage() {
                   ))}
                 </div>
               ) : pricing.length === 0 ? (
-                <div className="text-center py-10 m-4 sm:m-0 border border-dashed rounded-lg">
+                <div className="text-center py-10 m-4 sm:m-0 border border-dashed rounded-2xl">
                   <p className="text-sm font-medium text-foreground">No matching country or network found</p>
                   <p className="text-xs text-muted-foreground mt-1">
                     Try searching for a different country code, country name, or carrier network.
@@ -400,7 +400,7 @@ export default function PricingPage() {
                               <TableCell>
                                 <NetworkBadge network={item.networkName || item.networkCode} />
                               </TableCell>
-                              <TableCell className="font-bold text-secondary dark:text-primary">
+                              <TableCell className="font-bold text-brand-blue dark:text-brand-yellow">
                                 {item.currency} {priceNum.toFixed(2)}
                               </TableCell>
                               <TableCell>
@@ -423,7 +423,7 @@ export default function PricingPage() {
                         <div key={item.id} className="p-4 space-y-2">
                           <div className="flex items-center justify-between">
                             <span className="font-bold text-sm text-foreground">{item.countryName}</span>
-                            <span className="font-bold text-secondary dark:text-primary">
+                            <span className="font-bold text-brand-blue dark:text-brand-yellow">
                               {item.currency} {priceNum.toFixed(2)}
                             </span>
                           </div>

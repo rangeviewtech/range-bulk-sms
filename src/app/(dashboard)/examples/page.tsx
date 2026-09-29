@@ -6,7 +6,7 @@ export default function ExamplesPage() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <PageHeader heading="Examples" description="Manage your example items." />
-      <div className="border rounded-lg bg-card overflow-hidden">
+      <div className="border rounded-2xl bg-card overflow-hidden">
         <div className="w-full overflow-x-auto">
           <table className="w-full text-sm text-left min-w-[500px]">
             <thead className="bg-muted/50 border-b">

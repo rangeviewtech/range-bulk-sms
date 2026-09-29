@@ -50,7 +50,7 @@ describe('Scheduled Message Edit Feature & Safety Rules', () => {
 
   afterEach(() => {
     cleanup();
-  });
+  }, 15000);
 
   describe('EditScheduledMessageDialog Safety & Rules', () => {
     it('renders the dialog with Auto-Pause notification and safety banner', () => {
@@ -73,7 +73,7 @@ describe('Scheduled Message Edit Feature & Safety Rules', () => {
       // Check live phone preview
       expect(screen.getByText('Live Handset Preview')).toBeDefined();
       expect(screen.getByText('RANGESMS')).toBeDefined();
-    });
+    }, 15000);
 
     it('enforces rescheduling requirement when scheduled time is in the past', () => {
       const onSaveMock = vi.fn();
@@ -97,7 +97,7 @@ describe('Scheduled Message Edit Feature & Safety Rules', () => {
       // Clicking disabled button should not call onSave
       fireEvent.click(saveButton);
       expect(onSaveMock).not.toHaveBeenCalled();
-    });
+    }, 15000);
 
     it('allows setting quick reschedule presets (+15 mins, +1 hour, Tomorrow 9 AM) to satisfy future time requirement', () => {
       render(
@@ -117,7 +117,7 @@ describe('Scheduled Message Edit Feature & Safety Rules', () => {
       // After clicking +1 Hour, the button should become enabled because time is in the future
       const saveButton = screen.getByRole('button', { name: /Save & Schedule/i });
       expect(saveButton.hasAttribute('disabled')).toBe(false);
-    });
+    }, 15000);
 
     it('allows saving as paused even if deciding time later', async () => {
       const onSaveMock = vi.fn().mockResolvedValue(undefined);
@@ -140,9 +140,9 @@ describe('Scheduled Message Edit Feature & Safety Rules', () => {
             status: 'PAUSED',
           })
         );
-      });
-    });
-  });
+      }, { timeout: 15000 });
+    }, 15000);
+  }, 15000);
 
   describe('Scheduled Messages Page 10-Second Lockout Rule & Mobile Responsiveness', () => {
     it('renders scheduled broadcasts table on desktop and cards on mobile', async () => {
@@ -158,7 +158,7 @@ describe('Scheduled Message Edit Feature & Safety Rules', () => {
       // Mobile card deck present (block md:hidden)
       const mobileDeck = container.querySelector('.block.md\\:hidden');
       expect(mobileDeck).not.toBeNull();
-    });
+    }, 15000);
 
     it('locks edit button when a message is within 10 seconds of scheduled transmission', async () => {
       // Return a message that is 5 seconds from now

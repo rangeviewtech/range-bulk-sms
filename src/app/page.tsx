@@ -249,7 +249,7 @@ export default async function HomePage() {
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_35%_at_50%_0%,rgba(251,202,7,0.12),transparent_70%)]" />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs sm:text-sm font-medium text-foreground mb-8">
-            <Zap className="w-3.5 h-3.5 text-primary" />
+            <Zap className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
             <span>Carrier-Grade Bulk SMS &amp; Mobile Infrastructure • East Africa</span>
           </div>
 
@@ -283,7 +283,7 @@ export default async function HomePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 sm:p-6 bg-card/80 backdrop-blur-xs border border-border rounded-2xl shadow-xs">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center p-2">
-                <div className="text-2xl sm:text-4xl font-extrabold text-[#04648C] dark:text-[#FBCA07]">
+                <div className="text-2xl sm:text-4xl font-extrabold text-brand-blue dark:text-brand-yellow">
                   {stat.value}
                 </div>
                 <div className="text-xs sm:text-sm font-medium text-muted-foreground mt-1">
@@ -298,7 +298,7 @@ export default async function HomePage() {
       {/* Features Grid */}
       <section id="features" className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <Badge variant="outline" className="mb-3 px-3 py-1 font-semibold text-primary border-primary/30">
+          <Badge variant="outline" className="mb-3 px-3 py-1 font-semibold text-brand-blue border-brand-blue/30 dark:text-brand-yellow dark:border-brand-yellow/30">
             Platform Capabilities
           </Badge>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
@@ -317,7 +317,7 @@ export default async function HomePage() {
               className="border-border/60 bg-card hover:border-primary/40 hover:shadow-md transition-all group"
             >
               <CardHeader>
-                <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                <div className="w-12 h-12 rounded-xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                   <item.icon className="w-6 h-6" />
                 </div>
                 <CardTitle className="text-lg font-bold">{item.title}</CardTitle>
@@ -409,7 +409,7 @@ export default async function HomePage() {
       {/* Pricing Section */}
       <section id="pricing" className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <Badge variant="outline" className="mb-3 px-3 py-1 font-semibold text-primary border-primary/30">
+          <Badge variant="outline" className="mb-3 px-3 py-1 font-semibold text-brand-blue border-brand-blue/30 dark:text-brand-yellow dark:border-brand-yellow/30">
             Simple &amp; Transparent
           </Badge>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
@@ -485,7 +485,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div className="space-y-4">
-              <Badge variant="outline" className="px-3 py-1 text-primary border-primary/30">
+              <Badge variant="outline" className="px-3 py-1 font-semibold text-brand-blue border-brand-blue/30 dark:text-brand-yellow dark:border-brand-yellow/30">
                 Developer Friendly
               </Badge>
               <h2 className="text-3xl font-bold tracking-tight">

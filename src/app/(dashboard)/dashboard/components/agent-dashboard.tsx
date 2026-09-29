@@ -41,7 +41,7 @@ export function AgentDashboard() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        <Card className="shadow-none border border-border/50 bg-muted/20 rounded-2xl flex flex-col">
           <CardHeader>
             <CardTitle>Recent Clients</CardTitle>
             <CardDescription>Latest organizations onboarded</CardDescription>
@@ -53,7 +53,7 @@ export function AgentDashboard() {
                 { name: "Globex Ltd", joined: "1 week ago", volume: "5.1k msgs", status: "Active" },
                 { name: "Initech", joined: "2 weeks ago", volume: "0 msgs", status: "Pending" },
               ].map((client, i) => (
-                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-4 last:border-0 last:pb-0">
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4 last:border-0 last:pb-0">
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">{client.name}</p>
                     <p className="text-sm text-muted-foreground">Joined {client.joined}</p>
@@ -75,7 +75,7 @@ export function AgentDashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="shadow-none border border-border/50 bg-muted/20 rounded-2xl flex flex-col">
           <CardHeader>
             <CardTitle>Recent Commissions</CardTitle>
             <CardDescription>Earnings from client usage</CardDescription>
@@ -87,7 +87,7 @@ export function AgentDashboard() {
                 { client: "Globex Ltd", amount: "UGX 12,500", date: "Yesterday", status: "Approved" },
                 { client: "Acme Corp", amount: "UGX 8,000", date: "3 days ago", status: "Paid" },
               ].map((comm, i) => (
-                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-4 last:border-0 last:pb-0">
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4 last:border-0 last:pb-0">
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">{comm.client}</p>
                     <p className="text-sm text-muted-foreground">{comm.date}</p>

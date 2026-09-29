@@ -496,7 +496,7 @@ export default function ApiKeysPage() {
         title="Developer API Keys & Quotas"
         description="Generate multiple API keys segmented by application and environment. Configure optional daily, weekly, or monthly dispatch quotas, or leave keys uncapped for unlimited pay-as-you-go throughput."
         action={
-          <Button onClick={() => setCreateDialogOpen(true)} className="w-full sm:w-auto shadow-sm">
+          <Button onClick={() => setCreateDialogOpen(true)} className="w-full sm:w-auto shadow-none">
             <Plus className="mr-2 h-4 w-4" /> Generate New Key
           </Button>
         }
@@ -515,7 +515,7 @@ export default function ApiKeysPage() {
               </p>
               <p className="text-xs text-muted-foreground">Distinct systems & projects</p>
             </div>
-            <div className="p-3 rounded-xl bg-primary/10 text-primary">
+            <div className="p-3 rounded-2xl bg-primary/10 text-primary">
               <Layers className="h-5 w-5" />
             </div>
           </CardContent>
@@ -534,7 +534,7 @@ export default function ApiKeysPage() {
                 {uncappedCount} uncapped • {cappedCount} capped
               </p>
             </div>
-            <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
               <KeyRound className="h-5 w-5" />
             </div>
           </CardContent>
@@ -551,7 +551,7 @@ export default function ApiKeysPage() {
               </p>
               <p className="text-xs text-muted-foreground">Requests & SMS dispatched</p>
             </div>
-            <div className="p-3 rounded-xl bg-secondary/15 text-secondary dark:text-secondary-foreground">
+            <div className="p-3 rounded-2xl bg-secondary/15 text-secondary dark:text-secondary-foreground">
               <Zap className="h-5 w-5" />
             </div>
           </CardContent>
@@ -589,7 +589,7 @@ export default function ApiKeysPage() {
                 {uncappedCount > 0 ? `${uncappedCount} key(s) with no quota` : 'Auto-throttled at limits'}
               </p>
             </div>
-            <div className="p-3 rounded-xl bg-muted text-muted-foreground">
+            <div className="p-3 rounded-2xl bg-muted text-muted-foreground">
               <ShieldCheck className="h-5 w-5" />
             </div>
           </CardContent>
@@ -600,7 +600,7 @@ export default function ApiKeysPage() {
       <Card className="border-primary/20 bg-primary/5">
         <CardContent className="p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center gap-4 justify-between">
           <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0 mt-0.5">
+            <div className="p-2 rounded-2xl bg-primary/10 text-primary shrink-0 mt-0.5">
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div className="space-y-0.5">
@@ -626,17 +626,20 @@ export default function ApiKeysPage() {
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
+            id="api-keys-search"
+            name="api-keys-search"
             placeholder="Search by key name, app, or prefix..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9 text-sm"
+            aria-label="Search API keys"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           {/* App Filter */}
-          <Select value={selectedAppFilter} onValueChange={setSelectedAppFilter}>
-            <SelectTrigger className="w-[150px] text-xs h-9">
+          <Select name="filter-api-app" value={selectedAppFilter} onValueChange={setSelectedAppFilter}>
+            <SelectTrigger id="filter-api-app" className="w-[150px] text-xs h-9" aria-label="Filter by application">
               <SelectValue placeholder="All Applications" />
             </SelectTrigger>
             <SelectContent>
@@ -650,8 +653,8 @@ export default function ApiKeysPage() {
           </Select>
 
           {/* Quota Policy Filter */}
-          <Select value={selectedQuotaFilter} onValueChange={setSelectedQuotaFilter}>
-            <SelectTrigger className="w-[145px] text-xs h-9">
+          <Select name="filter-api-quota" value={selectedQuotaFilter} onValueChange={setSelectedQuotaFilter}>
+            <SelectTrigger id="filter-api-quota" className="w-[145px] text-xs h-9" aria-label="Filter by quota policy">
               <SelectValue placeholder="Quota Policy" />
             </SelectTrigger>
             <SelectContent>
@@ -664,8 +667,8 @@ export default function ApiKeysPage() {
           </Select>
 
           {/* Environment Filter */}
-          <Select value={selectedEnvFilter} onValueChange={setSelectedEnvFilter}>
-            <SelectTrigger className="w-[130px] text-xs h-9">
+          <Select name="filter-api-env" value={selectedEnvFilter} onValueChange={setSelectedEnvFilter}>
+            <SelectTrigger id="filter-api-env" className="w-[130px] text-xs h-9" aria-label="Filter by environment">
               <SelectValue placeholder="Environment" />
             </SelectTrigger>
             <SelectContent>
@@ -677,8 +680,8 @@ export default function ApiKeysPage() {
           </Select>
 
           {/* Status Filter */}
-          <Select value={selectedStatusFilter} onValueChange={setSelectedStatusFilter}>
-            <SelectTrigger className="w-[120px] text-xs h-9">
+          <Select name="filter-api-status" value={selectedStatusFilter} onValueChange={setSelectedStatusFilter}>
+            <SelectTrigger id="filter-api-status" className="w-[120px] text-xs h-9" aria-label="Filter by status">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -734,7 +737,7 @@ export default function ApiKeysPage() {
             <div className="text-center p-12 space-y-3">
               <KeyRound className="mx-auto h-10 w-10 text-muted-foreground/50" />
               <h3 className="font-semibold text-base">No matching API keys found</h3>
-              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+              <p className="text-sm text-muted-foreground w-full">
                 {searchQuery ||
                 selectedAppFilter !== 'all' ||
                 selectedEnvFilter !== 'all' ||
@@ -1017,7 +1020,7 @@ export default function ApiKeysPage() {
 
                       {/* Quota Progress */}
                       {k.quotaLimit !== null ? (
-                        <div className="space-y-1.5 bg-muted/20 p-2.5 rounded-lg border">
+                        <div className="space-y-1.5 bg-muted/20 p-2.5 rounded-2xl border">
                           <div className="flex items-center justify-between text-xs">
                             <span className="font-medium text-foreground">
                               Quota: {(k.quotaUsed || 0).toLocaleString()} /{' '}
@@ -1051,7 +1054,7 @@ export default function ApiKeysPage() {
                           )}
                         </div>
                       ) : (
-                        <div className="flex items-center justify-between text-xs bg-muted/20 p-2.5 rounded-lg border">
+                        <div className="flex items-center justify-between text-xs bg-muted/20 p-2.5 rounded-2xl border">
                           <div className="flex items-center gap-1.5 text-primary font-medium">
                             <InfinityIcon className="h-4 w-4" />
                             <span>No Quota Limit (Unlimited)</span>
@@ -1141,7 +1144,7 @@ export default function ApiKeysPage() {
                       type="button"
                       key={preset.id}
                       onClick={() => setSelectedPresetApp(preset.id)}
-                      className={`flex items-center gap-2 p-2.5 rounded-lg border text-left text-xs transition-all ${
+                      className={`flex items-center gap-2 p-2.5 rounded-2xl border text-left text-xs transition-all ${
                         selectedPresetApp === preset.id
                           ? 'border-primary bg-primary/10 text-primary font-medium shadow-xs'
                           : 'border-border bg-card hover:bg-muted/50 text-foreground'
@@ -1215,7 +1218,7 @@ export default function ApiKeysPage() {
                   <button
                     type="button"
                     onClick={() => setQuotaType('unlimited')}
-                    className={`p-3 rounded-lg border text-left transition-all ${
+                    className={`p-3 rounded-2xl border text-left transition-all ${
                       quotaType === 'unlimited'
                         ? 'border-primary bg-primary/10 text-foreground ring-1 ring-primary'
                         : 'border-border bg-card hover:bg-muted/40 text-muted-foreground'
@@ -1237,7 +1240,7 @@ export default function ApiKeysPage() {
                   <button
                     type="button"
                     onClick={() => setQuotaType('capped')}
-                    className={`p-3 rounded-lg border text-left transition-all ${
+                    className={`p-3 rounded-2xl border text-left transition-all ${
                       quotaType === 'capped'
                         ? 'border-primary bg-primary/10 text-foreground ring-1 ring-primary'
                         : 'border-border bg-card hover:bg-muted/40 text-muted-foreground'
@@ -1258,7 +1261,7 @@ export default function ApiKeysPage() {
 
                 {/* If Unlimited: friendly confirmation banner */}
                 {quotaType === 'unlimited' ? (
-                  <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-start gap-2.5">
+                  <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-start gap-2.5">
                     <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                     <div className="space-y-0.5">
                       <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">
@@ -1271,7 +1274,7 @@ export default function ApiKeysPage() {
                   </div>
                 ) : (
                   /* If Capped: full configuration controls */
-                  <div className="p-3.5 bg-muted/20 border rounded-lg space-y-3">
+                  <div className="p-3.5 bg-muted/20 border rounded-2xl space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="space-y-1.5">
                         <Label htmlFor="quotaPeriod" className="text-xs">
@@ -1393,7 +1396,7 @@ export default function ApiKeysPage() {
                 <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   3. Scopes & API Permissions
                 </Label>
-                <div className="space-y-2 border rounded-lg p-3 bg-muted/20 max-h-40 overflow-y-auto">
+                <div className="space-y-2 border rounded-2xl p-3 bg-muted/20 max-h-40 overflow-y-auto">
                   {AVAILABLE_SCOPES.map((scope) => (
                     <div key={scope.id} className="flex items-start space-x-2.5">
                       <Checkbox
@@ -1458,7 +1461,7 @@ export default function ApiKeysPage() {
                 <button
                   type="button"
                   onClick={() => setEditQuotaType('unlimited')}
-                  className={`p-3 rounded-lg border text-left transition-all ${
+                  className={`p-3 rounded-2xl border text-left transition-all ${
                     editQuotaType === 'unlimited'
                       ? 'border-primary bg-primary/10 text-foreground ring-1 ring-primary'
                       : 'border-border bg-card hover:bg-muted/40 text-muted-foreground'
@@ -1477,7 +1480,7 @@ export default function ApiKeysPage() {
                 <button
                   type="button"
                   onClick={() => setEditQuotaType('capped')}
-                  className={`p-3 rounded-lg border text-left transition-all ${
+                  className={`p-3 rounded-2xl border text-left transition-all ${
                     editQuotaType === 'capped'
                       ? 'border-primary bg-primary/10 text-foreground ring-1 ring-primary'
                       : 'border-border bg-card hover:bg-muted/40 text-muted-foreground'
@@ -1495,14 +1498,14 @@ export default function ApiKeysPage() {
               </div>
 
               {editQuotaType === 'unlimited' ? (
-                <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-start gap-2.5">
+                <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-start gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                   <p className="text-xs text-muted-foreground">
                     Saving will remove all quota limits from this key. Requests will be accepted without any ceiling.
                   </p>
                 </div>
               ) : (
-                <div className="space-y-3 bg-muted/20 p-3.5 rounded-lg border">
+                <div className="space-y-3 bg-muted/20 p-3.5 rounded-2xl border">
                   <div className="space-y-1.5">
                     <Label htmlFor="editQuotaPeriod" className="text-xs">
                       Rollover Frequency

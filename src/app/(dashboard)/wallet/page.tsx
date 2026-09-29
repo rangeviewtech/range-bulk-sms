@@ -184,7 +184,7 @@ export default function WalletPage() {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
             <Button
               variant="outline"
-              size="sm"
+              size="md"
               onClick={handleManualRefresh}
               disabled={refreshing || loading}
               aria-label="Refresh wallet data"
@@ -196,7 +196,7 @@ export default function WalletPage() {
 
             <Dialog open={isDepositOpen} onOpenChange={setIsDepositOpen}>
               <DialogTrigger asChild>
-                <Button className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90">
+                <Button size="md" className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90">
                   <Plus className="mr-2 h-4 w-4" /> Deposit Funds
                 </Button>
               </DialogTrigger>
@@ -304,12 +304,12 @@ export default function WalletPage() {
 
       {/* KPI Cards */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="border-secondary/20 shadow-sm relative overflow-hidden">
+        <Card className="border-secondary/20 shadow-none relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Available Balance</CardTitle>
-            <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
-              <WalletIcon className="h-4 w-4" />
+            <div className="h-7 w-7 rounded-full bg-secondary text-secondary-foreground shadow-none flex items-center justify-center shrink-0">
+              <WalletIcon className="w-3.5 h-3.5 text-inherit" />
             </div>
           </CardHeader>
           <CardContent>
@@ -324,11 +324,11 @@ export default function WalletPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Estimated SMS Credits</CardTitle>
-            <div className="p-2 rounded-lg bg-primary/20 text-primary-foreground">
-              <MessageSquare className="h-4 w-4 text-foreground" />
+            <div className="h-7 w-7 rounded-full bg-secondary text-secondary-foreground shadow-none flex items-center justify-center shrink-0">
+              <MessageSquare className="w-3.5 h-3.5 text-inherit" />
             </div>
           </CardHeader>
           <CardContent>
@@ -343,19 +343,19 @@ export default function WalletPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Pricing Tier</CardTitle>
-            <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
-              <History className="h-4 w-4" />
+            <div className="h-7 w-7 rounded-full bg-secondary text-secondary-foreground shadow-none flex items-center justify-center shrink-0">
+              <History className="w-3.5 h-3.5 text-inherit" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold tracking-tight text-secondary dark:text-primary">
+            <div className="text-3xl font-bold tracking-tight text-foreground">
               Standard
             </div>
             <div className="mt-1">
-              <Link href="/wallet/pricing" className="text-xs text-secondary hover:underline font-medium dark:text-primary">
+              <Link href="/wallet/pricing" className="text-xs text-brand-blue dark:text-brand-yellow hover:underline font-semibold">
                 View coverage pricing &rarr;
               </Link>
             </div>
@@ -364,7 +364,7 @@ export default function WalletPage() {
       </div>
 
       {/* Recent Transactions Card */}
-      <Card className="border-secondary/20 shadow-sm">
+      <Card className="border-secondary/20 shadow-none">
         <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <CardTitle className="text-lg">Recent Transactions</CardTitle>

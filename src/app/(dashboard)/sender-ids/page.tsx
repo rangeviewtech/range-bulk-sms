@@ -163,20 +163,22 @@ export default function SenderIdsPage() {
         </div>
       </div>
 
-      <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 flex gap-3 text-sm">
-        <Info className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+      <div className="bg-brand-blue/5 border border-brand-blue/20 dark:bg-brand-yellow/10 dark:border-brand-yellow/25 rounded-2xl p-4 flex gap-3 text-sm">
+        <Info className="w-5 h-5 text-brand-blue dark:text-brand-yellow shrink-0 mt-0.5" />
         <p>
           Sender IDs are the alphanumeric brand names that appear on a recipient&apos;s phone when they receive your SMS (max 11 characters).
           Telecom operator registration fee is UGX 250,000 (VAT Incl.) per Sender ID. Approvals take 24–48 business hours upon KYC verification.
         </p>
       </div>
 
-      <div className="bg-card rounded-lg border shadow-sm overflow-hidden mt-2">
+      <div className="bg-card rounded-2xl border shadow-none overflow-hidden mt-2">
         {/* Toolbar: Search, Status Filter & Sort Order */}
         <div className="p-4 border-b flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
+              id="sender-ids-search"
+              name="sender-ids-search"
               placeholder="Search sender ID or purpose..."
               className="pl-8 pr-8"
               value={search}
@@ -198,10 +200,11 @@ export default function SenderIdsPage() {
           <div className="flex flex-wrap items-center gap-2">
             <div className="w-36">
               <Select
+                name="filter-sender-status"
                 value={filters.status || 'ALL'}
                 onValueChange={(val) => setFilter('status', val)}
               >
-                <SelectTrigger className="h-9 text-xs" aria-label="Filter by status">
+                <SelectTrigger id="filter-sender-status" className="h-9 text-xs" aria-label="Filter by status">
                   <SelectValue placeholder="All Statuses" />
                 </SelectTrigger>
                 <SelectContent>
@@ -285,7 +288,7 @@ export default function SenderIdsPage() {
               ) : displayedSenderIds.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
-                    <AtSign className="h-8 w-8 text-muted-foreground/50 mx-auto mb-2" />
+                    <AtSign className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                     <p className="font-medium text-foreground">
                       {senderIds.length === 0 ? 'No Sender IDs requested yet' : 'No matching Sender IDs found'}
                     </p>

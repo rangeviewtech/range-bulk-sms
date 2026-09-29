@@ -387,7 +387,7 @@ export default function CustomSmsPage() {
       />
 
       {/* Dataset quick loaders */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-muted/40 p-4 rounded-xl border border-border">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-muted/40 p-4 rounded-2xl border border-border">
         <div className="flex items-center gap-2 text-sm">
           <Sparkles className="w-4 h-4 text-primary shrink-0" />
           <span className="font-medium text-foreground">Quick Test Presets:</span>
@@ -453,9 +453,9 @@ export default function CustomSmsPage() {
               />
 
               {rows.length > 0 ? (
-                <div className="border border-border rounded-xl p-5 bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="border border-border rounded-2xl p-5 bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-3.5">
-                    <div className="p-3 bg-emerald-500/10 text-emerald-600 rounded-xl">
+                    <div className="p-3 bg-emerald-500/10 text-emerald-600 rounded-2xl">
                       <FileSpreadsheet className="w-6 h-6" />
                     </div>
                     <div>
@@ -487,7 +487,7 @@ export default function CustomSmsPage() {
               ) : (
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-border hover:border-primary/50 transition-colors rounded-xl p-8 flex flex-col items-center justify-center text-center gap-3 bg-muted/20 cursor-pointer"
+                  className="border-2 border-dashed border-border hover:border-primary/50 transition-colors rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-3 bg-muted/20 cursor-pointer"
                 >
                   <div className="p-4 bg-primary/10 rounded-full text-primary">
                     <FileSpreadsheet className="w-8 h-8" />
@@ -523,8 +523,8 @@ export default function CustomSmsPage() {
                   <Label htmlFor="phoneCol" required className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Phone Number Column
                   </Label>
-                  <Select value={phoneColumn} onValueChange={setPhoneColumn} disabled={headers.length === 0}>
-                    <SelectTrigger id="phoneCol">
+                  <Select name="phoneCol" value={phoneColumn} onValueChange={setPhoneColumn} disabled={headers.length === 0}>
+                    <SelectTrigger id="phoneCol" name="phoneCol" aria-label="Phone Number Column">
                       <SelectValue placeholder="Select phone column" />
                     </SelectTrigger>
                     <SelectContent>
@@ -544,8 +544,8 @@ export default function CustomSmsPage() {
                   <Label htmlFor="senderIdSelect" required className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Sender ID
                   </Label>
-                  <Select value={selectedSenderId} onValueChange={setSelectedSenderId}>
-                    <SelectTrigger id="senderIdSelect">
+                  <Select name="senderIdSelect" value={selectedSenderId} onValueChange={setSelectedSenderId}>
+                    <SelectTrigger id="senderIdSelect" name="senderIdSelect" aria-label="Sender ID">
                       <SelectValue placeholder="Select Sender ID" />
                     </SelectTrigger>
                     <SelectContent>
@@ -564,9 +564,9 @@ export default function CustomSmsPage() {
 
               <div className="pt-3 border-t">
                 <div className="flex items-center justify-between mb-2">
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Available Column Variables (Click to insert)
-                  </Label>
+                  </span>
                   <span className="text-xs text-muted-foreground">Click to append at cursor</span>
                 </div>
                 {headers.length === 0 ? (
@@ -610,6 +610,9 @@ export default function CustomSmsPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <VariableTextarea
+                id="custom-message"
+                name="custom-message"
+                aria-label="Custom SMS Template Content"
                 ref={textareaRef}
                 rows={5}
                 placeholder="Dear {{Parent Name}}, your child {{Student Name}} has a balance of {{Balance}}..."
@@ -624,7 +627,7 @@ export default function CustomSmsPage() {
               />
               <InputError message={messageError} />
 
-              <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground bg-muted/30 p-2.5 rounded-lg border border-border/50">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground bg-muted/30 p-2.5 rounded-2xl border border-border/50">
                 <div className="flex items-center gap-2">
                   <span>
                     Length: <strong className="text-foreground">{charLength}</strong> characters
@@ -663,11 +666,11 @@ export default function CustomSmsPage() {
 
         {/* Right Column: Live Interactive Row Preview */}
         <div className="space-y-6">
-          <Card className="sticky top-6 shadow-sm border-border">
+          <Card className="sticky top-6 shadow-none border-border">
             <CardHeader className="pb-3 border-b bg-muted/20">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Settings2 className="w-4 h-4 text-primary" />
+                  <Settings2 className="w-4 h-4 text-brand-blue dark:text-brand-yellow" />
                   Live Handset Preview
                 </CardTitle>
                 <Badge variant="outline" className="text-xs font-mono">
@@ -683,12 +686,12 @@ export default function CustomSmsPage() {
               <div className="rounded-2xl bg-muted/40 p-4 border border-border/80 min-h-[220px] flex flex-col justify-between">
                 <div className="flex items-center justify-between pb-2 border-b border-border/40 text-[11px] text-muted-foreground font-mono">
                   <span className="flex items-center gap-1">
-                    <Smartphone className="w-3.5 h-3.5 text-primary" /> {selectedSenderId}
+                    <Smartphone className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" /> {selectedSenderId}
                   </span>
                   <span suppressHydrationWarning>Today, {currentTime}</span>
                 </div>
 
-                <div className="my-3 p-3.5 bg-primary/10 dark:bg-primary/20 border border-primary/20 rounded-xl rounded-tl-none font-sans text-xs sm:text-sm leading-relaxed text-foreground whitespace-pre-wrap">
+                <div className="my-3 p-3.5 bg-brand-blue/10 border border-brand-blue/20 dark:bg-brand-yellow/15 dark:border-brand-yellow/25 rounded-2xl rounded-tl-none font-sans text-xs sm:text-sm leading-relaxed text-foreground whitespace-pre-wrap">
                   <TemplateHighlighter text={message || 'Type your message template on the left...'} customValues={currentRow} />
                 </div>
 
@@ -729,7 +732,7 @@ export default function CustomSmsPage() {
 
               {/* Row attributes summary */}
               {rows.length > 0 && (
-                <div className="p-3 bg-muted/30 rounded-lg text-xs space-y-1.5 border border-border/60">
+                <div className="p-3 bg-muted/30 rounded-2xl text-xs space-y-1.5 border border-border/60">
                   <div className="font-semibold text-foreground text-[11px] uppercase tracking-wider mb-1">
                     Row {currentRowIndex + 1} Data Values
                   </div>
@@ -773,7 +776,7 @@ export default function CustomSmsPage() {
               <InputError message={campaignNameError} />
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs bg-muted/40 p-3.5 rounded-lg border">
+            <div className="grid grid-cols-2 gap-3 text-xs bg-muted/40 p-3.5 rounded-2xl border">
               <div>
                 <span className="text-muted-foreground">Total Recipients:</span>
                 <p className="text-base font-bold text-foreground mt-0.5">{rows.length} contacts</p>
@@ -796,7 +799,7 @@ export default function CustomSmsPage() {
 
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Sample Message (Row 1):</Label>
-              <div className="p-3 bg-muted rounded-lg text-xs leading-relaxed font-sans text-foreground whitespace-pre-wrap border">
+              <div className="p-3 bg-muted rounded-2xl text-xs leading-relaxed font-sans text-foreground whitespace-pre-wrap border">
                 <TemplateHighlighter text={message || 'Type your message template on the left...'} customValues={currentRow} />
               </div>
             </div>

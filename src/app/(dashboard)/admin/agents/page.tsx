@@ -541,7 +541,7 @@ export default function AgentsPage() {
                       <TableRow key={agent.id}>
                         <TableCell>
                           <div className="flex items-start gap-3">
-                            <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-600 mt-0.5">
+                            <div className="p-2 rounded-2xl bg-indigo-500/10 text-indigo-600 mt-0.5">
                               <Briefcase className="w-4 h-4" />
                             </div>
                             <div>

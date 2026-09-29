@@ -247,10 +247,10 @@ export function RangeAppsDropdown({ className, align = "end" }: RangeAppsDropdow
               <span className="text-[10px] text-muted-foreground">Enterprise Ecosystem</span>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/25 text-[10px] font-mono font-semibold text-primary uppercase tracking-wider">
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-brand-blue/10 border border-brand-blue/25 text-[10px] font-mono font-semibold text-brand-blue dark:bg-brand-yellow/15 dark:border-brand-yellow/30 dark:text-brand-yellow uppercase tracking-wider">
             <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-blue dark:bg-brand-yellow opacity-75" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-blue dark:bg-brand-yellow" />
             </span>
             Ecosystem
           </div>
@@ -297,8 +297,8 @@ export function RangeAppsDropdown({ className, align = "end" }: RangeAppsDropdow
                   className={cn(
                     "text-[11px] font-medium leading-[1.2] mt-1.5 text-center line-clamp-2 w-full px-0.5 transition-colors",
                     app.isCurrentApp
-                      ? "text-primary font-semibold"
-                      : "text-foreground group-hover:text-primary"
+                      ? "text-brand-blue dark:text-brand-yellow font-semibold"
+                      : "text-foreground group-hover:text-brand-blue dark:group-hover:text-brand-yellow"
                   )}
                 >
                   {app.name}
@@ -361,10 +361,10 @@ export function RangeAppsDropdown({ className, align = "end" }: RangeAppsDropdow
             className="w-full flex items-center justify-between text-muted-foreground hover:text-foreground"
           >
             <div className="flex items-center gap-2">
-              <ExternalLink className="h-3.5 w-3.5 text-primary group-hover:scale-110 transition-transform" />
+              <ExternalLink className="h-3.5 w-3.5 text-brand-blue dark:text-brand-yellow group-hover:scale-110 transition-transform" />
               <span className="font-semibold text-foreground/90 text-xs">More from Range View</span>
             </div>
-            <span className="text-[10px] font-mono text-muted-foreground flex items-center gap-0.5 group-hover:text-primary transition-colors">
+            <span className="text-[10px] font-mono text-muted-foreground flex items-center gap-0.5 group-hover:text-brand-blue dark:group-hover:text-brand-yellow transition-colors">
               rangeview.com
               <ArrowUpRight className="h-3 w-3 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </span>

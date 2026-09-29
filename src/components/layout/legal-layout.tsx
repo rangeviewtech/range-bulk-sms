@@ -72,11 +72,11 @@ export function LegalLayout({
                     href={item.href}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
                       isActive
-                        ? 'shadow-sm'
+                        ? 'shadow-none'
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                     }`}
                     style={{
-                      backgroundColor: isActive ? '#04648C' : 'transparent',
+                      backgroundColor: isActive ? 'var(--color-brand-blue)' : 'transparent',
                       color: isActive ? '#ffffff' : undefined,
                     }}
                   >
@@ -104,14 +104,14 @@ export function LegalLayout({
               <span>{dict.legal?.backToRegister || 'Back to Registration'}</span>
             </Link>
             <span className="text-muted-foreground/40">•</span>
-            <span className="text-xs font-medium text-[#04648C] bg-[#04648C]/10 px-2.5 py-0.5 rounded-full border border-[#04648C]/20">
+            <span className="text-xs font-medium text-brand-blue bg-brand-blue/10 px-2.5 py-0.5 rounded-full border border-brand-blue/20">
               {lastUpdated}
             </span>
           </div>
 
           <div className="flex items-start gap-4">
             {icon && (
-              <div className="hidden sm:flex p-3 rounded-xl bg-[#04648C]/10 text-[#04648C] border border-[#04648C]/20 mt-1">
+              <div className="hidden sm:flex p-3 rounded-2xl bg-brand-blue/10 text-brand-blue border border-brand-blue/20 mt-1">
                 {icon}
               </div>
             )}
@@ -133,9 +133,9 @@ export function LegalLayout({
           {/* Table of Contents (Sticky on Desktop) */}
           {toc.length > 0 && (
             <aside className="lg:col-span-4 hidden lg:block">
-              <div className="sticky top-24 rounded-xl border border-border bg-card p-5 shadow-sm space-y-4">
+              <div className="sticky top-24 rounded-2xl border border-border bg-card p-5 shadow-none space-y-4">
                 <div className="flex items-center gap-2 pb-3 border-b border-border text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  <FileText size={14} className="text-[#04648C]" />
+                  <FileText size={14} className="text-brand-blue" />
                   <span>{dict.legal?.tableOfContents || 'Table of Contents'}</span>
                 </div>
                 <nav className="space-y-1">
@@ -145,14 +145,14 @@ export function LegalLayout({
                       href={`#${item.id}`}
                       className="block px-2.5 py-1.5 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
                     >
-                      <span className="font-mono text-[#04648C] mr-1.5">{idx + 1}.</span>
+                      <span className="font-mono text-brand-blue mr-1.5">{idx + 1}.</span>
                       {item.title}
                     </a>
                   ))}
                 </nav>
 
                 <div className="pt-3 border-t border-border">
-                  <div className="p-3 rounded-lg bg-muted/60 text-xs text-muted-foreground space-y-1.5">
+                  <div className="p-3 rounded-2xl bg-muted/60 text-xs text-muted-foreground space-y-1.5">
                     <div className="flex items-center gap-1.5 font-semibold text-foreground">
                       <CheckCircle2 size={13} className="text-green-500" />
                       <span>Legally Binding</span>
@@ -168,22 +168,22 @@ export function LegalLayout({
 
           {/* Document Content */}
           <main className={toc.length > 0 ? 'lg:col-span-8' : 'lg:col-span-12'}>
-            <div className="rounded-xl border border-border bg-card p-6 sm:p-8 shadow-sm space-y-8 prose prose-neutral dark:prose-invert max-w-none text-foreground">
+            <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-none space-y-8 prose prose-neutral dark:prose-invert max-w-none text-foreground">
               {children}
             </div>
 
             {/* Quick Actions at bottom */}
-            <div className="mt-8 p-5 rounded-xl border border-border bg-card flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+            <div className="mt-8 p-5 rounded-2xl border border-border bg-card flex flex-col sm:flex-row items-center justify-between gap-4 shadow-none">
               <div className="text-xs text-muted-foreground text-center sm:text-left">
                 Questions about our policies? Contact our Legal & Data Protection team at{' '}
-                <a href="mailto:support@rangesms.com" className="text-[#04648C] hover:underline font-semibold">
+                <a href="mailto:support@rangesms.com" className="text-brand-blue hover:underline font-semibold">
                   support@rangesms.com
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <Link
                   href="/register"
-                  className="btn btn-primary auth-btn-primary px-4 py-2 text-xs font-bold rounded-md bg-[#FBCA07] text-[#141B2D]"
+                  className="btn btn-primary auth-btn-primary px-4 py-2 text-xs font-bold rounded-md bg-brand-yellow text-brand-navy"
                   style={{ height: '36px' }}
                 >
                   {dict.legal?.backToRegister || 'Back to Registration'}

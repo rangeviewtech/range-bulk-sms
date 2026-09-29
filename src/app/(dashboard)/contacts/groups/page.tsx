@@ -941,7 +941,7 @@ export default function ContactGroupsPage() {
             <DialogHeader>
               <div className="flex items-center gap-2.5">
                 <div
-                  className="p-2 rounded-lg"
+                  className="p-2 rounded-2xl"
                   style={{
                     backgroundColor: `${addColor}20`,
                     color: addColor,
@@ -1028,7 +1028,7 @@ export default function ContactGroupsPage() {
                           className={cn(
                             'w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 border-2',
                             isSelected
-                              ? 'scale-110 border-foreground shadow-sm ring-2 ring-primary/30'
+                              ? 'scale-110 border-foreground shadow-none ring-2 ring-primary/30'
                               : 'border-transparent hover:scale-105 opacity-80 hover:opacity-100'
                           )}
                           style={{ backgroundColor: color.value }}
@@ -1063,7 +1063,7 @@ export default function ContactGroupsPage() {
                         className={cn(
                           'w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 border-2 relative overflow-hidden',
                           isAddCustom
-                            ? 'scale-110 border-foreground shadow-sm ring-2 ring-primary/30'
+                            ? 'scale-110 border-foreground shadow-none ring-2 ring-primary/30'
                             : 'border-border/80 hover:scale-105 hover:border-foreground/60'
                         )}
                         style={{
@@ -1084,7 +1084,7 @@ export default function ContactGroupsPage() {
                     </div>
 
                     {/* Hex input */}
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-border bg-muted/40 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-2xl border border-border bg-muted/40 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
                       <Pipette className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                       <span className="text-xs text-muted-foreground font-mono">#</span>
                       <input
@@ -1144,7 +1144,7 @@ export default function ContactGroupsPage() {
       </div>
 
       {/* Filter / Search Bar */}
-      <div className="flex flex-col md:flex-row gap-3 sm:gap-4 justify-between items-stretch md:items-center bg-card p-3 sm:p-4 rounded-xl border border-border shadow-xs">
+      <div className="flex flex-col md:flex-row gap-3 sm:gap-4 justify-between items-stretch md:items-center bg-card p-3 sm:p-4 rounded-2xl border border-border shadow-xs">
         <div className="flex flex-1 flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -1277,7 +1277,7 @@ export default function ContactGroupsPage() {
                         <TableCell>
                           <div className="flex items-center gap-2.5">
                             <div
-                              className="p-1.5 rounded-lg flex items-center justify-center shrink-0"
+                              className="p-1.5 rounded-2xl flex items-center justify-center shrink-0"
                               style={{
                                 backgroundColor: `${groupColor}1A`,
                                 color: groupColor,
@@ -1312,7 +1312,7 @@ export default function ContactGroupsPage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                              className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-2xl transition-colors"
                               onClick={() => handleOpenView(group)}
                               title={`View ${group.name} details & contacts`}
                               aria-label={`View ${group.name}`}
@@ -1324,7 +1324,7 @@ export default function ContactGroupsPage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-amber-500 hover:bg-amber-500/10 dark:hover:text-amber-400 rounded-lg transition-colors"
+                              className="h-8 w-8 text-muted-foreground hover:text-amber-500 hover:bg-amber-500/10 dark:hover:text-amber-400 rounded-2xl transition-colors"
                               onClick={() => handleOpenEdit(group)}
                               title={`Edit ${group.name}`}
                               aria-label={`Edit ${group.name}`}
@@ -1337,7 +1337,7 @@ export default function ContactGroupsPage() {
                               asChild
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 dark:hover:text-blue-400 rounded-lg transition-colors"
+                              className="h-8 w-8 text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 dark:hover:text-blue-400 rounded-2xl transition-colors"
                             >
                               <Link
                                 href={`/sms/send?deliveryMode=group&groupId=${group.id}&groupName=${encodeURIComponent(group.name)}`}
@@ -1352,7 +1352,7 @@ export default function ContactGroupsPage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50/60 dark:bg-red-500/10 border border-red-200/50 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
+                              className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50/60 dark:bg-red-500/10 border border-red-200/50 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-2xl"
                               onClick={() => handleDeleteGroup(group.id, group.name)}
                               title={`Delete ${group.name}`}
                               aria-label={`Delete ${group.name}`}
@@ -1389,7 +1389,7 @@ export default function ContactGroupsPage() {
               <DialogHeader>
                 <div className="flex items-center gap-3">
                   <div
-                    className="p-2 rounded-xl flex items-center justify-center shrink-0 shadow-xs"
+                    className="p-2 rounded-2xl flex items-center justify-center shrink-0 shadow-xs"
                     style={{
                       backgroundColor: `${viewGroup.color || '#04648C'}20`,
                       color: viewGroup.color || '#04648C',
@@ -1402,7 +1402,7 @@ export default function ContactGroupsPage() {
                       <DialogTitle className="text-xl font-bold truncate">
                         {viewGroup.name}
                       </DialogTitle>
-                      <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-primary/10 text-primary shrink-0">
+                      <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow shrink-0">
                         {(viewGroup.contactCount ?? 0).toLocaleString()} contacts
                       </span>
                     </div>
@@ -1415,11 +1415,11 @@ export default function ContactGroupsPage() {
 
               <DialogBody className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
                 {/* Meta details strip */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 p-3 rounded-xl bg-muted/40 border border-border/50 text-xs">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 p-3 rounded-2xl bg-muted/40 border border-border/50 text-xs">
                   <div>
                     <span className="text-muted-foreground block text-[11px]">Total Audience</span>
                     <span className="font-semibold text-foreground flex items-center gap-1.5 mt-0.5">
-                      <Users className="w-3.5 h-3.5 text-primary" />
+                      <Users className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
                       {(viewGroup.contactCount ?? 0).toLocaleString()} subscribers
                     </span>
                   </div>
@@ -1541,7 +1541,7 @@ export default function ContactGroupsPage() {
                   </div>
 
                   {/* Members Table */}
-                  <div className="rounded-lg border border-border overflow-hidden">
+                  <div className="rounded-2xl border border-border overflow-hidden">
                     <div className="max-h-[320px] overflow-y-auto">
                       <Table className="min-w-full">
                         <TableHeader className="bg-muted/50 sticky top-0 z-10">
@@ -1592,7 +1592,7 @@ export default function ContactGroupsPage() {
                             <TableRow>
                               <TableCell colSpan={5} className="text-center py-8">
                                 <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                                  <Loader2 className="w-4 h-4 animate-spin text-brand-blue dark:text-brand-yellow" />
                                   Loading group members...
                                 </div>
                               </TableCell>
@@ -1610,7 +1610,7 @@ export default function ContactGroupsPage() {
                               <TableRow key={member.id} className="text-xs hover:bg-muted/20">
                                 <TableCell className="font-medium py-2.5">
                                   <div className="flex items-center gap-2.5">
-                                    <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold shrink-0">
+                                    <div className="w-6 h-6 rounded-full bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow flex items-center justify-center text-[10px] font-bold shrink-0">
                                       {member.name.charAt(0).toUpperCase()}
                                     </div>
                                     <span className="truncate max-w-[160px] sm:max-w-[240px] md:max-w-[320px]">
@@ -1630,13 +1630,13 @@ export default function ContactGroupsPage() {
                                         title={`Send email to ${member.email}`}
                                         aria-label={`Send email to ${member.email}`}
                                         onClick={(e) => e.stopPropagation()}
-                                        className="truncate max-w-[180px] sm:max-w-[280px] md:max-w-[380px] hover:underline hover:text-primary transition-colors cursor-pointer focus:outline-hidden focus-visible:ring-1 focus-visible:ring-primary rounded-xs"
+                                        className="truncate max-w-[180px] sm:max-w-[280px] md:max-w-[380px] hover:underline hover:text-brand-blue dark:hover:text-brand-yellow transition-colors cursor-pointer outline-none focus:outline-none focus-visible:outline-none focus-visible:underline rounded-xs"
                                       >
                                         {member.email}
                                       </a>
                                     </div>
                                   ) : (
-                                    <span className="text-muted-foreground/40">—</span>
+                                    <span className="text-muted-foreground">—</span>
                                   )}
                                 </TableCell>
                                 <TableCell className="py-2.5 whitespace-nowrap">
@@ -1692,7 +1692,7 @@ export default function ContactGroupsPage() {
                                       type="button"
                                       variant="ghost"
                                       size="icon"
-                                      className="h-7 w-7 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-md transition-colors"
+                                      className="h-7 w-7 text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/15 rounded-md transition-colors"
                                       asChild
                                     >
                                       <Link
@@ -1817,7 +1817,7 @@ export default function ContactGroupsPage() {
             <>
               <DialogHeader>
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-lg bg-amber-500/10 text-amber-500 dark:text-amber-400">
+                  <div className="p-2 rounded-2xl bg-amber-500/10 text-amber-500 dark:text-amber-400">
                     <Pencil className="w-4 h-4" />
                   </div>
                   <div>
@@ -1901,7 +1901,7 @@ export default function ContactGroupsPage() {
                             className={cn(
                               'w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 border-2',
                               isSelected
-                                ? 'scale-110 border-foreground shadow-sm ring-2 ring-primary/30'
+                                ? 'scale-110 border-foreground shadow-none ring-2 ring-primary/30'
                                 : 'border-transparent hover:scale-105 opacity-80 hover:opacity-100'
                             )}
                             style={{ backgroundColor: color.value }}
@@ -1936,7 +1936,7 @@ export default function ContactGroupsPage() {
                           className={cn(
                             'w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 border-2 relative overflow-hidden',
                             isEditCustom
-                              ? 'scale-110 border-foreground shadow-sm ring-2 ring-primary/30'
+                              ? 'scale-110 border-foreground shadow-none ring-2 ring-primary/30'
                               : 'border-border/80 hover:scale-105 hover:border-foreground/60'
                           )}
                           style={{
@@ -1957,7 +1957,7 @@ export default function ContactGroupsPage() {
                       </div>
 
                       {/* Hex input */}
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-border bg-muted/40 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-2xl border border-border bg-muted/40 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
                         <Pipette className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                         <span className="text-xs text-muted-foreground font-mono">#</span>
                         <input
@@ -1983,7 +1983,7 @@ export default function ContactGroupsPage() {
                         <button
                           type="button"
                           onClick={() => editColorInputRef.current?.click()}
-                          className="text-[10px] text-primary hover:underline font-medium shrink-0 ml-0.5"
+                          className="text-[10px] text-brand-blue dark:text-brand-yellow hover:underline font-semibold shrink-0 ml-0.5"
                           title="Open color palette"
                         >
                           Pick
@@ -1993,7 +1993,7 @@ export default function ContactGroupsPage() {
                   </div>
 
                   {/* Audience Information Note */}
-                  <div className="p-3 rounded-lg bg-muted/40 border border-border/60 flex items-center justify-between text-xs">
+                  <div className="p-3 rounded-2xl bg-muted/40 border border-border/60 flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">Current Audience Size</span>
                     <span className="font-semibold text-foreground font-mono">
                       {(editGroup.contactCount ?? 0).toLocaleString()} contacts

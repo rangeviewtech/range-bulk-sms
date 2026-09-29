@@ -25,11 +25,11 @@ export function MagicLinkAuth() {
     });
 
   return (
-    <div className="flex min-h-[600px] h-full w-full items-center justify-center bg-muted/30 p-4 rounded-xl border shadow-inner">
-      <div className="w-full max-w-sm bg-card p-8 rounded-xl border shadow-sm space-y-6">
+    <div className="flex min-h-[600px] h-full w-full items-center justify-center bg-muted/30 p-4 rounded-2xl border shadow-inner">
+      <div className="w-full max-w-sm bg-card p-8 rounded-2xl border shadow-none space-y-6">
         <div className="flex justify-center">
-          <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-            <Sparkles className="w-6 h-6 text-primary" />
+          <div className="w-12 h-12 bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow rounded-2xl flex items-center justify-center">
+            <Sparkles className="w-6 h-6" />
           </div>
         </div>
 

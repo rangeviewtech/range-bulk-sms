@@ -20,9 +20,9 @@ export function DashboardSkeleton({ className }: { className?: string }) {
           <Skeleton className="h-8 sm:h-9 w-48 sm:w-64" />
           <Skeleton className="h-4 w-72 sm:w-96 max-w-full" />
         </div>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-          <Skeleton className="h-9 w-full sm:w-36 rounded-md" />
-          <Skeleton className="h-9 w-full sm:w-36 rounded-md" />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto shrink-0">
+          <Skeleton className="h-10 w-full sm:w-44 rounded-full" />
+          <Skeleton className="h-10 w-full sm:w-44 rounded-full" />
         </div>
       </div>
 
@@ -39,7 +39,7 @@ export function DashboardSkeleton({ className }: { className?: string }) {
           <Card key={i} className="h-full border">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 sm:p-5 pb-2">
               <Skeleton className={cn("h-3", kpi.titleW)} />
-              <Skeleton className="h-7 w-7 rounded-md" />
+              <Skeleton className="h-7 w-7 rounded-full" />
             </CardHeader>
             <CardContent className="p-4 sm:p-5 pt-0 space-y-2">
               <Skeleton className={cn("h-7", kpi.valW)} />
@@ -61,7 +61,7 @@ export function DashboardSkeleton({ className }: { className?: string }) {
             <Skeleton className="h-5 w-24 rounded-full" />
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="h-64 w-full flex flex-col justify-between p-4 border border-dashed border-border/70 rounded-lg bg-muted/10 relative overflow-hidden">
+            <div className="h-64 w-full flex flex-col justify-between p-4 border border-dashed border-border/70 rounded-2xl bg-muted/10 relative overflow-hidden">
               {/* Subtle grid lines */}
               <div className="space-y-8 w-full opacity-40">
                 <div className="border-b border-border/50 w-full" />
@@ -92,7 +92,7 @@ export function DashboardSkeleton({ className }: { className?: string }) {
             <Skeleton className="h-5 w-20 rounded-full" />
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="h-64 w-full flex flex-col justify-between p-4 border border-dashed border-border/70 rounded-lg bg-muted/10 relative overflow-hidden">
+            <div className="h-64 w-full flex flex-col justify-between p-4 border border-dashed border-border/70 rounded-2xl bg-muted/10 relative overflow-hidden">
               <div className="space-y-8 w-full opacity-40">
                 <div className="border-b border-border/50 w-full" />
                 <div className="border-b border-border/50 w-full" />
@@ -121,7 +121,7 @@ export function DashboardSkeleton({ className }: { className?: string }) {
               <Skeleton className="h-5 w-44" />
               <Skeleton className="h-3.5 w-56" />
             </div>
-            <Skeleton className="h-8 w-20 rounded-md" />
+            <Skeleton className="h-8 w-20 rounded-full" />
           </CardHeader>
           <CardContent>
             <div className="divide-y divide-border">
@@ -145,7 +145,7 @@ export function DashboardSkeleton({ className }: { className?: string }) {
               <Skeleton className="h-5 w-48" />
               <Skeleton className="h-3.5 w-60" />
             </div>
-            <Skeleton className="h-8 w-28 rounded-md" />
+            <Skeleton className="h-8 w-28 rounded-full" />
           </CardHeader>
           <CardContent>
             <div className="divide-y divide-border">
@@ -198,7 +198,7 @@ export function TablePageSkeleton({
         </div>
         <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto">
           {Array.from({ length: actionButtons }).map((_, i) => (
-            <Skeleton key={i} className="h-9 w-28 rounded-md flex-1 sm:flex-initial" />
+            <Skeleton key={i} className="h-9 w-28 rounded-full flex-1 sm:flex-initial" />
           ))}
         </div>
       </div>
@@ -208,8 +208,8 @@ export function TablePageSkeleton({
         {/* Search & Filter Bar Skeleton */}
         <CardHeader className="p-4 sm:p-6 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            <Skeleton className="h-9 w-full sm:w-72 rounded-md" />
-            <Skeleton className="h-9 w-20 rounded-md shrink-0" />
+            <Skeleton className="h-9 w-full sm:w-72 rounded-full" />
+            <Skeleton className="h-9 w-20 rounded-full shrink-0" />
           </div>
           <Skeleton className="h-4 w-28 sm:ml-auto" />
         </CardHeader>
@@ -233,7 +233,7 @@ export function TablePageSkeleton({
                     {/* First column: usually entity with avatar/icon */}
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-3">
-                        <Skeleton className="h-8 w-8 rounded-lg shrink-0" />
+                        <Skeleton className="h-8 w-8 rounded-2xl shrink-0" />
                         <div className="space-y-1.5">
                           <Skeleton className="h-4 w-32 sm:w-40" />
                           <Skeleton className="h-3 w-40 sm:w-48" />
@@ -252,7 +252,7 @@ export function TablePageSkeleton({
                     ))}
                     {/* Last column: action buttons */}
                     <td className="py-3.5 px-4 text-right">
-                      <Skeleton className="h-8 w-16 ml-auto rounded-md" />
+                      <Skeleton className="h-8 w-16 ml-auto rounded-full" />
                     </td>
                   </tr>
                 ))}
@@ -290,32 +290,32 @@ export function FormPageSkeleton({ className }: { className?: string }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Skeleton className="h-4 w-20" />
-                <Skeleton className="h-10 w-full rounded-md" />
+                <Skeleton className="h-10 w-full rounded-full" />
               </div>
               <div className="space-y-2">
                 <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-10 w-full rounded-md" />
+                <Skeleton className="h-10 w-full rounded-full" />
               </div>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <Skeleton className="h-4 w-28" />
                 <div className="flex gap-2">
-                  <Skeleton className="h-7 w-24 rounded-md" />
-                  <Skeleton className="h-7 w-20 rounded-md" />
+                  <Skeleton className="h-7 w-24 rounded-full" />
+                  <Skeleton className="h-7 w-20 rounded-full" />
                 </div>
               </div>
-              <Skeleton className="h-36 w-full rounded-md" />
+              <Skeleton className="h-36 w-full rounded-full" />
             </div>
-            <div className="flex flex-wrap justify-between items-center p-3 rounded-lg border bg-muted/20 gap-2">
+            <div className="flex flex-wrap justify-between items-center p-3 rounded-2xl border bg-muted/20 gap-2">
               <Skeleton className="h-4 w-20" />
               <Skeleton className="h-4 w-20" />
               <Skeleton className="h-4 w-24" />
               <Skeleton className="h-4 w-24" />
             </div>
             <div className="flex justify-end gap-2 pt-2">
-              <Skeleton className="h-9 w-24 rounded-md" />
-              <Skeleton className="h-9 w-32 rounded-md" />
+              <Skeleton className="h-9 w-24 rounded-full" />
+              <Skeleton className="h-9 w-32 rounded-full" />
             </div>
           </CardContent>
         </Card>
@@ -328,12 +328,12 @@ export function FormPageSkeleton({ className }: { className?: string }) {
               <Skeleton className="h-3.5 w-48" />
             </CardHeader>
             <CardContent className="p-5 pt-2 space-y-3">
-              <div className="grid grid-cols-3 gap-1 p-1 bg-muted rounded-lg">
-                <Skeleton className="h-8 w-full rounded-md" />
-                <Skeleton className="h-8 w-full rounded-md" />
-                <Skeleton className="h-8 w-full rounded-md" />
+              <div className="grid grid-cols-3 gap-1 p-1 bg-muted rounded-2xl">
+                <Skeleton className="h-8 w-full rounded-full" />
+                <Skeleton className="h-8 w-full rounded-full" />
+                <Skeleton className="h-8 w-full rounded-full" />
               </div>
-              <Skeleton className="h-16 w-full rounded-md" />
+              <Skeleton className="h-16 w-full rounded-full" />
             </CardContent>
           </Card>
 
@@ -378,8 +378,8 @@ export function WalletPageSkeleton({ className }: { className?: string }) {
           <Skeleton className="h-4 w-80 max-w-full" />
         </div>
         <div className="flex items-center gap-2">
-          <Skeleton className="h-9 w-24 rounded-md" />
-          <Skeleton className="h-9 w-32 rounded-md" />
+          <Skeleton className="h-9 w-24 rounded-full" />
+          <Skeleton className="h-9 w-32 rounded-full" />
         </div>
       </div>
 
@@ -393,7 +393,7 @@ export function WalletPageSkeleton({ className }: { className?: string }) {
           <Card key={i} className="border">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 sm:p-5 pb-2">
               <Skeleton className={cn("h-3.5", card.titleW)} />
-              <Skeleton className="h-7 w-7 rounded-md" />
+              <Skeleton className="h-7 w-7 rounded-full" />
             </CardHeader>
             <CardContent className="p-4 sm:p-5 pt-0 space-y-2">
               <Skeleton className={cn("h-7", card.valW)} />
@@ -410,7 +410,7 @@ export function WalletPageSkeleton({ className }: { className?: string }) {
             <Skeleton className="h-5 w-44" />
             <Skeleton className="h-3.5 w-72" />
           </div>
-          <Skeleton className="h-8 w-20 rounded-md" />
+          <Skeleton className="h-8 w-20 rounded-full" />
         </CardHeader>
         <CardContent className="p-0 sm:p-6 pt-0">
           <div className="w-full overflow-x-auto">
@@ -469,7 +469,7 @@ export function SettingsPageSkeleton({ className }: { className?: string }) {
         ].map((item, i) => (
           <Card key={i} className="border p-6 space-y-3">
             <div className="flex items-center gap-3">
-              <Skeleton className="h-6 w-6 rounded-md" />
+              <Skeleton className="h-6 w-6 rounded-full" />
               <Skeleton className={cn("h-5", item.titleW)} />
             </div>
             <Skeleton className={cn("h-4", item.subW)} />
@@ -493,8 +493,8 @@ export function ReportsPageSkeleton({ className }: { className?: string }) {
           <Skeleton className="h-4 w-72 max-w-full" />
         </div>
         <div className="flex items-center gap-2">
-          <Skeleton className="h-9 w-36 rounded-md" />
-          <Skeleton className="h-9 w-24 rounded-md" />
+          <Skeleton className="h-9 w-36 rounded-full" />
+          <Skeleton className="h-9 w-24 rounded-full" />
         </div>
       </div>
 
@@ -504,7 +504,7 @@ export function ReportsPageSkeleton({ className }: { className?: string }) {
           <Card key={i} className="border">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 sm:p-5 pb-2">
               <Skeleton className="h-3.5 w-24" />
-              <Skeleton className="h-7 w-7 rounded-md" />
+              <Skeleton className="h-7 w-7 rounded-full" />
             </CardHeader>
             <CardContent className="p-4 sm:p-5 pt-0 space-y-2">
               <Skeleton className="h-7 w-20" />
@@ -524,7 +524,7 @@ export function ReportsPageSkeleton({ className }: { className?: string }) {
           <Skeleton className="h-5 w-24 rounded-full" />
         </CardHeader>
         <CardContent className="pt-4">
-          <div className="h-72 w-full flex flex-col justify-between p-4 border border-dashed border-border/70 rounded-lg bg-muted/10">
+          <div className="h-72 w-full flex flex-col justify-between p-4 border border-dashed border-border/70 rounded-2xl bg-muted/10">
             <div className="space-y-10 w-full opacity-40">
               <div className="border-b border-border/50 w-full" />
               <div className="border-b border-border/50 w-full" />
@@ -598,7 +598,7 @@ export function TableSkeletonRows({
         <TableRow key={rIdx} className="hover:bg-transparent">
           <TableCell className="py-3 px-4">
             <div className="flex items-start gap-3">
-              <Skeleton className="h-8 w-8 rounded-lg shrink-0 mt-0.5" />
+              <Skeleton className="h-8 w-8 rounded-2xl shrink-0 mt-0.5" />
               <div className="space-y-1.5">
                 <Skeleton className="h-4 w-32 sm:w-40" />
                 <Skeleton className="h-3 w-40 sm:w-48" />
@@ -615,7 +615,7 @@ export function TableSkeletonRows({
             </TableCell>
           ))}
           <TableCell className="py-3 px-4 text-right">
-            <Skeleton className="h-8 w-16 ml-auto rounded-md" />
+            <Skeleton className="h-8 w-16 ml-auto rounded-full" />
           </TableCell>
         </TableRow>
       ))}

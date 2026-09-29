@@ -512,11 +512,13 @@ export default function TemplatesPage() {
       />
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3 bg-card p-3 sm:p-4 rounded-xl border border-border shadow-xs">
+      <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3 bg-card p-3 sm:p-4 rounded-2xl border border-border shadow-xs">
         <div className="flex flex-1 flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <Input
+              id="templates-search"
+              name="templates-search"
               placeholder="Search templates by name, category, or content..."
               className="pl-9 pr-8"
               value={search}
@@ -537,10 +539,11 @@ export default function TemplatesPage() {
 
           {/* Category Filter */}
           <Select
+            name="filter-category"
             value={filters.category || 'ALL'}
             onValueChange={(val) => setFilter('category', val)}
           >
-            <SelectTrigger className="w-full sm:w-[170px] h-9 text-xs" aria-label="Filter by category">
+            <SelectTrigger id="filter-category" name="filter-category" className="w-full sm:w-[170px] h-9 text-xs" aria-label="Filter by category">
               <Filter className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
@@ -556,10 +559,11 @@ export default function TemplatesPage() {
 
           {/* Sort By Select */}
           <Select
+            name="filter-sort"
             value={sortKey || 'name'}
             onValueChange={(val) => setSort(val, sortOrder)}
           >
-            <SelectTrigger className="w-full sm:w-[150px] h-9 text-xs" aria-label="Sort templates by">
+            <SelectTrigger id="filter-sort" name="filter-sort" className="w-full sm:w-[150px] h-9 text-xs" aria-label="Sort templates by">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -592,7 +596,7 @@ export default function TemplatesPage() {
       {/* Grid of Templates */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {paginatedData.length === 0 ? (
-          <div className="col-span-full py-12 text-center text-muted-foreground border border-dashed rounded-xl">
+          <div className="col-span-full py-12 text-center text-muted-foreground border border-dashed rounded-2xl">
             <p className="font-medium text-foreground">No templates found</p>
             <p className="text-xs text-muted-foreground mt-1 mb-4">
               Try a different search query or create a new reusable template.
@@ -608,7 +612,7 @@ export default function TemplatesPage() {
             return (
               <Card
                 key={template.id}
-                className="flex flex-col h-full hover:shadow-md transition-shadow border-border/80 bg-card group"
+                className="flex flex-col h-full hover:shadow-none transition-shadow border-border/80 bg-card group"
               >
                 <CardContent className="p-4 sm:p-6 flex-1 flex flex-col">
                   {/* Card Header with Category & Quick Actions */}
@@ -635,7 +639,7 @@ export default function TemplatesPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
+                        className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-2xl"
                         onClick={() => handleDeleteClick(template.id, template.name)}
                         title="Delete template"
                         aria-label={`Delete ${template.name}`}
@@ -648,7 +652,7 @@ export default function TemplatesPage() {
                   {/* Message Preview Box */}
                   <div
                     onClick={() => handleView(template)}
-                    className="p-3 bg-muted/60 dark:bg-muted/30 rounded-lg text-sm font-sans whitespace-pre-wrap flex-1 mb-4 border border-border/50 text-foreground cursor-pointer hover:border-primary/40 transition-colors"
+                    className="p-3 bg-muted/60 dark:bg-muted/30 rounded-2xl text-sm font-sans whitespace-pre-wrap flex-1 mb-4 border border-border/50 text-foreground cursor-pointer hover:border-primary/40 transition-colors"
                     title="Click to view full preview"
                   >
                     <TemplateHighlighter text={template.message} />
@@ -682,7 +686,7 @@ export default function TemplatesPage() {
                       className={cn(
                         'h-9 text-xs font-medium gap-1.5 flex-1 shrink-0 transition-all duration-150',
                         copiedId === template.id
-                          ? 'bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white border-emerald-600 hover:border-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:text-white dark:hover:text-white dark:border-emerald-600 shadow-sm'
+                          ? 'bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white border-emerald-600 hover:border-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:text-white dark:hover:text-white dark:border-emerald-600 shadow-none'
                           : 'hover:bg-primary hover:text-primary-foreground hover:border-primary'
                       )}
                       onClick={() => handleCopy(template)}
@@ -717,7 +721,7 @@ export default function TemplatesPage() {
           onPageChange={setPage}
           onPageSizeChange={setPageSize}
           pageSizeOptions={[6, 12, 24, 48]}
-          className="rounded-xl border border-border"
+          className="rounded-2xl border border-border"
         />
       )}
 
@@ -728,7 +732,7 @@ export default function TemplatesPage() {
         <DialogContent className="w-[calc(100%-2rem)] max-w-3xl p-0 overflow-hidden">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-secondary/10 text-secondary dark:bg-primary/15 dark:text-primary">
+              <div className="p-1.5 rounded-2xl bg-secondary/10 text-secondary dark:bg-primary/15 dark:text-primary">
                 <Smartphone className="w-5 h-5" />
               </div>
               <div>
@@ -745,7 +749,7 @@ export default function TemplatesPage() {
           {viewingTemplate && (
             <DialogBody className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
               {/* Metadata Badges */}
-              <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-lg bg-muted/40 border text-xs">
+              <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-2xl bg-muted/40 border text-xs">
                 <Badge variant="outline" className={getCategoryBadgeClass(viewingTemplate.category)}>
                   {viewingTemplate.category}
                 </Badge>
@@ -762,16 +766,16 @@ export default function TemplatesPage() {
               {/* Raw Template Content */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     Raw Template String
-                  </Label>
+                  </span>
                   <Button
                     variant={copiedRaw ? 'success' : 'outline'}
                     size="sm"
                     className={cn(
                       'h-7 text-xs gap-1 px-2.5 transition-all duration-150',
                       copiedRaw &&
-                        'bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white border-emerald-600 hover:border-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:text-white dark:border-emerald-600 shadow-sm'
+                        'bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white border-emerald-600 hover:border-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:text-white dark:border-emerald-600 shadow-none'
                     )}
                     onClick={() => {
                       navigator.clipboard.writeText(viewingTemplate.message);
@@ -793,7 +797,7 @@ export default function TemplatesPage() {
                     )}
                   </Button>
                 </div>
-                <div className="p-3.5 rounded-xl border bg-muted/40 font-mono text-xs text-foreground select-all break-words leading-relaxed">
+                <div className="p-3.5 rounded-2xl border bg-muted/40 font-mono text-xs text-foreground select-all break-words leading-relaxed">
                   <TemplateHighlighter text={viewingTemplate.message} />
                 </div>
               </div>
@@ -819,6 +823,7 @@ export default function TemplatesPage() {
                         </Label>
                         <Input
                           id={`var-${v}`}
+                          name={`var-${v}`}
                           size={1}
                           className="h-8 text-xs font-sans"
                           placeholder={`Value for ${v}`}
@@ -836,18 +841,18 @@ export default function TemplatesPage() {
               {/* Live Rendered Device Preview */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <Label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                  <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                     <Smartphone className="w-3.5 h-3.5 text-secondary dark:text-primary" />
                     Handset Recipient Live Preview
-                  </Label>
+                  </span>
                   <span className="text-xs text-muted-foreground font-mono">
                     {previewMetrics.charCount} chars • {previewMetrics.segments} {previewMetrics.segments === 1 ? 'part' : 'parts'} (
                     {previewMetrics.isUnicode ? 'Unicode' : 'GSM-7'})
                   </span>
                 </div>
 
-                <div className="p-4 rounded-xl border bg-muted/30 dark:bg-slate-950/40 flex flex-col items-start">
-                  <div className="max-w-[90%] p-3.5 rounded-2xl rounded-bl-xs bg-primary text-primary-foreground shadow-sm text-sm whitespace-pre-wrap leading-relaxed">
+                <div className="p-4 rounded-2xl border bg-muted/30 dark:bg-slate-950/40 flex flex-col items-start">
+                  <div className="max-w-[90%] p-3.5 rounded-2xl rounded-bl-xs bg-primary text-primary-foreground shadow-none text-sm whitespace-pre-wrap leading-relaxed">
                     <TemplateHighlighter
                       text={renderedPreview || viewingTemplate.message}
                       variant="on-primary"
@@ -877,7 +882,7 @@ export default function TemplatesPage() {
               className={cn(
                 'w-full sm:w-auto gap-2 px-4 transition-all duration-150 whitespace-nowrap',
                 copiedPreview &&
-                  'bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white border-emerald-600 hover:border-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:text-white dark:border-emerald-600 shadow-sm'
+                  'bg-emerald-600 hover:bg-emerald-700 text-white hover:text-white border-emerald-600 hover:border-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:text-white dark:border-emerald-600 shadow-none'
               )}
             >
               {copiedPreview ? (
@@ -935,7 +940,7 @@ export default function TemplatesPage() {
         <DialogContent className="w-[calc(100%-2rem)] max-w-2xl p-0 overflow-hidden">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-secondary/10 text-secondary dark:bg-primary/15 dark:text-primary">
+              <div className="p-1.5 rounded-2xl bg-secondary/10 text-secondary dark:bg-primary/15 dark:text-primary">
                 <Pencil className="w-5 h-5" />
               </div>
               <div>
@@ -953,6 +958,7 @@ export default function TemplatesPage() {
                 <Label htmlFor="edit-template-name" required>Template Name</Label>
                 <Input
                   id="edit-template-name"
+                  name="edit-template-name"
                   placeholder="e.g. Welcome Message"
                   value={editValues.name}
                   onChange={(e) => setEditFieldValue('name', e.target.value)}
@@ -969,10 +975,11 @@ export default function TemplatesPage() {
               <div className="space-y-1">
                 <Label htmlFor="edit-template-category">Category</Label>
                 <Select
+                  name="edit-template-category"
                   value={editValues.category}
                   onValueChange={(val) => setEditFieldValue('category', val)}
                 >
-                  <SelectTrigger id="edit-template-category">
+                  <SelectTrigger id="edit-template-category" name="edit-template-category">
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -999,6 +1006,7 @@ export default function TemplatesPage() {
                 </div>
                 <Textarea
                   id="edit-template-body"
+                  name="edit-template-body"
                   rows={5}
                   placeholder="e.g. Hello {{name}}, your order #{{orderId}} is on its way!"
                   value={editValues.message}
@@ -1033,7 +1041,7 @@ export default function TemplatesPage() {
         <DialogContent className="w-[calc(100%-2rem)] max-w-2xl p-0 overflow-hidden">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-secondary/10 text-secondary dark:bg-primary/15 dark:text-primary">
+              <div className="p-1.5 rounded-2xl bg-secondary/10 text-secondary dark:bg-primary/15 dark:text-primary">
                 <Plus className="w-5 h-5" />
               </div>
               <div>
@@ -1051,6 +1059,7 @@ export default function TemplatesPage() {
                 <Label htmlFor="create-template-name" required>Template Name</Label>
                 <Input
                   id="create-template-name"
+                  name="create-template-name"
                   placeholder="e.g. Welcome Message"
                   value={templateValues.name}
                   onChange={(e) => setTemplateFieldValue('name', e.target.value)}
@@ -1067,10 +1076,11 @@ export default function TemplatesPage() {
               <div className="space-y-1">
                 <Label htmlFor="create-template-category">Category</Label>
                 <Select
+                  name="create-template-category"
                   value={templateValues.category}
                   onValueChange={(val) => setTemplateFieldValue('category', val)}
                 >
-                  <SelectTrigger id="create-template-category">
+                  <SelectTrigger id="create-template-category" name="create-template-category">
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -1097,6 +1107,7 @@ export default function TemplatesPage() {
                 </div>
                 <Textarea
                   id="create-template-body"
+                  name="create-template-body"
                   rows={5}
                   placeholder="e.g. Hello {{name}}, thank you for contacting us!"
                   value={templateValues.message}

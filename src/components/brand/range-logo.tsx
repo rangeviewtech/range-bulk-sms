@@ -145,7 +145,7 @@ export function RangeLogo({
     return (
       <Link
         href={href}
-        className="inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md transition-opacity hover:opacity-95"
+        className="inline-flex items-center justify-center outline-none focus:outline-none focus-visible:outline-none rounded-md transition-opacity hover:opacity-95"
         title="Range Bulk SMS Platform"
       >
         {containerContent}

@@ -243,7 +243,7 @@ export function EditScheduledMessageDialog({
         <DialogHeader className="px-5 py-4 border-b border-border/50 bg-muted/20 dark:bg-white/[0.02]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-500 shrink-0">
+              <div className="w-9 h-9 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-500 shrink-0">
                 <Clock className="w-5 h-5" />
               </div>
               <div>
@@ -316,20 +316,20 @@ export function EditScheduledMessageDialog({
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Type your message here..."
                   rows={5}
-                  className="text-xs leading-relaxed resize-none focus-visible:ring-primary/40 font-mono"
+                  className="text-xs leading-relaxed resize-none font-mono"
                 />
 
                 {/* Variable helper chips */}
                 <div className="flex items-center flex-wrap gap-1.5 pt-1">
                   <span className="text-[11px] text-muted-foreground mr-1 flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 text-primary" /> Insert:
+                    <Sparkles className="w-3 h-3 text-brand-blue dark:text-brand-yellow" /> Insert:
                   </span>
                   {['firstName', 'lastName', 'company', 'orderId', 'code'].map((v) => (
                     <button
                       key={v}
                       type="button"
                       onClick={() => handleInsertVariable(v)}
-                      className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-muted/60 hover:bg-primary/10 hover:text-primary border border-border/50 transition-colors"
+                      className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-muted/60 hover:bg-brand-blue/10 dark:hover:bg-brand-yellow/15 hover:text-brand-blue dark:hover:text-brand-yellow border border-border/50 transition-colors"
                     >
                       {`{{${v}}}`}
                     </button>
@@ -340,7 +340,7 @@ export function EditScheduledMessageDialog({
               {/* Scheduled Time Section with Validation & Presets */}
               <div
                 className={cn(
-                  'p-4 rounded-xl border transition-all space-y-3.5',
+                  'p-4 rounded-2xl border transition-all space-y-3.5',
                   isTimeInPastOrTooClose
                     ? 'bg-destructive/5 border-destructive/30 dark:border-destructive/40 shadow-xs'
                     : 'bg-muted/30 dark:bg-white/[0.02] border-border/60'
@@ -348,7 +348,7 @@ export function EditScheduledMessageDialog({
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-primary shrink-0" />
+                    <Calendar className="w-4 h-4 text-brand-blue dark:text-brand-yellow shrink-0" />
                     <div>
                       <h4 className="text-xs font-bold text-foreground">Scheduled Delivery Time</h4>
                       <p className="text-[11px] text-muted-foreground">
@@ -372,7 +372,7 @@ export function EditScheduledMessageDialog({
 
                 {/* Mandatory Warning if Time Passed */}
                 {isTimeInPastOrTooClose && (
-                  <div className="p-2.5 rounded-lg bg-destructive/10 border border-destructive/25 text-destructive dark:text-red-400 text-xs flex items-start gap-2">
+                  <div className="p-2.5 rounded-2xl bg-destructive/10 border border-destructive/25 text-destructive dark:text-red-400 text-xs flex items-start gap-2">
                     <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" />
                     <div className="leading-snug">
                       <span className="font-semibold">Rescheduling Required:</span> The original scheduled time has already passed or is within 10 seconds of delivery. You must pick a new future date and time to schedule this message.
@@ -389,7 +389,7 @@ export function EditScheduledMessageDialog({
                       variant="outline"
                       size="sm"
                       onClick={() => handleSetQuickTime(15)}
-                      className="h-7 text-xs px-2.5 bg-background hover:bg-primary/10 hover:text-primary hover:border-primary/40"
+                      className="h-7 text-xs px-2.5 bg-background hover:bg-brand-blue/10 dark:hover:bg-brand-yellow/15 hover:text-brand-blue dark:hover:text-brand-yellow hover:border-brand-blue/40 dark:hover:border-brand-yellow/40"
                     >
                       +15 Mins
                     </Button>
@@ -398,7 +398,7 @@ export function EditScheduledMessageDialog({
                       variant="outline"
                       size="sm"
                       onClick={() => handleSetQuickTime(60)}
-                      className="h-7 text-xs px-2.5 bg-background hover:bg-primary/10 hover:text-primary hover:border-primary/40"
+                      className="h-7 text-xs px-2.5 bg-background hover:bg-brand-blue/10 dark:hover:bg-brand-yellow/15 hover:text-brand-blue dark:hover:text-brand-yellow hover:border-brand-blue/40 dark:hover:border-brand-yellow/40"
                     >
                       +1 Hour
                     </Button>
@@ -407,7 +407,7 @@ export function EditScheduledMessageDialog({
                       variant="outline"
                       size="sm"
                       onClick={handleSetTomorrowMorning}
-                      className="h-7 text-xs px-2.5 bg-background hover:bg-primary/10 hover:text-primary hover:border-primary/40"
+                      className="h-7 text-xs px-2.5 bg-background hover:bg-brand-blue/10 dark:hover:bg-brand-yellow/15 hover:text-brand-blue dark:hover:text-brand-yellow hover:border-brand-blue/40 dark:hover:border-brand-yellow/40"
                     >
                       Tomorrow 09:00 AM
                     </Button>
@@ -428,7 +428,7 @@ export function EditScheduledMessageDialog({
                       onChange={(e) => setScheduleDate(e.target.value)}
                       className={cn(
                         'h-9 text-xs',
-                        isTimeInPastOrTooClose && 'border-destructive/60 focus-visible:ring-destructive'
+                        isTimeInPastOrTooClose && 'border-destructive/60 hover:border-destructive focus-visible:border-destructive'
                       )}
                     />
                   </div>
@@ -443,7 +443,7 @@ export function EditScheduledMessageDialog({
                       onChange={(e) => setScheduleTime(e.target.value)}
                       className={cn(
                         'h-9 text-xs',
-                        isTimeInPastOrTooClose && 'border-destructive/60 focus-visible:ring-destructive'
+                        isTimeInPastOrTooClose && 'border-destructive/60 hover:border-destructive focus-visible:border-destructive'
                       )}
                     />
                   </div>
@@ -463,60 +463,60 @@ export function EditScheduledMessageDialog({
             {/* Right Column: Smartphone Live Preview & Cost Summary */}
             <div className="lg:col-span-5 space-y-4">
               <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                <Smartphone className="w-4 h-4 text-primary" />
+                <Smartphone className="w-4 h-4 text-brand-blue dark:text-brand-yellow" />
                 Live Handset Preview
               </div>
 
               {/* Smartphone Chassis */}
-              <div className="mx-auto w-full max-w-[280px] bg-slate-900 text-slate-100 rounded-[32px] p-3 shadow-xl border-4 border-slate-700/80 relative">
+              <div className="mx-auto w-full max-w-[280px] bg-card dark:bg-brand-navy text-foreground dark:text-slate-100 rounded-[32px] p-3 shadow-xl border-4 border-slate-300/90 dark:border-slate-700/80 relative transition-colors">
                 {/* Speaker Notch */}
-                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-16 h-3 bg-slate-800 rounded-full flex items-center justify-center">
-                  <div className="w-2.5 h-2.5 rounded-full bg-slate-900 border border-slate-700" />
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-16 h-3 bg-muted dark:bg-slate-800 rounded-full flex items-center justify-center">
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-900 dark:bg-black border border-border dark:border-slate-700" />
                 </div>
 
                 {/* Status Bar */}
-                <div className="flex justify-between items-center text-[10px] text-slate-400 px-3 pt-3 pb-1">
+                <div className="flex justify-between items-center text-[10px] text-muted-foreground dark:text-slate-400 px-3 pt-3 pb-1">
                   <span>9:41</span>
                   <div className="flex items-center gap-1">
                     <span>5G</span>
-                    <span className="w-3.5 h-2 border border-slate-400 rounded-xs inline-block relative">
-                      <span className="absolute inset-0 bg-slate-400 m-0.5" />
+                    <span className="w-3.5 h-2 border border-muted-foreground dark:border-slate-400 rounded-xs inline-block relative">
+                      <span className="absolute inset-0 bg-muted-foreground dark:bg-slate-400 m-0.5" />
                     </span>
                   </div>
                 </div>
 
                 {/* Sender Header */}
-                <div className="text-center py-2 border-b border-slate-800">
-                  <div className="w-8 h-8 rounded-full bg-primary/20 text-primary border border-primary/30 flex items-center justify-center mx-auto text-xs font-bold mb-1">
+                <div className="text-center py-2 border-b border-border/60 dark:border-slate-800">
+                  <div className="w-8 h-8 rounded-full bg-brand-blue/10 dark:bg-brand-yellow/15 text-brand-blue dark:text-brand-yellow border border-brand-blue/25 dark:border-brand-yellow/30 flex items-center justify-center mx-auto text-xs font-bold mb-1">
                     RA
                   </div>
-                  <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-slate-200">
+                  <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-foreground dark:text-slate-200">
                     <span>{senderId || 'RANGESMS'}</span>
-                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                    <CheckCircle2 className="w-3 h-3 text-emerald-500 dark:text-emerald-400" />
                   </div>
-                  <div className="text-[9px] text-slate-500">Text Message • Scheduled</div>
+                  <div className="text-[9px] text-muted-foreground dark:text-slate-400">Text Message • Scheduled</div>
                 </div>
 
                 {/* SMS Speech Bubble Area */}
                 <div className="py-4 min-h-[140px] flex flex-col justify-end">
-                  <div className="bg-[#1f2937] border border-slate-700 text-slate-100 p-2.5 rounded-2xl rounded-bl-xs text-xs leading-relaxed break-words shadow-sm">
+                  <div className="bg-muted/70 dark:bg-slate-900/90 border border-border/70 dark:border-slate-700 text-foreground dark:text-slate-100 p-2.5 rounded-2xl rounded-bl-xs text-xs leading-relaxed break-words shadow-none">
                     {message.trim() ? (
                       message
                     ) : (
-                      <span className="text-slate-500 italic">Message preview will appear live as you type...</span>
+                      <span className="text-muted-foreground dark:text-slate-400 italic">Message preview will appear live as you type...</span>
                     )}
                   </div>
-                  <div className="text-[9px] text-slate-400 text-right mt-1 px-1">
+                  <div className="text-[9px] text-muted-foreground dark:text-slate-400 text-right mt-1 px-1">
                     {scheduleTime} • {segmentCount} SMS
                   </div>
                 </div>
 
                 {/* Home Indicator Bar */}
-                <div className="w-20 h-1 bg-slate-700 rounded-full mx-auto mt-2" />
+                <div className="w-20 h-1 bg-muted-foreground/30 dark:bg-slate-700 rounded-full mx-auto mt-2" />
               </div>
 
               {/* Recipient & Cost Summary */}
-              <div className="p-3 rounded-xl bg-muted/40 border border-border/50 text-xs space-y-1.5">
+              <div className="p-3 rounded-2xl bg-muted/40 border border-border/50 text-xs space-y-1.5">
                 <div className="flex justify-between text-muted-foreground">
                   <span>Target Recipients:</span>
                   <span className="font-semibold text-foreground">
@@ -531,7 +531,7 @@ export function EditScheduledMessageDialog({
                 </div>
                 <div className="flex justify-between text-muted-foreground pt-1 border-t border-border/40 font-medium">
                   <span>Estimated Total:</span>
-                  <span className="font-bold text-primary">
+                  <span className="font-bold text-brand-blue dark:text-brand-yellow">
                     ~{estimatedTotalCost.toLocaleString()} UGX
                   </span>
                 </div>
@@ -586,7 +586,7 @@ export function EditScheduledMessageDialog({
               onClick={() => handleSave('SCHEDULED')}
               disabled={isSubmitting || isTimeInPastOrTooClose}
               className={cn(
-                'text-xs font-semibold gap-1.5 shadow-sm',
+                'text-xs font-semibold gap-1.5 shadow-none',
                 isTimeInPastOrTooClose
                   ? 'opacity-50 cursor-not-allowed bg-muted text-muted-foreground'
                   : 'bg-primary text-primary-foreground hover:bg-primary/90'

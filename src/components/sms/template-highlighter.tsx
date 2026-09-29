@@ -61,7 +61,7 @@ export function TemplateHighlighter({
         // High-contrast dark badge designed specifically for brand yellow (bg-primary) bubbles
         return 'text-slate-950 bg-black/10 border-black/25 hover:bg-black/15 shadow-2xs';
       case 'subtle':
-        return 'text-amber-800 dark:text-primary/90 bg-amber-500/10 dark:bg-primary/10 border-amber-500/20 dark:border-primary/20';
+        return 'text-brand-blue dark:text-brand-yellow bg-brand-blue/10 dark:bg-brand-yellow/15 border-brand-blue/25 dark:border-brand-yellow/30 font-semibold';
       case 'plain':
         return 'text-foreground underline decoration-dotted decoration-foreground/35 underline-offset-2';
       case 'badge':

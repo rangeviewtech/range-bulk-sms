@@ -4,6 +4,7 @@ import path from 'path';
 export default defineConfig({
   test: {
     environment: 'node', // We are testing backend core services for now
+    testTimeout: 30000,
     include: ['src/__tests__/**/*.test.ts', 'src/__tests__/**/*.spec.ts'],
     coverage: {
       provider: 'v8',

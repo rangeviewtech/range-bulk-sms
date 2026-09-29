@@ -89,10 +89,10 @@ export default function FinancialReportPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Deposits (YTD)</CardTitle>
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600">
+            <div className="p-2 rounded-2xl bg-emerald-500/10 text-emerald-600">
               <ArrowDownRight className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -108,10 +108,10 @@ export default function FinancialReportPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Spend (YTD)</CardTitle>
-            <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+            <div className="p-2 rounded-2xl bg-secondary/10 text-secondary">
               <ArrowUpRight className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -127,10 +127,10 @@ export default function FinancialReportPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Refunds Credited (YTD)</CardTitle>
-            <div className="p-2 rounded-lg bg-primary/20 text-primary-foreground">
+            <div className="p-2 rounded-2xl bg-primary/20 text-primary-foreground">
               <RotateCcw className="h-4 w-4 text-foreground" />
             </div>
           </CardHeader>
@@ -148,7 +148,7 @@ export default function FinancialReportPage() {
       </div>
 
       {/* Monthly Spend & Deposit Chart */}
-      <Card className="border-secondary/20 shadow-sm">
+      <Card className="border-secondary/20 shadow-none">
         <CardHeader>
           <CardTitle>Monthly Spend & Deposits</CardTitle>
           <CardDescription>
@@ -157,11 +157,11 @@ export default function FinancialReportPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="h-[320px] w-full bg-muted/30 animate-pulse rounded-lg flex items-center justify-center">
+            <div className="h-[320px] w-full bg-muted/30 animate-pulse rounded-2xl flex items-center justify-center">
               <p className="text-xs text-muted-foreground">Loading financial chart...</p>
             </div>
           ) : !data?.monthlyData || data.monthlyData.length === 0 ? (
-            <div className="h-[300px] flex items-center justify-center border border-dashed rounded-lg">
+            <div className="h-[300px] flex items-center justify-center border border-dashed rounded-2xl">
               <p className="text-sm text-muted-foreground">No financial activity recorded this year</p>
             </div>
           ) : (

@@ -498,9 +498,9 @@ const PhoneRecipientsInputComponent = React.forwardRef<PhoneRecipientsInputHandl
         ref={containerRef}
         onClick={handleContainerClick}
         className={cn(
-          'relative flex items-center h-10 min-h-10 max-h-10 w-full rounded-md border border-input bg-background shadow-sm transition-colors overflow-hidden cursor-text',
-          'focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
-          error && 'border-destructive focus-within:ring-destructive',
+          'relative flex items-center h-10 min-h-10 max-h-10 w-full rounded-2xl border border-input/50 bg-muted/20 shadow-none transition-colors overflow-hidden cursor-text outline-none',
+          'hover:border-ring/60 focus-within:outline-none focus-within:border-ring focus-within:ring-0',
+          error && 'border-destructive hover:border-destructive focus-within:border-destructive',
           disabled && 'opacity-50 cursor-not-allowed bg-muted/40',
           containerClassName
         )}
@@ -508,7 +508,7 @@ const PhoneRecipientsInputComponent = React.forwardRef<PhoneRecipientsInputHandl
         {/* Scrollable Badges Track and Inline Active Input */}
         <div
           ref={scrollTrackRef}
-          className="flex items-center gap-1.5 w-full h-full px-3 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex items-center gap-1.5 w-full h-full px-4 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {badges.map((badge, idx) => {
             const meta = getCachedBadgeMeta(badge);
@@ -518,7 +518,7 @@ const PhoneRecipientsInputComponent = React.forwardRef<PhoneRecipientsInputHandl
               <div
                 key={`badge-${idx}-${badge}`}
                 className={cn(
-                  'group/badge shrink-0 font-mono text-xs font-semibold rounded-[4px] h-6 px-2 inline-flex items-center gap-1.5 transition-all select-none align-middle',
+                  'group/badge shrink-0 font-mono text-xs font-semibold rounded-lg h-6 px-2 inline-flex items-center gap-1.5 transition-all select-none align-middle',
                   meta.isValid
                     ? 'text-emerald-700 bg-emerald-500/15 ring-1 ring-emerald-500/40 dark:text-emerald-300 dark:bg-emerald-500/25 dark:ring-emerald-400/50'
                     : isDuplicate
@@ -531,7 +531,7 @@ const PhoneRecipientsInputComponent = React.forwardRef<PhoneRecipientsInputHandl
                   <img
                     src={`https://flagcdn.com/20x15/${meta.countryIso.toLowerCase()}.png`}
                     alt={meta.countryName || ''}
-                    className="h-2.5 w-3.5 rounded-[1px] object-cover shrink-0 pointer-events-none shadow-xs border border-border/30"
+                    className="h-2.5 w-3.5 rounded-[1px] object-cover shrink-0 pointer-events-none shadow-none border border-border/30"
                   />
                 )}
                 {readOnly ? (
@@ -576,13 +576,13 @@ const PhoneRecipientsInputComponent = React.forwardRef<PhoneRecipientsInputHandl
                 <img
                   src={`https://flagcdn.com/20x15/${activeInputCountryIso.toLowerCase()}.png`}
                   alt=""
-                  className="h-2.5 w-3.5 rounded-[1px] object-cover shrink-0 pointer-events-none shadow-xs border border-border/30"
+                  className="h-2.5 w-3.5 rounded-[1px] object-cover shrink-0 pointer-events-none shadow-none border border-border/30"
                 />
               )}
               <input
                 ref={inputRef}
                 id={id}
-                name={name}
+                name={name || id || 'recipients'}
                 type="text"
                 value={inputValue}
                 onChange={(e) => {
@@ -616,11 +616,11 @@ const PhoneRecipientsInputComponent = React.forwardRef<PhoneRecipientsInputHandl
 
         {/* Action Controls: Copy All & Clear All */}
         {!isLoading && badges.length > 0 && (
-          <div className="flex items-center h-full gap-0.5 px-2 shrink-0 bg-background border-l border-border/60 select-none">
+          <div className="flex items-center h-full gap-0.5 px-2 shrink-0 bg-muted/10 border-l border-border/60 select-none">
             <button
               type="button"
               onClick={copyAll}
-              className="h-7 w-7 inline-flex items-center justify-center text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors cursor-pointer"
+              className="h-7 w-7 inline-flex items-center justify-center text-muted-foreground hover:text-foreground rounded-2xl hover:bg-muted transition-colors cursor-pointer"
               title={copied ? 'Copied all recipients!' : 'Copy all recipients'}
               aria-label="Copy all recipients"
             >
@@ -630,7 +630,7 @@ const PhoneRecipientsInputComponent = React.forwardRef<PhoneRecipientsInputHandl
               <button
                 type="button"
                 onClick={() => setShowClearConfirm(true)}
-                className="h-7 w-7 inline-flex items-center justify-center text-muted-foreground hover:text-destructive rounded-md hover:bg-muted transition-colors cursor-pointer"
+                className="h-7 w-7 inline-flex items-center justify-center text-muted-foreground hover:text-destructive rounded-2xl hover:bg-muted transition-colors cursor-pointer"
                 title="Clear all recipients"
                 aria-label="Clear all recipients"
               >
@@ -645,16 +645,16 @@ const PhoneRecipientsInputComponent = React.forwardRef<PhoneRecipientsInputHandl
           <div
             role="status"
             aria-live="polite"
-            className="absolute inset-0 z-20 flex items-center justify-between px-3 py-2 bg-background/95 backdrop-blur-[1px] text-xs font-medium select-none pointer-events-none"
+            className="absolute inset-0 z-20 flex items-center justify-between px-3 py-2 bg-muted/95 backdrop-blur-[1px] text-xs font-medium select-none pointer-events-none"
           >
             <div className="flex items-center gap-2 text-foreground/90 min-w-0">
-              <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0" />
+              <Loader2 className="h-4 w-4 animate-spin text-brand-blue dark:text-brand-yellow shrink-0" />
               <span className="truncate font-sans font-medium text-xs text-foreground">
                 {loadingMessage}
               </span>
             </div>
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-primary/10 text-primary shrink-0 animate-pulse">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow shrink-0 animate-pulse">
+              <span className="h-1.5 w-1.5 rounded-full bg-brand-blue dark:bg-brand-yellow" />
               Fetching...
             </span>
           </div>

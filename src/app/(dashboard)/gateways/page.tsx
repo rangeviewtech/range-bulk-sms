@@ -86,7 +86,7 @@ export default function GatewaysPage() {
             <Card key={gw.id} className="relative overflow-hidden group">
               <CardHeader className="pb-4">
                 <div className="flex justify-between items-start">
-                  <div className="p-3 bg-muted/50 rounded-xl">
+                  <div className="p-3 bg-muted/50 rounded-2xl">
                     {getIcon(gw.type)}
                   </div>
                   <div className="flex items-center gap-1.5 px-2.5 py-1 bg-muted/30 rounded-full text-xs font-medium border">

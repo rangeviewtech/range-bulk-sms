@@ -285,18 +285,18 @@ export function DocsSearchModal({
                         <span
                           className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                             item.method === 'POST'
-                              ? 'bg-[#04648C] text-white'
+                              ? 'bg-brand-blue text-white'
                               : 'bg-emerald-600 text-white'
                           }`}
                         >
                           {item.method}
                         </span>
                       ) : item.category === 'Schema' ? (
-                        <Hash className="h-4 w-4 text-[#04648C] dark:text-[#FBCA07]" />
+                        <Hash className="h-4 w-4 text-brand-blue dark:text-brand-yellow" />
                       ) : item.category === 'Error Code' ? (
                         <AlertCircle className="h-4 w-4 text-rose-500" />
                       ) : (
-                        <BookOpen className="h-4 w-4 text-[#FBCA07]" />
+                        <BookOpen className="h-4 w-4 text-brand-yellow" />
                       )}
                     </div>
                     <div>
@@ -311,7 +311,7 @@ export function DocsSearchModal({
                   </div>
                   <ArrowRight
                     className={`h-4 w-4 shrink-0 transition-transform ${
-                      isSelected ? 'text-[#04648C] dark:text-[#FBCA07] translate-x-1' : 'text-muted-foreground'
+                      isSelected ? 'text-brand-blue dark:text-brand-yellow translate-x-1' : 'text-muted-foreground'
                     }`}
                   />
                 </div>

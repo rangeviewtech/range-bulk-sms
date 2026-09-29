@@ -199,7 +199,7 @@ export default function TransactionsPage() {
       </div>
 
       {/* Main Table Card */}
-      <Card className="border-secondary/20 shadow-sm">
+      <Card className="border-secondary/20 shadow-none">
         <CardHeader className="flex flex-col space-y-4 p-4 sm:p-6 pb-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
@@ -237,7 +237,7 @@ export default function TransactionsPage() {
 
             <div className="flex flex-wrap items-center gap-2">
               {/* Type Category Filter Buttons */}
-              <div className="flex flex-wrap items-center gap-1 bg-muted/40 p-1 rounded-lg border">
+              <div className="flex flex-wrap items-center gap-1 bg-muted/40 p-1 rounded-2xl border">
                 {(['ALL', 'DEPOSIT', 'DEDUCTION', 'REFUND'] as const).map((t) => (
                   <Button
                     key={t}

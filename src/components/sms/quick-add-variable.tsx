@@ -224,14 +224,14 @@ export function QuickAddVariable({
         <div className="p-4 sm:p-5 border-b border-border bg-muted/20">
           <DialogHeader>
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-amber-500/15 text-amber-900 dark:bg-primary/10 dark:text-primary flex-shrink-0">
+              <div className="p-2 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow flex-shrink-0">
                 <Braces className="w-5 h-5" />
               </div>
               <div className="flex-1 text-left space-y-1">
                 <div className="flex items-center justify-between">
                   <DialogTitle className="text-base font-semibold leading-none">Add Custom Variable</DialogTitle>
                   {key && (
-                    <span className="font-mono text-xs font-semibold text-amber-900 bg-amber-500/10 dark:text-primary dark:bg-primary/15 px-2 py-0.5 rounded border border-amber-500/30 dark:border-primary/30">
+                    <span className="font-mono text-xs font-semibold text-brand-blue bg-brand-blue/10 border border-brand-blue/25 dark:text-brand-yellow dark:bg-brand-yellow/15 dark:border-brand-yellow/30 px-2 py-0.5 rounded">
                       {`{{${key}}}`}
                     </span>
                   )}
@@ -264,7 +264,7 @@ export function QuickAddVariable({
                 placeholder="e.g. Discount Code, Order Number"
                 value={label}
                 onChange={handleLabelChange}
-                className="h-8 text-xs font-sans"
+                className="h-9 text-xs font-sans"
                 autoFocus={autoFocus}
                 error={!!errors.label}
                 aria-describedby={errors.label ? 'inline-var-label-err' : undefined}
@@ -290,7 +290,7 @@ export function QuickAddVariable({
                 value={key}
                 readOnly
                 tabIndex={-1}
-                className="h-8 text-xs font-mono bg-muted/50 dark:bg-muted/30 border-dashed text-foreground/90 select-all cursor-default"
+                className="h-9 text-xs font-mono bg-muted/50 dark:bg-muted/30 border-dashed text-foreground/90 select-all cursor-default"
                 error={!!errors.key}
                 aria-describedby={errors.key ? 'inline-var-key-err' : undefined}
               />
@@ -303,7 +303,7 @@ export function QuickAddVariable({
                 Data Type
               </Label>
               <Select value={dataType} onValueChange={(v) => handleDataTypeChange(v as VariableDataType)}>
-                <SelectTrigger id="inline-var-type" className="h-8 text-xs">
+                <SelectTrigger id="inline-var-type" className="h-9 text-xs">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -324,7 +324,7 @@ export function QuickAddVariable({
                   Sample Preview Value
                 </Label>
                 <span className="text-[10px] text-muted-foreground">
-                  For handset simulator
+                  For live simulator
                 </span>
               </div>
               <Input
@@ -341,7 +341,7 @@ export function QuickAddVariable({
                     });
                   }
                 }}
-                className="h-8 text-xs font-sans"
+                className="h-9 text-xs font-sans"
                 error={!!errors.sampleValue}
                 aria-describedby={errors.sampleValue ? 'inline-var-sample-err' : undefined}
                 required
@@ -365,7 +365,7 @@ export function QuickAddVariable({
               placeholder="e.g. valued customer, your order"
               value={fallbackValue}
               onChange={(e) => setFallbackValue(e.target.value)}
-              className="h-8 text-xs font-sans"
+              className="h-9 text-xs font-sans"
             />
           </div>
         </div>
@@ -382,7 +382,7 @@ export function QuickAddVariable({
                 href="/sms/variables"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-secondary hover:underline dark:text-primary inline-flex items-center gap-0.5 font-medium"
+                className="text-brand-blue hover:underline dark:text-brand-yellow inline-flex items-center gap-0.5 font-semibold"
               >
                 <span>Manage all</span>
                 <ExternalLink className="w-2.5 h-2.5" />
@@ -395,7 +395,7 @@ export function QuickAddVariable({
                 variant="outline"
                 size="sm"
                 onClick={onClose}
-                className="h-8 text-xs px-4"
+                className="h-9 text-xs px-4 rounded-full font-semibold shadow-none"
               >
                 Cancel
               </Button>
@@ -404,7 +404,7 @@ export function QuickAddVariable({
                 size="sm"
                 disabled={isSubmitting || !!errors.label || !!errors.key || !label.trim()}
                 onClick={handleSubmit}
-                className="h-8 text-xs px-4 font-semibold bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5"
+                className="h-9 text-xs px-4 rounded-full font-semibold bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5 shadow-none"
               >
                 {isSubmitting ? (
                   <>

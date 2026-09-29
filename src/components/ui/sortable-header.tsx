@@ -30,7 +30,7 @@ export function SortableHeader({
       type="button"
       onClick={() => onSort(column)}
       className={cn(
-        'group inline-flex items-center gap-1.5 font-semibold transition-colors select-none text-left cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded-sm',
+        'group inline-flex items-center gap-1.5 font-semibold transition-colors select-none text-left cursor-pointer outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 rounded-sm',
         align === 'right' && 'justify-end w-full text-right',
         align === 'center' && 'justify-center w-full text-center',
         align === 'left' && 'justify-start',
@@ -48,12 +48,12 @@ export function SortableHeader({
       <span className="inline-flex items-center shrink-0">
         {isSorted ? (
           currentOrder === 'asc' ? (
-            <ArrowUp className="w-3.5 h-3.5 text-primary" />
+            <ArrowUp className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
           ) : (
-            <ArrowDown className="w-3.5 h-3.5 text-primary" />
+            <ArrowDown className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
           )
         ) : (
-          <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
         )}
       </span>
     </button>

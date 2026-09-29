@@ -180,7 +180,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const updated = await prisma.customVariable.update({
-      where: { id },
+      where: { id, userId: session.userId },
       data: {
         label: targetLabel,
         key: targetKey,
@@ -226,7 +226,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     await prisma.customVariable.delete({
-      where: { id }
+      where: { id, userId: session.userId }
     });
     
     const count = await prisma.customVariable.count({

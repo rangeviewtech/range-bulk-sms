@@ -101,7 +101,7 @@ export default function SwaggerUIComponent({ spec }: SwaggerUIProps) {
     <div className="w-full relative">
       {isLoading && (
         <div className="py-16 text-center space-y-3" role="status">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#04648C] border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-brand-blue border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
           <p className="text-xs text-muted-foreground font-medium">Initializing Range API Explorer...</p>
         </div>
       )}

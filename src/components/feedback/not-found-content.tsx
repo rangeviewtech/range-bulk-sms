@@ -74,7 +74,7 @@ export function NotFoundContent() {
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute top-1/3 -right-40 w-[400px] h-[400px] bg-[#04648C]/15 dark:bg-[#04648C]/10 rounded-full blur-3xl opacity-60"
+        className="pointer-events-none absolute top-1/3 -right-40 w-[400px] h-[400px] bg-brand-blue/15 dark:bg-brand-blue/10 rounded-full blur-3xl opacity-60"
         aria-hidden="true"
       />
 
@@ -100,7 +100,7 @@ export function NotFoundContent() {
               className="text-xs text-muted-foreground hover:text-foreground hidden sm:inline-flex"
             >
               <Link href="/support" className="flex items-center gap-1.5">
-                <HelpCircle className="w-3.5 h-3.5 text-primary" />
+                <HelpCircle className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
                 <span>Support Center</span>
               </Link>
             </Button>
@@ -131,7 +131,7 @@ export function NotFoundContent() {
           {/* Foreground glowing icon card */}
           <div className="relative z-10 w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-card border border-border/80 shadow-2xl flex items-center justify-center p-5 ring-4 ring-primary/10">
             <div className="w-full h-full rounded-xl bg-gradient-to-br from-primary/15 via-[#04648C]/15 to-transparent flex items-center justify-center">
-              <Compass className="w-12 h-12 text-[#04648C] dark:text-[#FBCA07]" strokeWidth={1.75} />
+              <Compass className="w-12 h-12 text-brand-blue dark:text-brand-yellow" strokeWidth={1.75} />
             </div>
           </div>
         </div>
@@ -152,7 +152,7 @@ export function NotFoundContent() {
           <Button
             asChild
             size="lg"
-            className="w-full sm:w-auto bg-[#FBCA07] hover:bg-[#FBCA07]/90 text-slate-900 font-bold px-6 h-11 rounded-xl shadow-md hover:shadow-lg transition-all"
+            className="w-full sm:w-auto bg-brand-yellow hover:bg-brand-yellow/90 text-slate-900 font-bold px-6 h-11 rounded-xl shadow-md hover:shadow-lg transition-all"
           >
             <Link href="/dashboard" className="flex items-center justify-center gap-2">
               <Home className="w-4 h-4" />
@@ -167,7 +167,7 @@ export function NotFoundContent() {
             className="w-full sm:w-auto border-border/80 hover:bg-muted font-semibold px-5 h-11 rounded-xl"
           >
             <Link href="/support" className="flex items-center justify-center gap-2">
-              <LifeBuoy className="w-4 h-4 text-[#04648C] dark:text-[#FBCA07]" />
+              <LifeBuoy className="w-4 h-4 text-brand-blue dark:text-brand-yellow" />
               <span>Contact Support</span>
             </Link>
           </Button>
@@ -203,12 +203,12 @@ export function NotFoundContent() {
                   href={link.href}
                   className="group relative flex items-start gap-3.5 p-4 rounded-xl border border-border/70 bg-card hover:bg-muted/50 hover:border-primary/50 transition-all duration-200 shadow-sm hover:shadow"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/15 text-[#04648C] dark:text-[#FBCA07] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/15 text-brand-blue dark:text-brand-yellow flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                     <Icon className="w-5 h-5" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors truncate">
+                      <span className="font-semibold text-sm text-foreground group-hover:text-brand-blue dark:group-hover:text-brand-yellow transition-colors truncate">
                         {link.title}
                       </span>
                       <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-muted text-muted-foreground">

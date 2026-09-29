@@ -298,7 +298,7 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
                     <p className="text-sm font-medium text-muted-foreground">Total Recipients</p>
                     <h2 className="text-3xl font-bold mt-1">{total.toLocaleString()}</h2>
                   </div>
-                  <div className="p-2.5 bg-primary/20 text-slate-900 rounded-lg">
+                  <div className="p-2.5 bg-primary/20 text-slate-900 rounded-2xl">
                     <CheckCircle2 className="w-5 h-5" />
                   </div>
                 </div>
@@ -314,7 +314,7 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
                       {deliveryRate}%
                     </h2>
                   </div>
-                  <div className="p-2.5 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 rounded-lg">
+                  <div className="p-2.5 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 rounded-2xl">
                     <CheckCircle2 className="w-5 h-5" />
                   </div>
                 </div>
@@ -333,7 +333,7 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
                       <span className="text-lg font-medium text-muted-foreground">UGX</span>
                     </h2>
                   </div>
-                  <div className="p-2.5 bg-secondary/15 text-secondary dark:text-secondary-foreground rounded-lg">
+                  <div className="p-2.5 bg-secondary/15 text-secondary dark:text-secondary-foreground rounded-2xl">
                     <Clock className="w-5 h-5" />
                   </div>
                 </div>
@@ -349,7 +349,7 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
                       {failed.toLocaleString()}
                     </h2>
                   </div>
-                  <div className="p-2.5 bg-rose-500/15 text-rose-600 dark:text-rose-400 rounded-lg">
+                  <div className="p-2.5 bg-rose-500/15 text-rose-600 dark:text-rose-400 rounded-2xl">
                     <XCircle className="w-5 h-5" />
                   </div>
                 </div>

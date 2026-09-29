@@ -199,7 +199,7 @@ export default function ApiUsagePage() {
         {/* Action Controls */}
         <div className="flex items-center gap-2 flex-wrap">
           {/* Time Range Selector */}
-          <div className="inline-flex rounded-lg border border-border bg-card p-1 shadow-2xs">
+          <div className="inline-flex rounded-2xl border border-border bg-card p-1 shadow-2xs">
             {(['24h', '7d', '30d', '90d'] as TimeRange[]).map((range) => (
               <button
                 key={range}
@@ -246,7 +246,7 @@ export default function ApiUsagePage() {
             <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Total Invocations
             </CardTitle>
-            <div className="p-2 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+            <div className="p-2 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
               <Activity className="w-4 h-4" />
             </div>
           </CardHeader>
@@ -266,7 +266,7 @@ export default function ApiUsagePage() {
             <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Success Delivery Rate
             </CardTitle>
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            <div className="p-2 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </CardHeader>
@@ -285,7 +285,7 @@ export default function ApiUsagePage() {
             <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Average Latency
             </CardTitle>
-            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
+            <div className="p-2 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
               <Clock className="w-4 h-4" />
             </div>
           </CardHeader>
@@ -304,7 +304,7 @@ export default function ApiUsagePage() {
             <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Error / Reject Rate
             </CardTitle>
-            <div className="p-2 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400">
+            <div className="p-2 rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400">
               <AlertTriangle className="w-4 h-4" />
             </div>
           </CardHeader>
@@ -488,7 +488,7 @@ export default function ApiUsagePage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto rounded-lg border border-border/60">
+          <div className="overflow-x-auto rounded-2xl border border-border/60">
             <table className="w-full text-xs text-left">
               <thead className="bg-muted/50 border-b border-border text-muted-foreground uppercase text-[10px] font-semibold tracking-wider">
                 <tr>

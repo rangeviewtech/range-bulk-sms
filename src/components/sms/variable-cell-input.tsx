@@ -99,11 +99,11 @@ export function VariableCellInput({
           onChange={(e) => onChange(e.target.value)}
           placeholder={getVariablePlaceholder(varName, dataType)}
           className={cn(
-            'w-full h-9 pl-8 pr-16 text-xs font-sans rounded-md border shadow-xs transition-colors bg-background text-foreground',
-            'placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
-            isEmpty && isMissing && 'border-amber-500/60 focus-visible:ring-amber-500/60 bg-amber-500/[0.03]',
-            hasError && !isEmpty && 'border-destructive focus-visible:ring-destructive bg-destructive/5',
-            isValid && 'border-input hover:border-primary/50'
+            'w-full h-9 pl-8 pr-16 text-xs font-sans rounded-xl border border-input/50 shadow-none transition-colors bg-muted/20 text-foreground outline-none',
+            'placeholder:text-muted-foreground hover:border-ring/60 focus:border-ring focus:outline-none focus:ring-0 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-0',
+            isEmpty && isMissing && 'border-amber-500/60 hover:border-amber-500 focus-visible:border-amber-500 bg-amber-500/[0.05]',
+            hasError && !isEmpty && 'border-destructive hover:border-destructive focus-visible:border-destructive bg-destructive/10',
+            isValid && 'border-input/50 hover:border-ring/60 focus-visible:border-ring'
           )}
         />
 
@@ -129,7 +129,7 @@ export function VariableCellInput({
                 <button
                   type="button"
                   onClick={() => onApplyToAll(value)}
-                  className="text-muted-foreground hover:text-primary p-0.5 rounded cursor-pointer transition-colors"
+                  className="text-muted-foreground hover:text-brand-blue dark:hover:text-brand-yellow p-0.5 rounded cursor-pointer transition-colors"
                   title={`Apply "${value}" to all rows`}
                   aria-label={`Apply "${value}" to all rows`}
                 >

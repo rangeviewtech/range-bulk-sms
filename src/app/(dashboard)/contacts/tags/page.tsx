@@ -164,7 +164,7 @@ export default function ContactTagsPage() {
       case 'yellow':
         return 'border-amber-500/50 text-amber-600 bg-amber-500/10';
       default:
-        return 'border-primary/50 text-primary bg-primary/10';
+        return 'border-brand-blue/40 text-brand-blue bg-brand-blue/10 dark:border-brand-yellow/40 dark:text-brand-yellow dark:bg-brand-yellow/15';
     }
   };
 
@@ -240,7 +240,7 @@ export default function ContactTagsPage() {
         </div>
       </div>
 
-      <div className="bg-card rounded-lg border shadow-sm overflow-hidden">
+      <div className="bg-card rounded-2xl border shadow-none overflow-hidden">
         <div className="w-full overflow-x-auto">
           <Table className="min-w-[600px]">
             <TableHeader>
@@ -310,7 +310,7 @@ export default function ContactTagsPage() {
                   <TableRow key={t.id}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
-                        <Tag className="w-4 h-4 text-primary" />
+                        <Tag className="w-4 h-4 text-brand-blue dark:text-brand-yellow" />
                         {t.name}
                       </div>
                     </TableCell>

@@ -336,7 +336,7 @@ export function EditCampaignDialog({
             </div>
 
             {/* Target Audience Overview */}
-            <div className="p-3 bg-muted/40 rounded-xl border border-border/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div className="p-3 bg-muted/40 rounded-2xl border border-border/80 flex flex-wrap items-center justify-between gap-3 text-xs">
               <div className="flex items-center gap-2">
                 <span className="text-muted-foreground font-medium">Audience:</span>
                 <span className="font-semibold text-foreground">
@@ -348,17 +348,17 @@ export function EditCampaignDialog({
               </div>
               <div className="text-muted-foreground">
                 Est. Cost:{' '}
-                <span className="font-semibold text-secondary dark:text-primary">
+                <span className="font-semibold text-brand-blue dark:text-brand-yellow">
                   {estimatedCost.toLocaleString()} UGX
                 </span>
               </div>
             </div>
 
             {/* Schedule Section */}
-            <div className="p-3.5 bg-muted/20 rounded-xl border border-border/70 space-y-3">
+            <div className="p-3.5 bg-muted/20 rounded-2xl border border-border/70 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-secondary dark:text-primary" />
+                  <Calendar className="w-4 h-4 text-brand-blue dark:text-brand-yellow" />
                   <span className="text-xs font-semibold text-foreground">Schedule Broadcast</span>
                 </div>
                 <label className="flex items-center gap-2 text-xs cursor-pointer select-none">
@@ -366,7 +366,7 @@ export function EditCampaignDialog({
                     type="checkbox"
                     checked={isScheduled}
                     onChange={(e) => setIsScheduled(e.target.checked)}
-                    className="w-4 h-4 rounded border-input text-primary focus:ring-primary"
+                    className="w-4 h-4 rounded border-input text-primary outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:border-ring"
                   />
                   <span className="text-muted-foreground font-medium">
                     {isScheduled ? 'Scheduled for later' : 'Save as Draft / Send manually'}
@@ -443,12 +443,12 @@ export function EditCampaignDialog({
                       <DropdownMenuContent align="end" className="w-64 max-h-96 overflow-y-auto">
                         <div className="px-2 py-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex justify-between items-center">
                           <span>Variables</span>
-                          <Link href="/sms/variables" target="_blank" rel="noopener noreferrer" className="text-secondary dark:text-primary hover:underline flex items-center gap-0.5 lowercase text-[10px]">
+                          <Link href="/sms/variables" target="_blank" rel="noopener noreferrer" className="text-brand-blue dark:text-brand-yellow hover:underline flex items-center gap-0.5 lowercase text-[10px] font-semibold">
                             manage all <ExternalLink className="w-2.5 h-2.5" />
                           </Link>
                         </div>
                         
-                        <div className="px-2 py-1 mt-1 text-[10px] font-semibold text-foreground/50 uppercase tracking-wider">
+                        <div className="px-2 py-1 mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                           Built-in
                         </div>
                         {availableVariables.filter(v => v.isSystem).map((v) => {
@@ -469,7 +469,7 @@ export function EditCampaignDialog({
                         })}
 
                         <DropdownMenuSeparator />
-                        <div className="px-2 py-1 text-[10px] font-semibold text-foreground/50 uppercase tracking-wider">
+                        <div className="px-2 py-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                           Custom
                         </div>
                         {availableVariables.filter(v => !v.isSystem).map((v) => {
@@ -491,7 +491,7 @@ export function EditCampaignDialog({
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           onClick={() => setShowAddVar(true)}
-                          className="text-xs font-sans text-secondary dark:text-primary cursor-pointer flex items-center gap-1.5 py-1.5"
+                          className="text-xs font-sans text-brand-blue dark:text-brand-yellow font-semibold cursor-pointer flex items-center gap-1.5 py-1.5"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Create Custom Variable</span>
@@ -521,7 +521,7 @@ export function EditCampaignDialog({
 
 
             {/* Metrics Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 bg-muted/30 rounded-lg border text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 bg-muted/30 rounded-2xl border text-xs">
               <div>
                 <span className="text-muted-foreground block text-[11px]">Characters</span>
                 <span className="font-semibold text-sm">{charCount}</span>
@@ -544,13 +544,13 @@ export function EditCampaignDialog({
               </div>
             </div>
 
-            {/* Handset Recipient Live Preview */}
+            {/* Live Simulator Preview */}
             <div className="space-y-1 pt-1">
               <Label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                <Smartphone className="w-3.5 h-3.5 text-secondary dark:text-primary" />
-                Handset Recipient Live Preview
+                <Smartphone className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
+                Live Simulator Preview
               </Label>
-              <div className="p-3.5 rounded-xl border bg-muted/30 dark:bg-slate-950/40 flex flex-col items-start">
+              <div className="p-3.5 rounded-2xl border bg-muted/30 dark:bg-slate-950/40 flex flex-col items-start">
                 <div className="max-w-[90%] p-3.5 rounded-2xl rounded-bl-xs bg-primary text-primary-foreground shadow-xs text-sm whitespace-pre-wrap leading-relaxed">
                   <TemplateHighlighter
                     text={message || 'Your campaign message will appear here...'}

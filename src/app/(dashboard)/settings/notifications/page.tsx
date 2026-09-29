@@ -114,7 +114,7 @@ export default async function NotificationSettingsPage({ searchParams }: { searc
               </div>
               <div className="space-y-1">
                 <Label htmlFor="telegramChatId">Telegram Chat ID</Label>
-                <Input id="telegramChatId" readOnly aria-describedby="telegram-help" defaultValue={user?.telegramChatId || ''} placeholder="Not linked" />
+                <Input id="telegramChatId" name="telegramChatId" readOnly aria-describedby="telegram-help" defaultValue={user?.telegramChatId || ''} placeholder="Not linked" />
                 <Button type="submit" formAction={linkTelegram} formNoValidate variant="outline">Link Telegram account</Button>
                 <p id="telegram-help" className="text-sm text-muted-foreground">Telegram IDs are set only after verified bot linking.</p>
               </div>

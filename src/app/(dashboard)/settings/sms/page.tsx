@@ -97,6 +97,7 @@ export default function SmsSettingsPage() {
               <Label htmlFor="defaultSenderId" required>Default Sender ID</Label>
               <Input
                 id="defaultSenderId"
+                name="defaultSenderId"
                 value={values.defaultSenderId}
                 onChange={(e) => setFieldValue('defaultSenderId', e.target.value)}
                 onBlur={() => handleBlur('defaultSenderId')}
@@ -112,6 +113,7 @@ export default function SmsSettingsPage() {
               <Label htmlFor="webhookUrl">Callback Webhook URL</Label>
               <Input
                 id="webhookUrl"
+                name="webhookUrl"
                 type="url"
                 placeholder="https://..."
                 value={values.webhookUrl ?? ''}

@@ -90,7 +90,7 @@ export function WebhookSimulator() {
     <div className="w-full space-y-6 py-6">
       <div>
         <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <Radio className="h-5 w-5 text-[#04648C] dark:text-[#FBCA07]" />
+          <Radio className="h-5 w-5 text-brand-blue dark:text-brand-yellow" />
           Interactive Webhooks & DLR Delivery Simulator
         </h2>
         <p className="text-xs text-muted-foreground">
@@ -106,7 +106,7 @@ export function WebhookSimulator() {
             <select
               value={eventType}
               onChange={(e) => setEventType(e.target.value)}
-              className="w-full p-2 text-xs rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-[#04648C] outline-none"
+              className="w-full px-3 py-2 text-xs rounded-2xl border border-input/50 bg-muted/20 text-foreground outline-none hover:border-ring/60 focus:border-ring focus:outline-none focus:ring-0 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-0 transition-colors cursor-pointer"
             >
               <option value="message.delivered">message.delivered (Handset delivery confirmed)</option>
               <option value="message.failed">message.failed (Carrier network rejection)</option>
@@ -122,7 +122,7 @@ export function WebhookSimulator() {
               value={webhookUrl}
               onChange={(e) => setWebhookUrl(e.target.value)}
               placeholder="https://your-api.com/webhooks/sms"
-              className="w-full p-2 text-xs rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-[#04648C] outline-none"
+              className="w-full px-3 py-2 text-xs rounded-2xl border border-input/50 bg-muted/20 text-foreground placeholder:text-muted-foreground outline-none hover:border-ring/60 focus:border-ring focus:outline-none focus:ring-0 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-0 transition-colors"
             />
             <p className="text-[11px] text-muted-foreground">
               Internal private IP ranges (127.0.0.1, 10.x, 192.168.x) are blocked by SSRF protection.
@@ -131,13 +131,13 @@ export function WebhookSimulator() {
 
           <div className="space-y-1">
             <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-              <Key className="h-3.5 w-3.5 text-[#FBCA07]" /> Webhook HMAC Secret
+              <Key className="h-3.5 w-3.5 text-brand-yellow" /> Webhook HMAC Secret
             </label>
             <input
               type="text"
               value={webhookSecret}
               onChange={(e) => setWebhookSecret(e.target.value)}
-              className="w-full p-2 text-xs font-mono rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-[#04648C] outline-none"
+              className="w-full px-3 py-2 text-xs font-mono rounded-2xl border border-input/50 bg-muted/20 text-foreground placeholder:text-muted-foreground outline-none hover:border-ring/60 focus:border-ring focus:outline-none focus:ring-0 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-0 transition-colors"
             />
           </div>
 
@@ -148,14 +148,14 @@ export function WebhookSimulator() {
               value={phone}
               onChange={(e) => setPhone(sanitizeSinglePhoneInput(e.target.value))}
               onKeyDown={(e) => handlePhoneInputKeyDown(e, false)}
-              className="w-full p-2 text-xs font-mono rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-[#04648C] outline-none"
+              className="w-full px-3 py-2 text-xs font-mono rounded-2xl border border-input/50 bg-muted/20 text-foreground placeholder:text-muted-foreground outline-none hover:border-ring/60 focus:border-ring focus:outline-none focus:ring-0 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-0 transition-colors"
             />
           </div>
 
           <Button
             onClick={handleSimulate}
             disabled={isSending}
-            className="w-full bg-[#04648C] hover:bg-[#034f6f] text-white font-semibold text-xs h-9 rounded-xl flex items-center justify-center gap-2 shadow-sm"
+            className="w-full bg-brand-blue hover:bg-[#034f6f] text-white font-semibold text-xs h-9 rounded-xl flex items-center justify-center gap-2 shadow-sm"
           >
             {isSending ? (
               <>
@@ -198,12 +198,12 @@ export function WebhookSimulator() {
         </div>
 
         {/* Payload Preview Card */}
-        <div className="flex flex-col rounded-2xl border border-border bg-[#07163D] overflow-hidden shadow-xl">
+        <div className="flex flex-col rounded-2xl border border-border bg-brand-navy overflow-hidden shadow-xl">
           <div className="flex items-center justify-between px-4 py-2.5 bg-[#03102E] border-b border-border/40 text-xs text-slate-300">
             <span className="font-mono flex items-center gap-1.5">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" /> Event Payload (application/json)
             </span>
-            <span className="text-[10px] font-mono text-[#FBCA07] uppercase font-bold">
+            <span className="text-[10px] font-mono text-brand-yellow uppercase font-bold">
               X-Range-Signature: sha256=...
             </span>
           </div>

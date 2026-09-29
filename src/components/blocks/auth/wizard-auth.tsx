@@ -51,8 +51,8 @@ export function WizardAuth() {
   };
 
   return (
-    <div className="flex min-h-[600px] h-full w-full items-center justify-center bg-muted/30 p-4 rounded-xl border shadow-inner">
-      <div className="w-full max-w-md bg-card p-8 rounded-xl border shadow-sm space-y-6">
+    <div className="flex min-h-[600px] h-full w-full items-center justify-center bg-muted/30 p-4 rounded-2xl border shadow-inner">
+      <div className="w-full max-w-md bg-card p-8 rounded-2xl border shadow-none space-y-6">
         {/* Progress Indicator */}
         <div className="flex items-center justify-between relative mb-8">
           <div className="absolute left-0 top-1/2 w-full h-1 bg-muted -translate-y-1/2" />
@@ -66,9 +66,9 @@ export function WizardAuth() {
               key={s}
               className={`w-8 h-8 rounded-full flex items-center justify-center relative z-10 transition-colors duration-300 border-2 ${
                 s < step
-                  ? 'bg-primary border-primary text-primary-foreground'
+                  ? 'bg-primary border-primary text-primary-foreground font-bold'
                   : s === step
-                  ? 'bg-background border-primary text-primary'
+                  ? 'bg-background border-brand-blue text-brand-blue dark:border-brand-yellow dark:text-brand-yellow font-bold'
                   : 'bg-background border-muted text-muted-foreground'
               }`}
             >
@@ -194,7 +194,7 @@ export function WizardAuth() {
 
         <div className="text-center text-sm pt-4 border-t">
           Already have an account?{' '}
-          <Link href="#" className="font-medium text-primary hover:underline">
+          <Link href="#" className="font-semibold text-brand-blue dark:text-brand-yellow hover:underline">
             Sign in
           </Link>
         </div>

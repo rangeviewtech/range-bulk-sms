@@ -69,7 +69,7 @@ export function DocsHeader({
         <div className="flex items-center gap-3 2xl:gap-8 shrink-0">
           <Link
             href="/api/docs"
-            className="flex items-center gap-2 shrink-0 focus:outline-none focus:ring-2 focus:ring-[#35B6FF] rounded-lg"
+            className="flex items-center gap-2 shrink-0 outline-none focus:outline-none focus-visible:outline-none rounded-lg"
           >
             <div className="relative h-7 sm:h-9 w-24 sm:w-40 flex items-center shrink-0">
               <Image

@@ -454,11 +454,13 @@ export default function ScheduledSmsPage() {
       />
 
       {/* Search and Filters Bar */}
-      <div className="flex flex-col md:flex-row gap-3 sm:gap-4 justify-between items-stretch md:items-center bg-card p-3 sm:p-4 rounded-xl border border-border shadow-xs">
+      <div className="flex flex-col md:flex-row gap-3 sm:gap-4 justify-between items-stretch md:items-center bg-card p-3 sm:p-4 rounded-2xl border border-border shadow-xs">
         <div className="flex flex-1 flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
             <Input
+              id="scheduled-search"
+              name="scheduled-search"
               placeholder="Search scheduled campaigns..."
               className="pl-9 pr-8 w-full"
               value={search}
@@ -478,10 +480,11 @@ export default function ScheduledSmsPage() {
 
           {/* Status Filter */}
           <Select
+            name="filter-scheduled-status"
             value={filters.status || 'ALL'}
             onValueChange={(val) => setFilter('status', val)}
           >
-            <SelectTrigger className="w-full sm:w-[180px] h-9 text-xs">
+            <SelectTrigger id="filter-scheduled-status" aria-label="Filter scheduled messages by status" className="w-full sm:w-[180px] h-9 text-xs">
               <Filter className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
               <SelectValue placeholder="All Active Queue" />
             </SelectTrigger>
@@ -503,9 +506,9 @@ export default function ScheduledSmsPage() {
             title={`Sort Order: ${sortOrder === 'asc' ? 'Ascending' : 'Descending'}`}
           >
             {sortOrder === 'asc' ? (
-              <ArrowUp className="w-3.5 h-3.5 text-primary" />
+              <ArrowUp className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
             ) : (
-              <ArrowDown className="w-3.5 h-3.5 text-primary" />
+              <ArrowDown className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
             )}
             <span className="text-xs uppercase font-medium">{sortOrder}</span>
           </Button>
@@ -576,7 +579,7 @@ export default function ScheduledSmsPage() {
                         {/* Campaign Name & preview */}
                         <TableCell className="font-medium text-foreground">
                           <div className="flex flex-col gap-0.5">
-                            <span className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                            <span className="font-semibold text-foreground group-hover:text-brand-blue dark:group-hover:text-brand-yellow transition-colors">
                               {item.name}
                             </span>
                             {item.message && (
@@ -605,7 +608,7 @@ export default function ScheduledSmsPage() {
                           ) : (
                             <div className="flex flex-col gap-1">
                               <div className="flex items-center gap-1.5 text-xs text-foreground">
-                                <CalendarClock className="w-3.5 h-3.5 text-primary shrink-0" />
+                                <CalendarClock className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow shrink-0" />
                                 <span>{formatScheduledTime(item.scheduledAt)}</span>
                               </div>
                               <div className="flex items-center gap-1">
@@ -673,10 +676,10 @@ export default function ScheduledSmsPage() {
                             size="icon"
                             disabled={locked}
                             className={cn(
-                              'h-8 w-8 transition-colors rounded-lg',
+                              'h-8 w-8 transition-colors rounded-2xl',
                               locked
                                 ? 'opacity-40 cursor-not-allowed text-muted-foreground'
-                                : 'text-muted-foreground hover:text-primary hover:bg-primary/10'
+                                : 'text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/15'
                             )}
                             onClick={() => handleEditClick(item)}
                             title={
@@ -697,7 +700,7 @@ export default function ScheduledSmsPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:text-amber-500 hover:bg-amber-500/10 rounded-lg transition-colors"
+                            className="h-8 w-8 text-muted-foreground hover:text-amber-500 hover:bg-amber-500/10 rounded-2xl transition-colors"
                             onClick={() => handleRequestToggleStatus(item.id, item.name, item.status)}
                             aria-label={item.status === 'SCHEDULED' ? 'Pause message' : 'Resume message'}
                             title={item.status === 'SCHEDULED' ? 'Pause message' : 'Resume message'}
@@ -713,7 +716,7 @@ export default function ScheduledSmsPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
+                            className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-2xl"
                             onClick={() => handleDeleteClick(item.id, item.name)}
                             aria-label={`Cancel scheduled message ${item.name}`}
                             title="Cancel scheduled broadcast"
@@ -779,7 +782,7 @@ export default function ScheduledSmsPage() {
                     {/* Metadata Grid */}
                     <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground pt-1">
                       <div className="flex items-center gap-1.5">
-                        <CalendarClock className="w-3.5 h-3.5 text-primary shrink-0" />
+                        <CalendarClock className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow shrink-0" />
                         <span className="truncate">{formatScheduledTime(item.scheduledAt)}</span>
                       </div>
                       <div className="flex items-center gap-1.5">

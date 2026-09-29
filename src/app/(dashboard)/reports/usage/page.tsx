@@ -99,10 +99,10 @@ export default function UsageReportPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total API Requests</CardTitle>
-            <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+            <div className="p-2 rounded-2xl bg-secondary/10 text-secondary">
               <Terminal className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -118,10 +118,10 @@ export default function UsageReportPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Success Rate</CardTitle>
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600">
+            <div className="p-2 rounded-2xl bg-emerald-500/10 text-emerald-600">
               <Activity className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -137,10 +137,10 @@ export default function UsageReportPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Error Rate</CardTitle>
-            <div className="p-2 rounded-lg bg-primary/20 text-primary-foreground">
+            <div className="p-2 rounded-2xl bg-primary/20 text-primary-foreground">
               <AlertTriangle className="h-4 w-4 text-foreground" />
             </div>
           </CardHeader>
@@ -156,10 +156,10 @@ export default function UsageReportPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Avg Latency</CardTitle>
-            <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+            <div className="p-2 rounded-2xl bg-secondary/10 text-secondary">
               <Clock className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -173,7 +173,7 @@ export default function UsageReportPage() {
       </div>
 
       {/* Daily Request Volume Chart */}
-      <Card className="border-secondary/20 shadow-sm">
+      <Card className="border-secondary/20 shadow-none">
         <CardHeader>
           <CardTitle>Daily Request Volume & Latency</CardTitle>
           <CardDescription>
@@ -182,11 +182,11 @@ export default function UsageReportPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="h-[320px] w-full bg-muted/30 animate-pulse rounded-lg flex items-center justify-center">
+            <div className="h-[320px] w-full bg-muted/30 animate-pulse rounded-2xl flex items-center justify-center">
               <p className="text-xs text-muted-foreground">Loading usage chart...</p>
             </div>
           ) : !data?.usageData || data.usageData.length === 0 ? (
-            <div className="h-[300px] flex items-center justify-center border border-dashed rounded-lg">
+            <div className="h-[300px] flex items-center justify-center border border-dashed rounded-2xl">
               <p className="text-sm text-muted-foreground">No API calls recorded in the last 7 days</p>
             </div>
           ) : (

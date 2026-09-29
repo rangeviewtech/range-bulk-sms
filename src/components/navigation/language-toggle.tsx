@@ -65,7 +65,7 @@ export function LanguageToggle({ className, align = "end" }: LanguageToggleProps
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align={align}
-        className="w-60 p-1.5 rounded-xl border bg-popover text-popover-foreground shadow-xl z-50"
+        className="w-60 p-1.5 rounded-2xl border bg-popover text-popover-foreground shadow-xl z-50"
       >
         {/* Search Header */}
         <div className="relative px-1 pt-1 pb-2">
@@ -75,7 +75,7 @@ export function LanguageToggle({ className, align = "end" }: LanguageToggleProps
             placeholder={dict.common.searchPlaceholder || "Search language..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg bg-muted/60 py-1.5 pl-8 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-primary focus:bg-muted transition-all"
+            className="w-full rounded-2xl border border-input/50 bg-muted/20 py-1.5 pl-8 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground outline-none hover:border-ring/60 focus:border-ring focus:outline-none focus:ring-0 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-0 transition-colors"
             onClick={(e) => e.stopPropagation()}
             onKeyDown={(e) => e.stopPropagation()}
           />
@@ -109,7 +109,7 @@ export function LanguageToggle({ className, align = "end" }: LanguageToggleProps
                       <span className="h-3 w-4 rounded-[2px] bg-muted inline-block" />
                     )}
                     <div className="flex flex-col text-left">
-                      <span className={`font-medium ${isSelected ? 'text-primary' : 'text-foreground'}`}>
+                      <span className={`font-medium ${isSelected ? 'text-brand-blue dark:text-brand-yellow font-semibold' : 'text-foreground'}`}>
                         {l.name}
                       </span>
                       {l.nativeName && l.nativeName !== l.name && (
@@ -119,7 +119,7 @@ export function LanguageToggle({ className, align = "end" }: LanguageToggleProps
                       )}
                     </div>
                   </div>
-                  {isSelected && <Check className="h-4 w-4 text-primary" />}
+                  {isSelected && <Check className="h-4 w-4 text-brand-blue dark:text-brand-yellow shrink-0" />}
                 </DropdownMenuItem>
               );
             })

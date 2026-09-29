@@ -26,7 +26,7 @@ export function SplitScreenAuth() {
     });
 
   return (
-    <div className="flex min-h-[600px] h-full w-full bg-background rounded-xl overflow-hidden border shadow-sm">
+    <div className="flex min-h-[600px] h-full w-full bg-background rounded-2xl overflow-hidden border shadow-none">
       {/* Left Form Area */}
       <div className="flex-1 flex flex-col justify-center px-8 sm:px-12 py-12">
         <div className="w-full max-w-sm mx-auto space-y-6">
@@ -62,7 +62,7 @@ export function SplitScreenAuth() {
                 <Label htmlFor="split-password" required>
                   Password
                 </Label>
-                <Link href="#" className="text-sm font-medium text-primary hover:underline">
+                <Link href="#" className="text-sm font-semibold text-brand-blue dark:text-brand-yellow hover:underline">
                   Forgot password?
                 </Link>
               </div>
@@ -88,7 +88,7 @@ export function SplitScreenAuth() {
 
           <div className="text-center sm:text-left text-sm">
             Don&apos;t have an account?{' '}
-            <Link href="#" className="font-medium text-primary hover:underline">
+            <Link href="#" className="font-semibold text-brand-blue dark:text-brand-yellow hover:underline">
               Sign up
             </Link>
           </div>
@@ -104,7 +104,7 @@ export function SplitScreenAuth() {
 
         {/* Branded Content */}
         <div className="relative z-10 max-w-md text-center space-y-6">
-          <div className="w-16 h-16 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto shadow-sm">
+          <div className="w-16 h-16 bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow rounded-2xl flex items-center justify-center mx-auto shadow-none">
             <Shield className="w-8 h-8" />
           </div>
           <div className="space-y-2">

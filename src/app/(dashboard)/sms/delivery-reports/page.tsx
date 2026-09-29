@@ -230,7 +230,7 @@ export default function DeliveryReportsPage() {
           <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-muted-foreground">Total Messages</span>
-              <Smartphone className="w-4 h-4 text-primary" />
+              <Smartphone className="w-4 h-4 text-brand-blue dark:text-brand-yellow" />
             </div>
             <div className="text-2xl font-bold text-foreground mt-2">{records.length}</div>
             <p className="text-[11px] text-muted-foreground mt-1">Across all campaigns</p>
@@ -284,6 +284,8 @@ export default function DeliveryReportsPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                 <Input
+                  id="delivery-reports-search"
+                  name="delivery-reports-search"
                   placeholder="Search phone, campaign, or network..."
                   className="pl-9 pr-8"
                   value={search}
@@ -303,10 +305,11 @@ export default function DeliveryReportsPage() {
 
               {/* Network Filter */}
               <Select
+                name="filter-network"
                 value={filters.network || 'ALL'}
                 onValueChange={(val) => setFilter('network', val)}
               >
-                <SelectTrigger className="w-full sm:w-[150px] h-9 text-xs">
+                <SelectTrigger id="filter-network" aria-label="Filter delivery reports by network" className="w-full sm:w-[150px] h-9 text-xs">
                   <SelectValue placeholder="All Networks" />
                 </SelectTrigger>
                 <SelectContent>
@@ -336,9 +339,9 @@ export default function DeliveryReportsPage() {
                 title={`Sort Order: ${sortOrder === 'asc' ? 'Ascending' : 'Descending'}`}
               >
                 {sortOrder === 'asc' ? (
-                  <ArrowUp className="w-3.5 h-3.5 text-primary" />
+                  <ArrowUp className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
                 ) : (
-                  <ArrowDown className="w-3.5 h-3.5 text-primary" />
+                  <ArrowDown className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
                 )}
                 <span className="text-xs uppercase font-medium">{sortOrder}</span>
               </Button>

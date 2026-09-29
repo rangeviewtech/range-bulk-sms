@@ -99,7 +99,7 @@ export default function AgentClientsPage() {
       </div>
 
       {/* Table Card */}
-      <Card className="border-secondary/20 shadow-sm">
+      <Card className="border-secondary/20 shadow-none">
         <CardHeader>
           <CardTitle>Client Portfolio ({clients.length})</CardTitle>
           <CardDescription>

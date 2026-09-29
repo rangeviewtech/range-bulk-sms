@@ -56,9 +56,9 @@ const DialogCountryRowItem = React.memo(function DialogCountryRowItem({
       onClick={handleClick}
       disabled={!region.libphonenumberSupported}
       className={cn(
-        'w-full text-left px-3 py-2 rounded-lg flex items-center justify-between gap-3 transition-colors contain-content',
+        'w-full text-left px-3 py-2 rounded-2xl flex items-center justify-between gap-3 transition-colors contain-content',
         isSelected
-          ? 'bg-primary/10 border border-primary/20 text-primary font-medium'
+          ? 'bg-brand-blue/10 border border-brand-blue/25 text-brand-blue dark:bg-brand-yellow/15 dark:border-brand-yellow/30 dark:text-brand-yellow font-semibold'
           : 'hover:bg-muted/60 text-foreground',
         !region.libphonenumberSupported ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
       )}
@@ -114,7 +114,7 @@ const DialogCountryRowItem = React.memo(function DialogCountryRowItem({
             <Info className="h-3.5 w-3.5" />
           </span>
         )}
-        {isSelected && <Check className="h-4 w-4 text-primary" />}
+        {isSelected && <Check className="h-4 w-4 text-brand-blue dark:text-brand-yellow" />}
       </div>
     </button>
   );
@@ -192,7 +192,7 @@ export function CountryPickerDialog({
       >
         <DialogHeader className="p-4 pb-2 border-b border-border bg-muted/20">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+            <div className="p-2 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow">
               <Globe className="h-5 w-5" />
             </div>
             <div>
@@ -213,7 +213,7 @@ export function CountryPickerDialog({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search country, alias (e.g. UK, USA, DRC), or +CC..."
-              className="pl-9 pr-8 h-9 text-sm bg-background"
+              className="pl-9 pr-8 h-10 text-sm"
             />
             {searchQuery && (
               <button

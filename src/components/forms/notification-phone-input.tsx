@@ -37,6 +37,8 @@ export function NotificationPhoneInput({ defaultValue }: NotificationPhoneInputP
       <Input
         id="phone"
         name="phone"
+        type="tel"
+        autoComplete="tel"
         value={value}
         onChange={(e) => {
           const sanitized = sanitizeSinglePhoneInput(e.target.value);

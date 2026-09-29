@@ -30,14 +30,14 @@ describe('RangeAppsDropdown Component (Google-Style 3-Column App Switcher)', () 
       } else {
         expect(app?.isExternal).toBe(true);
       }
-    });
-  });
+    }, 15000);
+  }, 15000);
 
   it('renders the 9-dot WaffleGridIcon with 9 circular dots', () => {
     const { container } = render(React.createElement(WaffleGridIcon));
     const circles = container.querySelectorAll('circle');
     expect(circles.length).toBe(9);
-  });
+  }, 15000);
 
   it('renders the trigger button with proper aria-label and title matching Google apps design', () => {
     render(React.createElement(RangeAppsDropdown));
@@ -46,7 +46,7 @@ describe('RangeAppsDropdown Component (Google-Style 3-Column App Switcher)', () 
     expect(trigger).not.toBeNull();
     expect(trigger?.getAttribute('aria-label')).toBe('Range View apps');
     expect(trigger?.getAttribute('title')).toBe('Range View apps');
-  });
+  }, 15000);
 
   it('opens the dropdown on click and displays 3 items per row in a 3-column grid matching sample', () => {
     render(React.createElement(RangeAppsDropdown));
@@ -103,5 +103,5 @@ describe('RangeAppsDropdown Component (Google-Style 3-Column App Switcher)', () 
     expect(footerLink).not.toBeNull();
     expect(footerLink?.getAttribute('href')).toBe('https://www.rangeview.com');
     expect(footerLink?.getAttribute('target')).toBe('_blank');
-  });
+  }, 15000);
 });

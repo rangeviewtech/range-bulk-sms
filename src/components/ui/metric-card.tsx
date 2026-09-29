@@ -27,23 +27,23 @@ export function MetricCard({
   ...props
 }: MetricCardProps) {
   return (
-    <Card className={cn("overflow-hidden transition-all duration-150 hover:shadow-md", className)} {...props}>
+    <Card className={cn("overflow-hidden transition-all duration-150 hover:bg-muted/40", className)} {...props}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+        <CardTitle className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{title}</CardTitle>
         {Icon && (
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/60 text-foreground">
-            <Icon className={cn("h-4 w-4 text-muted-foreground", iconClassName)} />
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-secondary-foreground shadow-none">
+            <Icon className={cn("h-4 w-4 text-inherit", iconClassName)} />
           </div>
         )}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">{value}</div>
+        <div className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">{value}</div>
         {(trend || description) && (
-          <div className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <div className="mt-2 flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
             {trend && (
               <span
                 className={cn(
-                  "font-semibold inline-flex items-center",
+                  "font-bold inline-flex items-center",
                   trend.isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
                 )}
               >

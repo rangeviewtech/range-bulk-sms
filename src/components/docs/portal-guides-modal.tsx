@@ -139,7 +139,7 @@ export function PortalGuidesModal({ topic, onClose }: PortalGuidesModalProps) {
 
             <div className="space-y-4 text-sm" style={{ color: PORTAL_COLORS.secondaryText }}>
               <div
-                className="p-4 rounded-xl border border-border/60 bg-[#07163D] text-slate-100 font-mono text-xs overflow-x-auto"
+                className="p-4 rounded-xl border border-border/60 bg-brand-navy text-slate-100 font-mono text-xs overflow-x-auto"
               >
                 <pre>{`{
   "type": "https://docs.rangesms.com/errors/invalid-recipient",

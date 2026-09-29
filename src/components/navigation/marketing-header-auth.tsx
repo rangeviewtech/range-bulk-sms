@@ -180,12 +180,12 @@ export function MarketingHeaderAuth({
                 aria-label="Open user profile menu"
                 aria-expanded={isOpen}
                 onClick={() => setIsOpen((prev) => !prev)}
-                className="group relative flex items-center gap-2 p-0.5 rounded-full border border-border/80 hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all cursor-pointer bg-background"
+                className="group relative flex items-center gap-2 p-0.5 rounded-full border border-border/80 hover:border-primary/50 outline-none focus:outline-none focus-visible:outline-none focus:border-ring focus-visible:border-ring focus:ring-0 focus-visible:ring-0 transition-all cursor-pointer bg-background"
               >
                 <div className="relative">
                   <Avatar className="h-8 w-8 sm:h-9 sm:w-9 border border-border/40 group-hover:scale-105 transition-transform">
                     <AvatarImage src={user.image || ''} alt={user.name || user.email || 'User Avatar'} />
-                    <AvatarFallback className="bg-[#04648C]/10 text-[#04648C] dark:bg-[#FBCA07]/20 dark:text-[#FBCA07] font-bold text-xs sm:text-sm">
+                    <AvatarFallback className="bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/20 dark:text-brand-yellow font-bold text-xs sm:text-sm">
                       {userInitials}
                     </AvatarFallback>
                   </Avatar>
@@ -225,7 +225,7 @@ export function MarketingHeaderAuth({
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10 border border-border">
                     <AvatarImage src={user.image || ''} alt={user.name || user.email || 'User Avatar'} />
-                    <AvatarFallback className="bg-[#04648C]/10 text-[#04648C] dark:bg-[#FBCA07]/20 dark:text-[#FBCA07] font-bold text-sm">
+                    <AvatarFallback className="bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/20 dark:text-brand-yellow font-bold text-sm">
                       {userInitials}
                     </AvatarFallback>
                   </Avatar>
@@ -255,13 +255,13 @@ export function MarketingHeaderAuth({
                 <Link
                   href="/dashboard"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-semibold text-[#04648C] dark:text-[#FBCA07] bg-[#04648C]/10 dark:bg-[#FBCA07]/10 hover:bg-[#04648C]/15 dark:hover:bg-[#FBCA07]/20 cursor-pointer transition-colors"
+                  className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-semibold text-brand-blue dark:text-brand-yellow bg-brand-blue/10 dark:bg-brand-yellow/10 hover:bg-brand-blue/15 dark:hover:bg-brand-yellow/20 cursor-pointer transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
                     <LayoutDashboard className="h-4 w-4" />
                     <span>Go to Dashboard</span>
                   </div>
-                  <Sparkles className="h-3.5 w-3.5 text-primary" />
+                  <Sparkles className="h-3.5 w-3.5 text-inherit" />
                 </Link>
               </DropdownMenuItem>
 

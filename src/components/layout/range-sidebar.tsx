@@ -719,7 +719,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
         )}
         onMouseLeave={() => scheduleClose(180)}
       >
-        {/* 1. PRIMARY SIDEBAR (w-[280px] on mobile, w-[90px] on desktop, #07163d) */}
+        {/* 1. PRIMARY SIDEBAR (w-[280px] on mobile, w-[90px] on desktop - adapts to light and dark color theme) */}
         <aside
           id="left-tree"
           ref={sidebarRef}
@@ -728,10 +728,10 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               cancelCloseTimer();
             }
           }}
-          className="h-full w-[280px] sm:w-[300px] md:w-[90px] bg-[#07163d] text-white flex flex-col pointer-events-auto select-none shadow-[4px_0_24px_rgba(0,0,0,0.4)] shrink-0 border-r border-white/5 overflow-hidden"
+          className="h-full w-[280px] sm:w-[300px] md:w-[90px] bg-sidebar-background text-sidebar-foreground flex flex-col pointer-events-auto select-none shadow-[4px_0_24px_rgba(0,0,0,0.06)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.4)] shrink-0 border-r border-sidebar-border overflow-hidden transition-colors duration-200"
         >
           {/* MOBILE DRAWER HEADER */}
-          <div className="flex items-center justify-between p-3.5 border-b border-white/10 md:hidden bg-black/20">
+          <div className="flex items-center justify-between p-3.5 border-b border-border dark:border-white/10 md:hidden bg-muted/40 dark:bg-black/20">
             <div className="flex items-center gap-2.5">
               <img
                 src="/images/brand/range-icon-transparent.svg"
@@ -739,14 +739,14 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                 className="w-8 h-8 object-contain"
               />
               <div className="flex flex-col">
-                <span className="font-bold text-sm text-white leading-tight">Range SMS</span>
-                <span className="text-[10px] text-[#FBCA07] font-medium">Enterprise Platform</span>
+                <span className="font-bold text-sm text-foreground dark:text-white leading-tight">Range SMS</span>
+                <span className="text-[10px] text-brand-blue dark:text-brand-yellow font-semibold">Enterprise Platform</span>
               </div>
             </div>
             <button
               type="button"
               onClick={() => setIsMobileOpen(false)}
-              className="p-1.5 text-white/70 hover:text-white rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+              className="p-1.5 text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white rounded-2xl hover:bg-muted/70 dark:hover:bg-white/10 transition-colors cursor-pointer"
               aria-label="Close Navigation"
             >
               <X className="w-5 h-5" />
@@ -754,7 +754,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
           </div>
 
           {/* MOBILE DRAWER WALLET CARD */}
-          <div className="p-3 border-b border-white/10 md:hidden bg-white/5">
+          <div className="p-3 border-b border-border dark:border-white/10 md:hidden bg-muted/20 dark:bg-white/5">
             <NavWalletBadge variant="drawer" onNavigate={() => setIsMobileOpen(false)} />
           </div>
 
@@ -762,7 +762,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
           <div id="tree-logo" className="hidden md:flex items-center justify-center p-2 pt-2.5">
             <Link
               href="/dashboard"
-              className="w-[78px] h-[78px] rounded-2xl bg-transparent hover:bg-white/5 border border-transparent flex flex-col items-center justify-center range-logo-badge group overflow-hidden transition-all duration-300"
+              className="w-[78px] h-[78px] rounded-2xl bg-transparent hover:bg-muted/60 dark:hover:bg-white/5 border border-transparent flex flex-col items-center justify-center range-logo-badge group overflow-hidden transition-all duration-300"
               title="Range SMS - Enterprise Bulk SMS"
             >
               <img
@@ -774,7 +774,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
           </div>
 
           {/* USER & NOTIFICATIONS BAR (compact 44px height for sleek spacing) */}
-          <div id="tree-user" className="flex items-center justify-center h-[44px] border-b border-white/10 relative">
+          <div id="tree-user" className="flex items-center justify-center h-[44px] border-b border-border dark:border-white/10 relative">
             {/* User Icon */}
             <button
               type="button"
@@ -783,8 +783,8 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                 setIsNotificationsOpen(false);
               }}
               className={cn(
-                "flex-1 h-full flex items-center justify-center hover:bg-white/10 transition-all duration-200 text-white/70 hover:text-white cursor-pointer relative group",
-                isUserMenuOpen && "bg-white/15 text-white"
+                "flex-1 h-full flex items-center justify-center hover:bg-muted/70 dark:hover:bg-white/10 transition-all duration-200 text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white cursor-pointer relative group",
+                isUserMenuOpen && "bg-muted text-foreground dark:bg-white/15 dark:text-white"
               )}
               title="User Profile & Settings"
               aria-label="User Profile"
@@ -793,7 +793,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
             </button>
 
             {/* Divider */}
-            <div className="w-[1px] h-[18px] bg-white/10" />
+            <div className="w-[1px] h-[18px] bg-border dark:bg-white/10" />
 
             {/* Notifications Icon */}
             <button
@@ -803,15 +803,15 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                 setIsUserMenuOpen(false);
               }}
               className={cn(
-                "flex-1 h-full flex items-center justify-center hover:bg-white/10 transition-all duration-200 text-white/70 hover:text-white cursor-pointer relative group",
-                isNotificationsOpen && "bg-white/15 text-white"
+                "flex-1 h-full flex items-center justify-center hover:bg-muted/70 dark:hover:bg-white/10 transition-all duration-200 text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white cursor-pointer relative group",
+                isNotificationsOpen && "bg-muted text-foreground dark:bg-white/15 dark:text-white"
               )}
               title="Notifications & Announcements"
               aria-label="Notifications"
             >
               <Bell className="w-[20px] h-[20px] transition-transform duration-200 group-hover:scale-110" strokeWidth={1.3} />
-              <span className="absolute top-2.5 right-3 w-2 h-2 bg-[#FBCA07] rounded-full animate-ping opacity-75 ring-2 ring-[#07163d]" />
-              <span className="absolute top-2.5 right-3 w-2 h-2 bg-[#FBCA07] rounded-full ring-2 ring-[#07163d]" />
+              <span className="absolute top-2.5 right-3 w-2 h-2 bg-brand-blue dark:bg-brand-yellow rounded-full animate-ping opacity-75 ring-2 ring-card dark:ring-brand-navy" />
+              <span className="absolute top-2.5 right-3 w-2 h-2 bg-brand-blue dark:bg-brand-yellow rounded-full ring-2 ring-card dark:ring-brand-navy" />
             </button>
           </div>
 
@@ -850,12 +850,12 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                           href={mod.href}
                           onClick={closeAllFlyouts}
                           className={cn(
-                            "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white range-module-btn relative group transition-colors duration-150",
-                            (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
+                            "w-full h-full flex flex-col items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 dark:text-white/75 dark:hover:text-white dark:hover:bg-white/5 range-module-btn relative group transition-colors duration-150",
+                            (isHovered || isActive) && "bg-brand-blue/10 text-brand-blue font-semibold hover:bg-brand-blue/15 dark:bg-brand-blue dark:text-white dark:shadow-inner"
                           )}
                         >
                           {isActive && (
-                            <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#FBCA07] shadow-[0_0_10px_#FBCA07] animate-indicator-slide" />
+                            <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-brand-blue dark:bg-brand-yellow dark:shadow-[0_0_10px_#FBCA07] animate-indicator-slide" />
                           )}
                           {mod.icon}
                           <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px] group-hover:font-semibold transition-all">
@@ -869,12 +869,12 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                         href={mod.href}
                         onClick={() => setIsMobileOpen(false)}
                         className={cn(
-                          "flex md:hidden items-center justify-between px-4 py-3 text-sm text-white/80 hover:text-white hover:bg-white/5 border-l-3 transition-colors",
-                          isActive ? "bg-[#04648C] text-white font-semibold border-[#FBCA07]" : "border-transparent"
+                          "flex md:hidden items-center justify-between px-4 py-3 text-sm text-foreground/80 hover:text-foreground hover:bg-muted/60 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/5 border-l-3 transition-colors",
+                          isActive ? "bg-brand-blue/10 text-brand-blue font-semibold border-brand-blue dark:bg-brand-blue dark:text-white dark:border-brand-yellow" : "border-transparent"
                         )}
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-5 h-5 flex items-center justify-center shrink-0 text-white/90">
+                          <div className="w-5 h-5 flex items-center justify-center shrink-0 text-foreground/90 dark:text-white/90">
                             {mod.icon}
                           </div>
                           <span>{mod.title}</span>
@@ -922,12 +922,12 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                             href={mod.href}
                             onClick={closeAllFlyouts}
                             className={cn(
-                              "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white range-module-btn relative group",
-                              (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
+                              "w-full h-full flex flex-col items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 dark:text-white/75 dark:hover:text-white dark:hover:bg-white/5 range-module-btn relative group transition-colors duration-150",
+                              (isHovered || isActive) && "bg-brand-blue/10 text-brand-blue font-semibold hover:bg-brand-blue/15 dark:bg-brand-blue dark:text-white dark:shadow-inner"
                             )}
                           >
                             {isActive && (
-                              <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#FBCA07] shadow-[0_0_10px_#FBCA07] animate-indicator-slide" />
+                              <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-brand-blue dark:bg-brand-yellow dark:shadow-[0_0_10px_#FBCA07] animate-indicator-slide" />
                             )}
                             {mod.icon}
                             <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px] group-hover:font-semibold transition-all">
@@ -937,12 +937,12 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                         ) : (
                           <div
                             className={cn(
-                              "w-full h-full flex flex-col items-center justify-center text-white/75 hover:text-white range-module-btn relative group",
-                              (isHovered || isActive) && "bg-[#04648C] text-white shadow-inner"
+                              "w-full h-full flex flex-col items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 dark:text-white/75 dark:hover:text-white dark:hover:bg-white/5 range-module-btn relative group transition-colors duration-150",
+                              (isHovered || isActive) && "bg-brand-blue/10 text-brand-blue font-semibold hover:bg-brand-blue/15 dark:bg-brand-blue dark:text-white dark:shadow-inner"
                             )}
                           >
                             {isActive && (
-                              <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#FBCA07] shadow-[0_0_10px_#FBCA07] animate-indicator-slide" />
+                              <span className="absolute left-0 top-0 bottom-0 w-[4px] bg-brand-blue dark:bg-brand-yellow dark:shadow-[0_0_10px_#FBCA07] animate-indicator-slide" />
                             )}
                             {mod.icon}
                             <span className="text-[11px] font-medium tracking-tight text-center px-1 truncate max-w-[84px] group-hover:font-semibold transition-all">
@@ -953,37 +953,37 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                       </div>
 
                       {/* Mobile Accordion Module */}
-                      <div className="block md:hidden border-b border-white/5">
+                      <div className="block md:hidden border-b border-border/50 dark:border-white/5">
                         <button
                           type="button"
                           onClick={() => {
                             setExpandedMobileModule((prev) => (prev === mod.title ? null : mod.title));
                           }}
                           className={cn(
-                            "w-full flex items-center justify-between px-4 py-3 text-sm text-white/80 hover:text-white hover:bg-white/5 border-l-3 transition-colors text-left cursor-pointer",
-                            isActive || isExpanded ? "bg-[#04648C]/40 text-white font-medium border-[#FBCA07]" : "border-transparent"
+                            "w-full flex items-center justify-between px-4 py-3 text-sm text-foreground/80 hover:text-foreground hover:bg-muted/60 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/5 border-l-3 transition-colors text-left cursor-pointer",
+                            isActive || isExpanded ? "bg-brand-blue/10 text-brand-blue font-semibold border-brand-blue dark:bg-brand-blue/40 dark:text-white dark:border-brand-yellow" : "border-transparent"
                           )}
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-5 h-5 flex items-center justify-center shrink-0 text-white/90">
+                            <div className="w-5 h-5 flex items-center justify-center shrink-0 text-foreground/90 dark:text-white/90">
                               {mod.icon}
                             </div>
                             <span className="font-medium text-[13px]">{mod.title}</span>
                           </div>
                           <ChevronDown
                             className={cn(
-                              "w-4 h-4 text-white/50 transition-transform duration-200",
-                              isExpanded && "rotate-180 text-[#FBCA07]"
+                              "w-4 h-4 text-muted-foreground dark:text-white/50 transition-transform duration-200",
+                              isExpanded && "rotate-180 text-brand-blue dark:text-brand-yellow"
                             )}
                           />
                         </button>
 
                         {/* Mobile Accordion Submenu */}
                         {isExpanded && mod.categories && (
-                          <div className="bg-black/25 border-t border-white/10 py-1 px-3 space-y-3">
+                          <div className="bg-muted/40 dark:bg-black/25 border-t border-border dark:border-white/10 py-1 px-3 space-y-3">
                             {mod.categories.map((cat) => (
                               <div key={cat.title} className="space-y-1">
-                                <div className="text-[10px] font-bold uppercase tracking-wider text-[#FBCA07] px-2 pt-1.5">
+                                <div className="text-[10px] font-bold uppercase tracking-wider text-brand-blue dark:text-brand-yellow px-2 pt-1.5">
                                   {cat.title}
                                 </div>
                                 <ul className="space-y-0.5 list-none m-0 p-0">
@@ -999,8 +999,8 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                                           className={cn(
                                             "block px-2.5 py-1.5 text-xs rounded-md transition-colors",
                                             isCurrent
-                                              ? "bg-[#04648C] text-white font-semibold"
-                                              : "text-white/80 hover:text-white hover:bg-white/10"
+                                              ? "bg-brand-blue text-white font-semibold"
+                                              : "text-foreground/80 hover:text-foreground hover:bg-muted/70 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/10"
                                           )}
                                         >
                                           {screen.title}
@@ -1036,20 +1036,20 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               left: `${flyoutPosition.left}px`,
             }}
           >
-            {/* LAYER 2: Submenu Categories (170px wide, Range teal #04648C) */}
+            {/* LAYER 2: Submenu Categories (170px wide - adapts to theme) */}
             <div
               id="subMenu"
               ref={subMenuRef}
-              className="w-[170px] bg-[#04648C] text-white flex flex-col border-r border-white/10 overflow-y-auto sidebar-scrollbar animate-flyout-sub shadow-[4px_6px_16px_rgba(0,0,0,0.3)] z-10 shrink-0"
+              className="w-[170px] bg-card text-foreground border border-border shadow-[0_12px_36px_rgba(0,0,0,0.12)] dark:bg-brand-blue dark:text-white dark:border-r dark:border-white/10 dark:shadow-[4px_6px_16px_rgba(0,0,0,0.3)] flex flex-col overflow-y-auto sidebar-scrollbar animate-flyout-sub z-10 shrink-0"
               style={{
                 maxHeight: `${flyoutPosition.maxHeight}px`,
               }}
             >
               {/* Module title header */}
-              <div className="px-3 py-2 text-[10px] uppercase font-bold tracking-wider text-white/50 border-b border-white/10 bg-[#04648C]/80">
+              <div className="px-3 py-2 text-[10px] uppercase font-bold tracking-wider text-muted-foreground border-b border-border bg-muted/40 dark:text-white/50 dark:border-white/10 dark:bg-brand-blue/80">
                 {hoveredModule.title}
               </div>
-              <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5" role="menu">
+              <ul className="py-0 list-none m-0 p-0 divide-y divide-border/40 dark:divide-white/5" role="menu">
                 {hoveredModule.categories.map((cat) => {
                   const isCatHovered = hoveredCategory?.title === cat.title;
                   return (
@@ -1080,17 +1080,19 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                         setHoveredCategory(cat);
                       }}
                       className={cn(
-                        "h-[38px] px-3 flex items-center justify-between text-[12px] font-medium text-white/90 hover:text-white range-menu-item cursor-pointer transition-all duration-150 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FBCA07] focus-visible:ring-inset",
+                        "h-[38px] px-3 flex items-center justify-between text-[12px] font-medium range-menu-item cursor-pointer transition-all duration-150 group outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0",
                         isCatHovered 
-                          ? "bg-[#07163d] text-white font-semibold shadow-inner border-l-2 border-[#FBCA07]" 
-                          : "hover:bg-[#07163d]/80 border-l-2 border-transparent"
+                          ? "bg-brand-blue/10 text-brand-blue font-semibold border-l-2 border-brand-blue dark:bg-white/10 dark:text-white dark:border-brand-yellow dark:shadow-inner" 
+                          : "text-foreground/80 hover:text-brand-blue hover:bg-muted/60 dark:text-white/90 dark:hover:text-white dark:hover:bg-white/5 border-l-2 border-transparent"
                       )}
                     >
                       <span className="truncate">{cat.title}</span>
                       <ChevronRight
                         className={cn(
-                          "w-3.5 h-3.5 text-white/50 group-hover:text-white transition-all duration-200",
-                          isCatHovered ? "text-[#FBCA07] translate-x-1" : "group-hover:translate-x-0.5"
+                          "w-3.5 h-3.5 transition-all duration-200",
+                          isCatHovered 
+                            ? "text-brand-blue dark:text-brand-yellow translate-x-1" 
+                            : "text-muted-foreground group-hover:text-brand-blue dark:text-white/50 dark:group-hover:text-white group-hover:translate-x-0.5"
                         )}
                       />
                     </li>
@@ -1099,19 +1101,19 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               </ul>
             </div>
 
-            {/* LAYER 3: Deep Menu Screens (180px wide, Range teal #04648C) */}
+            {/* LAYER 3: Deep Menu Screens (180px wide - adapts to theme) */}
             {hoveredCategory && (
               <div
                 id="deepMenu"
                 ref={deepMenuRef}
                 key={hoveredCategory.title}
-                className="w-[180px] bg-[#04648C] text-white flex flex-col overflow-y-auto sidebar-scrollbar border-r border-white/10 animate-flyout-deep shadow-[4px_6px_18px_rgba(0,0,0,0.35)] shrink-0 z-20 absolute left-[170px] h-max"
+                className="w-[180px] bg-card text-foreground border border-border shadow-[0_12px_36px_rgba(0,0,0,0.15)] dark:bg-brand-blue dark:text-white dark:border-r dark:border-white/10 dark:shadow-[4px_6px_18px_rgba(0,0,0,0.35)] flex flex-col overflow-y-auto sidebar-scrollbar animate-flyout-deep shrink-0 z-20 absolute left-[170px] h-max"
                 style={{
                   top: `${deepMenuTop}px`,
                   maxHeight: `${flyoutPosition.maxHeight}px`,
                 }}
               >
-                <ul className="py-0 list-none m-0 p-0 divide-y divide-white/5" role="menu">
+                <ul className="py-0 list-none m-0 p-0 divide-y divide-border/40 dark:divide-white/5" role="menu">
                   {hoveredCategory.items.map((screen) => {
                     const isCurrent = pathname === screen.href;
                     return (
@@ -1120,10 +1122,10 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                           href={screen.href}
                           onClick={closeAllFlyouts}
                           className={cn(
-                            "w-full h-full px-3.5 flex items-center text-[12px] text-white/90 hover:text-white range-menu-item transition-all duration-150 truncate border-l-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FBCA07] focus-visible:ring-inset",
+                            "w-full h-full px-3.5 flex items-center text-[12px] range-menu-item transition-all duration-150 truncate border-l-2 outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0",
                             isCurrent 
-                              ? "bg-[#07163d] text-white font-semibold border-[#FBCA07]" 
-                              : "border-transparent hover:bg-[#07163d]/90 hover:border-white/30"
+                              ? "bg-brand-blue/15 text-brand-blue font-semibold border-brand-blue dark:bg-white/10 dark:text-white dark:border-brand-yellow" 
+                              : "border-transparent text-foreground/80 hover:text-brand-blue hover:bg-muted/60 hover:border-brand-blue/40 dark:text-white/90 dark:hover:text-white dark:hover:bg-white/5 dark:hover:border-white/30"
                           )}
                           title={screen.title}
                         >
@@ -1214,10 +1216,10 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
                 <Link
                   href="/dashboard"
                   onClick={() => setIsUserMenuOpen(false)}
-                  className="flex items-center justify-between px-3.5 py-2 hover:bg-muted/70 transition-colors font-semibold text-[#04648C] dark:text-[#38bdf8]"
+                  className="flex items-center justify-between px-3.5 py-2 hover:bg-muted/70 transition-colors font-semibold text-brand-blue dark:text-[#38bdf8]"
                 >
                   <span>Range SMS App</span>
-                  <Check className="w-3.5 h-3.5 text-[#04648C] dark:text-[#38bdf8]" />
+                  <Check className="w-3.5 h-3.5 text-brand-blue dark:text-[#38bdf8]" />
                 </Link>
                 <div className="h-[1px] bg-border my-1" />
                 <Link
@@ -1276,7 +1278,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               className={cn(
                 "flex-1 flex items-center justify-center text-xs font-semibold border-b-2 transition-colors cursor-pointer",
                 activeNotiTab === "notifications"
-                  ? "border-[#04648C] text-[#04648C] dark:border-[#38bdf8] dark:text-[#38bdf8] bg-card"
+                  ? "border-brand-blue text-brand-blue dark:border-[#38bdf8] dark:text-[#38bdf8] bg-card"
                   : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
@@ -1288,7 +1290,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               className={cn(
                 "flex-1 flex items-center justify-center text-xs font-semibold border-b-2 transition-colors cursor-pointer",
                 activeNotiTab === "announcements"
-                  ? "border-[#04648C] text-[#04648C] dark:border-[#38bdf8] dark:text-[#38bdf8] bg-card"
+                  ? "border-brand-blue text-brand-blue dark:border-[#38bdf8] dark:text-[#38bdf8] bg-card"
                   : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
@@ -1347,7 +1349,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               type="button"
               id="mobile-nav-toggle"
               onClick={() => setIsMobileOpen((prev) => !prev)}
-              className="h-9 w-9 rounded-lg flex items-center justify-center text-foreground hover:bg-accent/60 transition-colors cursor-pointer active:scale-95 shrink-0"
+              className="h-9 w-9 rounded-2xl flex items-center justify-center text-foreground hover:bg-accent/60 transition-colors cursor-pointer active:scale-95 shrink-0"
               title="Open Navigation Menu"
               aria-label="Open Navigation Menu"
             >
@@ -1395,7 +1397,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
           onClick={() => setIsSearchOpen(false)}
         >
           <div
-            className="w-full max-w-xl bg-card border border-border rounded-xl shadow-[0_24px_64px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col animate-in zoom-in-95 duration-200"
+            className="w-full max-w-xl bg-card border border-border rounded-2xl shadow-[0_24px_64px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Search Input Bar */}

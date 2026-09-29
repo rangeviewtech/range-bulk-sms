@@ -422,6 +422,8 @@ export default function PricingPage() {
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
+                id="admin-pricing-search"
+                name="admin-pricing-search"
                 placeholder="Search by country, code, network, currency..."
                 className="pl-8 pr-8"
                 value={search}
@@ -444,10 +446,11 @@ export default function PricingPage() {
               {distinctNetworks.length > 0 && (
                 <div className="w-36">
                   <Select
+                    name="filter-network"
                     value={filters.network || "ALL"}
                     onValueChange={(val) => setFilter("network", val)}
                   >
-                    <SelectTrigger className="h-9 text-xs" aria-label="Filter by network">
+                    <SelectTrigger id="filter-network" className="h-9 text-xs" aria-label="Filter by network">
                       <SelectValue placeholder="All Networks" />
                     </SelectTrigger>
                     <SelectContent>
@@ -624,7 +627,7 @@ export default function PricingPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-lg"
+                            className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-2xl"
                             onClick={() =>
                               handleDeleteClick(
                                 rule.id,

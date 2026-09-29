@@ -197,7 +197,7 @@ export function PortalHero({ environment: _environment }: PortalHeroProps) {
 
             {/* Code Body with line numbers */}
             <div
-              className="p-4 sm:p-5 font-mono text-xs overflow-x-auto bg-[#07163D] text-slate-100"
+              className="p-4 sm:p-5 font-mono text-xs overflow-x-auto bg-brand-navy text-slate-100"
             >
               {activeLang === 'curl' ? (
                 <div className="space-y-1 font-mono leading-relaxed">

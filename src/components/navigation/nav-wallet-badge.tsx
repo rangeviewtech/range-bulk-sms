@@ -1,10 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { Wallet, Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Wallet, Plus, Eye, EyeOff } from 'lucide-react';
 import { useWallet } from '@/hooks/use-wallet';
 import { cn } from '@/lib/utils';
+import { UnmaskWalletDialog } from '@/components/wallet/unmask-wallet-dialog';
 
 interface NavWalletBadgeProps {
   className?: string;
@@ -13,7 +15,10 @@ interface NavWalletBadgeProps {
 }
 
 export function NavWalletBadge({ className, variant = 'full', onNavigate }: NavWalletBadgeProps) {
-  const { balance, currency, smsCredits, isLoading } = useWallet();
+  const { balance, currency, isLoading } = useWallet();
+  const [isMasked, setIsMasked] = useState(true);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const router = useRouter();
 
   const formattedBalance = balance.toLocaleString();
   const compactBalance =
@@ -22,6 +27,24 @@ export function NavWalletBadge({ className, variant = 'full', onNavigate }: NavW
       : balance >= 1_000
       ? `${Math.floor(balance / 1_000)}k`
       : formattedBalance;
+
+  const displayBalance = isMasked ? '••••••' : formattedBalance;
+  const displayCompact = isMasked ? '••••' : compactBalance;
+
+  const handleToggleMask = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isMasked) {
+      setShowAuthDialog(true);
+    } else {
+      setIsMasked(true);
+    }
+  };
+
+  const handleContainerClick = (e: React.MouseEvent) => {
+    router.push('/wallet');
+    if (onNavigate) onNavigate();
+  };
 
   if (variant === 'drawer') {
     return (
@@ -32,27 +55,28 @@ export function NavWalletBadge({ className, variant = 'full', onNavigate }: NavW
               <Wallet className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+              <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                 Wallet Balance
+                <button type="button" onClick={handleToggleMask} className="p-0.5 hover:bg-muted rounded text-muted-foreground transition-colors">
+                  {isMasked ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                </button>
               </div>
               <div className="text-sm font-bold font-mono text-emerald-600 dark:text-emerald-400">
-                {formattedBalance} {currency}
+                {displayBalance} {currency}
               </div>
             </div>
           </div>
-          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:text-[#FBCA07] border border-primary/20">
-            ~{smsCredits.toLocaleString()} SMS
-          </span>
         </div>
 
-        <Link
-          href="/wallet"
-          onClick={onNavigate}
-          className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors shadow-2xs"
+        <button
+          onClick={handleContainerClick}
+          className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors shadow-2xs cursor-pointer"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Top Up Credits</span>
-        </Link>
+        </button>
+
+        <UnmaskWalletDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} onSuccess={() => setIsMasked(false)} />
       </div>
     );
   }
@@ -60,10 +84,9 @@ export function NavWalletBadge({ className, variant = 'full', onNavigate }: NavW
   return (
     <>
       {/* Desktop / Large Screen Pill */}
-      <Link
-        href="/wallet"
+      <div
         id="top-nav-wallet-badge-desktop"
-        onClick={onNavigate}
+        onClick={handleContainerClick}
         className={cn(
           'group hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-border/80 bg-card hover:bg-muted/50 hover:border-primary/50 transition-all duration-200 shadow-2xs select-none cursor-pointer active:scale-95 shrink-0',
           className
@@ -73,31 +96,36 @@ export function NavWalletBadge({ className, variant = 'full', onNavigate }: NavW
         <div className="w-7 h-7 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
           <Wallet className={cn('w-3.5 h-3.5', isLoading && 'animate-pulse')} />
         </div>
-        <div className="flex flex-col text-left">
-          <span className="text-[9px] uppercase font-semibold text-muted-foreground/80 leading-none tracking-wider">
-            Balance
-          </span>
-          <span className="text-xs font-bold text-foreground font-mono leading-tight group-hover:text-primary transition-colors">
-            {formattedBalance} <span className="text-[10px] text-muted-foreground font-sans font-normal">{currency}</span>
-          </span>
+        
+        <div className="flex items-center gap-1">
+          <div className="flex flex-col text-left">
+            <span className="text-[9px] uppercase font-semibold text-muted-foreground/80 leading-none tracking-wider">
+              Balance
+            </span>
+            <span className="text-xs font-bold text-foreground font-mono leading-tight group-hover:text-brand-blue dark:group-hover:text-brand-yellow transition-colors">
+              {displayBalance} <span className="text-[10px] text-muted-foreground font-sans font-normal">{currency}</span>
+            </span>
+          </div>
+          <button 
+            type="button" 
+            onClick={handleToggleMask} 
+            className="p-1 rounded-full hover:bg-muted text-muted-foreground transition-colors ml-0.5"
+            title={isMasked ? 'Unmask balance' : 'Mask balance'}
+          >
+            {isMasked ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+          </button>
         </div>
 
-        {/* SMS Capacity Chip visible on lg+ */}
-        <span className="hidden lg:inline-flex text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:text-[#FBCA07] border border-primary/20">
-          ~{smsCredits.toLocaleString()} SMS
-        </span>
-
         {/* Quick Top-Up Action */}
-        <span className="hidden xl:inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 pl-1.5 border-l border-border/60 hover:underline">
+        <span className="hidden xl:inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 pl-2 ml-1 border-l border-border/60 hover:underline">
           <Plus className="w-3 h-3" /> Top Up
         </span>
-      </Link>
+      </div>
 
       {/* Mobile Screen Compact Badge */}
-      <Link
-        href="/wallet"
+      <div
         id="top-nav-wallet-badge-mobile"
-        onClick={onNavigate}
+        onClick={handleContainerClick}
         className={cn(
           'flex sm:hidden items-center gap-1.5 px-2.5 py-1 rounded-full border border-border/80 bg-card hover:bg-muted/50 text-xs font-mono font-bold text-foreground transition-all cursor-pointer active:scale-95 shrink-0',
           className
@@ -105,11 +133,19 @@ export function NavWalletBadge({ className, variant = 'full', onNavigate }: NavW
         title="Wallet Balance — Click to manage credits"
       >
         <Wallet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-        <span className="text-[11px] font-bold text-foreground">
-          {compactBalance}{' '}
-          <span className="text-[9px] text-muted-foreground font-sans font-normal">{currency}</span>
+        <span className="text-[11px] font-bold text-foreground flex items-center gap-1">
+          {displayCompact} <span className="text-[9px] text-muted-foreground font-sans font-normal">{currency}</span>
         </span>
-      </Link>
+        <button 
+          type="button" 
+          onClick={handleToggleMask} 
+          className="p-0.5 rounded-full hover:bg-muted text-muted-foreground transition-colors"
+        >
+          {isMasked ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+        </button>
+      </div>
+
+      <UnmaskWalletDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} onSuccess={() => setIsMasked(false)} />
     </>
   );
 }

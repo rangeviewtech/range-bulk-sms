@@ -120,10 +120,10 @@ export default function SmsReportsPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Sent</CardTitle>
-            <div className="p-2 rounded-lg bg-primary/20 text-primary-foreground">
+            <div className="p-2 rounded-2xl bg-primary/20 text-primary-foreground">
               <Send className="h-4 w-4 text-foreground" />
             </div>
           </CardHeader>
@@ -139,10 +139,10 @@ export default function SmsReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Delivered</CardTitle>
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600">
+            <div className="p-2 rounded-2xl bg-emerald-500/10 text-emerald-600">
               <CheckCircle2 className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -158,10 +158,10 @@ export default function SmsReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Failed</CardTitle>
-            <div className="p-2 rounded-lg bg-destructive/10 text-destructive">
+            <div className="p-2 rounded-2xl bg-destructive/10 text-destructive">
               <XCircle className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -177,10 +177,10 @@ export default function SmsReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Avg Cost per SMS</CardTitle>
-            <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+            <div className="p-2 rounded-2xl bg-secondary/10 text-secondary">
               <DollarSign className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -194,7 +194,7 @@ export default function SmsReportsPage() {
       </div>
 
       {/* Delivery Trends Chart */}
-      <Card className="border-secondary/20 shadow-sm">
+      <Card className="border-secondary/20 shadow-none">
         <CardHeader>
           <CardTitle>Delivery Throughput Trends</CardTitle>
           <CardDescription>

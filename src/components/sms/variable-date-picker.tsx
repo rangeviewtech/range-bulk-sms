@@ -140,11 +140,11 @@ export function VariableDatePicker({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           className={cn(
-            'w-full h-9 pl-3 pr-16 text-xs font-sans rounded-md border shadow-xs transition-colors bg-background text-foreground',
-            'placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
-            isEmpty && isMissing && 'border-amber-500/60 focus-visible:ring-amber-500/60 bg-amber-500/[0.03]',
-            hasError && !isEmpty && 'border-destructive focus-visible:ring-destructive bg-destructive/5',
-            isActuallyValid && 'border-input hover:border-primary/50',
+            'w-full h-9 pl-3 pr-16 text-xs font-sans rounded-xl border border-input/50 shadow-none transition-colors bg-muted/20 text-foreground outline-none',
+            'placeholder:text-muted-foreground hover:border-ring/60 focus:border-ring focus:outline-none focus:ring-0 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-0',
+            isEmpty && isMissing && 'border-amber-500/60 hover:border-amber-500 focus-visible:border-amber-500 bg-amber-500/[0.05]',
+            hasError && !isEmpty && 'border-destructive hover:border-destructive focus-visible:border-destructive bg-destructive/10',
+            isActuallyValid && 'border-input/50 hover:border-ring/60 focus-visible:border-ring',
             className
           )}
         />
@@ -171,7 +171,7 @@ export function VariableDatePicker({
                 <button
                   type="button"
                   onClick={() => onApplyToAll(value)}
-                  className="text-muted-foreground hover:text-primary p-0.5 rounded cursor-pointer transition-colors"
+                  className="text-muted-foreground hover:text-brand-blue dark:hover:text-brand-yellow p-0.5 rounded cursor-pointer transition-colors"
                   title={`Apply "${value}" to all rows`}
                   aria-label={`Apply "${value}" to all rows`}
                 >
@@ -190,7 +190,7 @@ export function VariableDatePicker({
                 disabled={disabled}
                 className={cn(
                   'h-7 w-7 p-0 rounded text-muted-foreground hover:text-foreground cursor-pointer',
-                  open && 'text-primary bg-muted'
+                  open && 'text-brand-blue dark:text-brand-yellow bg-muted'
                 )}
                 title="Open calendar date picker"
                 aria-label="Pick date"
@@ -201,7 +201,7 @@ export function VariableDatePicker({
 
             <PopoverContent
               align="end"
-              className="w-68 p-3 shadow-xl border-border bg-card rounded-xl space-y-3 z-50"
+              className="w-68 p-3 shadow-xl border-border bg-card rounded-2xl space-y-3 z-50"
             >
               {/* Header: Month and Year Selector */}
               <div className="flex items-center justify-between">
@@ -313,7 +313,7 @@ export function VariableDatePicker({
                           selected
                             ? 'bg-primary text-primary-foreground font-bold shadow-xs'
                             : today
-                              ? 'border border-primary text-primary font-semibold hover:bg-muted'
+                              ? 'border border-brand-blue text-brand-blue dark:border-brand-yellow dark:text-brand-yellow font-semibold hover:bg-muted'
                               : 'text-foreground hover:bg-muted/80'
                         )}
                       >
@@ -349,7 +349,7 @@ export function VariableDatePicker({
                       onApplyToAll(value);
                       setOpen(false);
                     }}
-                    className="text-primary hover:underline font-semibold cursor-pointer"
+                    className="text-brand-blue dark:text-brand-yellow hover:underline font-semibold cursor-pointer"
                   >
                     Apply to all rows
                   </button>

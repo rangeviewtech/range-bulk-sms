@@ -243,7 +243,7 @@ export default function DraftsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="border-border/60 bg-card">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-primary/10 text-primary shrink-0">
+            <div className="p-2.5 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow shrink-0">
               <FileEdit className="w-5 h-5" />
             </div>
             <div>
@@ -259,7 +259,7 @@ export default function DraftsPage() {
 
         <Card className="border-border/60 bg-card">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-500 shrink-0">
+            <div className="p-2.5 rounded-2xl bg-blue-500/10 text-blue-500 shrink-0">
               <Send className="w-5 h-5" />
             </div>
             <div>
@@ -275,7 +275,7 @@ export default function DraftsPage() {
 
         <Card className="border-border/60 bg-card">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-500 shrink-0">
+            <div className="p-2.5 rounded-2xl bg-amber-500/10 text-amber-500 shrink-0">
               <Layers className="w-5 h-5" />
             </div>
             <div>
@@ -291,7 +291,7 @@ export default function DraftsPage() {
 
         <Card className="border-border/60 bg-card">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-500 shrink-0">
+            <div className="p-2.5 rounded-2xl bg-emerald-500/10 text-emerald-500 shrink-0">
               <Users className="w-5 h-5" />
             </div>
             <div>
@@ -307,11 +307,13 @@ export default function DraftsPage() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row gap-3 sm:gap-4 justify-between items-stretch md:items-center bg-card p-3.5 sm:p-4 rounded-xl border border-border shadow-xs">
+      <div className="flex flex-col md:flex-row gap-3 sm:gap-4 justify-between items-stretch md:items-center bg-card p-3.5 sm:p-4 rounded-2xl border border-border shadow-xs">
         <div className="flex flex-1 flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
             <Input
+              id="drafts-search"
+              name="drafts-search"
               placeholder="Search by title, message body, sender ID, or recipients..."
               className="pl-9 pr-8 w-full text-sm"
               value={search}
@@ -331,10 +333,11 @@ export default function DraftsPage() {
 
           {/* Delivery Mode Filter */}
           <Select
+            name="filter-delivery-mode"
             value={filters.deliveryMode || 'ALL'}
             onValueChange={(val) => setFilter('deliveryMode', val)}
           >
-            <SelectTrigger className="w-full sm:w-[170px] h-9 text-xs">
+            <SelectTrigger id="filter-delivery-mode" aria-label="Filter drafts by delivery mode" className="w-full sm:w-[170px] h-9 text-xs">
               <Filter className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
               <SelectValue placeholder="All Modes" />
             </SelectTrigger>
@@ -356,9 +359,9 @@ export default function DraftsPage() {
             title={`Sort Order: ${sortOrder === 'asc' ? 'Ascending' : 'Descending'}`}
           >
             {sortOrder === 'asc' ? (
-              <ArrowUp className="w-3.5 h-3.5 text-primary" />
+              <ArrowUp className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
             ) : (
-              <ArrowDown className="w-3.5 h-3.5 text-primary" />
+              <ArrowDown className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
             )}
             <span className="text-xs uppercase font-medium">{sortOrder}</span>
           </Button>
@@ -370,13 +373,13 @@ export default function DraftsPage() {
         <CardContent className="p-0">
           {isLoading ? (
             <div className="p-12 text-center space-y-3">
-              <RefreshCw className="w-8 h-8 mx-auto text-primary animate-spin" />
+              <RefreshCw className="w-8 h-8 mx-auto text-brand-blue dark:text-brand-yellow animate-spin" />
               <p className="text-sm text-muted-foreground">Loading draft messages...</p>
             </div>
           ) : drafts.length === 0 ? (
             /* Empty State: No Drafts at all */
-            <div className="p-12 text-center space-y-4 max-w-md mx-auto">
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto">
+            <div className="p-12 text-center space-y-4 w-full">
+              <div className="w-16 h-16 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow flex items-center justify-center mx-auto">
                 <FileEdit className="w-8 h-8 stroke-[1.5]" />
               </div>
               <div className="space-y-1.5">
@@ -395,8 +398,8 @@ export default function DraftsPage() {
             </div>
           ) : paginatedData.length === 0 ? (
             /* Empty State: Search / Filter yielded no results */
-            <div className="p-12 text-center space-y-3 max-w-sm mx-auto">
-              <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center mx-auto text-muted-foreground">
+            <div className="p-12 text-center space-y-3 w-full">
+              <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center mx-auto text-muted-foreground">
                 <Search className="w-6 h-6" />
               </div>
               <div className="space-y-1">
@@ -463,7 +466,7 @@ export default function DraftsPage() {
                         <TableCell className="py-3.5 align-top">
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
-                              <span className="font-semibold text-sm text-foreground hover:text-primary transition-colors">
+                              <span className="font-semibold text-sm text-foreground hover:text-brand-blue dark:hover:text-brand-yellow transition-colors">
                                 <Link href={`/sms/send?draft=${draft.id}`}>
                                   <TemplateHighlighter text={draft.title} />
                                 </Link>
@@ -527,7 +530,7 @@ export default function DraftsPage() {
                               asChild
                               size="sm"
                               variant="outline"
-                              className="h-8 px-2.5 text-xs font-semibold text-primary hover:text-primary hover:bg-primary/10 border-primary/30"
+                              className="h-8 px-2.5 text-xs font-semibold text-brand-blue hover:text-brand-blue hover:bg-brand-blue/10 border-brand-blue/30 dark:text-brand-yellow dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/15 dark:border-brand-yellow/30"
                               title="Resume composing message"
                             >
                               <Link href={`/sms/send?draft=${draft.id}`}>
@@ -573,7 +576,7 @@ export default function DraftsPage() {
                       <div className="space-y-0.5 flex-1 min-w-0">
                         <Link
                           href={`/sms/send?draft=${draft.id}`}
-                          className="font-semibold text-sm text-foreground hover:text-primary transition-colors block truncate"
+                          className="font-semibold text-sm text-foreground hover:text-brand-blue dark:hover:text-brand-yellow transition-colors block truncate"
                         >
                           <TemplateHighlighter text={draft.title} />
                         </Link>

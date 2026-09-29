@@ -85,10 +85,10 @@ export default function CampaignsReportPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Campaigns</CardTitle>
-            <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+            <div className="p-2 rounded-2xl bg-secondary/10 text-secondary">
               <BarChart3 className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -98,10 +98,10 @@ export default function CampaignsReportPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Messages Sent</CardTitle>
-            <div className="p-2 rounded-lg bg-primary/20 text-primary-foreground">
+            <div className="p-2 rounded-2xl bg-primary/20 text-primary-foreground">
               <Send className="h-4 w-4 text-foreground" />
             </div>
           </CardHeader>
@@ -111,10 +111,10 @@ export default function CampaignsReportPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Avg Delivery Rate</CardTitle>
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600">
+            <div className="p-2 rounded-2xl bg-emerald-500/10 text-emerald-600">
               <CheckCircle className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -126,10 +126,10 @@ export default function CampaignsReportPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Campaign Spend</CardTitle>
-            <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+            <div className="p-2 rounded-2xl bg-secondary/10 text-secondary">
               <span className="font-bold text-xs">UGX</span>
             </div>
           </CardHeader>
@@ -143,7 +143,7 @@ export default function CampaignsReportPage() {
       </div>
 
       {/* Campaign Performance Table */}
-      <Card className="border-secondary/20 shadow-sm">
+      <Card className="border-secondary/20 shadow-none">
         <CardHeader>
           <CardTitle>Campaigns Breakdown</CardTitle>
           <CardDescription>
@@ -158,7 +158,7 @@ export default function CampaignsReportPage() {
               ))}
             </div>
           ) : campaigns.length === 0 ? (
-            <div className="text-center py-12 border border-dashed rounded-lg">
+            <div className="text-center py-12 border border-dashed rounded-2xl">
               <BarChart3 className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
               <p className="text-sm font-medium text-foreground">No campaign data available</p>
               <p className="text-xs text-muted-foreground mt-1 mb-4">

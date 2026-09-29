@@ -52,7 +52,7 @@ export function ConfirmationDialog({
                 "p-2.5 rounded-full shrink-0 flex items-center justify-center",
                 isDestructive
                   ? "bg-destructive/10 text-destructive dark:bg-destructive/20"
-                  : "bg-primary/10 text-primary dark:bg-primary/20"
+                  : "bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow"
               )}
             >
               {icon || (isDestructive ? (

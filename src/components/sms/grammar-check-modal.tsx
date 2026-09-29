@@ -94,7 +94,7 @@ export function GrammarCheckModal({ isOpen, onClose, originalText, onApply }: Gr
         <div className="py-4">
           {loading ? (
             <div className="flex flex-col items-center justify-center space-y-4 py-8 text-muted-foreground">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <Loader2 className="h-8 w-8 animate-spin text-brand-blue dark:text-brand-yellow" />
               <p>Analyzing your message...</p>
             </div>
           ) : result ? (

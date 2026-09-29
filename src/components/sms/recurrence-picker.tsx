@@ -86,12 +86,12 @@ export function RecurrencePicker({
   };
 
   return (
-    <div className={cn("space-y-3 rounded-xl border border-border/70 bg-muted/20 p-3.5 transition-all", className)}>
+    <div className={cn("space-y-3 rounded-2xl border border-border/70 bg-muted/20 p-3.5 transition-all", className)}>
       {/* Recurrence Toggle Header */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <div className={cn(
-            "w-7 h-7 rounded-lg flex items-center justify-center transition-colors shrink-0",
+            "w-7 h-7 rounded-2xl flex items-center justify-center transition-colors shrink-0",
             isRecurring ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
           )}>
             <Repeat className="w-3.5 h-3.5" />
@@ -123,7 +123,7 @@ export function RecurrencePicker({
                 value={rule.frequency}
                 onValueChange={(val) => handleFrequencyChange(val as RecurrenceFrequency)}
               >
-                <SelectTrigger className="h-8.5 text-xs bg-background">
+                <SelectTrigger className="h-9 text-xs">
                   <SelectValue placeholder="Select frequency" />
                 </SelectTrigger>
                 <SelectContent className="z-[150]">
@@ -152,7 +152,7 @@ export function RecurrencePicker({
                     const val = Math.max(1, parseInt(e.target.value, 10) || 1);
                     onRuleChange({ ...rule, interval: val });
                   }}
-                  className="h-8.5 text-xs w-20 bg-background"
+                  className="h-9 text-xs w-20"
                 />
                 <span className="text-xs text-muted-foreground">
                   {rule.frequency === 'DAILY' && ((rule.interval || 1) > 1 ? 'days' : 'day')}
@@ -180,7 +180,7 @@ export function RecurrencePicker({
                       type="button"
                       onClick={() => toggleDayOfWeek(idx)}
                       className={cn(
-                        "h-8 w-full rounded-lg text-xs font-medium transition-all cursor-pointer border flex items-center justify-center",
+                        "h-8 w-full rounded-2xl text-xs font-medium transition-all cursor-pointer border flex items-center justify-center",
                         isSelected
                           ? "bg-primary text-primary-foreground border-primary shadow-xs font-semibold"
                           : "bg-background text-muted-foreground border-border hover:bg-accent hover:text-foreground"
@@ -202,7 +202,7 @@ export function RecurrencePicker({
                 type="button"
                 onClick={() => handleEndTypeChange('NEVER')}
                 className={cn(
-                  "p-2 rounded-lg text-left text-xs border transition-all cursor-pointer flex flex-col justify-center",
+                  "p-2 rounded-2xl text-left text-xs border transition-all cursor-pointer flex flex-col justify-center",
                   rule.endType === 'NEVER'
                     ? "bg-primary/10 border-primary text-foreground font-medium"
                     : "bg-background border-border text-muted-foreground hover:bg-accent"
@@ -216,7 +216,7 @@ export function RecurrencePicker({
                 type="button"
                 onClick={() => handleEndTypeChange('ON_DATE')}
                 className={cn(
-                  "p-2 rounded-lg text-left text-xs border transition-all cursor-pointer flex flex-col justify-center",
+                  "p-2 rounded-2xl text-left text-xs border transition-all cursor-pointer flex flex-col justify-center",
                   rule.endType === 'ON_DATE'
                     ? "bg-primary/10 border-primary text-foreground font-medium"
                     : "bg-background border-border text-muted-foreground hover:bg-accent"
@@ -230,7 +230,7 @@ export function RecurrencePicker({
                 type="button"
                 onClick={() => handleEndTypeChange('AFTER_COUNT')}
                 className={cn(
-                  "p-2 rounded-lg text-left text-xs border transition-all cursor-pointer flex flex-col justify-center",
+                  "p-2 rounded-2xl text-left text-xs border transition-all cursor-pointer flex flex-col justify-center",
                   rule.endType === 'AFTER_COUNT'
                     ? "bg-primary/10 border-primary text-foreground font-medium"
                     : "bg-background border-border text-muted-foreground hover:bg-accent"
@@ -252,7 +252,7 @@ export function RecurrencePicker({
                   type="date"
                   value={rule.endDate || ''}
                   onChange={(e) => onRuleChange({ ...rule, endDate: e.target.value })}
-                  className="h-8 text-xs bg-background max-w-[200px]"
+                  className="h-9 text-xs max-w-[200px]"
                 />
               </div>
             )}
@@ -270,7 +270,7 @@ export function RecurrencePicker({
                   max={500}
                   value={rule.maxOccurrences || 10}
                   onChange={(e) => onRuleChange({ ...rule, maxOccurrences: Math.max(1, parseInt(e.target.value, 10) || 1) })}
-                  className="h-8 text-xs bg-background w-24"
+                  className="h-9 text-xs w-24"
                 />
                 <span className="text-xs text-muted-foreground">occurrences</span>
               </div>
@@ -278,9 +278,9 @@ export function RecurrencePicker({
           </div>
 
           {/* Live Recurrence Summary Banner */}
-          <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/25 text-xs text-primary flex items-center gap-2">
+          <div className="p-2.5 rounded-2xl bg-brand-blue/10 border border-brand-blue/25 text-xs text-brand-blue dark:bg-brand-yellow/15 dark:border-brand-yellow/30 dark:text-brand-yellow flex items-center gap-2 font-medium">
             <Sparkles className="w-3.5 h-3.5 shrink-0" />
-            <span className="font-medium text-[11px] leading-tight">
+            <span className="font-semibold text-[11px] leading-tight">
               {describeRecurrence(rule, timeStr)}
             </span>
           </div>

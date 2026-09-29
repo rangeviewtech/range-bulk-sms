@@ -38,7 +38,7 @@ export default function GlobalError({
         <title>Application Error | Range Bulk SMS</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body className="bg-[#0b1329] text-slate-100 antialiased font-sans min-h-screen flex flex-col justify-between selection:bg-[#FBCA07]/20 selection:text-[#FBCA07]">
+      <body className="bg-[#0b1329] text-slate-100 antialiased font-sans min-h-screen flex flex-col justify-between selection:bg-brand-yellow/20 selection:text-brand-yellow">
         {/* Ambient background glows */}
         <div
           className="pointer-events-none fixed -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-red-500/10 rounded-full blur-3xl opacity-60"
@@ -51,7 +51,7 @@ export default function GlobalError({
             <div className="flex items-center gap-3">
               {/* Brand Logo mark */}
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-[#FBCA07] flex items-center justify-center font-black text-slate-950 text-base shadow-sm">
+                <div className="w-8 h-8 rounded-lg bg-brand-yellow flex items-center justify-center font-black text-slate-950 text-base shadow-sm">
                   R
                 </div>
                 <span className="font-bold text-lg tracking-tight text-white">Range View</span>
@@ -61,7 +61,7 @@ export default function GlobalError({
               href="mailto:support@rangeview.com"
               className="text-xs text-slate-400 hover:text-white transition-colors flex items-center gap-1.5"
             >
-              <LifeBuoy className="w-3.5 h-3.5 text-[#FBCA07]" />
+              <LifeBuoy className="w-3.5 h-3.5 text-brand-yellow" />
               <span>Contact Support</span>
             </a>
           </div>
@@ -90,7 +90,7 @@ export default function GlobalError({
           <div className="flex flex-wrap items-center justify-center gap-4 w-full max-w-sm mb-10">
             <button
               onClick={handleReload}
-              className="w-full sm:w-auto px-6 py-2.5 bg-[#FBCA07] hover:bg-[#FBCA07]/90 text-slate-950 font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
+              className="w-full sm:w-auto px-6 py-2.5 bg-brand-yellow hover:bg-brand-yellow/90 text-slate-950 font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
             >
               <RefreshCw className="w-4 h-4" />
               <span>Reload Platform</span>
@@ -100,7 +100,7 @@ export default function GlobalError({
               href="mailto:support@rangeview.com"
               className="w-full sm:w-auto px-5 py-2.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95 text-sm"
             >
-              <LifeBuoy className="w-4 h-4 text-[#FBCA07]" />
+              <LifeBuoy className="w-4 h-4 text-brand-yellow" />
               <span>Support Desk</span>
             </a>
           </div>
@@ -109,7 +109,7 @@ export default function GlobalError({
           <div className="w-full text-left bg-slate-950/80 border border-slate-800/80 rounded-xl p-4 font-mono text-xs text-slate-300">
             <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
               <div className="flex items-center gap-2 text-slate-400">
-                <Terminal className="w-3.5 h-3.5 text-[#FBCA07]" />
+                <Terminal className="w-3.5 h-3.5 text-brand-yellow" />
                 <span className="text-[11px] font-semibold uppercase">Incident Telemetry</span>
               </div>
               <button

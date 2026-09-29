@@ -104,7 +104,7 @@ export default async function SecuritySettingsPage({
       )}
 
       {mfaPolicy.type === 'MANDATORY_ROLE' && (
-        <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 flex items-start gap-3">
+        <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 flex items-start gap-3">
           <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
           <div>
             <h4 className="text-sm font-semibold text-foreground">
@@ -201,7 +201,7 @@ export default async function SecuritySettingsPage({
               return (
                 <div
                   key={s.id}
-                  className="flex items-center justify-between p-3 rounded-lg border bg-muted/30 text-xs"
+                  className="flex items-center justify-between p-3 rounded-2xl border bg-muted/30 text-xs"
                 >
                   <div className="flex items-center gap-3">
                     <Laptop className="w-4 h-4 text-muted-foreground shrink-0" />
@@ -265,7 +265,7 @@ export default async function SecuritySettingsPage({
               recognizedDevices.map((d) => (
                 <div
                   key={d.id}
-                  className="flex items-center justify-between p-3 rounded-lg border bg-muted/30 text-xs"
+                  className="flex items-center justify-between p-3 rounded-2xl border bg-muted/30 text-xs"
                 >
                   <div className="flex items-center gap-3">
                     <Smartphone className="w-4 h-4 text-muted-foreground shrink-0" />

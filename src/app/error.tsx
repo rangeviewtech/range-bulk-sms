@@ -66,7 +66,7 @@ export default function ErrorPage({
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute top-1/3 -right-40 w-[400px] h-[400px] bg-[#04648C]/15 dark:bg-[#04648C]/10 rounded-full blur-3xl opacity-60"
+        className="pointer-events-none absolute top-1/3 -right-40 w-[400px] h-[400px] bg-brand-blue/15 dark:bg-brand-blue/10 rounded-full blur-3xl opacity-60"
         aria-hidden="true"
       />
 
@@ -92,7 +92,7 @@ export default function ErrorPage({
               className="text-xs text-muted-foreground hover:text-foreground hidden sm:inline-flex"
             >
               <Link href="/support" className="flex items-center gap-1.5">
-                <HelpCircle className="w-3.5 h-3.5 text-primary" />
+                <HelpCircle className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
                 <span>Support Center</span>
               </Link>
             </Button>
@@ -135,7 +135,7 @@ export default function ErrorPage({
           <Button
             onClick={reset}
             size="lg"
-            className="w-full sm:w-auto bg-[#FBCA07] hover:bg-[#FBCA07]/90 text-slate-900 font-bold px-6 h-11 rounded-xl shadow-md hover:shadow-lg transition-all"
+            className="w-full sm:w-auto bg-brand-yellow hover:bg-brand-yellow/90 text-slate-900 font-bold px-6 h-11 rounded-xl shadow-md hover:shadow-lg transition-all"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             <span>Try Again</span>
@@ -160,7 +160,7 @@ export default function ErrorPage({
             className="text-xs text-muted-foreground hover:text-foreground font-medium px-3 mt-1 sm:mt-0 flex items-center gap-1.5"
           >
             <Link href="/support">
-              <LifeBuoy className="w-3.5 h-3.5 text-primary" />
+              <LifeBuoy className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
               <span>Contact Support</span>
             </Link>
           </Button>
@@ -173,7 +173,7 @@ export default function ErrorPage({
             className="w-full flex items-center justify-between p-4 text-xs font-mono text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
           >
             <div className="flex items-center gap-2">
-              <Terminal className="w-4 h-4 text-primary" />
+              <Terminal className="w-4 h-4 text-brand-blue dark:text-brand-yellow" />
               <span className="font-semibold uppercase tracking-wider">
                 Technical Diagnostics & Telemetry
               </span>

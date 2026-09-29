@@ -727,7 +727,7 @@ export function VariableResolutionModal({
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
               <Input
                 placeholder="Search by recipient phone or variable values..."
-                className="pl-9 pr-8 w-full text-xs h-9 bg-background shadow-xs border-border"
+                className="pl-9 pr-8 w-full text-xs h-10"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -754,7 +754,7 @@ export function VariableResolutionModal({
                 setCurrentPage(1);
               }}
             >
-              <SelectTrigger className="w-full sm:w-[185px] h-9 text-xs bg-background shadow-xs">
+              <SelectTrigger className="w-full sm:w-[185px] h-10 text-xs">
                 <Filter className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
                 <SelectValue placeholder="All Recipients" />
               </SelectTrigger>
@@ -896,7 +896,7 @@ export function VariableResolutionModal({
                     <button
                       type="button"
                       onClick={() => handleToggleAllMode(!allArePlain)}
-                      className="text-[11px] font-normal text-primary hover:underline cursor-pointer"
+                      className="text-[11px] font-semibold text-brand-blue dark:text-brand-yellow hover:underline cursor-pointer"
                       title={allArePlain ? 'Switch all to variables' : 'Switch all to plain text'}
                     >
                       {allArePlain ? 'All Vars' : 'All Plain'}
@@ -914,7 +914,7 @@ export function VariableResolutionModal({
                     className="h-48 text-center text-muted-foreground py-10"
                   >
                     <div className="max-w-xs mx-auto space-y-2">
-                      <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mx-auto text-muted-foreground">
+                      <div className="w-10 h-10 rounded-2xl bg-muted flex items-center justify-center mx-auto text-muted-foreground">
                         <Search className="w-5 h-5" />
                       </div>
                       <p className="text-sm font-semibold text-foreground">No matching recipients</p>
@@ -1015,10 +1015,10 @@ export function VariableResolutionModal({
                               onChange={(e) => handlePlainTextChange(item.phone, e.target.value)}
                               placeholder="Enter custom plain text message for this recipient..."
                               className={cn(
-                                'w-full text-xs font-sans p-2.5 rounded-md border border-input bg-background text-foreground shadow-xs transition-colors',
-                                'placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-y min-h-[56px] leading-relaxed',
+                                'w-full text-xs font-sans p-2.5 rounded-md border border-input/50 bg-background text-foreground shadow-none transition-colors',
+                                'placeholder:text-muted-foreground outline-none hover:border-ring/60 focus:border-ring focus:outline-none focus:ring-0 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-0 resize-y min-h-[56px] leading-relaxed',
                                 !item.plainTextMessage?.trim() &&
-                                  'border-amber-500/60 focus-visible:ring-amber-500/60 bg-amber-500/[0.02]'
+                                  'border-amber-500/60 hover:border-amber-500 focus-visible:border-amber-500 bg-amber-500/[0.02]'
                               )}
                             />
                             <div className="flex items-center justify-between text-[11px] text-muted-foreground px-0.5">
@@ -1031,7 +1031,7 @@ export function VariableResolutionModal({
                                 <button
                                   type="button"
                                   onClick={() => handleApplyPlainToAll(item.plainTextMessage || '')}
-                                  className="text-[11px] text-primary hover:underline font-medium inline-flex items-center gap-1 cursor-pointer transition-colors"
+                                  className="text-[11px] text-brand-blue dark:text-brand-yellow hover:underline font-semibold inline-flex items-center gap-1 cursor-pointer transition-colors"
                                   title="Copy this plain text message to all other plain text recipients"
                                 >
                                   <Copy className="w-3 h-3" />
@@ -1143,7 +1143,7 @@ export function VariableResolutionModal({
               type="button"
               onClick={handleSend}
               disabled={!isFormValid || isLoading}
-              className="bg-amber-500 text-amber-950 hover:bg-amber-400 font-bold min-w-[160px] text-xs h-9 shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="bg-amber-500 text-amber-950 hover:bg-amber-400 font-bold min-w-[160px] text-xs h-9 shadow-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {isLoading ? 'Dispatching...' : `Send Messages (${data.length})`}
               {!isLoading && <Send className="w-3.5 h-3.5 ml-1.5" />}

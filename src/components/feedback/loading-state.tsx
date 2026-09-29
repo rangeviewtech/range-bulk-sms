@@ -18,7 +18,7 @@ export function LoadingState({
       className={cn("flex flex-col items-center justify-center gap-2", className)}
       {...props}
     >
-      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <Loader2 className="h-8 w-8 animate-spin text-brand-blue dark:text-brand-yellow" />
       {message && <p className="text-sm text-muted-foreground">{message}</p>}
     </div>
   );

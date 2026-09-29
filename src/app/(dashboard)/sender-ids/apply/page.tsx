@@ -85,7 +85,7 @@ export default function SenderIdApplyPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 w-full">
       <div className="flex items-center gap-3 sm:gap-4 mb-2">
         <Link href="/sender-ids">
           <Button variant="ghost" size="icon" className="shrink-0" aria-label="Back to sender IDs">
@@ -121,7 +121,7 @@ export default function SenderIdApplyPage() {
 
               <CardContent className="space-y-6">
                 {/* Telecom Setup Fee Disclosure Banner */}
-                <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 flex gap-3 text-sm">
+                <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 flex gap-3 text-sm">
                   <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <div className="space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -162,7 +162,7 @@ export default function SenderIdApplyPage() {
 
                   {/* Dynamic Regulatory & Format Guidance */}
                   {formValues.senderId.length > 0 && /^\d+$/.test(formValues.senderId) && (
-                    <div className="flex items-start gap-2.5 p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs">
+                    <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs">
                       <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
                       <div className="space-y-0.5">
                         <p className="font-semibold">UCC Regulatory Clearance Required for Numeric Sender IDs</p>
@@ -195,14 +195,14 @@ export default function SenderIdApplyPage() {
                 </div>
 
                 {/* Handset Mock Preview */}
-                <div className="rounded-lg border bg-muted/30 p-4 space-y-2">
+                <div className="rounded-2xl border bg-muted/30 p-4 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                       Mobile Handset Preview
                     </span>
                     <span className="text-[10px] text-muted-foreground font-mono">GSM 03.38 Alphanumeric</span>
                   </div>
-                  <div className="max-w-sm mx-auto bg-card border rounded-xl p-3 shadow-sm space-y-2">
+                  <div className="w-full bg-card border rounded-2xl p-3 shadow-none space-y-2">
                     <div className="flex items-center gap-2 border-b pb-2">
                       <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
                         {(formValues.senderId || 'RANGE')[0]}
@@ -215,7 +215,7 @@ export default function SenderIdApplyPage() {
                       </div>
                       <span className="text-[10px] text-muted-foreground">Now</span>
                     </div>
-                    <div className="bg-muted/50 rounded-lg p-2.5 text-xs text-foreground/90 leading-relaxed font-sans">
+                    <div className="bg-muted/50 rounded-2xl p-2.5 text-xs text-foreground/90 leading-relaxed font-sans">
                       Your verification OTP is 584920. Valid for 10 minutes. Do not share this code with anyone.
                     </div>
                   </div>
@@ -241,7 +241,7 @@ export default function SenderIdApplyPage() {
                 </div>
 
                 {/* Approval Timeline Note */}
-                <div className="bg-muted/40 p-3.5 rounded-lg flex gap-3 text-xs border text-muted-foreground">
+                <div className="bg-muted/40 p-3.5 rounded-2xl flex gap-3 text-xs border text-muted-foreground">
                   <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                   <p className="leading-relaxed">
                     Sender IDs are verified against registered company documentation to protect brand identity and prevent fraudulent impersonation. Approvals typically take 24–48 business hours.
@@ -269,7 +269,7 @@ export default function SenderIdApplyPage() {
         {/* Regulatory & Onboarding Checklist (1 column on lg) */}
         <div className="space-y-6">
           {/* KYC Documentation Card */}
-          <Card className="border-secondary/20 shadow-sm">
+          <Card className="border-secondary/20 shadow-none">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <FileText className="w-4 h-4 text-primary" />
@@ -305,7 +305,7 @@ export default function SenderIdApplyPage() {
           </Card>
 
           {/* SMPP v3.4 Gateway Specs */}
-          <Card className="border-secondary/20 shadow-sm">
+          <Card className="border-secondary/20 shadow-none">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-secondary dark:text-primary" />

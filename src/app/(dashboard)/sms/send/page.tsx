@@ -12,6 +12,8 @@ import {
   cleanToGsm7,
 } from '@/lib/sms/counter';
 import readXlsxFile from 'read-excel-file/browser';
+import { useTheme } from 'next-themes';
+import { useMounted } from '@/hooks/use-mounted';
 import { notifyWalletUpdated } from '@/hooks/use-wallet';
 import { generateSampleRecipientsCsv, triggerCsvDownload } from '@/lib/sms/template-csv';
 
@@ -75,6 +77,8 @@ import {
   Trash2,
   CalendarClock,
   PauseCircle,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { Button } from '@/components/ui/button';
@@ -161,8 +165,8 @@ function SendSmsSkeleton() {
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Skeleton className="lg:col-span-2 h-[550px] rounded-xl" />
-        <Skeleton className="h-[550px] rounded-xl" />
+        <Skeleton className="lg:col-span-2 h-[550px] rounded-2xl" />
+        <Skeleton className="h-[550px] rounded-2xl" />
       </div>
     </div>
   );
@@ -220,8 +224,12 @@ function SendSmsContent() {
   const [includeOptOut, setIncludeOptOut] = useState(false);
 
   // Preview & Schedule Modals
+  const { resolvedTheme } = useTheme();
+  const mounted = useMounted();
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewMode, setPreviewMode] = useState<'sample' | 'realistic' | 'raw'>('sample');
+  const [previewMode, setPreviewMode] = useState<'sample' | 'realistic' | 'raw'>('realistic');
+  const [handsetTheme, setHandsetTheme] = useState<'auto' | 'light' | 'dark'>('auto');
+  const isHandsetDark = handsetTheme === 'dark' || (handsetTheme === 'auto' && (mounted ? resolvedTheme === 'dark' : false));
   const [copiedPreview, setCopiedPreview] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [scheduleDate, setScheduleDate] = useState('');
@@ -1178,74 +1186,74 @@ function SendSmsContent() {
         title="Send SMS"
         description="Compose and dispatch bulk SMS broadcasts with real-time carrier intelligence."
       >
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           {/* Autosave Status Pill */}
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border bg-muted/30 text-xs text-muted-foreground mr-1">
+          <div className="h-10 px-4 rounded-full border border-border/50 bg-muted/20 text-xs text-muted-foreground inline-flex items-center gap-2 shadow-none shrink-0">
             {saveStatus === 'saving' ? (
               <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
-                <span className="text-[11px] font-medium">Saving draft...</span>
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-brand-blue dark:text-brand-yellow shrink-0" />
+                <span className="text-xs font-medium">Saving draft...</span>
               </>
             ) : saveStatus === 'saved' ? (
               <>
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-300">Autosaved</span>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">Autosaved</span>
               </>
             ) : saveStatus === 'conflict' ? (
               <>
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                <span className="text-[11px] font-medium text-amber-600">Draft Conflict</span>
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                <span className="text-xs font-medium text-amber-600">Draft Conflict</span>
               </>
             ) : lastSavedAt ? (
-              <span className="text-[11px] inline-flex items-center gap-1">
-                <Clock className="w-3 h-3 text-muted-foreground/70" />
+              <span className="text-xs inline-flex items-center gap-1.5 font-medium">
+                <Clock className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" />
                 Saved {formatRelativeDate(lastSavedAt)}
               </span>
             ) : (
-              <span className="text-[11px]">Draft ready</span>
+              <span className="text-xs font-medium">Draft ready</span>
             )}
           </div>
 
           <Button
             type="button"
-            variant="ghost"
-            size="sm"
+            size="md"
+            variant="outline"
             onClick={handleResetForm}
-            className="h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground gap-1.5"
+            className="h-10 px-4 text-sm font-semibold rounded-full shadow-none border-border/80 hover:bg-muted/40 transition-all duration-150 gap-2 shrink-0"
             title="Start new message"
             aria-label="Start new message"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-4 h-4 shrink-0" />
             <span className="hidden sm:inline">New</span>
           </Button>
 
           <Button
             type="button"
+            size="md"
             variant="outline"
-            size="sm"
             onClick={() => saveDraft()}
             disabled={saveStatus === 'saving' || !message.trim()}
-            className="h-8 px-2.5 text-xs gap-1.5"
+            className="h-10 px-4 text-sm font-semibold rounded-full shadow-none border-border/80 hover:bg-muted/40 transition-all duration-150 gap-2 shrink-0"
             title="Save current progress as draft"
             aria-label="Save current draft"
           >
-            <Bookmark className="w-3.5 h-3.5" />
+            <Bookmark className="w-4 h-4 shrink-0" />
             <span>Save Draft</span>
           </Button>
 
           <Button
             type="button"
-            variant="outline"
-            size="sm"
+            size="md"
+            variant="secondary"
             onClick={() => setDraftsDrawerOpen(true)}
-            className="h-8 px-2.5 text-xs gap-1.5 font-medium border-primary/30 hover:border-primary"
+            className="h-10 px-4 text-sm font-semibold rounded-full shadow-none transition-all duration-150 hover:brightness-110 gap-2 shrink-0"
           >
-            <FileText className="w-3.5 h-3.5 text-primary" />
+            <FileText className="w-4 h-4 shrink-0" />
             <span>Drafts</span>
             {draftsCount > 0 && (
-              <Badge variant="secondary" className="px-1.5 py-0 h-4 text-[10px] bg-primary/10 text-primary font-bold">
+              <span className="flex items-center justify-center h-5 min-w-[20px] px-1.5 rounded-full bg-white/20 text-white font-bold text-xs ml-0.5">
                 {draftsCount}
-              </Badge>
+              </span>
             )}
           </Button>
         </div>
@@ -1253,10 +1261,10 @@ function SendSmsContent() {
 
       {/* Editing Scheduled Campaign Safety Banner */}
       {isEditingScheduled && (
-        <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 shadow-xs">
+        <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 shadow-none">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-start sm:items-center gap-3">
-              <div className="p-2 rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-400 shrink-0">
+              <div className="p-2 rounded-2xl bg-amber-500/20 text-amber-600 dark:text-amber-400 shrink-0">
                 <PauseCircle className="w-5 h-5 animate-pulse" />
               </div>
               <div className="space-y-0.5">
@@ -1281,10 +1289,10 @@ function SendSmsContent() {
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <Button
+                type="button"
                 variant="outline"
-                size="sm"
                 onClick={() => router.push('/sms/scheduled')}
-                className="h-8 px-3 text-xs border-amber-500/30 hover:bg-amber-500/20 text-amber-900 dark:text-amber-200"
+                className="h-9 px-4 text-xs font-semibold rounded-full border-amber-500/40 hover:bg-amber-500/20 text-amber-900 dark:text-amber-200 shadow-none transition-all duration-150"
               >
                 Back to Queue
               </Button>
@@ -1296,57 +1304,62 @@ function SendSmsContent() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 lg:items-stretch">
         {/* Left Column: Primary Message Details & Composer (2 columns on desktop) */}
         <div className="lg:col-span-2 flex flex-col lg:h-full">
-          <Card className="shadow-xs border-border/80 flex flex-col flex-1 lg:h-full">
+          <Card className="shadow-none border-border/40 flex flex-col flex-1 lg:h-full">
             <CardHeader className="p-4 sm:p-6 pb-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                <div>
-                  <CardTitle className="text-lg sm:text-xl font-bold">Message Details</CardTitle>
-                  <CardDescription className="text-xs sm:text-sm">
-                    Configure your delivery mode, sender ID, and targeted recipients.
-                  </CardDescription>
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-secondary text-secondary-foreground shadow-none shrink-0">
+                    <Send className="h-3.5 w-3.5" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg sm:text-xl font-bold">Message Details</CardTitle>
+                    <CardDescription className="text-xs sm:text-sm">
+                      Configure your delivery mode, sender ID, and targeted recipients.
+                    </CardDescription>
+                  </div>
                 </div>
               </div>
 
               {/* Seamless Segmented Delivery Mode Selector */}
               <div className="pt-3">
-                <div className="p-1 bg-muted/60 dark:bg-muted/30 rounded-xl border flex items-center gap-1">
+                <div className="p-1.5 bg-muted/50 dark:bg-muted/25 rounded-full border border-border/70 shadow-inner flex items-center gap-1.5">
                   <button
                     type="button"
                     onClick={() => setDeliveryMode('manual')}
                     className={cn(
-                      'flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer',
+                      'flex-1 h-10 px-4 rounded-full text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer active:scale-[0.98]',
                       deliveryMode === 'manual'
-                        ? 'bg-background text-foreground shadow-xs border border-border/50'
-                        : 'text-muted-foreground hover:text-foreground'
+                        ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow dark:shadow-md dark:shadow-brand-yellow/20 font-bold'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-transparent'
                     )}
                   >
-                    <Send className="w-3.5 h-3.5" />
+                    <Send className={cn("w-3.5 h-3.5 transition-colors", deliveryMode === 'manual' ? "text-white dark:text-brand-navy" : "text-muted-foreground")} />
                     <span>Manual Entry</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setDeliveryMode('groups')}
                     className={cn(
-                      'flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer',
+                      'flex-1 h-10 px-4 rounded-full text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer active:scale-[0.98]',
                       deliveryMode === 'groups'
-                        ? 'bg-background text-foreground shadow-xs border border-border/50'
-                        : 'text-muted-foreground hover:text-foreground'
+                        ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow dark:shadow-md dark:shadow-brand-yellow/20 font-bold'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-transparent'
                     )}
                   >
-                    <Users className="w-3.5 h-3.5" />
+                    <Users className={cn("w-3.5 h-3.5 transition-colors", deliveryMode === 'groups' ? "text-white dark:text-brand-navy" : "text-muted-foreground")} />
                     <span>Contact Groups</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setDeliveryMode('import')}
                     className={cn(
-                      'flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer',
+                      'flex-1 h-10 px-4 rounded-full text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer active:scale-[0.98]',
                       deliveryMode === 'import'
-                        ? 'bg-background text-foreground shadow-xs border border-border/50'
-                        : 'text-muted-foreground hover:text-foreground'
+                        ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow dark:shadow-md dark:shadow-brand-yellow/20 font-bold'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-transparent'
                     )}
                   >
-                    <FileSpreadsheet className="w-3.5 h-3.5" />
+                    <FileSpreadsheet className={cn("w-3.5 h-3.5 transition-colors", deliveryMode === 'import' ? "text-white dark:text-brand-navy" : "text-muted-foreground")} />
                     <span>Import File</span>
                   </button>
                 </div>
@@ -1361,13 +1374,13 @@ function SendSmsContent() {
                   <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
                     <div className="space-y-1.5 w-full sm:max-w-xs">
                       <div className="flex items-center justify-between min-h-8">
-                        <Label htmlFor="sender" required>Sender ID</Label>
+                        <Label htmlFor="import-sender" required>Sender ID</Label>
                         <Badge variant="outline" className="text-[10px] font-normal px-1.5 py-0 h-4 border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
                           Approved
                         </Badge>
                       </div>
-                      <Select value={senderId} onValueChange={setSenderId}>
-                        <SelectTrigger id="sender" className="h-10 text-xs sm:text-sm">
+                      <Select name="import-sender" value={senderId} onValueChange={setSenderId}>
+                        <SelectTrigger id="import-sender" name="import-sender" aria-label="Sender ID" className="h-10 text-xs sm:text-sm">
                           <SelectValue placeholder="Select sender ID" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1392,12 +1405,11 @@ function SendSmsContent() {
                       <Button
                         type="button"
                         variant="outline"
-                        size="sm"
-                        className="h-10 text-xs px-3 border-dashed hover:border-primary/50 gap-1.5 text-muted-foreground hover:text-foreground cursor-pointer"
+                        className="h-10 text-xs px-4 rounded-full border-border/60 hover:bg-muted/40 font-semibold gap-1.5 shadow-none transition-all duration-150 text-muted-foreground hover:text-foreground cursor-pointer"
                         onClick={handleDownloadSampleCsv}
                         title="Download sample spreadsheet template with phone numbers"
                       >
-                        <Download className="w-3.5 h-3.5 text-primary" />
+                        <Download className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow shrink-0" />
                         <span>Download Sample CSV Template</span>
                       </Button>
                     </div>
@@ -1424,6 +1436,8 @@ function SendSmsContent() {
 
                     {/* Hidden file input */}
                     <input
+                      id="spreadsheet-file-input"
+                      name="spreadsheet-file-input"
                       ref={fileInputRef}
                       type="file"
                       accept=".xlsx, .xls, .csv, .tsv, .txt"
@@ -1436,9 +1450,9 @@ function SendSmsContent() {
                     />
 
                     {importFilename ? (
-                      <div className="p-3.5 sm:p-4 rounded-xl border bg-muted/30 border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="p-3.5 sm:p-4 rounded-2xl border bg-muted/30 border-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+                          <div className="p-2.5 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
                             <FileSpreadsheet className="w-5 h-5" />
                           </div>
                           <div className="min-w-0 space-y-0.5">
@@ -1458,23 +1472,21 @@ function SendSmsContent() {
                           <Button
                             type="button"
                             variant="outline"
-                            size="sm"
-                            className="h-8 text-xs px-2.5"
+                            className="h-9 text-xs px-4 rounded-full border-border/60 hover:bg-muted/40 font-semibold shadow-none transition-all duration-150"
                             onClick={() => fileInputRef.current?.click()}
                             disabled={isParsingFile}
                           >
-                            <UploadCloud className="w-3.5 h-3.5 mr-1" />
+                            <UploadCloud className="w-3.5 h-3.5 mr-1.5 shrink-0" />
                             Replace File
                           </Button>
                           <Button
                             type="button"
                             variant="ghost"
-                            size="sm"
-                            className="h-8 px-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                            className="h-9 px-3.5 rounded-full text-xs font-semibold text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-150"
                             onClick={handleClearImportFile}
                             title="Remove uploaded file"
                           >
-                            <Trash2 className="w-3.5 h-3.5 mr-1" />
+                            <Trash2 className="w-3.5 h-3.5 mr-1.5 shrink-0" />
                             Remove
                           </Button>
                         </div>
@@ -1489,20 +1501,20 @@ function SendSmsContent() {
                         onDrop={handleFileDrop}
                         onClick={() => fileInputRef.current?.click()}
                         className={cn(
-                          'p-6 sm:p-7 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center cursor-pointer transition-all',
+                          'p-6 sm:p-7 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer transition-all',
                           isDraggingFile
-                            ? 'border-primary bg-primary/5 scale-[0.99]'
-                            : 'border-border/80 hover:border-primary/50 hover:bg-muted/20'
+                            ? 'border-brand-blue bg-brand-blue/5 dark:border-brand-yellow dark:bg-brand-yellow/10 scale-[0.99]'
+                            : 'border-border/40 hover:border-brand-blue/50 dark:hover:border-brand-yellow/50 hover:bg-muted/20'
                         )}
                       >
                         {isParsingFile ? (
-                          <div className="flex items-center gap-2 text-sm text-primary py-2 font-medium">
+                          <div className="flex items-center gap-2 text-sm text-brand-blue dark:text-brand-yellow py-2 font-medium">
                             <Loader2 className="w-4 h-4 animate-spin" />
                             <span>Parsing spreadsheet contacts...</span>
                           </div>
                         ) : (
                           <>
-                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
+                            <div className="w-10 h-10 rounded-full bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow flex items-center justify-center mb-2">
                               <UploadCloud className="w-5 h-5" />
                             </div>
                             <p className="text-sm font-semibold text-foreground">
@@ -1535,8 +1547,8 @@ function SendSmsContent() {
                         Approved
                       </Badge>
                     </div>
-                    <Select value={senderId} onValueChange={setSenderId}>
-                      <SelectTrigger id="sender" className="h-10 text-xs sm:text-sm">
+                    <Select name="sender" value={senderId} onValueChange={setSenderId}>
+                      <SelectTrigger id="sender" name="sender" aria-label="Sender ID" className="h-10 text-xs sm:text-sm">
                         <SelectValue placeholder="Select sender ID" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1566,7 +1578,7 @@ function SendSmsContent() {
                           <button
                             type="button"
                             onClick={() => setShowGroupDetailsModal(true)}
-                            className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-amber-500/15 text-amber-500 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25 hover:underline transition-all cursor-pointer inline-flex items-center gap-1 shadow-2xs"
+                            className="h-7 px-3 text-xs font-semibold rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25 transition-all duration-150 cursor-pointer inline-flex items-center gap-1.5 shadow-none"
                             title={`Click to view ${selectedGroup.count.toLocaleString()} members in ${selectedGroup.name}`}
                             aria-label={`View ${selectedGroup.count.toLocaleString()} members in ${selectedGroup.name}`}
                           >
@@ -1578,13 +1590,14 @@ function SendSmsContent() {
                           </button>
                         </div>
                         <Select
+                          name="group-select"
                           value={selectedGroupId}
                           onValueChange={(val) => {
                             setSelectedGroupId(val);
                             setExcludedGroupPhones([]);
                           }}
                         >
-                          <SelectTrigger id="group-select" className="h-10 text-xs sm:text-sm">
+                          <SelectTrigger id="group-select" name="group-select" aria-label="Target Contact Group" className="h-10 text-xs sm:text-sm">
                             <SelectValue placeholder="Select Contact Group" />
                           </SelectTrigger>
                           <SelectContent>
@@ -1599,7 +1612,7 @@ function SendSmsContent() {
                           <span className="inline-flex items-center gap-1.5">
                             {isGroupLoading ? (
                               <>
-                                <Loader2 className="w-3 h-3 animate-spin text-primary" />
+                                <Loader2 className="w-3 h-3 animate-spin text-brand-blue dark:text-brand-yellow" />
                                 Syncing group contacts...
                               </>
                             ) : (
@@ -1638,12 +1651,11 @@ function SendSmsContent() {
                             <Button
                               type="button"
                               variant="ghost"
-                              size="sm"
                               onClick={handleDeduplicateRecipients}
-                              className="h-6 px-1.5 text-[11px] text-primary hover:text-primary gap-1"
+                              className="h-7 px-3 rounded-full text-xs font-semibold text-brand-blue hover:bg-brand-blue/10 dark:text-brand-yellow dark:hover:bg-brand-yellow/15 transition-all duration-150 gap-1.5 shadow-none"
                               title="Remove duplicates and clean formatting"
                             >
-                              <Sparkles className="w-3 h-3" />
+                              <Sparkles className="w-3.5 h-3.5 shrink-0" />
                               <span>Clean / Deduplicate</span>
                             </Button>
                           )}
@@ -1651,6 +1663,7 @@ function SendSmsContent() {
                         <PhoneRecipientsInput
                           ref={recipientsInputRef}
                           id="recipients"
+                          name="recipients"
                           placeholder="e.g. +256700123456, +256772123456"
                           value={manualRecipients}
                           onChange={(val) => {
@@ -1725,34 +1738,31 @@ function SendSmsContent() {
                     {nonGsmChars.length > 0 && (
                       <Button
                         variant="secondary"
-                        size="sm"
-                        className="h-8 px-2.5 text-xs font-semibold gap-1.5 bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/25"
+                        className="h-9 px-3.5 rounded-full text-xs font-semibold gap-1.5 bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/25 shadow-none transition-all duration-150"
                         onClick={handleCleanGsm7}
                         type="button"
                         title="Convert smart quotes, em dashes, and non-GSM characters to standard GSM-7"
                       >
-                        <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                        <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                         <span>Clean to GSM-7</span>
                       </Button>
                     )}
                     <Button
                       variant="outline"
-                      size="sm"
-                      className="h-8 px-2.5 text-xs font-medium gap-1.5"
+                      className="h-9 px-3.5 rounded-full text-xs font-semibold gap-1.5 border-border/60 hover:bg-muted/40 shadow-none transition-all duration-150"
                       onClick={() => setShowGrammarCheck(true)}
                       type="button"
                     >
-                      <Sparkles className="w-3.5 h-3.5" />
+                      <Sparkles className="w-3.5 h-3.5 shrink-0" />
                       <span className="hidden xs:inline">Grammar</span> Check
                     </Button>
                     <Button
                       variant="outline"
-                      size="sm"
-                      className="h-8 px-2.5 text-xs font-medium gap-1.5"
+                      className="h-9 px-3.5 rounded-full text-xs font-semibold gap-1.5 border-border/60 hover:bg-muted/40 shadow-none transition-all duration-150"
                       onClick={() => setTemplateModalOpen(true)}
                       type="button"
                     >
-                      <BookTemplate className="w-3.5 h-3.5" />
+                      <BookTemplate className="w-3.5 h-3.5 shrink-0" />
                       <span>Template</span>
                     </Button>
                     <VariableDropdown onSelect={handleInsertVariable} />
@@ -1761,7 +1771,7 @@ function SendSmsContent() {
 
                 {/* Unicode Encoding Alert Banner */}
                 {nonGsmChars.length > 0 && (
-                  <div className="p-2.5 rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-200 text-xs flex items-start gap-2.5">
+                  <div className="p-2.5 rounded-2xl border border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-200 text-xs flex items-start gap-2.5">
                     <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center justify-between flex-wrap gap-1">
@@ -1789,6 +1799,7 @@ function SendSmsContent() {
                 <VariableTextarea
                   ref={messageTextareaRef}
                   id="message"
+                  name="message"
                   rows={5}
                   placeholder="Type your message here, e.g. Hello {{firstName}}, your order #{{orderId}} of {{amount}} is ready..."
                   value={message}
@@ -1827,16 +1838,15 @@ function SendSmsContent() {
                     <Button
                       type="button"
                       variant="outline"
-                      size="sm"
                       onClick={() => {
                         setDetectedVariables(detectedVariablesList);
                         setPendingAction(null);
                         setShowVariableModal(true);
                       }}
-                      className="h-6 px-2 text-[11px] gap-1 font-semibold border-amber-500/30 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 cursor-pointer ml-auto"
+                      className="h-7 px-3 text-xs gap-1.5 font-semibold rounded-full border-amber-500/30 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 cursor-pointer ml-auto shadow-none transition-all duration-150"
                       title="Open variable resolution table to configure values or download sample file"
                     >
-                      <Sparkles className="w-3 h-3 text-amber-500" />
+                      <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                       <span>Resolve Variables ({detectedVariablesList.length})</span>
                     </Button>
                   </div>
@@ -1844,7 +1854,7 @@ function SendSmsContent() {
               </div>
 
               {/* Advanced Controls & Compliance Toggles */}
-              <div className="p-3 bg-muted/20 rounded-xl border border-border/70 space-y-3">
+              <div className="p-3 bg-muted/20 rounded-2xl border border-border/70 space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-border/40">
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
@@ -1891,10 +1901,10 @@ function SendSmsContent() {
 
               {/* Scheduled Transmission & Recurrence Section (Visible when editing a scheduled project) */}
               {isEditingScheduled && (
-                <div className="p-4 bg-muted/30 rounded-xl border border-border/80 space-y-4">
+                <div className="p-4 bg-muted/30 rounded-2xl border border-border/40 space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-border/50 gap-2">
                     <div className="flex items-center gap-2">
-                      <CalendarClock className="w-4 h-4 text-primary" />
+                      <CalendarClock className="w-4 h-4 text-brand-blue dark:text-brand-yellow" />
                       <Label className="text-sm font-bold">Scheduled Transmission & Recurrence</Label>
                     </div>
                     {isSchedulePastDue ? (
@@ -1921,15 +1931,14 @@ function SendSmsContent() {
                           onChange={(e) => setScheduleDate(e.target.value)}
                           className={cn(
                             'w-full sm:w-72 text-xs font-mono',
-                            isSchedulePastDue && 'border-red-500 focus-visible:ring-red-500'
+                            isSchedulePastDue && 'border-red-500 hover:border-red-500 focus-visible:border-red-500'
                           )}
                         />
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <Button
                             type="button"
                             variant="outline"
-                            size="sm"
-                            className="h-9 px-2.5 text-xs font-medium"
+                            className="h-9 px-3.5 rounded-full text-xs font-semibold border-border/60 hover:bg-muted/40 shadow-none transition-all duration-150"
                             onClick={() => handleApplyReschedulePreset('15m')}
                           >
                             +15m
@@ -1937,8 +1946,7 @@ function SendSmsContent() {
                           <Button
                             type="button"
                             variant="outline"
-                            size="sm"
-                            className="h-9 px-2.5 text-xs font-medium"
+                            className="h-9 px-3.5 rounded-full text-xs font-semibold border-border/60 hover:bg-muted/40 shadow-none transition-all duration-150"
                             onClick={() => handleApplyReschedulePreset('1h')}
                           >
                             +1 Hour
@@ -1946,8 +1954,7 @@ function SendSmsContent() {
                           <Button
                             type="button"
                             variant="outline"
-                            size="sm"
-                            className="h-9 px-2.5 text-xs font-medium"
+                            className="h-9 px-3.5 rounded-full text-xs font-semibold border-border/60 hover:bg-muted/40 shadow-none transition-all duration-150"
                             onClick={() => handleApplyReschedulePreset('tomorrow9am')}
                           >
                             Tomorrow 9 AM
@@ -1976,7 +1983,7 @@ function SendSmsContent() {
               )}
 
               {/* SMS Telemetry & Segment Meter */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 bg-muted/40 rounded-xl border text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 bg-muted/20 rounded-2xl border border-border/50 text-xs">
                 <div>
                   <div className="text-muted-foreground text-[11px]">Characters</div>
                   <div className="font-semibold text-sm mt-0.5 flex items-baseline gap-1">
@@ -2009,100 +2016,111 @@ function SendSmsContent() {
                 </div>
                 <div>
                   <div className="text-muted-foreground text-[11px]">Est. Cost</div>
-                  <div className="font-semibold text-sm text-[#04648C] dark:text-[#FBCA07] mt-0.5">
+                  <div className="font-semibold text-sm text-brand-blue dark:text-brand-yellow mt-0.5">
                     {cost.toLocaleString()} UGX
                   </div>
                 </div>
               </div>
             </CardContent>
 
-            <CardFooter className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-border p-4 sm:p-6 bg-muted/10 mt-auto">
+            <CardFooter className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-border/40 p-4 sm:p-6 bg-muted/10 mt-auto">
               <Button
+                type="button"
+                size="md"
                 variant="outline"
-                className="w-full sm:w-auto h-10"
+                className="w-full sm:w-44 h-10 font-semibold rounded-full px-5 shadow-none border border-brand-blue/40 bg-brand-blue/10 text-brand-blue dark:border-brand-yellow/40 dark:bg-brand-yellow/15 dark:text-brand-yellow hover:bg-brand-blue/20 hover:border-brand-blue/70 dark:hover:bg-brand-yellow/25 dark:hover:border-brand-yellow/80 transition-all duration-150 active:scale-[0.98]"
                 onClick={() => setPreviewOpen(true)}
               >
-                <Eye className="w-4 h-4 mr-2" />
-                Preview Handset
+                <Eye className="w-4 h-4 mr-2 shrink-0" />
+                Live Simulator
               </Button>
 
               {isEditingScheduled ? (
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto shrink-0">
                   <Button
                     type="button"
+                    size="md"
                     variant="ghost"
-                    className="w-full sm:w-auto h-10"
+                    className="w-full sm:w-44 h-10 font-semibold rounded-full px-5 shadow-none transition-all duration-150 hover:bg-muted/40 border border-border/60"
                     onClick={() => router.push('/sms/scheduled')}
                   >
                     Cancel
                   </Button>
                   <Button
                     type="button"
+                    size="md"
                     variant="secondary"
-                    className="w-full sm:w-auto h-10"
+                    className="w-full sm:w-44 h-10 font-semibold rounded-full px-5 shadow-none transition-all duration-150 hover:brightness-110"
                     onClick={() => handleSaveScheduledProject('PAUSED')}
                     disabled={savingScheduled}
                   >
                     {savingScheduled ? (
                       <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />
                         Saving...
                       </>
                     ) : (
                       <>
-                        <PauseCircle className="w-4 h-4 mr-2" />
+                        <PauseCircle className="w-4 h-4 mr-2 shrink-0" />
                         Save as Paused
                       </>
                     )}
                   </Button>
                   <Button
                     type="button"
+                    size="md"
+                    variant="default"
                     onClick={() => handleSaveScheduledProject('SCHEDULED')}
                     disabled={savingScheduled || isSchedulePastDue}
                     className={cn(
-                      'w-full sm:w-auto h-10 font-semibold shadow-xs',
+                      'w-full sm:w-44 h-10 font-semibold rounded-full px-5 shadow-none transition-all duration-150',
                       isSchedulePastDue
                         ? 'opacity-60 cursor-not-allowed bg-muted text-muted-foreground'
-                        : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                        : 'hover:brightness-105'
                     )}
                     title={isSchedulePastDue ? 'Please update scheduled date/time to a future time' : 'Reschedule Campaign'}
                   >
                     {savingScheduled ? (
                       <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />
                         Rescheduling...
                       </>
                     ) : (
                       <>
-                        <CalendarClock className="w-4 h-4 mr-2" />
+                        <CalendarClock className="w-4 h-4 mr-2 shrink-0" />
                         Update &amp; Reschedule
                       </>
                     )}
                   </Button>
                 </div>
               ) : (
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto shrink-0">
                   <Button
+                    type="button"
+                    size="md"
                     variant="secondary"
-                    className="w-full sm:w-auto h-10"
+                    className="w-full sm:w-44 h-10 font-semibold rounded-full px-5 shadow-none transition-all duration-150 hover:brightness-110"
                     onClick={() => setScheduleOpen(true)}
                   >
-                    <Clock className="w-4 h-4 mr-2" />
+                    <Clock className="w-4 h-4 mr-2 shrink-0" />
                     Schedule Dispatch
                   </Button>
                   <Button
+                    type="button"
+                    size="md"
+                    variant="default"
                     onClick={handleSendNow}
                     disabled={sending}
-                    className="w-full sm:w-auto h-10 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-xs"
+                    className="w-full sm:w-44 h-10 font-semibold rounded-full px-5 shadow-none transition-all duration-150 hover:brightness-105"
                   >
                     {sending ? (
                       <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Dispatching SMS...
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />
+                        Dispatching...
                       </>
                     ) : (
                       <>
-                        <Send className="w-4 h-4 mr-2" />
+                        <Send className="w-4 h-4 mr-2 shrink-0" />
                         Send Now ({totalRecipients})
                       </>
                     )}
@@ -2115,58 +2133,94 @@ function SendSmsContent() {
 
         {/* Right Column: Live Interactive Smartphone Simulator & Account Status */}
         <div className="flex flex-col lg:h-full lg:justify-between gap-6">
-          {/* Desktop Live Handset Simulator */}
-          <Card className="hidden lg:block overflow-hidden border-border/80 shadow-md">
-            <CardHeader className="p-4 pb-3 border-b">
+          {/* Desktop Live Simulator */}
+          <Card className="hidden lg:block overflow-hidden border-border/50 bg-muted/20 shadow-none rounded-2xl">
+            <CardHeader className="p-4 pb-3 border-b border-border/40">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                  <Smartphone className="w-4 h-4 text-amber-500" />
-                  Live Handset Simulator
-                </CardTitle>
-                <div className="flex items-center gap-0.5 bg-slate-900/90 border border-slate-800 p-0.5 rounded-full text-xs">
-                  <button
-                    type="button"
-                    onClick={() => setPreviewMode('sample')}
-                    className={cn(
-                      'px-3 py-1 rounded-full font-medium transition-all text-xs cursor-pointer',
-                      previewMode === 'sample' ? 'bg-slate-800 text-white font-semibold shadow-xs' : 'text-slate-400 hover:text-white'
-                    )}
-                  >
-                    Sample
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPreviewMode('realistic')}
-                    className={cn(
-                      'px-3 py-1 rounded-full font-medium transition-all text-xs cursor-pointer',
-                      previewMode === 'realistic' ? 'bg-slate-800 text-white font-semibold shadow-xs' : 'text-slate-400 hover:text-white'
-                    )}
-                  >
-                    Realistic
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPreviewMode('raw')}
-                    className={cn(
-                      'px-3 py-1 rounded-full font-medium transition-all text-xs cursor-pointer',
-                      previewMode === 'raw' ? 'bg-slate-800 text-white font-semibold shadow-xs' : 'text-slate-400 hover:text-white'
-                    )}
-                  >
-                    Tags
-                  </button>
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-secondary text-secondary-foreground shadow-none shrink-0">
+                    <Smartphone className="h-3.5 w-3.5" />
+                  </div>
+                  <CardTitle className="text-sm font-semibold">
+                    Live Simulator
+                  </CardTitle>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {/* Simulator Theme Switcher */}
+                  <div className="flex items-center bg-muted/40 p-0.5 rounded-full border border-border/40">
+                    <button
+                      type="button"
+                      suppressHydrationWarning
+                      onClick={() => setHandsetTheme(isHandsetDark ? 'light' : 'dark')}
+                      className="h-7 px-2.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                      title={isHandsetDark ? 'Preview Simulator in Light Mode' : 'Preview Simulator in Dark Mode'}
+                      aria-label="Toggle simulator preview theme"
+                    >
+                      {isHandsetDark ? (
+                        <>
+                          <Moon className="w-3.5 h-3.5 text-indigo-400 dark:text-indigo-300" />
+                          <span className="text-[11px] font-medium hidden sm:inline">Dark</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sun className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
+                          <span className="text-[11px] font-medium hidden sm:inline">Light</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Preview Mode Switcher */}
+                  <div className="flex items-center gap-1 bg-muted/60 dark:bg-muted/30 p-0.5 rounded-full border border-border/60">
+                    <button
+                      type="button"
+                      onClick={() => setPreviewMode('realistic')}
+                      className={cn(
+                        'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer active:scale-[0.98]',
+                        previewMode === 'realistic'
+                          ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                      )}
+                    >
+                      Realistic
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPreviewMode('raw')}
+                      className={cn(
+                        'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer active:scale-[0.98]',
+                        previewMode === 'raw'
+                          ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                      )}
+                    >
+                      Tags
+                    </button>
+                  </div>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-5 sm:p-6 flex justify-center bg-slate-950/20 dark:bg-slate-950/50">
-              {/* Smartphone Frame with Increased Height & Width matching production screenshot */}
-              <div className="w-[335px] rounded-[46px] border-[6px] border-slate-700/80 dark:border-slate-800 bg-[#0a0f1d] shadow-2xl p-4 flex flex-col justify-between relative overflow-hidden min-h-[620px]">
+            <CardContent className="p-5 sm:p-6 flex justify-center bg-muted/10 dark:bg-muted/5 transition-colors">
+              {/* Smartphone Frame respecting active theme */}
+              <div className={cn(
+                "w-[335px] rounded-[46px] border-[6px] shadow-2xl p-4 flex flex-col justify-between relative overflow-hidden min-h-[620px] transition-colors duration-200",
+                isHandsetDark
+                  ? "border-slate-700/80 bg-brand-navy text-slate-100"
+                  : "border-slate-300/90 bg-white text-slate-900"
+              )}>
                 {/* Camera Punch Hole */}
-                <div className="w-2.5 h-2.5 bg-black rounded-full ring-1 ring-slate-800/80 mx-auto -mb-1 z-10" />
+                <div className={cn(
+                  "w-2.5 h-2.5 rounded-full mx-auto -mb-1 z-10 transition-colors",
+                  isHandsetDark ? "bg-black ring-1 ring-slate-800/80" : "bg-slate-900 ring-1 ring-slate-300"
+                )} />
 
                 {/* Handset Status Bar */}
-                <div className="flex items-center justify-between text-[11px] text-slate-300 font-medium px-3 pb-3">
+                <div className={cn(
+                  "flex items-center justify-between text-[11px] font-medium px-3 pb-3 transition-colors",
+                  isHandsetDark ? "text-slate-300" : "text-slate-600"
+                )}>
                   <span>9:41</span>
-                  <div className="flex items-center gap-1.5 text-slate-300">
+                  <div className="flex items-center gap-1.5">
                     <Signal className="w-3 h-3" />
                     <Wifi className="w-3 h-3" />
                     <Battery className="w-3.5 h-3.5" />
@@ -2174,26 +2228,55 @@ function SendSmsContent() {
                 </div>
 
                 {/* SMS Sender Header */}
-                <div className="text-center pb-3 border-b border-slate-800/60">
-                  <div className="w-12 h-12 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 font-bold text-sm flex items-center justify-center mx-auto mb-1.5 shadow-sm">
+                <div className={cn(
+                  "text-center pb-3 border-b transition-colors",
+                  isHandsetDark ? "border-slate-800/60" : "border-slate-200"
+                )}>
+                  <div className={cn(
+                    "w-12 h-12 rounded-full font-bold text-sm flex items-center justify-center mx-auto mb-1.5 shadow-none transition-colors",
+                    isHandsetDark
+                      ? "bg-brand-yellow/20 border border-brand-yellow/40 text-brand-yellow"
+                      : "bg-brand-blue/10 border border-brand-blue/25 text-brand-blue"
+                  )}>
                     {(senderId || 'RA').slice(0, 2).toUpperCase()}
                   </div>
-                  <div className="text-sm font-bold text-slate-100 flex items-center justify-center gap-1.5">
+                  <div className={cn(
+                    "text-sm font-bold flex items-center justify-center gap-1.5 transition-colors",
+                    isHandsetDark ? "text-slate-100" : "text-slate-900"
+                  )}>
                     <span>{senderId || 'RANGESMS'}</span>
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <ShieldCheck className={cn(
+                      "w-3.5 h-3.5 shrink-0",
+                      isHandsetDark ? "text-emerald-400" : "text-emerald-600"
+                    )} />
                   </div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">Text Message • Today</div>
+                  <div className={cn(
+                    "text-[10px] mt-0.5 transition-colors",
+                    isHandsetDark ? "text-slate-400" : "text-slate-500"
+                  )}>
+                    Text Message • Today
+                  </div>
                 </div>
 
                 {/* Message Bubble Simulator Area */}
                 <div className="flex-1 py-4 overflow-y-auto space-y-2">
                   {isFlashSms && (
-                    <div className="px-2 py-0.5 bg-amber-500/20 text-amber-300 rounded text-[9px] font-bold text-center border border-amber-500/40">
+                    <div className={cn(
+                      "px-2 py-0.5 rounded text-[9px] font-bold text-center border transition-colors",
+                      isHandsetDark
+                        ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                        : "bg-amber-500/15 text-amber-800 border-amber-500/30"
+                    )}>
                       ⚡ CLASS 0 FLASH SMS
                     </div>
                   )}
 
-                  <div className="bg-slate-900/90 border border-slate-800/80 rounded-2xl rounded-tl-sm p-4 text-xs text-slate-100 shadow-sm leading-relaxed space-y-1">
+                  <div className={cn(
+                    "rounded-2xl rounded-tl-sm p-4 text-xs shadow-none leading-relaxed space-y-1 transition-colors border",
+                    isHandsetDark
+                      ? "bg-slate-900/90 border-slate-800/80 text-slate-100"
+                      : "bg-slate-100 border-slate-200 text-slate-900"
+                  )}>
                     {effectiveMessage ? (
                       <TemplateHighlighter
                         text={effectiveMessage}
@@ -2201,35 +2284,61 @@ function SendSmsContent() {
                         variant={previewMode === 'realistic' ? 'plain' : 'badge'}
                       />
                     ) : (
-                      <span className="text-slate-500 italic text-[11px]">
+                      <span className={cn(
+                        "italic text-[11px] transition-colors",
+                        isHandsetDark ? "text-slate-400" : "text-slate-500"
+                      )}>
                         Message preview will appear live as you type...
                       </span>
                     )}
                   </div>
-                  <div className="text-[10px] text-slate-400 text-right pr-1 pt-1 font-sans">Now</div>
+                  <div className={cn(
+                    "text-[10px] text-right pr-1 pt-1 font-sans transition-colors",
+                    isHandsetDark ? "text-slate-400" : "text-slate-500"
+                  )}>
+                    Now
+                  </div>
                 </div>
 
                 {/* Handset Footer Stats & Indicator */}
-                <div className="pt-3 border-t border-slate-800/50 text-center space-y-2">
-                  <div className="text-xs text-slate-400 font-mono flex items-center justify-between px-2">
+                <div className={cn(
+                  "pt-3 border-t text-center space-y-2 transition-colors",
+                  isHandsetDark ? "border-slate-800/50" : "border-slate-200"
+                )}>
+                  <div className={cn(
+                    "text-xs font-mono flex items-center justify-between px-2 transition-colors",
+                    isHandsetDark ? "text-slate-400" : "text-slate-600"
+                  )}>
                     <span>{charCount} chars</span>
                     <span>{segments} {segments === 1 ? 'segment' : 'segments'}</span>
-                    <span className="text-amber-400 font-bold font-mono">{cost} UGX</span>
+                    <span className={cn(
+                      "font-bold font-mono transition-colors",
+                      isHandsetDark ? "text-brand-yellow" : "text-brand-blue"
+                    )}>
+                      {cost} UGX
+                    </span>
                   </div>
                   {/* Home Bar Indicator */}
-                  <div className="h-1 w-28 bg-slate-600/40 rounded-full mx-auto mt-2" />
+                  <div className={cn(
+                    "h-1 w-28 rounded-full mx-auto mt-2 transition-colors",
+                    isHandsetDark ? "bg-slate-600/40" : "bg-slate-300"
+                  )} />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Account Status Card */}
-          <Card className="border-border/80">
+          <Card className="border-border/50 bg-muted/20 shadow-none rounded-2xl">
             <CardHeader className="p-4 pb-2">
-              <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                <Activity className="w-4 h-4 text-primary" />
-                Account Capacity &amp; Routes
-              </CardTitle>
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-secondary text-secondary-foreground shadow-none shrink-0">
+                  <Activity className="h-3.5 w-3.5" />
+                </div>
+                <CardTitle className="text-sm font-semibold">
+                  Account Capacity &amp; Routes
+                </CardTitle>
+              </div>
             </CardHeader>
             <CardContent className="p-4 space-y-3.5">
               <div className="flex justify-between items-center pb-2 border-b">
@@ -2275,8 +2384,8 @@ function SendSmsContent() {
         <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
           <DialogHeader className="p-4 sm:p-5 pb-2">
             <DialogTitle className="text-base sm:text-lg flex items-center gap-2">
-              <Smartphone className="w-4 h-4 text-primary" />
-              Handset Display Preview
+              <Smartphone className="w-4 h-4 text-brand-blue dark:text-brand-yellow" />
+              Live Simulator Preview
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
               Simulated preview of how your message renders on a recipient smartphone with sample variable values.
@@ -2285,9 +2394,9 @@ function SendSmsContent() {
 
           <DialogBody className="p-4 sm:p-5 pt-2 space-y-3">
             {/* View Mode Switcher */}
-            <div className="flex items-center justify-between gap-2 p-1.5 rounded-lg bg-muted/40 border text-xs">
-              <span className="text-[11px] font-medium text-muted-foreground px-1 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-amber-500" />
+            <div className="flex items-center justify-between gap-2 p-1.5 rounded-full bg-muted/50 dark:bg-muted/30 border border-border/60 text-xs shadow-inner">
+              <span className="text-[11px] font-medium text-muted-foreground px-2 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                 Preview Mode:
               </span>
               <div className="flex items-center gap-1">
@@ -2295,8 +2404,10 @@ function SendSmsContent() {
                   type="button"
                   onClick={() => setPreviewMode('sample')}
                   className={cn(
-                    'px-2 py-0.5 rounded-md text-[11px] font-semibold transition-all cursor-pointer',
-                    previewMode === 'sample' ? 'bg-background text-foreground shadow-2xs' : 'text-muted-foreground'
+                    'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer active:scale-[0.98]',
+                    previewMode === 'sample'
+                      ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
                   )}
                 >
                   Sample Data
@@ -2305,8 +2416,10 @@ function SendSmsContent() {
                   type="button"
                   onClick={() => setPreviewMode('realistic')}
                   className={cn(
-                    'px-2 py-0.5 rounded-md text-[11px] font-semibold transition-all cursor-pointer',
-                    previewMode === 'realistic' ? 'bg-background text-foreground shadow-2xs' : 'text-muted-foreground'
+                    'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer active:scale-[0.98]',
+                    previewMode === 'realistic'
+                      ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
                   )}
                 >
                   Realistic SMS
@@ -2315,8 +2428,10 @@ function SendSmsContent() {
                   type="button"
                   onClick={() => setPreviewMode('raw')}
                   className={cn(
-                    'px-2 py-0.5 rounded-md text-[11px] font-semibold transition-all cursor-pointer',
-                    previewMode === 'raw' ? 'bg-background text-foreground shadow-2xs' : 'text-muted-foreground'
+                    'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer active:scale-[0.98]',
+                    previewMode === 'raw'
+                      ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
                   )}
                 >
                   Raw Tags
@@ -2325,7 +2440,7 @@ function SendSmsContent() {
             </div>
 
             {/* Handset Message Bubble */}
-            <div className="p-4 bg-muted/60 dark:bg-slate-900/60 rounded-xl min-h-[120px] whitespace-pre-wrap font-sans text-sm border shadow-inner">
+            <div className="p-4 bg-muted/60 dark:bg-slate-900/60 rounded-2xl min-h-[120px] whitespace-pre-wrap font-sans text-sm border shadow-inner">
               <div className="text-[11px] font-mono text-muted-foreground mb-3 pb-2 border-b border-border/50 flex items-center justify-between">
                 <span className="font-semibold text-foreground flex items-center gap-1">
                   FROM: {senderId}
@@ -2347,7 +2462,7 @@ function SendSmsContent() {
             </div>
 
             {/* Recipient & Metric Details */}
-            <div className="grid grid-cols-2 gap-2 text-xs bg-muted/20 p-2.5 rounded-lg border">
+            <div className="grid grid-cols-2 gap-2 text-xs bg-muted/20 p-2.5 rounded-2xl border">
               <div>
                 <span className="text-[10px] uppercase font-semibold text-muted-foreground block">
                   Simulated Recipient
@@ -2367,19 +2482,23 @@ function SendSmsContent() {
             </div>
           </DialogBody>
 
-          <DialogFooter className="p-4 sm:p-5 pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-t bg-muted/10">
+          <DialogFooter className="p-4 sm:p-5 pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 border-t bg-muted/10">
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={handleCopyPreview}
               disabled={!effectiveMessage}
-              className="text-xs h-8 gap-1.5"
+              className="h-10 px-5 text-sm font-semibold rounded-full shadow-none border-border/60 hover:bg-muted/40 transition-all duration-150 gap-2"
             >
-              {copiedPreview ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+              {copiedPreview ? <Check className="w-4 h-4 text-emerald-500 shrink-0" /> : <Copy className="w-4 h-4 shrink-0" />}
               {copiedPreview ? 'Copied' : 'Copy Sample Text'}
             </Button>
-            <Button variant="secondary" size="sm" onClick={() => setPreviewOpen(false)} className="h-8 text-xs">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setPreviewOpen(false)}
+              className="h-10 px-5 text-sm font-semibold rounded-full shadow-none transition-all duration-150 hover:brightness-110"
+            >
               Close Preview
             </Button>
           </DialogFooter>
@@ -2400,7 +2519,7 @@ function SendSmsContent() {
               <div
                 key={tmpl.id}
                 onClick={() => handleSelectTemplate(tmpl.content)}
-                className="p-3 bg-card hover:bg-muted/50 rounded-lg border border-border cursor-pointer transition-colors space-y-1.5"
+                className="p-3 bg-card hover:bg-muted/50 rounded-2xl border border-border cursor-pointer transition-colors space-y-1.5"
               >
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-sm">{tmpl.name}</span>
@@ -2415,7 +2534,12 @@ function SendSmsContent() {
             ))}
           </DialogBody>
           <DialogFooter className="p-4 sm:p-6 pt-2 border-t">
-            <Button variant="outline" onClick={() => setTemplateModalOpen(false)} className="w-full sm:w-auto h-9">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setTemplateModalOpen(false)}
+              className="w-full sm:w-44 h-10 font-semibold rounded-full px-5 shadow-none border-border/60 hover:bg-muted/40 transition-all duration-150"
+            >
               Cancel
             </Button>
           </DialogFooter>
@@ -2427,7 +2551,7 @@ function SendSmsContent() {
         <DialogContent className="w-[calc(100%-2rem)] sm:max-w-2xl md:max-w-3xl p-0 overflow-hidden shadow-2xl">
           <DialogHeader className="p-4 sm:p-6 pb-3 border-b bg-muted/20">
             <DialogTitle className="text-base sm:text-lg font-bold flex items-center gap-2">
-              <Clock className="w-5 h-5 text-primary" />
+              <Clock className="w-5 h-5 text-brand-blue dark:text-brand-yellow" />
               Schedule Broadcast Dispatch
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
@@ -2442,41 +2566,37 @@ function SendSmsContent() {
                 <Button
                   type="button"
                   variant="outline"
-                  size="sm"
-                  className="h-8.5 text-xs justify-start px-2.5 font-normal hover:bg-primary/10 hover:border-primary/40 transition-colors"
+                  className="h-9 text-xs justify-start px-3.5 rounded-full font-semibold border-border/60 hover:bg-brand-blue/10 dark:hover:bg-brand-yellow/15 hover:border-brand-blue/40 dark:hover:border-brand-yellow/40 shadow-none transition-all duration-150"
                   onClick={() => setPresetSchedule(1)}
                 >
-                  <Clock className="w-3.5 h-3.5 mr-1.5 text-primary" />
+                  <Clock className="w-3.5 h-3.5 mr-1.5 text-brand-blue dark:text-brand-yellow shrink-0" />
                   In 1 Hour
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
-                  size="sm"
-                  className="h-8.5 text-xs justify-start px-2.5 font-normal hover:bg-primary/10 hover:border-primary/40 transition-colors"
+                  className="h-9 text-xs justify-start px-3.5 rounded-full font-semibold border-border/60 hover:bg-brand-blue/10 dark:hover:bg-brand-yellow/15 hover:border-brand-blue/40 dark:hover:border-brand-yellow/40 shadow-none transition-all duration-150"
                   onClick={() => setPresetSchedule(3)}
                 >
-                  <Clock className="w-3.5 h-3.5 mr-1.5 text-primary" />
+                  <Clock className="w-3.5 h-3.5 mr-1.5 text-brand-blue dark:text-brand-yellow shrink-0" />
                   In 3 Hours
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
-                  size="sm"
-                  className="h-8.5 text-xs justify-start px-2.5 font-normal hover:bg-primary/10 hover:border-primary/40 transition-colors"
+                  className="h-9 text-xs justify-start px-3.5 rounded-full font-semibold border-border/60 hover:bg-brand-blue/10 dark:hover:bg-brand-yellow/15 hover:border-brand-blue/40 dark:hover:border-brand-yellow/40 shadow-none transition-all duration-150"
                   onClick={() => setPresetSchedule(undefined, 9)}
                 >
-                  <Clock className="w-3.5 h-3.5 mr-1.5 text-primary" />
+                  <Clock className="w-3.5 h-3.5 mr-1.5 text-brand-blue dark:text-brand-yellow shrink-0" />
                   Tomorrow 9:00 AM
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
-                  size="sm"
-                  className="h-8.5 text-xs justify-start px-2.5 font-normal hover:bg-primary/10 hover:border-primary/40 transition-colors"
+                  className="h-9 text-xs justify-start px-3.5 rounded-full font-semibold border-border/60 hover:bg-brand-blue/10 dark:hover:bg-brand-yellow/15 hover:border-brand-blue/40 dark:hover:border-brand-yellow/40 shadow-none transition-all duration-150"
                   onClick={() => setPresetSchedule(undefined, 14)}
                 >
-                  <Clock className="w-3.5 h-3.5 mr-1.5 text-primary" />
+                  <Clock className="w-3.5 h-3.5 mr-1.5 text-brand-blue dark:text-brand-yellow shrink-0" />
                   Tomorrow 2:00 PM
                 </Button>
               </div>
@@ -2511,32 +2631,39 @@ function SendSmsContent() {
               timeStr={scheduleDate ? new Date(scheduleDate).toTimeString().slice(0, 5) : '09:00'}
             />
 
-            <div className="p-3 bg-muted/30 rounded-xl border text-xs text-muted-foreground space-y-1">
+            <div className="p-3 bg-muted/30 rounded-2xl border text-xs text-muted-foreground space-y-1">
               <div className="flex items-center justify-between font-medium text-foreground">
                 <span className="font-semibold">Dispatch Summary</span>
-                <span className="font-mono text-primary font-bold">{totalRecipients} recipient(s)</span>
+                <span className="font-mono text-brand-blue dark:text-brand-yellow font-bold">{totalRecipients} recipient(s)</span>
               </div>
               <p className="text-[11px]">
                 Credits are reserved when scheduled and deducted when delivery begins.
               </p>
             </div>
           </DialogBody>
-          <DialogFooter className="p-4 sm:p-6 pt-3 border-t gap-2 flex-col sm:flex-row justify-between sm:items-center bg-muted/10">
+          <DialogFooter className="p-4 sm:p-6 pt-3 border-t gap-2.5 flex-col sm:flex-row justify-between sm:items-center bg-muted/10">
             <div className="text-xs text-muted-foreground hidden sm:block">
               <span className="text-foreground font-semibold">{totalRecipients}</span> recipient(s) queued for scheduled dispatch
             </div>
-            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-              <Button variant="outline" onClick={() => setScheduleOpen(false)} className="w-full sm:w-auto h-9">
+            <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setScheduleOpen(false)}
+                className="w-full sm:w-44 h-10 font-semibold rounded-full px-5 shadow-none border-border/60 hover:bg-muted/40 transition-all duration-150"
+              >
                 Cancel
               </Button>
               <Button
+                type="button"
+                variant="default"
                 onClick={handleConfirmSchedule}
                 disabled={scheduling}
-                className="w-full sm:w-auto h-9 bg-primary text-primary-foreground font-semibold px-4"
+                className="w-full sm:w-44 h-10 font-semibold rounded-full px-5 shadow-none transition-all duration-150 hover:brightness-105"
               >
                 {scheduling ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />
                     Scheduling...
                   </>
                 ) : (

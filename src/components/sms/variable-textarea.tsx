@@ -25,8 +25,8 @@ export const VARIABLE_COLOR_PALETTES: VariableColorPalette[] = [
   {
     name: 'amber',
     badgeClass:
-      'text-amber-800 bg-amber-500/20 ring-1 ring-amber-500/50 dark:text-[#FBCA07] dark:bg-[#FBCA07]/20 dark:ring-[#FBCA07]/50',
-    textClass: 'text-amber-700 dark:text-[#FBCA07]',
+      'text-amber-800 bg-amber-500/20 ring-1 ring-amber-500/50 dark:text-brand-yellow dark:bg-brand-yellow/20 dark:ring-brand-yellow/50',
+    textClass: 'text-amber-700 dark:text-brand-yellow',
   },
   {
     name: 'cyan',
@@ -43,8 +43,8 @@ export const VARIABLE_COLOR_PALETTES: VariableColorPalette[] = [
   {
     name: 'blue',
     badgeClass:
-      'text-[#04648C] bg-[#04648C]/15 ring-1 ring-[#04648C]/40 dark:text-sky-300 dark:bg-sky-500/25 dark:ring-sky-400/50',
-    textClass: 'text-[#04648C] dark:text-sky-400',
+      'text-brand-blue bg-brand-blue/15 ring-1 ring-brand-blue/40 dark:text-sky-300 dark:bg-sky-500/25 dark:ring-sky-400/50',
+    textClass: 'text-brand-blue dark:text-sky-400',
   },
   {
     name: 'orange',
@@ -504,11 +504,10 @@ const VariableTextareaComponent = React.forwardRef<HTMLTextAreaElement, Variable
     return (
       <div
         className={cn(
-          'relative w-full rounded-md border border-input bg-background shadow-xs transition-all duration-200 overflow-hidden',
-          'focus-within:outline-none focus-within:border-brand-blue focus-within:ring-2 focus-within:ring-brand-blue/25',
-          'dark:focus-within:border-sky-400 dark:focus-within:ring-sky-400/30',
+          'relative w-full rounded-2xl border border-input/50 bg-muted/20 shadow-none transition-all duration-200 overflow-hidden outline-none',
+          'hover:border-ring/60 focus-within:outline-none focus-within:border-ring focus-within:ring-0',
           error &&
-            'border-destructive focus-within:border-destructive focus-within:ring-destructive/25',
+            'border-destructive hover:border-destructive focus-within:border-destructive',
           disabled && 'opacity-50 cursor-not-allowed bg-muted/40',
           containerClassName
         )}
@@ -517,7 +516,7 @@ const VariableTextareaComponent = React.forwardRef<HTMLTextAreaElement, Variable
         <div
           ref={backdropRef}
           aria-hidden="true"
-          className="absolute inset-0 p-3 whitespace-pre-wrap break-words overflow-hidden pointer-events-none select-none text-foreground box-border"
+          className="absolute inset-0 px-4 py-3 whitespace-pre-wrap break-words overflow-hidden pointer-events-none select-none text-foreground box-border"
           style={{
             ...sharedEditorStyles,
             scrollbarWidth: 'none',
@@ -537,13 +536,14 @@ const VariableTextareaComponent = React.forwardRef<HTMLTextAreaElement, Variable
           disabled={disabled}
           placeholder={placeholder}
           className={cn(
-            'relative z-10 w-full min-h-[80px] p-3 whitespace-pre-wrap break-words',
+            'relative z-10 w-full min-h-[80px] px-4 py-3 whitespace-pre-wrap break-words',
             'bg-transparent text-transparent caret-foreground select-text',
             'border-0 outline-none resize-none shadow-none',
             'placeholder:text-muted-foreground focus:outline-none focus:ring-0',
             'disabled:cursor-not-allowed cursor-text',
             className
           )}
+          name={props.name || props.id || 'message'}
           style={sharedEditorStyles}
           {...props}
         />

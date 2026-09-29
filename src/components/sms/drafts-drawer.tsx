@@ -136,7 +136,7 @@ export function DraftsDrawer({
             <div className="flex items-center justify-between">
               <div>
                 <SheetTitle className="text-lg font-bold flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-primary" />
+                  <FileText className="w-5 h-5 text-brand-blue dark:text-brand-yellow" />
                   Saved Drafts
                 </SheetTitle>
                 <SheetDescription className="text-xs text-muted-foreground mt-1">
@@ -152,7 +152,7 @@ export function DraftsDrawer({
                 placeholder="Search by title, recipient, or message..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 pr-8 text-xs sm:text-sm h-9"
+                className="pl-9 pr-8 text-xs sm:text-sm h-10"
               />
               {searchQuery && (
                 <button
@@ -169,7 +169,7 @@ export function DraftsDrawer({
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-3">
-                <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                <Loader2 className="w-6 h-6 animate-spin text-brand-blue dark:text-brand-yellow" />
                 <span className="text-xs">Loading drafts...</span>
               </div>
             ) : drafts.length === 0 ? (
@@ -198,10 +198,10 @@ export function DraftsDrawer({
                     key={draft.id}
                     onClick={() => handleSelectDraft(draft)}
                     className={cn(
-                      'group relative rounded-xl border p-4 transition-all cursor-pointer text-left',
-                      'hover:border-primary/50 hover:shadow-sm bg-card',
+                      'group relative rounded-2xl border p-4 transition-all cursor-pointer text-left',
+                      'hover:border-brand-blue/50 dark:hover:border-brand-yellow/50 hover:shadow-none bg-card',
                       isActive
-                        ? 'border-primary ring-1 ring-primary/40 bg-primary/5 dark:bg-primary/10'
+                        ? 'border-brand-blue ring-1 ring-brand-blue/40 bg-brand-blue/5 dark:border-brand-yellow dark:ring-brand-yellow/40 dark:bg-brand-yellow/10'
                         : 'border-border'
                     )}
                   >
@@ -214,7 +214,7 @@ export function DraftsDrawer({
                           {isActive && (
                             <Badge
                               variant="default"
-                              className="text-[10px] h-4 px-1.5 py-0 bg-primary font-medium"
+                              className="text-[10px] h-4 px-1.5 py-0 bg-brand-blue text-white dark:bg-brand-yellow dark:text-brand-navy font-bold"
                             >
                               Currently Active
                             </Badge>
@@ -283,7 +283,7 @@ export function DraftsDrawer({
                         {draft.message}
                       </p>
                     ) : (
-                      <p className="mt-2.5 text-xs text-muted-foreground/60 italic">
+                      <p className="mt-2.5 text-xs text-muted-foreground italic">
                         No message body yet.
                       </p>
                     )}
@@ -293,7 +293,7 @@ export function DraftsDrawer({
                         <Clock className="w-3 h-3" />
                         {formatRelativeDate(draft.updatedAt)}
                       </span>
-                      <span className="inline-flex items-center gap-1 font-medium text-primary group-hover:underline">
+                      <span className="inline-flex items-center gap-1 font-semibold text-brand-blue dark:text-brand-yellow group-hover:underline">
                         {isActive ? 'Continue editing' : 'Resume draft'}
                         <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
                       </span>

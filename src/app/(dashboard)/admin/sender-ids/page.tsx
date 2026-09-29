@@ -389,7 +389,7 @@ export default function SenderIdsPage() {
                     <TableRow key={item.id}>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <div className="p-1.5 rounded bg-primary/10 text-primary">
+                          <div className="p-1.5 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow">
                             <AtSign className="w-4 h-4" />
                           </div>
                           <span className="font-mono font-bold text-base tracking-wider text-foreground">

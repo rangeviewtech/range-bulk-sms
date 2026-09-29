@@ -52,9 +52,9 @@ const CountryRowItem = React.memo(function CountryRowItem({
       onClick={handleClick}
       disabled={!region.libphonenumberSupported}
       className={cn(
-        'w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between gap-2.5 transition-colors group contain-content',
+        'w-full text-left px-2.5 py-1.5 rounded-2xl flex items-center justify-between gap-2.5 transition-colors group contain-content',
         isSelected
-          ? 'bg-primary/10 border border-primary/20 text-primary font-medium'
+          ? 'bg-brand-blue/10 border border-brand-blue/25 text-brand-blue dark:bg-brand-yellow/15 dark:border-brand-yellow/30 dark:text-brand-yellow font-semibold'
           : 'hover:bg-muted/80 text-foreground',
         !region.libphonenumberSupported ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
       )}
@@ -82,7 +82,7 @@ const CountryRowItem = React.memo(function CountryRowItem({
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium truncate group-hover:text-primary transition-colors">
+            <span className="text-xs font-medium truncate group-hover:text-brand-blue dark:group-hover:text-brand-yellow transition-colors">
               {region.name}
             </span>
             <span className="text-[9px] font-mono text-muted-foreground font-semibold px-1 py-0.2 rounded bg-muted/60 border border-border/40 shrink-0">
@@ -120,7 +120,7 @@ const CountryRowItem = React.memo(function CountryRowItem({
           </span>
         )}
         {isSelected && (
-          <Check className="h-3.5 w-3.5 text-primary shrink-0" />
+          <Check className="h-3.5 w-3.5 text-brand-blue dark:text-brand-yellow shrink-0" />
         )}
       </div>
     </button>
@@ -197,7 +197,7 @@ export function CountryPickerDropdown({
             size="sm"
             disabled={disabled}
             className={cn(
-              'h-8 px-3 text-xs font-medium gap-1.5 rounded-md transition-all',
+              'h-9 px-3.5 text-xs font-semibold gap-1.5 rounded-full border-border/60 hover:bg-muted/40 shadow-none transition-all duration-150',
               open && 'border-primary/40 bg-muted text-foreground',
               className
             )}
@@ -220,13 +220,13 @@ export function CountryPickerDropdown({
           align="start"
           sideOffset={6}
           collisionPadding={12}
-          className="w-[360px] sm:w-[420px] max-w-[calc(100vw-1.5rem)] p-0 rounded-xl border border-border bg-popover text-popover-foreground shadow-2xl z-[120] flex flex-col overflow-hidden"
+          className="w-[360px] sm:w-[420px] max-w-[calc(100vw-1.5rem)] p-0 rounded-2xl border border-border bg-popover text-popover-foreground shadow-2xl z-[120] flex flex-col overflow-hidden"
         >
         {/* Header & Search */}
         <div className="p-3 pb-2 border-b border-border/70 bg-muted/20">
           <div className="flex items-center justify-between gap-2 mb-2">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="p-1.5 rounded-lg bg-primary/10 text-primary shrink-0">
+              <div className="p-1.5 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow shrink-0">
                 <Globe className="h-4 w-4" />
               </div>
               <div className="min-w-0">
@@ -252,7 +252,7 @@ export function CountryPickerDropdown({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search country, alias (e.g. UK, USA, DRC), or +CC..."
-              className="w-full rounded-lg bg-muted/60 py-1.5 pl-8 pr-7 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-[#04648C] dark:focus:ring-[#FBCA07] focus:bg-muted transition-all"
+              className="w-full rounded-2xl border border-input/50 bg-muted/20 py-1.5 pl-8 pr-7 text-xs text-foreground placeholder:text-muted-foreground outline-none hover:border-ring/60 focus:border-ring focus:outline-none focus:ring-0 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-0 transition-colors"
             />
             {searchQuery && (
               <button

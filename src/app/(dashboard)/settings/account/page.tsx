@@ -100,6 +100,7 @@ export default function AccountSettingsPage() {
               <Label htmlFor="fullName" required>Full Name</Label>
               <Input
                 id="fullName"
+                name="fullName"
                 value={values.fullName}
                 onChange={(e) => setFieldValue('fullName', e.target.value)}
                 onBlur={() => handleBlur('fullName')}
@@ -115,6 +116,7 @@ export default function AccountSettingsPage() {
               <Label htmlFor="emailAddress" required>Email Address</Label>
               <Input
                 id="emailAddress"
+                name="emailAddress"
                 type="email"
                 value={values.emailAddress}
                 onChange={(e) => setFieldValue('emailAddress', e.target.value)}
@@ -131,6 +133,7 @@ export default function AccountSettingsPage() {
               <Label htmlFor="companyName">Company Name</Label>
               <Input
                 id="companyName"
+                name="companyName"
                 value={values.companyName ?? ''}
                 onChange={(e) => setFieldValue('companyName', e.target.value)}
                 onBlur={() => handleBlur('companyName')}

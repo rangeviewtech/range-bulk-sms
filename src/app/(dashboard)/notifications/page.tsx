@@ -22,7 +22,7 @@ export default async function NotificationsPage() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <div className="flex items-center space-x-3 mb-2">
-        <Bell className="w-6 h-6 text-[#04648C] dark:text-[#FBCA07]" />
+        <Bell className="w-6 h-6 text-brand-blue dark:text-brand-yellow" />
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Notifications</h1>
           <p className="text-xs text-muted-foreground mt-0.5">Stay updated with system and account alerts.</p>
@@ -31,7 +31,7 @@ export default async function NotificationsPage() {
 
       <div className="grid gap-3 sm:gap-4">
         {notifications.length === 0 ? (
-          <div className="text-center py-10 text-muted-foreground border rounded-lg bg-muted/20">
+          <div className="text-center py-10 text-muted-foreground border rounded-2xl bg-muted/20">
             No notifications available.
           </div>
         ) : (

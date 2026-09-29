@@ -92,10 +92,10 @@ export default function AgentDashboardPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Clients</CardTitle>
-            <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+            <div className="p-2 rounded-2xl bg-secondary/10 text-secondary">
               <Users className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -111,10 +111,10 @@ export default function AgentDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Client SMS Volume</CardTitle>
-            <div className="p-2 rounded-lg bg-primary/20 text-primary-foreground">
+            <div className="p-2 rounded-2xl bg-primary/20 text-primary-foreground">
               <MessageSquare className="h-4 w-4 text-foreground" />
             </div>
           </CardHeader>
@@ -132,10 +132,10 @@ export default function AgentDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm">
+        <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Portfolio Revenue</CardTitle>
-            <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+            <div className="p-2 rounded-2xl bg-secondary/10 text-secondary">
               <DollarSign className="h-4 w-4" />
             </div>
           </CardHeader>
@@ -153,11 +153,11 @@ export default function AgentDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-secondary/20 shadow-sm relative overflow-hidden">
+        <Card className="border-secondary/20 shadow-none relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Pending Commission</CardTitle>
-            <div className="p-2 rounded-lg bg-primary/20 text-primary-foreground">
+            <div className="p-2 rounded-2xl bg-primary/20 text-primary-foreground">
               <CreditCard className="h-4 w-4 text-foreground" />
             </div>
           </CardHeader>
@@ -179,7 +179,7 @@ export default function AgentDashboardPage() {
       </div>
 
       {/* Performance Trends Chart */}
-      <Card className="border-secondary/20 shadow-sm">
+      <Card className="border-secondary/20 shadow-none">
         <CardHeader>
           <CardTitle>Client Performance & Commission Trends</CardTitle>
           <CardDescription>
@@ -189,11 +189,11 @@ export default function AgentDashboardPage() {
         <CardContent>
           <div className="h-[280px] sm:h-[320px] w-full">
             {loading ? (
-              <div className="h-full w-full bg-muted/30 animate-pulse rounded-lg flex items-center justify-center">
+              <div className="h-full w-full bg-muted/30 animate-pulse rounded-2xl flex items-center justify-center">
                 <p className="text-xs text-muted-foreground">Loading performance trends...</p>
               </div>
             ) : !data?.monthlyTrends || data.monthlyTrends.length === 0 ? (
-              <div className="h-full w-full flex items-center justify-center border border-dashed rounded-lg">
+              <div className="h-full w-full flex items-center justify-center border border-dashed rounded-2xl">
                 <p className="text-sm text-muted-foreground">No monthly trends data available yet</p>
               </div>
             ) : (

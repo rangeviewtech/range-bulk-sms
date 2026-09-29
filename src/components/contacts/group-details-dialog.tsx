@@ -474,7 +474,7 @@ export function GroupDetailsDialog({
             <div>
               <span className="text-muted-foreground block text-[11px]">Total Audience</span>
               <span className="font-semibold text-foreground flex items-center gap-1.5 mt-0.5">
-                <Users className="w-3.5 h-3.5 text-primary" />
+                <Users className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
                 {totalCount.toLocaleString()} subscribers
               </span>
             </div>
@@ -657,7 +657,7 @@ export function GroupDetailsDialog({
                       <TableRow>
                         <TableCell colSpan={5} className="text-center py-8">
                           <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                            <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                            <Loader2 className="w-4 h-4 animate-spin text-brand-blue dark:text-brand-yellow" />
                             Loading group members...
                           </div>
                         </TableCell>
@@ -675,7 +675,7 @@ export function GroupDetailsDialog({
                         <TableRow key={member.id} className="text-xs hover:bg-muted/20">
                           <TableCell className="font-medium py-2.5">
                             <div className="flex items-center gap-2.5">
-                              <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold shrink-0">
+                              <div className="w-6 h-6 rounded-full bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow flex items-center justify-center text-[10px] font-bold shrink-0">
                                 {member.name.charAt(0).toUpperCase()}
                               </div>
                               <span className="truncate max-w-[160px] sm:max-w-[240px] md:max-w-[320px]">
@@ -695,7 +695,7 @@ export function GroupDetailsDialog({
                                   title={`Send email to ${member.email}`}
                                   aria-label={`Send email to ${member.email}`}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="truncate max-w-[180px] sm:max-w-[280px] md:max-w-[380px] hover:underline hover:text-primary transition-colors cursor-pointer"
+                                  className="truncate max-w-[180px] sm:max-w-[280px] md:max-w-[380px] hover:underline hover:text-brand-blue dark:hover:text-brand-yellow transition-colors cursor-pointer"
                                 >
                                   {member.email}
                                 </a>
@@ -801,7 +801,7 @@ export function GroupDetailsDialog({
                                     type="button"
                                     variant="ghost"
                                     size="icon"
-                                    className="h-7 w-7 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-md transition-colors"
+                                    className="h-7 w-7 text-muted-foreground hover:text-brand-blue dark:hover:text-brand-yellow hover:bg-brand-blue/10 dark:hover:bg-brand-yellow/15 rounded-md transition-colors"
                                     asChild
                                   >
                                     <Link

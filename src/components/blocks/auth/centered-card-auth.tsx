@@ -25,8 +25,8 @@ export function CenteredCardAuth() {
     });
 
   return (
-    <div className="flex min-h-[600px] h-full w-full items-center justify-center bg-muted/30 p-4 rounded-xl border shadow-inner">
-      <div className="w-full max-w-md bg-card p-8 rounded-xl border shadow-sm space-y-6">
+    <div className="flex min-h-[600px] h-full w-full items-center justify-center bg-muted/30 p-4 rounded-2xl border shadow-inner">
+      <div className="w-full max-w-md bg-card p-8 rounded-2xl border shadow-none space-y-6">
         <div className="space-y-2 text-center">
           <h1 className="text-3xl font-bold tracking-tight">Sign In</h1>
           <p className="text-muted-foreground text-sm">
@@ -59,7 +59,7 @@ export function CenteredCardAuth() {
               <Label htmlFor="centered-password" required>
                 Password
               </Label>
-              <Link href="#" className="text-sm font-medium text-primary hover:underline">
+              <Link href="#" className="text-sm font-semibold text-brand-blue dark:text-brand-yellow hover:underline">
                 Forgot password?
               </Link>
             </div>
@@ -85,7 +85,7 @@ export function CenteredCardAuth() {
 
         <div className="text-center text-sm">
           Don&apos;t have an account?{' '}
-          <Link href="#" className="font-medium text-primary hover:underline">
+          <Link href="#" className="font-semibold text-brand-blue dark:text-brand-yellow hover:underline">
             Sign up
           </Link>
         </div>
