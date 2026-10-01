@@ -29,7 +29,7 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition-all outline-none focus-visible:outline-none focus-visible:ring-0 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 active:scale-[0.98] data-[state=active]:bg-brand-blue data-[state=active]:text-white data-[state=active]:border data-[state=active]:border-brand-blue dark:data-[state=active]:bg-brand-yellow dark:data-[state=active]:text-brand-navy dark:data-[state=active]:border-brand-yellow data-[state=active]:shadow-sm",
+      "inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition-all outline-none focus-visible:outline-none focus-visible:ring-0 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 active:scale-[0.98] border border-transparent data-[state=inactive]:hover:bg-brand-blue/10 data-[state=inactive]:hover:text-brand-blue data-[state=inactive]:hover:border-brand-blue/20 dark:data-[state=inactive]:hover:bg-brand-yellow/15 dark:data-[state=inactive]:hover:text-brand-yellow dark:data-[state=inactive]:hover:border-brand-yellow/20 data-[state=active]:bg-brand-blue data-[state=active]:text-white data-[state=active]:border-brand-blue dark:data-[state=active]:bg-brand-yellow dark:data-[state=active]:text-brand-navy dark:data-[state=active]:border-brand-yellow data-[state=active]:shadow-sm",
       className
     )}
     {...props}

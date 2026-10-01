@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prismaRead } from '@/lib/prisma';
 import { redisCache } from '@/lib/redis';
 import { verifySession } from '@/lib/auth/session';
+import { formatInTimezone } from '@/lib/timezone';
 
 export async function GET() {
   try {
@@ -52,13 +53,13 @@ export async function GET() {
       for (let i = 6; i >= 0; i--) {
         const d = new Date(now);
         d.setDate(d.getDate() - i);
-        const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const dateStr = formatInTimezone(d, { month: 'short', day: 'numeric' }, session.user.timezone);
         trendMap[dateStr] = { sent: 0, delivered: 0, failed: 0 };
       }
 
       for (const c of campaigns) {
         const cDate = new Date(c.createdAt);
-        const dateStr = cDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const dateStr = formatInTimezone(cDate, { month: 'short', day: 'numeric' }, session.user.timezone);
         if (trendMap[dateStr]) {
           trendMap[dateStr].sent += c.sentCount;
           trendMap[dateStr].delivered += c.deliveredCount;

@@ -8,6 +8,7 @@ const updateProfileSchema = z.object({
   fullName: z.string().trim().min(2).max(70).optional(),
   emailAddress: z.string().trim().email().optional(),
   companyName: z.string().trim().max(100).optional(),
+  timezone: z.string().optional(),
   defaultSenderId: z.string().trim().max(11).regex(/^[a-zA-Z0-9]+$/).optional(),
   webhookUrl: z.string().trim().url().optional().or(z.literal('')),
 });
@@ -38,6 +39,7 @@ export async function GET() {
         companyName: user.client?.companyName || '',
         status: user.status,
         mfaEnabled: user.mfaEnabled,
+        timezone: user.timezone,
         defaultSenderId,
         webhookUrl,
       },
@@ -62,12 +64,13 @@ export async function PATCH(req: Request) {
       );
     }
 
-    const { fullName, emailAddress, companyName, defaultSenderId, webhookUrl } = parsed.data;
+    const { fullName, emailAddress, companyName, defaultSenderId, webhookUrl, timezone } = parsed.data;
 
     await prisma.$transaction(async (tx) => {
       // 1. Update user fields
       const userUpdate: Prisma.UserUpdateInput = {};
       if (fullName !== undefined) userUpdate.name = fullName;
+      if (timezone !== undefined) userUpdate.timezone = timezone;
       if (emailAddress !== undefined) {
         const existing = await tx.user.findFirst({
           where: { email: emailAddress, NOT: { id: session.userId } },

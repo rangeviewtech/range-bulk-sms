@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { InputError } from "@/components/ui/input-error";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { COMMON_TIMEZONES, getTimezoneLabel } from "@/lib/timezone";
 import { Label } from "@/components/ui/label";
 import { useFormValidation } from "@/hooks/use-form-validation";
 import { accountProfileSchema, type AccountProfileInput } from "@/lib/validations/settings";
@@ -21,6 +23,7 @@ export default function AccountSettingsPage() {
         fullName: 'John Doe',
         emailAddress: 'john@example.com',
         companyName: 'Acme Corp',
+        timezone: 'Africa/Kampala',
       },
       protectUnsavedChanges: true,
       id: 'account-settings',
@@ -40,6 +43,7 @@ export default function AccountSettingsPage() {
               fullName: data.fullName || 'John Doe',
               emailAddress: data.emailAddress || 'john@example.com',
               companyName: data.companyName || '',
+              timezone: data.timezone || 'Africa/Kampala',
             });
           }
         }
@@ -64,6 +68,7 @@ export default function AccountSettingsPage() {
           fullName: values.fullName,
           emailAddress: values.emailAddress,
           companyName: values.companyName || undefined,
+          timezone: values.timezone,
         }),
       });
 
@@ -142,6 +147,23 @@ export default function AccountSettingsPage() {
               />
               {touched.companyName && errors.companyName && (
                 <InputError id="companyName-error" message={errors.companyName} />
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="timezone" required>Timezone</Label>
+              <Select value={values.timezone} onValueChange={(val) => setFieldValue('timezone', val)}>
+                <SelectTrigger id="timezone" className={touched.timezone && errors.timezone ? 'border-destructive ring-destructive' : ''}>
+                  <SelectValue placeholder="Select a timezone" />
+                </SelectTrigger>
+                <SelectContent>
+                  {COMMON_TIMEZONES.map(tz => (
+                    <SelectItem key={tz} value={tz}>{getTimezoneLabel(tz)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {touched.timezone && errors.timezone && (
+                <InputError id="timezone-error" message={errors.timezone} />
               )}
             </div>
             <Button type="submit" disabled={saving} className="w-full sm:w-auto">

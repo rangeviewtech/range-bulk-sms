@@ -4,6 +4,7 @@ import { requireAuth } from '@/lib/dal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bell } from 'lucide-react';
 import { createMetadata } from '@/lib/metadata';
+import { formatDateTimeTz } from '@/lib/timezone';
 
 export const metadata = createMetadata({
   title: 'Notifications',
@@ -39,7 +40,7 @@ export default async function NotificationsPage() {
             <Card key={n.id} className={!n.readAt ? 'border-blue-200 dark:border-blue-900/40 bg-blue-50/50 dark:bg-blue-950/20' : ''}>
               <CardHeader className="py-3 px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <CardTitle className="text-sm font-semibold">{n.title}</CardTitle>
-                <span className="text-xs text-muted-foreground">{new Date(n.createdAt).toLocaleString()}</span>
+                <span className="text-xs text-muted-foreground">{formatDateTimeTz(n.createdAt)}</span>
               </CardHeader>
               <CardContent className="px-4 pb-3">
                 <p className="text-sm text-foreground/90">{n.body}</p>

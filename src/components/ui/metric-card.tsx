@@ -2,6 +2,7 @@ import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
+import { AnimatedNumber } from "@/components/ui/animated-number";
 
 export interface MetricCardProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -37,7 +38,9 @@ export function MetricCard({
         )}
       </CardHeader>
       <CardContent>
-        <div className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">{value}</div>
+        <div className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
+          <AnimatedNumber value={value} />
+        </div>
         {(trend || description) && (
           <div className="mt-2 flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
             {trend && (

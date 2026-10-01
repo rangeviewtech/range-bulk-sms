@@ -31,6 +31,7 @@ import { TableSkeletonRows } from '@/components/blocks/ui/skeleton-layouts';
 import { useFormValidation } from '@/hooks/use-form-validation';
 import { agentPayoutSchema } from '@/lib/validations/admin';
 import { InputError } from '@/components/ui/input-error';
+import { formatDateTimeTz } from '@/lib/timezone';
 
 interface PaidRecord {
   id: string;
@@ -375,11 +376,7 @@ export default function EarningsPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                        {new Date(p.paidAt || p.createdAt).toLocaleDateString(undefined, {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })}
+                        {formatDateTimeTz(p.paidAt || p.createdAt)}
                       </TableCell>
                     </TableRow>
                   ))

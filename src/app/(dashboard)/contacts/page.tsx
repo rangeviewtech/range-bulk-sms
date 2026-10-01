@@ -4,7 +4,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -17,7 +24,24 @@ import {
   DialogTrigger,
   DialogBody,
 } from '@/components/ui/dialog';
-import { Search, Plus, Download, RefreshCw, Trash2, User, Mail, Filter, ArrowUp, ArrowDown, X, Send, ToggleLeft, ToggleRight, Pencil, Globe } from 'lucide-react';
+import {
+  Search,
+  Plus,
+  Download,
+  RefreshCw,
+  Trash2,
+  User,
+  Mail,
+  Filter,
+  ArrowUp,
+  ArrowDown,
+  X,
+  Send,
+  ToggleLeft,
+  ToggleRight,
+  Pencil,
+  Globe,
+} from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -31,10 +55,7 @@ import { Pagination } from '@/components/ui/pagination';
 import { SortableHeader } from '@/components/ui/sortable-header';
 import { PageHeader } from '@/components/layout/page-header';
 import { useTableState } from '@/hooks/use-table-state';
-import {
-  validatePhoneCountryCode,
-  validatePhoneNumber,
-} from '@/lib/sms/normalizer';
+import { validatePhoneCountryCode, validatePhoneNumber } from '@/lib/sms/normalizer';
 import {
   Select,
   SelectContent,
@@ -86,16 +107,13 @@ const contactFormSchema = z.object({
       if (!fullResult.isValid) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: fullResult.error || 'Please enter a valid phone number (e.g. +256700123456 or 0700123456)',
+          message:
+            fullResult.error ||
+            'Please enter a valid phone number (e.g. +256700123456 or 0700123456)',
         });
       }
     }),
-  email: z
-    .string()
-    .trim()
-    .email('Please enter a valid email address')
-    .optional()
-    .or(z.literal('')),
+  email: z.string().trim().email('Please enter a valid email address').optional().or(z.literal('')),
 });
 
 const editContactFormSchema = z.object({
@@ -118,16 +136,13 @@ const editContactFormSchema = z.object({
       if (!fullResult.isValid) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: fullResult.error || 'Please enter a valid phone number (e.g. +256700123456 or 0700123456)',
+          message:
+            fullResult.error ||
+            'Please enter a valid phone number (e.g. +256700123456 or 0700123456)',
         });
       }
     }),
-  email: z
-    .string()
-    .trim()
-    .email('Please enter a valid email address')
-    .optional()
-    .or(z.literal('')),
+  email: z.string().trim().email('Please enter a valid email address').optional().or(z.literal('')),
   status: z.enum(['ACTIVE', 'OPTED_OUT']),
 });
 
@@ -286,7 +301,8 @@ export default function ContactsPage() {
     protectUnsavedChanges: isAddOpen,
     id: 'add-contact',
     title: 'Unsaved changes',
-    message: 'You have unsaved changes in this new contact form. If you leave now, your changes will be lost.',
+    message:
+      'You have unsaved changes in this new contact form. If you leave now, your changes will be lost.',
   });
 
   // Edit Contact Form State with Real-Time Validation
@@ -311,7 +327,8 @@ export default function ContactsPage() {
     protectUnsavedChanges: Boolean(editContact),
     id: 'edit-contact',
     title: 'Unsaved changes',
-    message: 'You have unsaved changes to this contact. If you leave now, your changes will be lost.',
+    message:
+      'You have unsaved changes to this contact. If you leave now, your changes will be lost.',
   });
 
   const handleOpenEdit = (contact: ContactItem) => {
@@ -395,7 +412,9 @@ export default function ContactsPage() {
           id: generateLocalId(),
           firstName: data.firstName?.trim() || null,
           lastName: data.lastName?.trim() || null,
-          phone: data.phone.trim().startsWith('+') ? data.phone.trim() : `+256${data.phone.trim().replace(/^0/, '')}`,
+          phone: data.phone.trim().startsWith('+')
+            ? data.phone.trim()
+            : `+256${data.phone.trim().replace(/^0/, '')}`,
           email: data.email?.trim() || null,
           status: 'ACTIVE',
           groups: [{ name: 'New Contact' }],
@@ -581,15 +600,15 @@ export default function ContactsPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+    <div className="space-y-4 p-4 sm:space-y-6 sm:p-6 lg:p-8">
       <PageHeader
         title="Contacts"
         description="Manage your phone directory, VIP lists, and broadcast target groups."
         action={
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <Link href="/contacts/import" className="w-full sm:w-auto">
               <Button variant="outline" className="w-full sm:w-auto">
-                <Download className="w-4 h-4 mr-2" />
+                <Download className="mr-2 h-4 w-4" />
                 Import CSV
               </Button>
             </Link>
@@ -609,21 +628,25 @@ export default function ContactsPage() {
             >
               <DialogTrigger asChild>
                 <Button className="w-full sm:w-auto">
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Plus className="mr-2 h-4 w-4" />
                   Add Contact
                 </Button>
               </DialogTrigger>
-              <DialogContent className="w-[calc(100%-2rem)] sm:max-w-xl md:max-w-2xl p-0 overflow-hidden shadow-2xl">
-                <DialogHeader className="px-6 py-5 border-b border-border bg-muted/20">
+              <DialogContent className="w-[calc(100%-2rem)] overflow-hidden p-0 shadow-2xl sm:max-w-xl md:max-w-2xl">
+                <DialogHeader className="border-border bg-muted/20 border-b px-6 py-5">
                   <DialogTitle className="text-lg font-bold">Add New Contact</DialogTitle>
-                  <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
+                  <DialogDescription className="text-muted-foreground mt-1 text-xs sm:text-sm">
                     Store contact identity and phone number for SMS dispatches.
                   </DialogDescription>
                 </DialogHeader>
 
-                <form onSubmit={handleAddContact} noValidate className="flex flex-col flex-1 min-h-0 overflow-hidden">
-                  <DialogBody className="p-6 space-y-4 sm:space-y-5">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <form
+                  onSubmit={handleAddContact}
+                  noValidate
+                  className="flex min-h-0 flex-1 flex-col overflow-hidden"
+                >
+                  <DialogBody className="space-y-4 p-6 sm:space-y-5">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <div className="space-y-1.5">
                         <Label htmlFor="contactFirst">First Name</Label>
                         <Input
@@ -633,7 +656,10 @@ export default function ContactsPage() {
                           onChange={(e) => setContactFieldValue('firstName', e.target.value)}
                           onBlur={() => handleContactBlur('firstName')}
                           error={contactTouched.firstName && !!contactErrors.firstName}
-                          aria-describedby={contactErrors.firstName ? 'contactFirst-error' : undefined}
+                          aria-invalid={!!contactErrors.firstName}
+                          aria-describedby={
+                            contactErrors.firstName ? 'contactFirst-error' : undefined
+                          }
                         />
                         {contactTouched.firstName && contactErrors.firstName && (
                           <InputError id="contactFirst-error" message={contactErrors.firstName} />
@@ -648,7 +674,10 @@ export default function ContactsPage() {
                           onChange={(e) => setContactFieldValue('lastName', e.target.value)}
                           onBlur={() => handleContactBlur('lastName')}
                           error={contactTouched.lastName && !!contactErrors.lastName}
-                          aria-describedby={contactErrors.lastName ? 'contactLast-error' : undefined}
+                          aria-invalid={!!contactErrors.lastName}
+                          aria-describedby={
+                            contactErrors.lastName ? 'contactLast-error' : undefined
+                          }
                         />
                         {contactTouched.lastName && contactErrors.lastName && (
                           <InputError id="contactLast-error" message={contactErrors.lastName} />
@@ -657,7 +686,9 @@ export default function ContactsPage() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label htmlFor="contactPhone" required>Phone Number</Label>
+                      <Label htmlFor="contactPhone" required>
+                        Phone Number
+                      </Label>
                       <SinglePhoneInput
                         id="contactPhone"
                         value={contactValues.phone}
@@ -682,6 +713,7 @@ export default function ContactsPage() {
                         onChange={(e) => setContactFieldValue('email', e.target.value)}
                         onBlur={() => handleContactBlur('email')}
                         error={contactTouched.email && !!contactErrors.email}
+                        aria-invalid={!!contactErrors.email}
                         aria-describedby={contactErrors.email ? 'contactEmail-error' : undefined}
                       />
                       {contactTouched.email && contactErrors.email && (
@@ -690,14 +722,14 @@ export default function ContactsPage() {
                     </div>
 
                     {contactServerErrors.length > 0 && (
-                      <div className="p-2.5 rounded-2xl bg-destructive/10 border border-destructive/20 text-xs text-destructive space-y-1">
+                      <div className="bg-destructive/10 border-destructive/20 text-destructive space-y-1 rounded-2xl border p-2.5 text-xs">
                         {contactServerErrors.map((err, i) => (
                           <p key={i}>• {err}</p>
                         ))}
                       </div>
                     )}
                   </DialogBody>
-                  <DialogFooter className="px-6 py-4 border-t border-border bg-muted/20 flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5">
+                  <DialogFooter className="border-border bg-muted/20 flex flex-col-reverse gap-2.5 border-t px-6 py-4 sm:flex-row sm:justify-end">
                     <Button
                       type="button"
                       variant="outline"
@@ -715,7 +747,7 @@ export default function ContactsPage() {
                     <Button
                       type="submit"
                       disabled={submitting}
-                      className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90 shadow-none"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 w-full font-bold shadow-none sm:w-auto"
                     >
                       {submitting ? 'Saving...' : 'Save Contact'}
                     </Button>
@@ -728,15 +760,15 @@ export default function ContactsPage() {
       />
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row gap-3 sm:gap-4 justify-between items-stretch md:items-center bg-card p-3 sm:p-4 rounded-2xl border border-border shadow-xs">
-        <div className="flex flex-1 flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
+      <div className="bg-card border-border flex flex-col items-stretch justify-between gap-3 rounded-2xl border p-3 shadow-xs sm:gap-4 sm:p-4 md:flex-row md:items-center">
+        <div className="flex flex-1 flex-col items-stretch gap-2.5 sm:flex-row sm:items-center">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <Input
               id="contacts-search"
               name="contacts-search"
               placeholder="Search by name, phone, network, email, or group..."
-              className="pl-9 pr-8 w-full"
+              className="w-full pr-8 pl-9"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -744,10 +776,10 @@ export default function ContactsPage() {
               <button
                 type="button"
                 onClick={clearSearch}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2.5 -translate-y-1/2"
                 aria-label="Clear search"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
@@ -758,8 +790,12 @@ export default function ContactsPage() {
             value={filters.group || 'ALL'}
             onValueChange={(val) => setFilter('group', val)}
           >
-            <SelectTrigger id="filter-group" aria-label="Filter contacts by group" className="w-full sm:w-[170px] h-9 text-xs">
-              <Filter className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
+            <SelectTrigger
+              id="filter-group"
+              aria-label="Filter contacts by group"
+              className="h-10 w-full text-sm sm:w-[170px]"
+            >
+              <Filter className="text-muted-foreground mr-2 h-3.5 w-3.5" />
               <SelectValue placeholder="All Groups" />
             </SelectTrigger>
             <SelectContent>
@@ -778,8 +814,12 @@ export default function ContactsPage() {
             value={filters.status || 'ALL'}
             onValueChange={(val) => setFilter('status', val)}
           >
-            <SelectTrigger id="filter-status" aria-label="Filter contacts by status" className="w-full sm:w-[140px] h-9 text-xs">
-              <Filter className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
+            <SelectTrigger
+              id="filter-status"
+              aria-label="Filter contacts by status"
+              className="h-10 w-full text-sm sm:w-[140px]"
+            >
+              <Filter className="text-muted-foreground mr-2 h-3.5 w-3.5" />
               <SelectValue placeholder="All Statuses" />
             </SelectTrigger>
             <SelectContent>
@@ -796,8 +836,12 @@ export default function ContactsPage() {
               value={filters.country || 'ALL'}
               onValueChange={(val) => setFilter('country', val)}
             >
-              <SelectTrigger id="filter-country" aria-label="Filter contacts by country" className="w-full sm:w-[150px] h-9 text-xs">
-                <Globe className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
+              <SelectTrigger
+                id="filter-country"
+                aria-label="Filter contacts by country"
+                className="h-10 w-full text-sm sm:w-[150px]"
+              >
+                <Globe className="text-muted-foreground mr-2 h-3.5 w-3.5" />
                 <SelectValue placeholder="All Countries" />
               </SelectTrigger>
               <SelectContent>
@@ -818,8 +862,12 @@ export default function ContactsPage() {
               value={filters.network || 'ALL'}
               onValueChange={(val) => setFilter('network', val)}
             >
-              <SelectTrigger id="filter-network" aria-label="Filter contacts by network" className="w-full sm:w-[150px] h-9 text-xs">
-                <Filter className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
+              <SelectTrigger
+                id="filter-network"
+                aria-label="Filter contacts by network"
+                className="h-10 w-full text-sm sm:w-[150px]"
+              >
+                <Filter className="text-muted-foreground mr-2 h-3.5 w-3.5" />
                 <SelectValue placeholder="All Networks" />
               </SelectTrigger>
               <SelectContent>
@@ -838,20 +886,20 @@ export default function ContactsPage() {
             type="button"
             variant="outline"
             size="sm"
-            className="h-9 px-3 gap-1.5 shrink-0"
+            className="h-10 shrink-0 gap-2 rounded-xl px-4"
             onClick={() => toggleSort(sortKey || 'name')}
             title={`Sort Order: ${sortOrder === 'asc' ? 'Ascending' : 'Descending'}`}
           >
             {sortOrder === 'asc' ? (
-              <ArrowUp className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
+              <ArrowUp className="text-brand-blue dark:text-brand-yellow h-3.5 w-3.5" />
             ) : (
-              <ArrowDown className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
+              <ArrowDown className="text-brand-blue dark:text-brand-yellow h-3.5 w-3.5" />
             )}
-            <span className="text-xs uppercase font-medium">{sortOrder}</span>
+            <span className="text-sm font-medium uppercase">{sortOrder}</span>
           </Button>
         </div>
 
-        <div className="flex items-center gap-2 justify-end">
+        <div className="flex items-center justify-end gap-2">
           <Link href="/contacts/groups">
             <Button variant="outline" size="sm">
               Manage Groups
@@ -864,7 +912,7 @@ export default function ContactsPage() {
             disabled={loading}
             aria-label="Refresh contacts"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
           </Button>
         </div>
       </div>
@@ -875,24 +923,24 @@ export default function ContactsPage() {
           {loading ? (
             <>
               {/* Mobile Skeleton */}
-              <div className="block md:hidden divide-y divide-border p-3 space-y-4">
+              <div className="divide-border block space-y-4 divide-y p-3 md:hidden">
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className="pt-3 first:pt-0 space-y-2.5 animate-pulse">
-                    <div className="flex justify-between items-center">
-                      <div className="h-4 bg-muted rounded w-36" />
-                      <div className="h-5 bg-muted rounded-full w-16" />
+                  <div key={n} className="animate-pulse space-y-2.5 pt-3 first:pt-0">
+                    <div className="flex items-center justify-between">
+                      <div className="bg-muted h-4 w-36 rounded" />
+                      <div className="bg-muted h-5 w-16 rounded-full" />
                     </div>
-                    <div className="h-3.5 bg-muted rounded w-28" />
+                    <div className="bg-muted h-3.5 w-28 rounded" />
                     <div className="flex gap-2">
-                      <div className="h-7 bg-muted rounded flex-1" />
-                      <div className="h-7 bg-muted rounded w-16" />
+                      <div className="bg-muted h-7 flex-1 rounded" />
+                      <div className="bg-muted h-7 w-16 rounded" />
                     </div>
                   </div>
                 ))}
               </div>
               {/* Desktop Skeleton */}
-              <div className="hidden md:block w-full overflow-x-auto">
-                <Table className="min-w-[700px]">
+              <div className="hidden w-full overflow-x-auto md:block">
+                <Table className="w-full">
                   <TableHeader>
                     <TableRow>
                       <TableHead>Contact Name</TableHead>
@@ -913,51 +961,59 @@ export default function ContactsPage() {
           ) : paginatedData.length === 0 ? (
             <EmptyState
               className="rounded-none border-0 bg-transparent py-16"
-              icon={<User className="h-8 w-8 text-muted-foreground" />}
+              icon={<User className="text-muted-foreground h-8 w-8" />}
               title="No contacts found"
               description={`We couldn't find any contacts matching "${search || filters.group || filters.status || filters.country || filters.network}".`}
               action={
                 search ? (
-                  <Button variant="outline" onClick={clearSearch}>Clear Search</Button>
+                  <Button variant="outline" onClick={clearSearch}>
+                    Clear Search
+                  </Button>
                 ) : undefined
               }
             />
           ) : (
             <>
               {/* Mobile View: High-density responsive contact card list */}
-              <div className="block md:hidden divide-y divide-border">
+              <div className="divide-border block divide-y md:hidden">
                 {paginatedData.map((c) => {
                   const fullName =
                     [c.firstName, c.lastName].filter(Boolean).join(' ') || 'Unnamed Contact';
                   return (
-                    <div key={c.id} className="p-4 space-y-3 hover:bg-muted/20 transition-colors">
+                    <div key={c.id} className="hover:bg-muted/20 space-y-3 p-4 transition-colors">
                       {/* Top Row: Avatar + Name + Status Pill */}
                       <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="p-1.5 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow shrink-0">
-                            <User className="w-4 h-4" />
+                        <div className="flex min-w-0 items-center gap-2.5">
+                          <div className="bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow shrink-0 rounded-2xl p-1.5">
+                            <User className="h-4 w-4" />
                           </div>
-                          <span className="font-semibold text-foreground text-sm line-clamp-1">
+                          <span className="text-foreground line-clamp-1 text-sm font-semibold">
                             {fullName}
                           </span>
                         </div>
                         <button
                           type="button"
-                          onClick={() => handleRequestToggleStatus(c.id, fullName, c.status || 'ACTIVE')}
-                          title={(c.status || 'ACTIVE') === 'ACTIVE' ? `Click to opt out ${fullName}` : `Click to activate ${fullName}`}
+                          onClick={() =>
+                            handleRequestToggleStatus(c.id, fullName, c.status || 'ACTIVE')
+                          }
+                          title={
+                            (c.status || 'ACTIVE') === 'ACTIVE'
+                              ? `Click to opt out ${fullName}`
+                              : `Click to activate ${fullName}`
+                          }
                           aria-label={`Toggle status for ${fullName}. Currently ${c.status || 'ACTIVE'}.`}
                           className={cn(
-                            'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold transition-all cursor-pointer border select-none shrink-0',
+                            'inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-semibold transition-all select-none',
                             (c.status || 'ACTIVE') === 'ACTIVE'
-                              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
-                              : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
+                              ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                              : 'border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-400'
                           )}
                         >
                           <span
                             className={cn(
-                              'w-1.5 h-1.5 rounded-full',
+                              'h-1.5 w-1.5 rounded-full',
                               (c.status || 'ACTIVE') === 'ACTIVE'
-                                ? 'bg-emerald-500 animate-pulse'
+                                ? 'animate-pulse bg-emerald-500'
                                 : 'bg-amber-500'
                             )}
                           />
@@ -966,38 +1022,49 @@ export default function ContactsPage() {
                       </div>
 
                       {/* Phone & Network */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 bg-muted/40 p-2.5 rounded-2xl border border-border/50">
-                        <CountryFlagPhone phone={c.phone} asLink className="text-xs font-mono text-foreground" />
+                      <div className="bg-muted/40 border-border/50 flex flex-wrap items-center justify-between gap-2 rounded-2xl border p-2.5">
+                        <CountryFlagPhone
+                          phone={c.phone}
+                          asLink
+                          className="text-foreground font-mono text-xs"
+                        />
                         <CarrierBadge phone={c.phone} showIcon={false} size="sm" />
                       </div>
 
                       {/* Email & Groups */}
                       <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
                         {c.email ? (
-                          <div className="flex items-center gap-1.5 text-muted-foreground">
-                            <Mail className="w-3.5 h-3.5 shrink-0" />
+                          <div className="text-muted-foreground flex items-center gap-1.5">
+                            <Mail className="h-3.5 w-3.5 shrink-0" />
                             <a
                               href={`mailto:${c.email}`}
                               title={`Send email to ${c.email}`}
                               aria-label={`Send email to ${c.email}`}
-                              className="hover:underline hover:text-brand-blue dark:hover:text-brand-yellow transition-colors cursor-pointer"
+                              className="hover:text-brand-blue dark:hover:text-brand-yellow cursor-pointer transition-colors hover:underline"
                             >
                               {c.email}
                             </a>
                           </div>
                         ) : (
-                          <span className="text-muted-foreground italic text-[11px]">No email</span>
+                          <span className="text-muted-foreground text-[11px] italic">No email</span>
                         )}
 
                         <div className="flex flex-wrap gap-1">
                           {c.groups && c.groups.length > 0 ? (
                             c.groups.map((g, idx) => (
-                              <Badge key={idx} variant="secondary" className="text-[11px] px-1.5 py-0">
+                              <Badge
+                                key={idx}
+                                variant="secondary"
+                                className="px-1.5 py-0 text-[11px]"
+                              >
                                 {g.name}
                               </Badge>
                             ))
                           ) : (
-                            <Badge variant="outline" className="text-[10px] text-muted-foreground px-1.5 py-0">
+                            <Badge
+                              variant="outline"
+                              className="text-muted-foreground px-1.5 py-0 text-[10px]"
+                            >
                               Default
                             </Badge>
                           )}
@@ -1005,19 +1072,19 @@ export default function ContactsPage() {
                       </div>
 
                       {/* Action buttons */}
-                      <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/40">
+                      <div className="border-border/40 flex items-center justify-between gap-2 border-t pt-1">
                         <Button
                           asChild
                           variant="outline"
                           size="sm"
-                          className="h-8 text-xs gap-1.5 flex-1 text-brand-blue hover:text-brand-blue hover:bg-brand-blue/10 dark:text-brand-yellow dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/15"
+                          className="text-brand-blue hover:text-brand-blue hover:bg-brand-blue/10 dark:text-brand-yellow dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/15 h-8 flex-1 gap-1.5 text-xs"
                         >
                           <Link
                             href={`/sms/send?deliveryMode=manual&recipients=${encodeURIComponent(c.phone)}`}
                             title={`Send SMS to ${fullName}`}
                             aria-label={`Send SMS to ${fullName}`}
                           >
-                            <Send className="w-3.5 h-3.5" />
+                            <Send className="h-3.5 w-3.5" />
                             <span>Send SMS</span>
                           </Link>
                         </Button>
@@ -1026,12 +1093,12 @@ export default function ContactsPage() {
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="h-8 text-xs gap-1.5"
+                          className="h-8 gap-1.5 text-xs"
                           onClick={() => handleOpenEdit(c)}
                           title={`Edit ${fullName}`}
                           aria-label={`Edit ${fullName}`}
                         >
-                          <Pencil className="w-3.5 h-3.5" />
+                          <Pencil className="h-3.5 w-3.5" />
                           <span>Edit</span>
                         </Button>
 
@@ -1040,31 +1107,41 @@ export default function ContactsPage() {
                           variant="ghost"
                           size="icon"
                           className={cn(
-                            'h-8 w-8 rounded-2xl transition-colors border',
+                            'h-8 w-8 rounded-2xl border transition-colors',
                             (c.status || 'ACTIVE') === 'ACTIVE'
-                              ? 'text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-amber-500/10 hover:text-amber-600'
-                              : 'text-amber-600 dark:text-amber-400 border-amber-500/20 hover:bg-emerald-500/10 hover:text-emerald-600'
+                              ? 'border-emerald-500/20 text-emerald-600 hover:bg-amber-500/10 hover:text-amber-600 dark:text-emerald-400'
+                              : 'border-amber-500/20 text-amber-600 hover:bg-emerald-500/10 hover:text-emerald-600 dark:text-amber-400'
                           )}
-                          onClick={() => handleRequestToggleStatus(c.id, fullName, c.status || 'ACTIVE')}
-                          title={(c.status || 'ACTIVE') === 'ACTIVE' ? `Opt out ${fullName}` : `Activate ${fullName}`}
-                          aria-label={(c.status || 'ACTIVE') === 'ACTIVE' ? `Opt out ${fullName}` : `Activate ${fullName}`}
+                          onClick={() =>
+                            handleRequestToggleStatus(c.id, fullName, c.status || 'ACTIVE')
+                          }
+                          title={
+                            (c.status || 'ACTIVE') === 'ACTIVE'
+                              ? `Opt out ${fullName}`
+                              : `Activate ${fullName}`
+                          }
+                          aria-label={
+                            (c.status || 'ACTIVE') === 'ACTIVE'
+                              ? `Opt out ${fullName}`
+                              : `Activate ${fullName}`
+                          }
                         >
                           {(c.status || 'ACTIVE') === 'ACTIVE' ? (
-                            <ToggleRight className="w-4 h-4" />
+                            <ToggleRight className="h-4 w-4" />
                           ) : (
-                            <ToggleLeft className="w-4 h-4" />
+                            <ToggleLeft className="h-4 w-4" />
                           )}
                         </Button>
 
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-2xl"
+                          className="h-8 w-8 rounded-2xl border border-red-200/60 bg-red-50 text-red-600 transition-colors hover:bg-red-100 hover:text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20 dark:hover:text-red-300"
                           onClick={() => handleDeleteContact(c.id, fullName)}
                           title={`Delete ${fullName}`}
                           aria-label={`Delete ${fullName}`}
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -1073,8 +1150,8 @@ export default function ContactsPage() {
               </div>
 
               {/* Desktop Table View */}
-              <div className="hidden md:block w-full overflow-x-auto">
-                <Table className="min-w-[700px]">
+              <div className="hidden w-full overflow-x-auto md:block">
+                <Table className="w-full">
                   <TableHeader>
                     <TableRow>
                       <TableHead>
@@ -1142,53 +1219,65 @@ export default function ContactsPage() {
                         <TableRow key={c.id} className="hover:bg-muted/30 transition-colors">
                           <TableCell>
                             <div className="flex items-center gap-2.5">
-                              <div className="p-1.5 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow">
-                                <User className="w-4 h-4" />
+                              <div className="bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow rounded-2xl p-1.5">
+                                <User className="h-4 w-4" />
                               </div>
-                              <span className="font-semibold text-foreground text-sm">{fullName}</span>
+                              <span className="text-foreground text-sm font-semibold">
+                                {fullName}
+                              </span>
                             </div>
                           </TableCell>
                           <TableCell>
-                            <CountryFlagPhone phone={c.phone} asLink className="text-xs text-foreground" />
+                            <CountryFlagPhone
+                              phone={c.phone}
+                              asLink
+                              className="text-foreground text-xs"
+                            />
                           </TableCell>
                           <TableCell>
                             <CarrierBadge phone={c.phone} showIcon={false} size="sm" />
                           </TableCell>
                           <TableCell>
                             {c.email ? (
-                              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                <Mail className="w-3.5 h-3.5 shrink-0" />
+                              <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                                <Mail className="h-3.5 w-3.5 shrink-0" />
                                 <a
                                   href={`mailto:${c.email}`}
                                   title={`Send email to ${c.email}`}
                                   aria-label={`Send email to ${c.email}`}
-                                  className="hover:underline hover:text-brand-blue dark:hover:text-brand-yellow transition-colors cursor-pointer outline-none focus:outline-none focus-visible:outline-none focus-visible:underline rounded-xs"
+                                  className="hover:text-brand-blue dark:hover:text-brand-yellow cursor-pointer rounded-xs transition-colors outline-none hover:underline focus:outline-none focus-visible:underline focus-visible:outline-none"
                                 >
                                   {c.email}
                                 </a>
                               </div>
                             ) : (
-                              <span className="text-xs text-muted-foreground italic">—</span>
+                              <span className="text-muted-foreground text-xs italic">—</span>
                             )}
                           </TableCell>
-                          <TableCell className="whitespace-nowrap">
+                          <TableCell className="hidden whitespace-nowrap sm:table-cell">
                             <button
                               type="button"
-                              onClick={() => handleRequestToggleStatus(c.id, fullName, c.status || 'ACTIVE')}
-                              title={(c.status || 'ACTIVE') === 'ACTIVE' ? `Click to opt out ${fullName}` : `Click to activate ${fullName}`}
+                              onClick={() =>
+                                handleRequestToggleStatus(c.id, fullName, c.status || 'ACTIVE')
+                              }
+                              title={
+                                (c.status || 'ACTIVE') === 'ACTIVE'
+                                  ? `Click to opt out ${fullName}`
+                                  : `Click to activate ${fullName}`
+                              }
                               aria-label={`Toggle status for ${fullName}. Currently ${c.status || 'ACTIVE'}.`}
                               className={cn(
-                                'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold transition-all cursor-pointer border select-none',
+                                'inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all select-none',
                                 (c.status || 'ACTIVE') === 'ACTIVE'
-                                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20'
-                                  : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 hover:bg-amber-500/20'
+                                  ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 dark:text-emerald-400'
+                                  : 'border-amber-500/20 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 dark:text-amber-400'
                               )}
                             >
                               <span
                                 className={cn(
-                                  'w-1.5 h-1.5 rounded-full',
+                                  'h-1.5 w-1.5 rounded-full',
                                   (c.status || 'ACTIVE') === 'ACTIVE'
-                                    ? 'bg-emerald-500 animate-pulse'
+                                    ? 'animate-pulse bg-emerald-500'
                                     : 'bg-amber-500'
                                 )}
                               />
@@ -1204,7 +1293,10 @@ export default function ContactsPage() {
                                   </Badge>
                                 ))
                               ) : (
-                                <Badge variant="outline" className="text-[11px] text-muted-foreground">
+                                <Badge
+                                  variant="outline"
+                                  className="text-muted-foreground text-[11px]"
+                                >
                                   Default
                                 </Badge>
                               )}
@@ -1220,17 +1312,27 @@ export default function ContactsPage() {
                                 className={cn(
                                   'h-8 w-8 rounded-2xl transition-colors',
                                   (c.status || 'ACTIVE') === 'ACTIVE'
-                                    ? 'text-emerald-600 dark:text-emerald-400 hover:text-amber-600 hover:bg-amber-500/10'
-                                    : 'text-amber-600 dark:text-amber-400 hover:text-emerald-600 hover:bg-emerald-500/10'
+                                    ? 'text-emerald-600 hover:bg-amber-500/10 hover:text-amber-600 dark:text-emerald-400'
+                                    : 'text-amber-600 hover:bg-emerald-500/10 hover:text-emerald-600 dark:text-amber-400'
                                 )}
-                                onClick={() => handleRequestToggleStatus(c.id, fullName, c.status || 'ACTIVE')}
-                                title={(c.status || 'ACTIVE') === 'ACTIVE' ? `Opt out ${fullName}` : `Activate ${fullName}`}
-                                aria-label={(c.status || 'ACTIVE') === 'ACTIVE' ? `Opt out ${fullName}` : `Activate ${fullName}`}
+                                onClick={() =>
+                                  handleRequestToggleStatus(c.id, fullName, c.status || 'ACTIVE')
+                                }
+                                title={
+                                  (c.status || 'ACTIVE') === 'ACTIVE'
+                                    ? `Opt out ${fullName}`
+                                    : `Activate ${fullName}`
+                                }
+                                aria-label={
+                                  (c.status || 'ACTIVE') === 'ACTIVE'
+                                    ? `Opt out ${fullName}`
+                                    : `Activate ${fullName}`
+                                }
                               >
                                 {(c.status || 'ACTIVE') === 'ACTIVE' ? (
-                                  <ToggleRight className="w-4 h-4" />
+                                  <ToggleRight className="h-4 w-4" />
                                 ) : (
-                                  <ToggleLeft className="w-4 h-4" />
+                                  <ToggleLeft className="h-4 w-4" />
                                 )}
                               </Button>
 
@@ -1239,12 +1341,12 @@ export default function ContactsPage() {
                                 type="button"
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-foreground/80 hover:text-foreground bg-muted/40 dark:bg-muted/15 border border-border/50 hover:bg-muted/70 rounded-2xl transition-colors"
+                                className="text-foreground/80 hover:text-foreground bg-muted/40 dark:bg-muted/15 border-border/50 hover:bg-muted/70 h-8 w-8 rounded-2xl border transition-colors"
                                 onClick={() => handleOpenEdit(c)}
                                 title={`Edit ${fullName}`}
                                 aria-label={`Edit ${fullName}`}
                               >
-                                <Pencil className="w-3.5 h-3.5" />
+                                <Pencil className="h-3.5 w-3.5" />
                               </Button>
 
                               {/* 3. Direct Send SMS */}
@@ -1252,7 +1354,7 @@ export default function ContactsPage() {
                                 type="button"
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-foreground/80 hover:text-brand-blue dark:hover:text-brand-yellow hover:border-brand-blue/40 dark:hover:border-brand-yellow/40 bg-muted/40 dark:bg-muted/15 border border-border/50 hover:bg-muted/70 rounded-2xl transition-colors"
+                                className="text-foreground/80 hover:text-brand-blue dark:hover:text-brand-yellow hover:border-brand-blue/40 dark:hover:border-brand-yellow/40 bg-muted/40 dark:bg-muted/15 border-border/50 hover:bg-muted/70 h-8 w-8 rounded-2xl border transition-colors"
                                 asChild
                               >
                                 <Link
@@ -1260,7 +1362,7 @@ export default function ContactsPage() {
                                   title={`Send SMS to ${fullName}`}
                                   aria-label={`Send SMS to ${fullName}`}
                                 >
-                                  <Send className="w-3.5 h-3.5" />
+                                  <Send className="h-3.5 w-3.5" />
                                 </Link>
                               </Button>
 
@@ -1268,12 +1370,12 @@ export default function ContactsPage() {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200/60 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300 transition-colors rounded-2xl"
+                                className="h-8 w-8 rounded-2xl border border-red-200/60 bg-red-50 text-red-600 transition-colors hover:bg-red-100 hover:text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20 dark:hover:text-red-300"
                                 onClick={() => handleDeleteContact(c.id, fullName)}
                                 title={`Delete ${fullName}`}
                                 aria-label={`Delete ${fullName}`}
                               >
-                                <Trash2 className="w-4 h-4" />
+                                <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
                           </TableCell>
@@ -1309,24 +1411,28 @@ export default function ContactsPage() {
           }
         }}
       >
-        <DialogContent className="w-[calc(100%-2rem)] sm:max-w-xl md:max-w-2xl p-0 overflow-hidden shadow-2xl">
-          <DialogHeader className="px-6 py-5 border-b border-border bg-muted/20">
+        <DialogContent className="w-[calc(100%-2rem)] overflow-hidden p-0 shadow-2xl sm:max-w-xl md:max-w-2xl">
+          <DialogHeader className="border-border bg-muted/20 border-b px-6 py-5">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow">
-                <Pencil className="w-4 h-4" />
+              <div className="bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow rounded-2xl p-2">
+                <Pencil className="h-4 w-4" />
               </div>
               <div>
                 <DialogTitle className="text-lg font-bold">Edit Contact</DialogTitle>
-                <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
+                <DialogDescription className="text-muted-foreground mt-1 text-xs sm:text-sm">
                   Update contact identity, phone number, and subscription status.
                 </DialogDescription>
               </div>
             </div>
           </DialogHeader>
 
-          <form onSubmit={handleSaveEdit} noValidate className="flex flex-col flex-1 min-h-0 overflow-hidden">
-            <DialogBody className="p-6 space-y-4 sm:space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <form
+            onSubmit={handleSaveEdit}
+            noValidate
+            className="flex min-h-0 flex-1 flex-col overflow-hidden"
+          >
+            <DialogBody className="space-y-4 p-6 sm:space-y-5">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
                   <Label htmlFor="editContactFirst">First Name</Label>
                   <Input
@@ -1336,6 +1442,7 @@ export default function ContactsPage() {
                     onChange={(e) => setEditFieldValue('firstName', e.target.value)}
                     onBlur={() => handleEditBlur('firstName')}
                     error={editTouched.firstName && !!editErrors.firstName}
+                    aria-invalid={!!editErrors.firstName}
                     aria-describedby={editErrors.firstName ? 'editContactFirst-error' : undefined}
                   />
                   {editTouched.firstName && editErrors.firstName && (
@@ -1352,6 +1459,7 @@ export default function ContactsPage() {
                     onChange={(e) => setEditFieldValue('lastName', e.target.value)}
                     onBlur={() => handleEditBlur('lastName')}
                     error={editTouched.lastName && !!editErrors.lastName}
+                    aria-invalid={!!editErrors.lastName}
                     aria-describedby={editErrors.lastName ? 'editContactLast-error' : undefined}
                   />
                   {editTouched.lastName && editErrors.lastName && (
@@ -1361,7 +1469,9 @@ export default function ContactsPage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="editContactPhone" required>Phone Number</Label>
+                <Label htmlFor="editContactPhone" required>
+                  Phone Number
+                </Label>
                 <SinglePhoneInput
                   id="editContactPhone"
                   value={editValues.phone}
@@ -1374,7 +1484,7 @@ export default function ContactsPage() {
                 {editTouched.phone && editErrors.phone && (
                   <InputError id="editContactPhone-error" message={editErrors.phone} />
                 )}
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-muted-foreground text-[11px]">
                   Select your country code and enter the national phone number.
                 </p>
               </div>
@@ -1389,6 +1499,7 @@ export default function ContactsPage() {
                   onChange={(e) => setEditFieldValue('email', e.target.value)}
                   onBlur={() => handleEditBlur('email')}
                   error={editTouched.email && !!editErrors.email}
+                  aria-invalid={!!editErrors.email}
                   aria-describedby={editErrors.email ? 'editContactEmail-error' : undefined}
                 />
                 {editTouched.email && editErrors.email && (
@@ -1409,25 +1520,25 @@ export default function ContactsPage() {
                   <SelectContent>
                     <SelectItem value="ACTIVE">
                       <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
                         <span>Active (Subscribed to broadcasts)</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="OPTED_OUT">
                       <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-amber-500" />
+                        <span className="h-2 w-2 rounded-full bg-amber-500" />
                         <span>Opted Out (Excluded from broadcasts)</span>
                       </div>
                     </SelectItem>
                   </SelectContent>
                 </Select>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-muted-foreground text-[11px]">
                   Opted-out contacts are protected and excluded from automated broadcast dispatches.
                 </p>
               </div>
 
               {editServerErrors.length > 0 && (
-                <div className="p-2.5 rounded-2xl bg-destructive/10 border border-destructive/20 text-xs text-destructive space-y-1">
+                <div className="bg-destructive/10 border-destructive/20 text-destructive space-y-1 rounded-2xl border p-2.5 text-xs">
                   {editServerErrors.map((err, i) => (
                     <p key={i}>• {err}</p>
                   ))}
@@ -1435,7 +1546,7 @@ export default function ContactsPage() {
               )}
             </DialogBody>
 
-            <DialogFooter className="px-6 py-4 border-t border-border bg-muted/20 flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5">
+            <DialogFooter className="border-border bg-muted/20 flex flex-col-reverse gap-2.5 border-t px-6 py-4 sm:flex-row sm:justify-end">
               <Button
                 type="button"
                 variant="outline"
@@ -1452,11 +1563,11 @@ export default function ContactsPage() {
               <Button
                 type="submit"
                 disabled={editSubmitting}
-                className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90 shadow-none"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 w-full font-bold shadow-none sm:w-auto"
               >
                 {editSubmitting ? (
                   <div className="flex items-center gap-1.5">
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    <RefreshCw className="h-3.5 w-3.5 animate-spin" />
                     <span>Saving...</span>
                   </div>
                 ) : (

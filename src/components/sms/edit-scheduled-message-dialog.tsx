@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { useRealTime } from '@/hooks/use-real-time';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -71,6 +72,7 @@ export function EditScheduledMessageDialog({
   item,
   onSave,
 }: EditScheduledMessageDialogProps) {
+  const simulatorTime = useRealTime();
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const [senderId, setSenderId] = useState('RANGESMS');
@@ -476,7 +478,7 @@ export function EditScheduledMessageDialog({
 
                 {/* Status Bar */}
                 <div className="flex justify-between items-center text-[10px] text-muted-foreground dark:text-slate-400 px-3 pt-3 pb-1">
-                  <span>9:41</span>
+                  <span>{simulatorTime}</span>
                   <div className="flex items-center gap-1">
                     <span>5G</span>
                     <span className="w-3.5 h-2 border border-muted-foreground dark:border-slate-400 rounded-xs inline-block relative">
@@ -494,7 +496,7 @@ export function EditScheduledMessageDialog({
                     <span>{senderId || 'RANGESMS'}</span>
                     <CheckCircle2 className="w-3 h-3 text-emerald-500 dark:text-emerald-400" />
                   </div>
-                  <div className="text-[9px] text-muted-foreground dark:text-slate-400">Text Message • Scheduled</div>
+                  <div className="text-[9px] text-muted-foreground dark:text-slate-400">Text Message • Scheduled {simulatorTime}</div>
                 </div>
 
                 {/* SMS Speech Bubble Area */}

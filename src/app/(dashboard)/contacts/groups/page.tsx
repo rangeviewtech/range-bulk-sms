@@ -66,6 +66,7 @@ import {
 import { cn } from '@/lib/utils';
 import { CountryFlagPhone, getPhoneCountry } from '@/components/sms/country-flag-phone';
 import { getMasterGroupMembers } from '@/lib/contacts/master-directory';
+import { formatDateTimeTz } from '@/lib/timezone';
 
 function isValidHexColor(color: string): boolean {
   return /^#[0-9A-Fa-f]{6}$/.test(color);
@@ -1299,11 +1300,7 @@ export default function ContactGroupsPage() {
                         </TableCell>
                         <TableCell className="text-xs text-muted-foreground font-mono">
                           {group.createdAt
-                            ? new Date(group.createdAt).toLocaleDateString('en-US', {
-                                month: 'short',
-                                day: 'numeric',
-                                year: 'numeric',
-                              })
+                            ? formatDateTimeTz(group.createdAt)
                             : 'Recent'}
                         </TableCell>
                         <TableCell className="text-right">
@@ -1428,11 +1425,7 @@ export default function ContactGroupsPage() {
                     <span className="font-semibold text-foreground flex items-center gap-1.5 mt-0.5 font-mono">
                       <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
                       {viewGroup.createdAt
-                        ? new Date(viewGroup.createdAt).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                          })
+                        ? formatDateTimeTz(viewGroup.createdAt)
                         : 'Sep 12, 2026'}
                     </span>
                   </div>

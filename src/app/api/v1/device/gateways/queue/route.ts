@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { withDeviceAuth } from '@/lib/gateways/device-auth';
 
@@ -70,11 +70,12 @@ export const GET = async (req: NextRequest) => {
           recipientId: recipient.id,
           phone: recipient.phone,
           message: attempt.message.message,
+          expiresAt: attempt.expiresAt,
           encoding: attempt.message.encoding,
         }));
       });
 
-      return NextResponse.json({ success: true, messages });
+      return NextResponse.json({ success: true, messages, maxThroughput: gateway.maxThroughput });
 
     } catch (error: unknown) {
       console.error('Gateway Queue Error:', error);
@@ -82,4 +83,6 @@ export const GET = async (req: NextRequest) => {
     }
   });
 };
+
+
 

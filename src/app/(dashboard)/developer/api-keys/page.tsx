@@ -35,6 +35,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { PageHeader } from '@/components/layout/page-header';
 import { ConfirmationDialog } from '@/components/feedback/confirmation-dialog';
 import { useUnsavedChanges } from '@/hooks/use-unsaved-changes';
+import { useTimezone } from '@/providers/timezone-provider';
+import { formatDateTz } from '@/lib/timezone';
 import {
   Plus,
   Copy,
@@ -108,6 +110,7 @@ const AVAILABLE_SCOPES = [
 ];
 
 export default function ApiKeysPage() {
+  const { timezone } = useTimezone();
   const [keys, setKeys] = useState<ApiKeyItem[]>([]);
   const [meta, setMeta] = useState<ApiResponseMeta>({
     apps: [],
@@ -484,7 +487,7 @@ export default function ApiKeysPage() {
     if (diffHours <= 0) return 'Resets soon';
     if (diffHours < 24) return `Resets in ${diffHours}h`;
     const diffDays = Math.ceil(diffHours / 24);
-    return `Resets in ${diffDays}d (${d.toLocaleDateString()})`;
+    return `Resets in ${diffDays}d (${formatDateTz(d, timezone)})`;
   };
 
   const uncappedCount = keys.filter((k) => k.quotaLimit === null).length;

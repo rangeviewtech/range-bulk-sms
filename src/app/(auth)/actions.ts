@@ -105,6 +105,13 @@ export async function login(formData: FormData) {
       (formData.get('returnTo') as string) ||
       null;
 
+    if (parsed.data.timezone && parsed.data.timezone !== user.timezone) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { timezone: parsed.data.timezone },
+      });
+    }
+
     if (mfaRequirement.required) {
       const { createPreauthChallenge } = await import('@/lib/auth/preauth');
       await createPreauthChallenge(

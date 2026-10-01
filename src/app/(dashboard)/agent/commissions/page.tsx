@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, RefreshCw, DollarSign, Clock, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { TableSkeletonRows } from '@/components/blocks/ui/skeleton-layouts';
+import { formatDateTimeTz } from '@/lib/timezone';
 
 interface CommissionRecord {
   id: string;
@@ -225,11 +226,7 @@ export default function CommissionsPage() {
                         UGX {Number(comm.amount || 0).toLocaleString()}
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                        {new Date(comm.createdAt).toLocaleDateString(undefined, {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })}
+                        {formatDateTimeTz(comm.createdAt)}
                       </TableCell>
                       <TableCell>{getStatusBadge(comm.status)}</TableCell>
                     </TableRow>

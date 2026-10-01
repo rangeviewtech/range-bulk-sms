@@ -29,6 +29,7 @@ import Link from 'next/link';
 import { use, useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { ConfirmationDialog } from '@/components/feedback/confirmation-dialog';
+import { formatDateTimeTz } from '@/lib/timezone';
 
 interface CampaignDetail {
   id: string;
@@ -416,7 +417,7 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
                 <div className="flex justify-between pb-3 border-b border-border">
                   <span className="text-muted-foreground">Created At</span>
                   <span className="font-medium text-xs">
-                    {campaign?.createdAt ? new Date(campaign.createdAt).toLocaleString() : '-'}
+                    {campaign?.createdAt ? formatDateTimeTz(campaign.createdAt) : '-'}
                   </span>
                 </div>
 
@@ -424,7 +425,7 @@ export default function CampaignAnalyticsPage({ params }: { params: Promise<{ id
                   <div className="flex justify-between pb-3 border-b border-border">
                     <span className="text-muted-foreground">Completed At</span>
                     <span className="font-medium text-xs">
-                      {new Date(campaign.completedAt).toLocaleString()}
+                      {formatDateTimeTz(campaign.completedAt)}
                     </span>
                   </div>
                 )}

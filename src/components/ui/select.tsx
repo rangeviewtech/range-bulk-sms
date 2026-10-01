@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
@@ -16,9 +16,10 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-10 w-full items-center justify-between whitespace-nowrap rounded-xl border border-input/60 bg-background px-3 py-2 text-sm shadow-sm outline-none transition-colors cursor-pointer",
+      "group flex h-10 w-full items-center justify-between whitespace-nowrap rounded-xl border border-input/60 bg-background px-3 py-2 text-sm shadow-sm outline-none transition-colors cursor-pointer",
       "placeholder:text-muted-foreground",
-      "hover:border-input",
+      "hover:border-brand-blue/50 hover:text-brand-blue dark:hover:border-brand-yellow/50 dark:hover:text-brand-yellow",
+      "dark:hover:border-brand-yellow/50 dark:hover:text-brand-yellow",
       "focus:outline-none focus:ring-0",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/20 focus-visible:border-brand-blue",
       "dark:focus-visible:ring-brand-yellow/20 dark:focus-visible:border-brand-yellow",
@@ -32,7 +33,7 @@ const SelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
+      <ChevronDown className="h-4 w-4 text-muted-foreground group-hover:text-brand-blue dark:group-hover:text-brand-yellow transition-colors shrink-0" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ))
@@ -185,7 +186,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-pointer select-none items-center rounded-xl py-2 pl-3 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 transition-colors",
+      "relative flex w-full cursor-pointer select-none items-center rounded-xl py-2 pl-3 pr-8 text-sm outline-none focus:bg-brand-blue/10 focus:text-brand-blue dark:focus:bg-brand-yellow/15 dark:focus:text-brand-yellow data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 transition-colors",
       className
     )}
     {...props}
@@ -224,3 +225,4 @@ export {
   SelectScrollUpButton,
   SelectScrollDownButton,
 }
+

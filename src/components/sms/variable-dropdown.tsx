@@ -67,7 +67,7 @@ export function VariableDropdown({ onSelect }: VariableDropdownProps) {
               type="button"
               variant="outline"
               size="sm"
-              className="h-9 px-3.5 text-xs font-semibold gap-1.5 rounded-full border-border/60 hover:bg-muted/40 shadow-none transition-all duration-150"
+              className="h-9 px-3.5 text-xs gap-1.5 font-semibold rounded-full shadow-none border border-brand-blue/40 bg-brand-blue/10 text-brand-blue dark:border-brand-yellow/40 dark:bg-brand-yellow/15 dark:text-brand-yellow hover:bg-brand-blue/20 hover:border-brand-blue/70 dark:hover:bg-brand-yellow/25 dark:hover:border-brand-yellow/80 transition-all duration-150 active:scale-[0.98]"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>Insert Variable</span>
@@ -127,7 +127,7 @@ export function VariableDropdown({ onSelect }: VariableDropdownProps) {
                             onSelect(v.key);
                             setOpen(false);
                           }}
-                          className="flex items-center justify-between gap-2.5 rounded-2xl px-2.5 py-1.5 cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground group"
+                          className="flex items-center justify-between gap-2.5 rounded-2xl px-2.5 py-1.5 cursor-pointer transition-colors group"
                           title={`${v.label} ({{${v.key}}})${v.sampleValue ? ` · e.g. ${v.sampleValue}` : ''}`}
                         >
                           <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -167,7 +167,7 @@ export function VariableDropdown({ onSelect }: VariableDropdownProps) {
                             onSelect(v.key);
                             setOpen(false);
                           }}
-                          className="flex items-center justify-between gap-2.5 rounded-2xl px-2.5 py-1.5 cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground group"
+                          className="flex items-center justify-between gap-2.5 rounded-2xl px-2.5 py-1.5 cursor-pointer transition-colors group"
                           title={`${v.label} ({{${v.key}}})${v.sampleValue ? ` · e.g. ${v.sampleValue}` : ''}`}
                         >
                           <div className="flex items-center gap-2 min-w-0 flex-1">

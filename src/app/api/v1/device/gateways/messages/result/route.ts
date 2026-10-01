@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { withDeviceAuth } from '@/lib/gateways/device-auth';
 import { MessageStatus } from '@/generated/prisma/client';
@@ -6,14 +6,14 @@ import { MessageStatus } from '@/generated/prisma/client';
 export const POST = async (req: NextRequest) => {
   return withDeviceAuth(req, async (req, { gatewayId }) => {
     try {
-      const { attemptId, status, providerMsgId, errorCode, errorMessage, hasCarrierDlr } = await req.json();
+      const { attemptId, status, providerMsgId, errorCode, errorMessage, hasCarrierDlr, simSlot } = await req.json();
 
       if (!attemptId || !status) {
         return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
       }
 
       // Valid statuses from hardware gateway: SUBMITTED_TO_MODEM, SENT, DELIVERED, FAILED
-      const validStatuses = ['SUBMITTED_TO_MODEM', 'SENT', 'DELIVERED', 'FAILED'];
+      const validStatuses = ['SUBMITTED_TO_MODEM', 'SENT', 'DELIVERED', 'FAILED', 'SEND_UNCERTAIN'];
       if (!validStatuses.includes(status)) {
         return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
       }
@@ -38,6 +38,7 @@ export const POST = async (req: NextRequest) => {
       const updateData: import("@/generated/prisma/client").Prisma.MessageAttemptUpdateInput = {
         status,
         providerMsgId,
+        simSlot: simSlot !== undefined ? simSlot : undefined,
         errorCode,
         errorMessage
       };
@@ -52,7 +53,7 @@ export const POST = async (req: NextRequest) => {
       // A local hardware modem send is proof of air transmission ('SENT'),
       // NOT handset delivery ('DELIVERED') unless explicit carrier DLR PDU is attached.
       let effectiveMessageStatus: MessageStatus;
-      if (status === 'FAILED') {
+      if (status === 'FAILED' || status === 'SEND_UNCERTAIN') {
         effectiveMessageStatus = 'FAILED';
       } else if (status === 'DELIVERED') {
         effectiveMessageStatus = hasCarrierDlr ? 'DELIVERED' : 'SENT';
@@ -109,3 +110,8 @@ export const POST = async (req: NextRequest) => {
     }
   });
 };
+
+
+
+
+

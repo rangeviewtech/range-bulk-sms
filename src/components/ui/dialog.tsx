@@ -35,13 +35,13 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-[100] flex flex-col w-[calc(100%-2rem)] max-w-lg max-h-[90dvh] translate-x-[-50%] translate-y-[-50%] border border-border bg-card text-card-foreground shadow-[0_24px_64px_rgba(0,0,0,0.4)] overflow-hidden rounded-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
+        "fixed left-[50%] top-[50%] z-[100] flex flex-col w-[calc(100%-2rem)] max-w-lg max-h-[90dvh] translate-x-[-50%] translate-y-[-50%] border border-border bg-card text-card-foreground shadow-[0_24px_64px_rgba(0,0,0,0.4)] overflow-hidden rounded-2xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
         className
       )}
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-3.5 top-3.5 sm:right-4 sm:top-4 p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed cursor-pointer z-10 border border-transparent hover:border-border">
+      <DialogPrimitive.Close className="absolute right-3.5 top-3.5 sm:right-4 sm:top-4 p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/20 focus-visible:border-brand-blue disabled:cursor-not-allowed cursor-pointer z-10 border border-transparent hover:border-border">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>

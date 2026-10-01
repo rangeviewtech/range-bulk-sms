@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { withDeviceAuth } from '@/lib/gateways/device-auth';
 
 export const POST = async (req: NextRequest) => {
   return withDeviceAuth(req, async (req, { gatewayId }) => {
     try {
-      const { batteryLevel, isCharging, signalStrength, networkOperator } = await req.json();
+      const { batteryLevel, isCharging, signalStrength, networkOperator, fcmToken } = await req.json();
 
       // Ensure device record exists
       const device = await prisma.gatewayDevice.findFirst({
@@ -20,6 +20,7 @@ export const POST = async (req: NextRequest) => {
             isCharging,
             signalStrength,
             networkOperator,
+            fcmToken: fcmToken !== undefined ? fcmToken : undefined,
             lastHeartbeatAt: new Date(),
             ipAddress: req.headers.get('x-forwarded-for') || req.headers.get('remote-addr') || undefined
           }
@@ -32,6 +33,7 @@ export const POST = async (req: NextRequest) => {
             isCharging,
             signalStrength,
             networkOperator,
+            fcmToken: fcmToken !== undefined ? fcmToken : undefined,
             lastHeartbeatAt: new Date(),
           }
         });
@@ -50,4 +52,7 @@ export const POST = async (req: NextRequest) => {
     }
   });
 };
+
+
+
 

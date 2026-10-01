@@ -5,6 +5,7 @@ import { Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
+import { formatDateTimeTz } from '@/lib/timezone';
 
 type NotificationItem = {
   id: string;
@@ -93,7 +94,7 @@ export function NotificationBell() {
               >
                 <div className="flex items-center justify-between w-full mb-1">
                   <span className="font-medium text-sm">{n.title}</span>
-                  <span className="text-[10px] text-muted-foreground">{new Date(n.createdAt).toLocaleDateString()}</span>
+                  <span className="text-[10px] text-muted-foreground">{formatDateTimeTz(n.createdAt)}</span>
                 </div>
                 <p className="text-xs text-muted-foreground line-clamp-2">{n.body}</p>
               </DropdownMenuItem>

@@ -39,6 +39,7 @@ import { toast } from 'sonner';
 import { useFormValidation } from '@/hooks/use-form-validation';
 import { createTicketSchema } from '@/lib/validations/sender-id';
 import { InputError } from '@/components/ui/input-error';
+import { formatDateTimeTz } from '@/lib/timezone';
 
 interface TicketMessage {
   id: string;
@@ -485,12 +486,7 @@ export default function SupportPage() {
                       <TableCell>{getPriorityBadge(ticket.priority)}</TableCell>
                       <TableCell>{getStatusBadge(ticket.status)}</TableCell>
                       <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                        {new Date(ticket.updatedAt).toLocaleDateString(undefined, {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
+                        {formatDateTimeTz(ticket.updatedAt)}
                       </TableCell>
                       <TableCell className="text-right">
                         <Button
@@ -564,10 +560,7 @@ export default function SupportPage() {
                           )}
                           <span>•</span>
                           <span>
-                            {new Date(msg.createdAt).toLocaleTimeString([], {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
+                            {formatDateTimeTz(msg.createdAt)}
                           </span>
                         </div>
                         <p className="whitespace-pre-wrap leading-relaxed text-xs sm:text-sm">

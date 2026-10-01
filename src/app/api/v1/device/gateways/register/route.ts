@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { prisma, Prisma } from '@/lib/prisma';
 import { generateGatewayToken } from '@/lib/gateways/device-auth';
 
 export async function POST(req: NextRequest) {
   try {
-    const { pairingCode, hardwareModel, appVersion, osVersion } = await req.json();
+    const { pairingCode, hardwareModel, appVersion, osVersion, fcmToken } = await req.json();
 
     if (!pairingCode) {
       return NextResponse.json({ error: 'Pairing code is required' }, { status: 400 });
@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
           hardwareModel: hardwareModel || 'Unknown',
           appVersion: appVersion || '1.0.0',
           osVersion: osVersion || 'Unknown',
+            fcmToken: fcmToken || null,
           lastHeartbeatAt: new Date()
         }
       });
@@ -89,4 +90,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+
 

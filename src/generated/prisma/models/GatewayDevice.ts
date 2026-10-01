@@ -48,6 +48,7 @@ export type GatewayDeviceMinAggregateOutputType = {
   simSlotCount: number | null
   appVersion: string | null
   osVersion: string | null
+  fcmToken: string | null
   hardwareModel: string | null
   lastHeartbeatAt: Date | null
   ipAddress: string | null
@@ -65,6 +66,7 @@ export type GatewayDeviceMaxAggregateOutputType = {
   simSlotCount: number | null
   appVersion: string | null
   osVersion: string | null
+  fcmToken: string | null
   hardwareModel: string | null
   lastHeartbeatAt: Date | null
   ipAddress: string | null
@@ -82,6 +84,7 @@ export type GatewayDeviceCountAggregateOutputType = {
   simSlotCount: number
   appVersion: number
   osVersion: number
+  fcmToken: number
   hardwareModel: number
   lastHeartbeatAt: number
   ipAddress: number
@@ -113,6 +116,7 @@ export type GatewayDeviceMinAggregateInputType = {
   simSlotCount?: true
   appVersion?: true
   osVersion?: true
+  fcmToken?: true
   hardwareModel?: true
   lastHeartbeatAt?: true
   ipAddress?: true
@@ -130,6 +134,7 @@ export type GatewayDeviceMaxAggregateInputType = {
   simSlotCount?: true
   appVersion?: true
   osVersion?: true
+  fcmToken?: true
   hardwareModel?: true
   lastHeartbeatAt?: true
   ipAddress?: true
@@ -147,6 +152,7 @@ export type GatewayDeviceCountAggregateInputType = {
   simSlotCount?: true
   appVersion?: true
   osVersion?: true
+  fcmToken?: true
   hardwareModel?: true
   lastHeartbeatAt?: true
   ipAddress?: true
@@ -251,6 +257,7 @@ export type GatewayDeviceGroupByOutputType = {
   simSlotCount: number
   appVersion: string | null
   osVersion: string | null
+  fcmToken: string | null
   hardwareModel: string | null
   lastHeartbeatAt: Date | null
   ipAddress: string | null
@@ -291,6 +298,7 @@ export type GatewayDeviceWhereInput = {
   simSlotCount?: Prisma.IntFilter<"GatewayDevice"> | number
   appVersion?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
   osVersion?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
+  fcmToken?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
   hardwareModel?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
   lastHeartbeatAt?: Prisma.DateTimeNullableFilter<"GatewayDevice"> | Date | string | null
   ipAddress?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
@@ -309,6 +317,7 @@ export type GatewayDeviceOrderByWithRelationInput = {
   simSlotCount?: Prisma.SortOrder
   appVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   osVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  fcmToken?: Prisma.SortOrderInput | Prisma.SortOrder
   hardwareModel?: Prisma.SortOrderInput | Prisma.SortOrder
   lastHeartbeatAt?: Prisma.SortOrderInput | Prisma.SortOrder
   ipAddress?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -330,6 +339,7 @@ export type GatewayDeviceWhereUniqueInput = Prisma.AtLeast<{
   simSlotCount?: Prisma.IntFilter<"GatewayDevice"> | number
   appVersion?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
   osVersion?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
+  fcmToken?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
   hardwareModel?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
   lastHeartbeatAt?: Prisma.DateTimeNullableFilter<"GatewayDevice"> | Date | string | null
   ipAddress?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
@@ -348,6 +358,7 @@ export type GatewayDeviceOrderByWithAggregationInput = {
   simSlotCount?: Prisma.SortOrder
   appVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   osVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  fcmToken?: Prisma.SortOrderInput | Prisma.SortOrder
   hardwareModel?: Prisma.SortOrderInput | Prisma.SortOrder
   lastHeartbeatAt?: Prisma.SortOrderInput | Prisma.SortOrder
   ipAddress?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -373,6 +384,7 @@ export type GatewayDeviceScalarWhereWithAggregatesInput = {
   simSlotCount?: Prisma.IntWithAggregatesFilter<"GatewayDevice"> | number
   appVersion?: Prisma.StringNullableWithAggregatesFilter<"GatewayDevice"> | string | null
   osVersion?: Prisma.StringNullableWithAggregatesFilter<"GatewayDevice"> | string | null
+  fcmToken?: Prisma.StringNullableWithAggregatesFilter<"GatewayDevice"> | string | null
   hardwareModel?: Prisma.StringNullableWithAggregatesFilter<"GatewayDevice"> | string | null
   lastHeartbeatAt?: Prisma.DateTimeNullableWithAggregatesFilter<"GatewayDevice"> | Date | string | null
   ipAddress?: Prisma.StringNullableWithAggregatesFilter<"GatewayDevice"> | string | null
@@ -389,6 +401,7 @@ export type GatewayDeviceCreateInput = {
   simSlotCount?: number
   appVersion?: string | null
   osVersion?: string | null
+  fcmToken?: string | null
   hardwareModel?: string | null
   lastHeartbeatAt?: Date | string | null
   ipAddress?: string | null
@@ -407,6 +420,7 @@ export type GatewayDeviceUncheckedCreateInput = {
   simSlotCount?: number
   appVersion?: string | null
   osVersion?: string | null
+  fcmToken?: string | null
   hardwareModel?: string | null
   lastHeartbeatAt?: Date | string | null
   ipAddress?: string | null
@@ -423,6 +437,7 @@ export type GatewayDeviceUpdateInput = {
   simSlotCount?: Prisma.IntFieldUpdateOperationsInput | number
   appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fcmToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hardwareModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -441,6 +456,7 @@ export type GatewayDeviceUncheckedUpdateInput = {
   simSlotCount?: Prisma.IntFieldUpdateOperationsInput | number
   appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fcmToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hardwareModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -458,6 +474,7 @@ export type GatewayDeviceCreateManyInput = {
   simSlotCount?: number
   appVersion?: string | null
   osVersion?: string | null
+  fcmToken?: string | null
   hardwareModel?: string | null
   lastHeartbeatAt?: Date | string | null
   ipAddress?: string | null
@@ -474,6 +491,7 @@ export type GatewayDeviceUpdateManyMutationInput = {
   simSlotCount?: Prisma.IntFieldUpdateOperationsInput | number
   appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fcmToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hardwareModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -491,6 +509,7 @@ export type GatewayDeviceUncheckedUpdateManyInput = {
   simSlotCount?: Prisma.IntFieldUpdateOperationsInput | number
   appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fcmToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hardwareModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -518,6 +537,7 @@ export type GatewayDeviceCountOrderByAggregateInput = {
   simSlotCount?: Prisma.SortOrder
   appVersion?: Prisma.SortOrder
   osVersion?: Prisma.SortOrder
+  fcmToken?: Prisma.SortOrder
   hardwareModel?: Prisma.SortOrder
   lastHeartbeatAt?: Prisma.SortOrder
   ipAddress?: Prisma.SortOrder
@@ -541,6 +561,7 @@ export type GatewayDeviceMaxOrderByAggregateInput = {
   simSlotCount?: Prisma.SortOrder
   appVersion?: Prisma.SortOrder
   osVersion?: Prisma.SortOrder
+  fcmToken?: Prisma.SortOrder
   hardwareModel?: Prisma.SortOrder
   lastHeartbeatAt?: Prisma.SortOrder
   ipAddress?: Prisma.SortOrder
@@ -558,6 +579,7 @@ export type GatewayDeviceMinOrderByAggregateInput = {
   simSlotCount?: Prisma.SortOrder
   appVersion?: Prisma.SortOrder
   osVersion?: Prisma.SortOrder
+  fcmToken?: Prisma.SortOrder
   hardwareModel?: Prisma.SortOrder
   lastHeartbeatAt?: Prisma.SortOrder
   ipAddress?: Prisma.SortOrder
@@ -622,6 +644,7 @@ export type GatewayDeviceCreateWithoutGatewayInput = {
   simSlotCount?: number
   appVersion?: string | null
   osVersion?: string | null
+  fcmToken?: string | null
   hardwareModel?: string | null
   lastHeartbeatAt?: Date | string | null
   ipAddress?: string | null
@@ -638,6 +661,7 @@ export type GatewayDeviceUncheckedCreateWithoutGatewayInput = {
   simSlotCount?: number
   appVersion?: string | null
   osVersion?: string | null
+  fcmToken?: string | null
   hardwareModel?: string | null
   lastHeartbeatAt?: Date | string | null
   ipAddress?: string | null
@@ -684,6 +708,7 @@ export type GatewayDeviceScalarWhereInput = {
   simSlotCount?: Prisma.IntFilter<"GatewayDevice"> | number
   appVersion?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
   osVersion?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
+  fcmToken?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
   hardwareModel?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
   lastHeartbeatAt?: Prisma.DateTimeNullableFilter<"GatewayDevice"> | Date | string | null
   ipAddress?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
@@ -700,6 +725,7 @@ export type GatewayDeviceCreateManyGatewayInput = {
   simSlotCount?: number
   appVersion?: string | null
   osVersion?: string | null
+  fcmToken?: string | null
   hardwareModel?: string | null
   lastHeartbeatAt?: Date | string | null
   ipAddress?: string | null
@@ -716,6 +742,7 @@ export type GatewayDeviceUpdateWithoutGatewayInput = {
   simSlotCount?: Prisma.IntFieldUpdateOperationsInput | number
   appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fcmToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hardwareModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -732,6 +759,7 @@ export type GatewayDeviceUncheckedUpdateWithoutGatewayInput = {
   simSlotCount?: Prisma.IntFieldUpdateOperationsInput | number
   appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fcmToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hardwareModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -748,6 +776,7 @@ export type GatewayDeviceUncheckedUpdateManyWithoutGatewayInput = {
   simSlotCount?: Prisma.IntFieldUpdateOperationsInput | number
   appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   osVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fcmToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hardwareModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -767,6 +796,7 @@ export type GatewayDeviceSelect<ExtArgs extends runtime.Types.Extensions.Interna
   simSlotCount?: boolean
   appVersion?: boolean
   osVersion?: boolean
+  fcmToken?: boolean
   hardwareModel?: boolean
   lastHeartbeatAt?: boolean
   ipAddress?: boolean
@@ -785,6 +815,7 @@ export type GatewayDeviceSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   simSlotCount?: boolean
   appVersion?: boolean
   osVersion?: boolean
+  fcmToken?: boolean
   hardwareModel?: boolean
   lastHeartbeatAt?: boolean
   ipAddress?: boolean
@@ -803,6 +834,7 @@ export type GatewayDeviceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   simSlotCount?: boolean
   appVersion?: boolean
   osVersion?: boolean
+  fcmToken?: boolean
   hardwareModel?: boolean
   lastHeartbeatAt?: boolean
   ipAddress?: boolean
@@ -821,6 +853,7 @@ export type GatewayDeviceSelectScalar = {
   simSlotCount?: boolean
   appVersion?: boolean
   osVersion?: boolean
+  fcmToken?: boolean
   hardwareModel?: boolean
   lastHeartbeatAt?: boolean
   ipAddress?: boolean
@@ -828,7 +861,7 @@ export type GatewayDeviceSelectScalar = {
   updatedAt?: boolean
 }
 
-export type GatewayDeviceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "gatewayId" | "batteryLevel" | "isCharging" | "signalStrength" | "networkOperator" | "simSlotCount" | "appVersion" | "osVersion" | "hardwareModel" | "lastHeartbeatAt" | "ipAddress" | "createdAt" | "updatedAt", ExtArgs["result"]["gatewayDevice"]>
+export type GatewayDeviceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "gatewayId" | "batteryLevel" | "isCharging" | "signalStrength" | "networkOperator" | "simSlotCount" | "appVersion" | "osVersion" | "fcmToken" | "hardwareModel" | "lastHeartbeatAt" | "ipAddress" | "createdAt" | "updatedAt", ExtArgs["result"]["gatewayDevice"]>
 export type GatewayDeviceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   gateway?: boolean | Prisma.GatewayDefaultArgs<ExtArgs>
 }
@@ -854,6 +887,7 @@ export type $GatewayDevicePayload<ExtArgs extends runtime.Types.Extensions.Inter
     simSlotCount: number
     appVersion: string | null
     osVersion: string | null
+    fcmToken: string | null
     hardwareModel: string | null
     lastHeartbeatAt: Date | null
     ipAddress: string | null
@@ -1292,6 +1326,7 @@ export interface GatewayDeviceFieldRefs {
   readonly simSlotCount: Prisma.FieldRef<"GatewayDevice", 'Int'>
   readonly appVersion: Prisma.FieldRef<"GatewayDevice", 'String'>
   readonly osVersion: Prisma.FieldRef<"GatewayDevice", 'String'>
+  readonly fcmToken: Prisma.FieldRef<"GatewayDevice", 'String'>
   readonly hardwareModel: Prisma.FieldRef<"GatewayDevice", 'String'>
   readonly lastHeartbeatAt: Prisma.FieldRef<"GatewayDevice", 'DateTime'>
   readonly ipAddress: Prisma.FieldRef<"GatewayDevice", 'String'>

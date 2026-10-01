@@ -10,7 +10,7 @@ export default function CookiesPage() {
   return (
     <LegalLayout title="Cookie Policy" subtitle="Information about how we use cookies" lastUpdated="January 1, 2024">
       <h1 id="cookies">Cookie Policy</h1>
-      <p>Last updated: {new Date().toLocaleDateString()}</p>
+      <p>Last updated: September 30, 2026</p>
 
       <h2 id="what-are-cookies">1. What are Cookies?</h2>
       <p>Cookies are small text files stored on your device when you visit our Bulk SMS platform.</p>

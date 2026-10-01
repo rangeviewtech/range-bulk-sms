@@ -722,7 +722,7 @@ export default function CampaignsPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-52">
-                          <DropdownMenuItem asChild className="cursor-pointer">
+                          <DropdownMenuItem asChild className="cursor-pointer group">
                             <Link
                               href={`/sms/campaigns/${camp.id}`}
                               className="flex items-center gap-2"
@@ -952,7 +952,7 @@ export default function CampaignsPage() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-52">
-                                <DropdownMenuItem asChild className="cursor-pointer">
+                                <DropdownMenuItem asChild className="cursor-pointer group">
                                   <Link
                                     href={`/sms/campaigns/${camp.id}`}
                                     className="flex items-center gap-2"

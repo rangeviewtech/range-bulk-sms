@@ -19,7 +19,7 @@ export function ThemeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Toggle theme" className="h-9 w-9 rounded-full transition-transform active:scale-95">
+        <Button variant="ghost"  size="icon" aria-label="Toggle theme" className="h-9 w-9 rounded-full transition-all active:scale-95 text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/15">
           {mounted && resolvedTheme === "dark" ? (
             <Moon className="h-[1.2rem] w-[1.2rem] transition-all" />
           ) : (
@@ -31,31 +31,31 @@ export function ThemeToggle() {
       <DropdownMenuContent align="end" className="w-36 p-1.5 rounded-xl border bg-popover text-popover-foreground shadow-xl">
         <DropdownMenuItem
           onClick={() => setTheme("light")}
-          className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground"
+          className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs cursor-pointer transition-colors group"
         >
           <div className="flex items-center gap-2">
-            <Sun className="h-4 w-4" />
-            <span className={`font-medium ${theme === 'light' ? 'text-brand-blue dark:text-brand-yellow' : 'text-foreground'}`}>Light</span>
+            <Sun className="h-4 w-4 group-focus:text-brand-blue dark:group-focus:text-brand-yellow" />
+            <span className={`font-medium ${theme === 'light' ? 'text-brand-blue dark:text-brand-yellow' : 'text-foreground group-focus:text-brand-blue dark:group-focus:text-brand-yellow'}`}>Light</span>
           </div>
           {theme === "light" && <Check className="h-4 w-4 text-brand-blue dark:text-brand-yellow" />}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setTheme("dark")}
-          className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground"
+          className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs cursor-pointer transition-colors group"
         >
           <div className="flex items-center gap-2">
-            <Moon className="h-4 w-4" />
-            <span className={`font-medium ${theme === 'dark' ? 'text-brand-blue dark:text-brand-yellow' : 'text-foreground'}`}>Dark</span>
+            <Moon className="h-4 w-4 group-focus:text-brand-blue dark:group-focus:text-brand-yellow" />
+            <span className={`font-medium ${theme === 'dark' ? 'text-brand-blue dark:text-brand-yellow' : 'text-foreground group-focus:text-brand-blue dark:group-focus:text-brand-yellow'}`}>Dark</span>
           </div>
           {theme === "dark" && <Check className="h-4 w-4 text-brand-blue dark:text-brand-yellow" />}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setTheme("system")}
-          className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground"
+          className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs cursor-pointer transition-colors group"
         >
           <div className="flex items-center gap-2">
-            <Monitor className="h-4 w-4" />
-            <span className={`font-medium ${theme === 'system' ? 'text-brand-blue dark:text-brand-yellow' : 'text-foreground'}`}>System</span>
+            <Monitor className="h-4 w-4 group-focus:text-brand-blue dark:group-focus:text-brand-yellow" />
+            <span className={`font-medium ${theme === 'system' ? 'text-brand-blue dark:text-brand-yellow' : 'text-foreground group-focus:text-brand-blue dark:group-focus:text-brand-yellow'}`}>System</span>
           </div>
           {theme === "system" && <Check className="h-4 w-4 text-brand-blue dark:text-brand-yellow" />}
         </DropdownMenuItem>

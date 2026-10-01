@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { ArrowLeft, RefreshCw, Search, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { TableSkeletonRows } from '@/components/blocks/ui/skeleton-layouts';
+import { formatDateTimeTz } from '@/lib/timezone';
 
 interface AgentClient {
   id: string;
@@ -147,11 +148,7 @@ export default function AgentClientsPage() {
                         {c.email}
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                        {new Date(c.joinedAt).toLocaleDateString(undefined, {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })}
+                        {formatDateTimeTz(c.joinedAt)}
                       </TableCell>
                       <TableCell className="font-medium text-sm">
                         {c.totalSms.toLocaleString()}

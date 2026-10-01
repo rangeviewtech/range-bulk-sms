@@ -188,6 +188,7 @@ export type ApiKeyStatus = (typeof ApiKeyStatus)[keyof typeof ApiKeyStatus]
 
 
 export const WebhookEvent = {
+  SMS_RECEIVED: 'SMS_RECEIVED',
   SMS_SENT: 'SMS_SENT',
   SMS_DELIVERED: 'SMS_DELIVERED',
   SMS_FAILED: 'SMS_FAILED',
@@ -248,7 +249,8 @@ export const MessageAttemptStatus = {
   SUBMITTED_TO_MODEM: 'SUBMITTED_TO_MODEM',
   SENT: 'SENT',
   DELIVERED: 'DELIVERED',
-  FAILED: 'FAILED'
+  FAILED: 'FAILED',
+  SEND_UNCERTAIN: 'SEND_UNCERTAIN'
 } as const
 
 export type MessageAttemptStatus = (typeof MessageAttemptStatus)[keyof typeof MessageAttemptStatus]

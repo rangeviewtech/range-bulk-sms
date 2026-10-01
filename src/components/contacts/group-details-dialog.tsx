@@ -47,6 +47,7 @@ import {
 import { cn } from '@/lib/utils';
 import { CountryFlagPhone, getPhoneCountry } from '@/components/sms/country-flag-phone';
 import { getMasterGroupMembers, type MasterContact } from '@/lib/contacts/master-directory';
+import { formatDateTimeTz } from '@/lib/timezone';
 
 export interface GroupDetailsDialogProps {
   open: boolean;
@@ -483,11 +484,7 @@ export function GroupDetailsDialog({
               <span className="font-semibold text-foreground flex items-center gap-1.5 mt-0.5 font-mono">
                 <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
                 {group.createdAt
-                  ? new Date(group.createdAt).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })
+                  ? formatDateTimeTz(group.createdAt)
                   : 'Sep 12, 2026'}
               </span>
             </div>

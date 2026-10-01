@@ -97,7 +97,7 @@ const SinglePhoneCountryItem = React.memo(function SinglePhoneCountryItem({
       key={`${region.alpha2}-${region.id}`}
       onClick={() => onSelect(region)}
       className={cn(
-        'flex items-center justify-between rounded-2xl px-2.5 py-2 text-xs cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground contain-content',
+        'flex items-center justify-between rounded-2xl px-2.5 py-2 text-xs cursor-pointer transition-colors contain-content',
         isSelected && 'bg-primary/10 font-medium'
       )}
     >
@@ -402,7 +402,7 @@ export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneIn
               {/* Search Header - Matching language-toggle.tsx */}
               <div className="relative px-1 pt-1 pb-2">
                 <Search className="absolute left-3 top-3.5 h-3.5 w-3.5 text-muted-foreground" />
-                <input
+                <Input
                   type="text"
                   placeholder="Search country, alias, or +CC..."
                   value={searchQuery}
@@ -439,6 +439,7 @@ export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneIn
 
           {/* National Phone Number Input */}
           <Input
+            aria-invalid={error || undefined}
             ref={ref}
             id={id}
             name={name}
@@ -455,7 +456,7 @@ export const SinglePhoneInput = React.forwardRef<HTMLInputElement, SinglePhoneIn
             className={cn(
               'pl-22 pr-8 h-10 font-mono text-sm transition-all',
               isValid && 'border-emerald-500/60 hover:border-emerald-500 focus-visible:border-emerald-500',
-              error && 'border-destructive hover:border-destructive focus-visible:border-destructive',
+              
               className
             )}
           />

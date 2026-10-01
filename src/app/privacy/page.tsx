@@ -10,7 +10,7 @@ export default function PrivacyPage() {
   return (
     <LegalLayout title="Privacy Policy" subtitle="How we handle your data" lastUpdated="January 1, 2024">
       <h1 id="privacy">Privacy Policy</h1>
-      <p>Last updated: {new Date().toLocaleDateString()}</p>
+      <p>Last updated: September 30, 2026</p>
 
       <h2 id="collection">1. Data Collection</h2>
       <p>We collect information necessary to provide our Bulk SMS services, including your account details, phone number data, message content, contact lists, and API usage data.</p>

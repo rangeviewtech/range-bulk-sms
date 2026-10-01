@@ -199,7 +199,7 @@ describe('API Keys - Multi-App & Quota Management', () => {
       const rawKey = `rsms_${prefix}_${secret}`;
       const hash = crypto.createHash('sha256').update(secret).digest('hex');
 
-      const resetDate = new Date('2026-10-01T00:00:00.000Z');
+      const resetDate = new Date('2030-10-01T00:00:00.000Z');
       mockApiKey.findFirst.mockResolvedValueOnce({
         id: 'key-pos-1',
         name: 'POS Terminal Key',

@@ -4,6 +4,7 @@ export const accountProfileSchema = z.object({
   fullName: z.string().trim().min(2, 'Full name must be at least 2 characters').max(70, 'Full name cannot exceed 70 characters'),
   emailAddress: z.string().trim().email('Please enter a valid email address'),
   companyName: z.string().trim().max(100, 'Company name cannot exceed 100 characters').optional(),
+  timezone: z.string().min(1, 'Timezone is required').default('Africa/Kampala'),
 });
 
 export const smsPreferencesSchema = z.object({

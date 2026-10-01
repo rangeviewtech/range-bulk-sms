@@ -10,7 +10,7 @@ export default function TermsPage() {
   return (
     <LegalLayout title="Terms of Service" subtitle="Terms and conditions for using our platform" lastUpdated="January 1, 2024">
       <h1 id="terms">Terms & Conditions</h1>
-      <p>Last updated: {new Date().toLocaleDateString()}</p>
+      <p>Last updated: September 30, 2026</p>
       
       <h2 id="acceptance">1. Acceptance of Terms</h2>
       <p>By accessing and using the Range SMS platform, you agree to comply with these terms. If you do not agree, do not use our services.</p>

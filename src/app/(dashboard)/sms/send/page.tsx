@@ -1,10 +1,11 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect, useRef, useMemo, useCallback, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { extractVariablesFromText, renderPreviewWithSamples } from '@/lib/sms/custom-variables';
 import { useSmsDraft } from '@/hooks/use-sms-draft';
+import { useRealTime } from '@/hooks/use-real-time';
 import { DraftsDrawer } from '@/components/sms/drafts-drawer';
 import { formatRelativeDate } from '@/utils/date';
 import {
@@ -96,9 +97,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogBody } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
+import { useTimezone } from '@/providers/timezone-provider';
+import { formatDateTimeTz } from '@/lib/timezone';
 import { InputError } from '@/components/ui/input-error';
 import { TemplateHighlighter } from '@/components/sms/template-highlighter';
 import type { SmsDraft, SmsDraftFormData } from '@/types/sms-draft';
+
 
 const TEMPLATES = [
   {
@@ -173,6 +177,8 @@ function SendSmsSkeleton() {
 }
 
 function SendSmsContent() {
+  const { timezone } = useTimezone();
+  const simulatorTime = useRealTime();
   const router = useRouter();
   const searchParams = useSearchParams();
   const draftQueryId = searchParams.get('draft');
@@ -271,7 +277,7 @@ function SendSmsContent() {
     const pad = (n: number) => String(n).padStart(2, '0');
     const localIso = `${next.getFullYear()}-${pad(next.getMonth() + 1)}-${pad(next.getDate())}T${pad(next.getHours())}:${pad(next.getMinutes())}`;
     setScheduleDate(localIso);
-    toast.info(`Updated schedule time to ${next.toLocaleString()}`);
+    toast.info(`Updated schedule time to ${formatDateTimeTz(next, timezone)}`);
   };
 
   // Hydrate scheduled project if editScheduledId is present in URL
@@ -1046,7 +1052,7 @@ function SendSmsContent() {
       toast.success(
         isRecurring
           ? `Recurring message schedule created (${describeRecurrence(recurrenceRule, timeStr)})!`
-          : `Message scheduled for delivery on ${new Date(scheduleDate).toLocaleString()}!`
+          : `Message scheduled for delivery on ${formatDateTimeTz(scheduleDate)}!`
       );
       notifyWalletUpdated();
       setScheduleOpen(false);
@@ -1142,7 +1148,7 @@ function SendSmsContent() {
       }
 
       if (targetStatus === 'SCHEDULED') {
-        toast.success(`Campaign rescheduled for ${new Date(scheduleDate).toLocaleString()}!`, {
+        toast.success(`Campaign rescheduled for ${formatDateTimeTz(scheduleDate)}!`, {
           description: isRecurring ? `Recurring: ${describeRecurrence(recurrenceRule, timeStr)}` : 'Queued for automated dispatch.',
         });
       } else {
@@ -1219,7 +1225,7 @@ function SendSmsContent() {
             size="md"
             variant="outline"
             onClick={handleResetForm}
-            className="h-10 px-4 text-sm font-semibold rounded-full shadow-none border-border/80 hover:bg-muted/40 transition-all duration-150 gap-2 shrink-0"
+            className="h-10 px-4 text-sm gap-2 shrink-0 font-semibold rounded-full shadow-none border border-brand-blue/40 bg-brand-blue/10 text-brand-blue dark:border-brand-yellow/40 dark:bg-brand-yellow/15 dark:text-brand-yellow hover:bg-brand-blue/20 hover:border-brand-blue/70 dark:hover:bg-brand-yellow/25 dark:hover:border-brand-yellow/80 transition-all duration-150 active:scale-[0.98]"
             title="Start new message"
             aria-label="Start new message"
           >
@@ -1233,7 +1239,7 @@ function SendSmsContent() {
             variant="outline"
             onClick={() => saveDraft()}
             disabled={saveStatus === 'saving' || !message.trim()}
-            className="h-10 px-4 text-sm font-semibold rounded-full shadow-none border-border/80 hover:bg-muted/40 transition-all duration-150 gap-2 shrink-0"
+            className="h-10 px-4 text-sm gap-2 shrink-0 font-semibold rounded-full shadow-none border border-brand-blue/40 bg-brand-blue/10 text-brand-blue dark:border-brand-yellow/40 dark:bg-brand-yellow/15 dark:text-brand-yellow hover:bg-brand-blue/20 hover:border-brand-blue/70 dark:hover:bg-brand-yellow/25 dark:hover:border-brand-yellow/80 transition-all duration-150 active:scale-[0.98]"
             title="Save current progress as draft"
             aria-label="Save current draft"
           >
@@ -1312,7 +1318,7 @@ function SendSmsContent() {
                     <Send className="h-3.5 w-3.5" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg sm:text-xl font-bold">Message Details</CardTitle>
+                    <CardTitle className="text-lg sm:text-xl font-bold group-hover:text-brand-blue dark:group-hover:text-brand-yellow transition-colors">Message Details</CardTitle>
                     <CardDescription className="text-xs sm:text-sm">
                       Configure your delivery mode, sender ID, and targeted recipients.
                     </CardDescription>
@@ -1329,11 +1335,11 @@ function SendSmsContent() {
                     className={cn(
                       'flex-1 h-10 px-4 rounded-full text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer active:scale-[0.98]',
                       deliveryMode === 'manual'
-                        ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow dark:shadow-md dark:shadow-brand-yellow/20 font-bold'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-transparent'
+                        ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
+                        : 'text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/10'
                     )}
                   >
-                    <Send className={cn("w-3.5 h-3.5 transition-colors", deliveryMode === 'manual' ? "text-white dark:text-brand-navy" : "text-muted-foreground")} />
+                    <Send className={cn("w-3.5 h-3.5 transition-colors", deliveryMode === 'manual' ? "text-white dark:text-brand-navy" : "")} />
                     <span>Manual Entry</span>
                   </button>
                   <button
@@ -1342,11 +1348,11 @@ function SendSmsContent() {
                     className={cn(
                       'flex-1 h-10 px-4 rounded-full text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer active:scale-[0.98]',
                       deliveryMode === 'groups'
-                        ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow dark:shadow-md dark:shadow-brand-yellow/20 font-bold'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-transparent'
+                        ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
+                        : 'text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/10'
                     )}
                   >
-                    <Users className={cn("w-3.5 h-3.5 transition-colors", deliveryMode === 'groups' ? "text-white dark:text-brand-navy" : "text-muted-foreground")} />
+                    <Users className={cn("w-3.5 h-3.5 transition-colors", deliveryMode === 'groups' ? "text-white dark:text-brand-navy" : "")} />
                     <span>Contact Groups</span>
                   </button>
                   <button
@@ -1355,11 +1361,11 @@ function SendSmsContent() {
                     className={cn(
                       'flex-1 h-10 px-4 rounded-full text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer active:scale-[0.98]',
                       deliveryMode === 'import'
-                        ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow dark:shadow-md dark:shadow-brand-yellow/20 font-bold'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-transparent'
+                        ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
+                        : 'text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/10'
                     )}
                   >
-                    <FileSpreadsheet className={cn("w-3.5 h-3.5 transition-colors", deliveryMode === 'import' ? "text-white dark:text-brand-navy" : "text-muted-foreground")} />
+                    <FileSpreadsheet className={cn("w-3.5 h-3.5 transition-colors", deliveryMode === 'import' ? "text-white dark:text-brand-navy" : "")} />
                     <span>Import File</span>
                   </button>
                 </div>
@@ -1463,7 +1469,7 @@ function SendSmsContent() {
                               </Badge>
                             </div>
                             <p className="text-xs text-muted-foreground">
-                              Ready for dispatch • Phone numbers automatically parsed and deduplicated
+                              Ready for dispatch â€¢ Phone numbers automatically parsed and deduplicated
                             </p>
                           </div>
                         </div>
@@ -1675,7 +1681,7 @@ function SendSmsContent() {
                           disabled={isGroupLoading}
                           isLoading={isGroupLoading}
                           loadingMessage={`Loading contacts from ${currentGroupName}...`}
-                          error={!isGroupLoading && !!recipientsError}
+                          aria-invalid={!isGroupLoading && !!recipientsError}
                           aria-describedby={recipientsError ? 'recipients-error' : undefined}
                         />
                         {recipientsError && !isGroupLoading && <InputError id="recipients-error" message={recipientsError} />}
@@ -1749,7 +1755,7 @@ function SendSmsContent() {
                     )}
                     <Button
                       variant="outline"
-                      className="h-9 px-3.5 rounded-full text-xs font-semibold gap-1.5 border-border/60 hover:bg-muted/40 shadow-none transition-all duration-150"
+                      className="h-9 px-3.5 text-xs gap-1.5 font-semibold rounded-full shadow-none border border-brand-blue/40 bg-brand-blue/10 text-brand-blue dark:border-brand-yellow/40 dark:bg-brand-yellow/15 dark:text-brand-yellow hover:bg-brand-blue/20 hover:border-brand-blue/70 dark:hover:bg-brand-yellow/25 dark:hover:border-brand-yellow/80 transition-all duration-150 active:scale-[0.98]"
                       onClick={() => setShowGrammarCheck(true)}
                       type="button"
                     >
@@ -1758,7 +1764,7 @@ function SendSmsContent() {
                     </Button>
                     <Button
                       variant="outline"
-                      className="h-9 px-3.5 rounded-full text-xs font-semibold gap-1.5 border-border/60 hover:bg-muted/40 shadow-none transition-all duration-150"
+                      className="h-9 px-3.5 text-xs gap-1.5 font-semibold rounded-full shadow-none border border-brand-blue/40 bg-brand-blue/10 text-brand-blue dark:border-brand-yellow/40 dark:bg-brand-yellow/15 dark:text-brand-yellow hover:bg-brand-blue/20 hover:border-brand-blue/70 dark:hover:bg-brand-yellow/25 dark:hover:border-brand-yellow/80 transition-all duration-150 active:scale-[0.98]"
                       onClick={() => setTemplateModalOpen(true)}
                       type="button"
                     >
@@ -1808,7 +1814,7 @@ function SendSmsContent() {
                     setMessageTouched(true);
                   }}
                   onBlur={() => setMessageTouched(true)}
-                  error={!!messageError}
+                  aria-invalid={!!messageError}
                   aria-describedby={messageError ? 'message-error' : undefined}
                 />
                 {messageError && <InputError id="message-error" message={messageError} />}
@@ -1909,7 +1915,7 @@ function SendSmsContent() {
                     </div>
                     {isSchedulePastDue ? (
                       <Badge variant="outline" className="text-[11px] border-red-500/40 text-red-600 dark:text-red-400 bg-red-500/10">
-                        Time Passed — Update Required
+                        Time Passed â€” Update Required
                       </Badge>
                     ) : (
                       <Badge variant="outline" className="text-[11px] border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10">
@@ -2141,7 +2147,7 @@ function SendSmsContent() {
                   <div className="flex h-7 w-7 items-center justify-center rounded-full bg-secondary text-secondary-foreground shadow-none shrink-0">
                     <Smartphone className="h-3.5 w-3.5" />
                   </div>
-                  <CardTitle className="text-sm font-semibold">
+                  <CardTitle className="text-sm font-semibold group-hover:text-brand-blue dark:group-hover:text-brand-yellow transition-colors">
                     Live Simulator
                   </CardTitle>
                 </div>
@@ -2152,20 +2158,14 @@ function SendSmsContent() {
                       type="button"
                       suppressHydrationWarning
                       onClick={() => setHandsetTheme(isHandsetDark ? 'light' : 'dark')}
-                      className="h-7 px-2.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer flex items-center gap-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                      className="w-7 h-7 flex items-center justify-center rounded-full text-xs transition-all duration-150 cursor-pointer text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/15 active:scale-95 shrink-0"
                       title={isHandsetDark ? 'Preview Simulator in Light Mode' : 'Preview Simulator in Dark Mode'}
                       aria-label="Toggle simulator preview theme"
                     >
                       {isHandsetDark ? (
-                        <>
-                          <Moon className="w-3.5 h-3.5 text-indigo-400 dark:text-indigo-300" />
-                          <span className="text-[11px] font-medium hidden sm:inline">Dark</span>
-                        </>
+                        <Moon className="w-3.5 h-3.5" />
                       ) : (
-                        <>
-                          <Sun className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
-                          <span className="text-[11px] font-medium hidden sm:inline">Light</span>
-                        </>
+                        <Sun className="w-3.5 h-3.5" />
                       )}
                     </button>
                   </div>
@@ -2179,10 +2179,10 @@ function SendSmsContent() {
                         'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer active:scale-[0.98]',
                         previewMode === 'realistic'
                           ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                          : 'text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/10'
                       )}
                     >
-                      Realistic
+                        Realistic
                     </button>
                     <button
                       type="button"
@@ -2191,10 +2191,10 @@ function SendSmsContent() {
                         'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer active:scale-[0.98]',
                         previewMode === 'raw'
                           ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                          : 'text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/10'
                       )}
                     >
-                      Tags
+                        Tags
                     </button>
                   </div>
                 </div>
@@ -2219,7 +2219,7 @@ function SendSmsContent() {
                   "flex items-center justify-between text-[11px] font-medium px-3 pb-3 transition-colors",
                   isHandsetDark ? "text-slate-300" : "text-slate-600"
                 )}>
-                  <span>9:41</span>
+                  <span>{simulatorTime}</span>
                   <div className="flex items-center gap-1.5">
                     <Signal className="w-3 h-3" />
                     <Wifi className="w-3 h-3" />
@@ -2254,7 +2254,7 @@ function SendSmsContent() {
                     "text-[10px] mt-0.5 transition-colors",
                     isHandsetDark ? "text-slate-400" : "text-slate-500"
                   )}>
-                    Text Message • Today
+                    Text Message â€¢ Today {simulatorTime}
                   </div>
                 </div>
 
@@ -2267,7 +2267,7 @@ function SendSmsContent() {
                         ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
                         : "bg-amber-500/15 text-amber-800 border-amber-500/30"
                     )}>
-                      ⚡ CLASS 0 FLASH SMS
+                      âš¡ CLASS 0 FLASH SMS
                     </div>
                   )}
 
@@ -2335,7 +2335,7 @@ function SendSmsContent() {
                 <div className="flex h-7 w-7 items-center justify-center rounded-full bg-secondary text-secondary-foreground shadow-none shrink-0">
                   <Activity className="h-3.5 w-3.5" />
                 </div>
-                <CardTitle className="text-sm font-semibold">
+                <CardTitle className="text-sm font-semibold group-hover:text-brand-blue dark:group-hover:text-brand-yellow transition-colors">
                   Account Capacity &amp; Routes
                 </CardTitle>
               </div>
@@ -2407,7 +2407,7 @@ function SendSmsContent() {
                     'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer active:scale-[0.98]',
                     previewMode === 'sample'
                       ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                      : 'text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/10'
                   )}
                 >
                   Sample Data
@@ -2419,7 +2419,7 @@ function SendSmsContent() {
                     'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer active:scale-[0.98]',
                     previewMode === 'realistic'
                       ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                      : 'text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/10'
                   )}
                 >
                   Realistic SMS
@@ -2431,7 +2431,7 @@ function SendSmsContent() {
                     'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer active:scale-[0.98]',
                     previewMode === 'raw'
                       ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                      : 'text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/10'
                   )}
                 >
                   Raw Tags
@@ -2476,7 +2476,7 @@ function SendSmsContent() {
                   Rendered Length
                 </span>
                 <span className="font-medium text-foreground block">
-                  {renderPreviewWithSamples(effectiveMessage || '').length} chars • {segments} {segments === 1 ? 'segment' : 'segments'}
+                  {renderPreviewWithSamples(effectiveMessage || '').length} chars â€¢ {segments} {segments === 1 ? 'segment' : 'segments'}
                 </span>
               </div>
             </div>
@@ -2615,7 +2615,7 @@ function SendSmsContent() {
                 onBlur={() => {
                   validateScheduleDate(scheduleDate);
                 }}
-                error={!!scheduleError}
+                aria-invalid={!!scheduleError}
                 aria-describedby={scheduleError ? 'schedule-time-error' : undefined}
                 className="h-10 text-xs sm:text-sm font-mono"
               />
@@ -2747,3 +2747,6 @@ export default function SendSmsPage() {
     </Suspense>
   );
 }
+
+
+

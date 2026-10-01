@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Wallet, Plus, Eye, EyeOff } from 'lucide-react';
 import { useWallet } from '@/hooks/use-wallet';
@@ -41,7 +40,7 @@ export function NavWalletBadge({ className, variant = 'full', onNavigate }: NavW
     }
   };
 
-  const handleContainerClick = (e: React.MouseEvent) => {
+  const handleContainerClick = () => {
     router.push('/wallet');
     if (onNavigate) onNavigate();
   };
@@ -88,12 +87,12 @@ export function NavWalletBadge({ className, variant = 'full', onNavigate }: NavW
         id="top-nav-wallet-badge-desktop"
         onClick={handleContainerClick}
         className={cn(
-          'group hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-border/80 bg-card hover:bg-muted/50 hover:border-primary/50 transition-all duration-200 shadow-2xs select-none cursor-pointer active:scale-95 shrink-0',
+          'group hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-border/80 bg-card hover:bg-brand-blue/10 hover:border-brand-blue/30 dark:hover:bg-brand-yellow/10 dark:hover:border-brand-yellow/30 transition-all duration-200 shadow-2xs select-none cursor-pointer active:scale-95 shrink-0',
           className
         )}
         title="Wallet Balance — Click to manage billing and top up credits"
       >
-        <div className="w-7 h-7 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+        <div className="w-7 h-7 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:bg-brand-blue/20 group-hover:text-brand-blue dark:group-hover:bg-brand-yellow/20 dark:group-hover:text-brand-yellow flex items-center justify-center group-hover:scale-105 transition-all shrink-0">
           <Wallet className={cn('w-3.5 h-3.5', isLoading && 'animate-pulse')} />
         </div>
         
@@ -117,7 +116,7 @@ export function NavWalletBadge({ className, variant = 'full', onNavigate }: NavW
         </div>
 
         {/* Quick Top-Up Action */}
-        <span className="hidden xl:inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 pl-2 ml-1 border-l border-border/60 hover:underline">
+        <span className="hidden xl:inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 group-hover:text-brand-blue dark:group-hover:text-brand-yellow pl-2 ml-1 border-l border-border/60 group-hover:border-brand-blue/30 dark:group-hover:border-brand-yellow/30 transition-colors hover:underline">
           <Plus className="w-3 h-3" /> Top Up
         </span>
       </div>
@@ -127,12 +126,12 @@ export function NavWalletBadge({ className, variant = 'full', onNavigate }: NavW
         id="top-nav-wallet-badge-mobile"
         onClick={handleContainerClick}
         className={cn(
-          'flex sm:hidden items-center gap-1.5 px-2.5 py-1 rounded-full border border-border/80 bg-card hover:bg-muted/50 text-xs font-mono font-bold text-foreground transition-all cursor-pointer active:scale-95 shrink-0',
+          'group flex sm:hidden items-center gap-1.5 px-2.5 py-1 rounded-full border border-border/80 bg-card hover:bg-brand-blue/10 hover:border-brand-blue/30 dark:hover:bg-brand-yellow/10 dark:hover:border-brand-yellow/30 text-xs font-mono font-bold text-foreground transition-all cursor-pointer active:scale-95 shrink-0',
           className
         )}
         title="Wallet Balance — Click to manage credits"
       >
-        <Wallet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+        <Wallet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 group-hover:text-brand-blue dark:group-hover:text-brand-yellow transition-colors shrink-0" />
         <span className="text-[11px] font-bold text-foreground flex items-center gap-1">
           {displayCompact} <span className="text-[9px] text-muted-foreground font-sans font-normal">{currency}</span>
         </span>

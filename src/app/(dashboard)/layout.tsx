@@ -1,6 +1,7 @@
 import { RangeShell } from '@/components/layout/range-shell';
 import { verifySession } from '@/lib/auth/session';
 import { SessionIdleTracker } from '@/components/auth/session-idle-tracker';
+import { TimezoneProvider } from '@/providers/timezone-provider';
 import { redirect } from 'next/navigation';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -16,6 +17,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
     role: userRole 
   };
 
+  // Read the user's timezone preference from the database
+  const userTimezone = (session.user as Record<string, unknown>).timezone as string | undefined;
+
   return (
     <SessionIdleTracker
       rememberMe={session.rememberMe}
@@ -24,9 +28,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
       timeoutMinutes={15}
       warningMinutes={2}
     >
-      <RangeShell user={user}>
-        {children}
-      </RangeShell>
+      <TimezoneProvider userTimezone={userTimezone}>
+        <RangeShell user={user}>
+          {children}
+        </RangeShell>
+      </TimezoneProvider>
     </SessionIdleTracker>
   );
 }

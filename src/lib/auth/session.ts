@@ -208,6 +208,7 @@ export async function verifySession() {
           id: true,
           name: true,
           email: true,
+          timezone: true,
           status: true,
           createdAt: true,
           mfaEnabled: true,

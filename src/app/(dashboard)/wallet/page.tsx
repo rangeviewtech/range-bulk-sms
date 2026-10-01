@@ -1,10 +1,17 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,7 +31,6 @@ import {
   ArrowDownRight,
   RefreshCw,
   Wallet as WalletIcon,
-  MessageSquare,
   History,
   CheckCircle2,
 } from 'lucide-react';
@@ -36,6 +42,8 @@ import { PageHeader } from '@/components/layout/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import { notifyWalletUpdated } from '@/hooks/use-wallet';
+import { Eye, EyeOff } from 'lucide-react';
+import { formatDateTimeTz } from '@/lib/timezone';
 
 const depositFormSchema = z.object({
   amount: z
@@ -68,10 +76,10 @@ const PRESET_AMOUNTS = [25000, 50000, 100000, 250000, 500000];
 export default function WalletPage() {
   const [balance, setBalance] = useState<number>(0);
   const [currency, setCurrency] = useState<string>('UGX');
-  const [smsCredits, setSmsCredits] = useState<number>(0);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [isMasked, setIsMasked] = useState(true);
 
   // Deposit Modal State with Real-Time Validation
   const [isDepositOpen, setIsDepositOpen] = useState(false);
@@ -103,7 +111,6 @@ export default function WalletPage() {
         const numBal = Number(walletData.data?.balance || 0);
         setBalance(numBal);
         setCurrency(walletData.data?.currency || 'UGX');
-        setSmsCredits(Math.floor(numBal / 45));
       }
 
       if (txnRes.ok) {
@@ -175,13 +182,13 @@ export default function WalletPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+    <div className="space-y-4 p-4 sm:space-y-6 sm:p-6 lg:p-8">
       {/* Page Header */}
       <PageHeader
         title="Wallet & Billing"
         description="Manage your prepaid balance, SMS credits, and review transaction history."
         action={
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+          <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
             <Button
               variant="outline"
               size="md"
@@ -190,17 +197,20 @@ export default function WalletPage() {
               aria-label="Refresh wallet data"
               className="w-full sm:w-auto"
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
 
             <Dialog open={isDepositOpen} onOpenChange={setIsDepositOpen}>
               <DialogTrigger asChild>
-                <Button size="md" className="w-full sm:w-auto bg-primary text-primary-foreground font-bold hover:bg-primary/90">
+                <Button
+                  size="md"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 w-full font-bold sm:w-auto"
+                >
                   <Plus className="mr-2 h-4 w-4" /> Deposit Funds
                 </Button>
               </DialogTrigger>
-              <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
+              <DialogContent className="w-[calc(100%-2rem)] max-w-md overflow-hidden p-0">
                 <DialogHeader>
                   <DialogTitle>Top-up Wallet</DialogTitle>
                   <DialogDescription>
@@ -208,16 +218,22 @@ export default function WalletPage() {
                   </DialogDescription>
                 </DialogHeader>
 
-                <form onSubmit={handleDepositSubmit} noValidate className="flex flex-col flex-1 overflow-hidden">
+                <form
+                  onSubmit={handleDepositSubmit}
+                  noValidate
+                  className="flex flex-1 flex-col overflow-hidden"
+                >
                   <DialogBody>
                     <div className="space-y-1">
                       <Label htmlFor="quick-amount">Quick Select ({currency})</Label>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                         {PRESET_AMOUNTS.map((amt) => (
                           <Button
                             key={amt}
                             type="button"
-                            variant={depositValues.amount === amt.toString() ? 'default' : 'outline'}
+                            variant={
+                              depositValues.amount === amt.toString() ? 'default' : 'outline'
+                            }
                             size="sm"
                             className={
                               depositValues.amount === amt.toString()
@@ -233,7 +249,9 @@ export default function WalletPage() {
                     </div>
 
                     <div className="space-y-1">
-                      <Label htmlFor="amount" required>Custom Amount ({currency})</Label>
+                      <Label htmlFor="amount" required>
+                        Custom Amount ({currency})
+                      </Label>
                       <Input
                         id="amount"
                         type="number"
@@ -260,7 +278,9 @@ export default function WalletPage() {
                         onChange={(e) => setDepositFieldValue('description', e.target.value)}
                         onBlur={() => handleDepositBlur('description')}
                         error={depositTouched.description && !!depositErrors.description}
-                        aria-describedby={depositErrors.description ? 'description-error' : undefined}
+                        aria-describedby={
+                          depositErrors.description ? 'description-error' : undefined
+                        }
                         placeholder="e.g. MTN Mobile Money deposit"
                       />
                       {depositTouched.description && depositErrors.description && (
@@ -268,9 +288,9 @@ export default function WalletPage() {
                       )}
                     </div>
 
-                    <div className="rounded-md bg-secondary/10 p-3 text-xs text-secondary-foreground space-y-1">
-                      <div className="font-semibold flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-secondary" /> Instant Credit
+                    <div className="bg-secondary/10 text-secondary-foreground space-y-1 rounded-md p-3 text-xs">
+                      <div className="flex items-center gap-1.5 font-semibold">
+                        <CheckCircle2 className="text-secondary h-3.5 w-3.5" /> Instant Credit
                       </div>
                       <p className="text-muted-foreground">
                         Funds are immediately credited to your wallet balance for SMS campaigns.
@@ -289,7 +309,7 @@ export default function WalletPage() {
                     </Button>
                     <Button
                       type="submit"
-                      className="bg-primary text-primary-foreground font-bold hover:bg-primary/90"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold"
                       disabled={submittingDeposit}
                     >
                       {submittingDeposit ? 'Processing...' : 'Confirm Deposit'}
@@ -304,58 +324,62 @@ export default function WalletPage() {
 
       {/* KPI Cards */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="border-secondary/20 shadow-none relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
+        <Card className="border-secondary/20 relative overflow-hidden shadow-none">
+          <div className="bg-primary absolute top-0 right-0 left-0 h-1" />
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Available Balance</CardTitle>
-            <div className="h-7 w-7 rounded-full bg-secondary text-secondary-foreground shadow-none flex items-center justify-center shrink-0">
-              <WalletIcon className="w-3.5 h-3.5 text-inherit" />
+            <CardTitle className="text-muted-foreground text-sm font-medium">
+              Available Balance
+            </CardTitle>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  if (isMasked) {
+                    setIsMasked(false);
+                  } else {
+                    setIsMasked(true);
+                  }
+                }}
+                className="hover:bg-muted text-muted-foreground rounded-full p-1 transition-colors"
+                title={isMasked ? 'Unmask balance' : 'Mask balance'}
+              >
+                {isMasked ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+              <div className="bg-secondary text-secondary-foreground flex h-7 w-7 shrink-0 items-center justify-center rounded-full shadow-none">
+                <WalletIcon className="h-3.5 w-3.5 text-inherit" />
+              </div>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold tracking-tight text-foreground">
+            <div className="text-foreground text-3xl font-bold tracking-tight">
               {loading ? (
                 <Skeleton className="h-8 w-32" />
+              ) : isMasked ? (
+                'â€¢â€¢â€¢â€¢â€¢â€¢'
               ) : (
                 `${currency} ${balance.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
               )}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">Ready for SMS dispatch</p>
+            <p className="text-muted-foreground mt-1 text-xs">Ready for SMS dispatch</p>
           </CardContent>
         </Card>
 
         <Card className="border-secondary/20 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Estimated SMS Credits</CardTitle>
-            <div className="h-7 w-7 rounded-full bg-secondary text-secondary-foreground shadow-none flex items-center justify-center shrink-0">
-              <MessageSquare className="w-3.5 h-3.5 text-inherit" />
+            <CardTitle className="text-muted-foreground text-sm font-medium">
+              Pricing Tier
+            </CardTitle>
+            <div className="bg-secondary text-secondary-foreground flex h-7 w-7 shrink-0 items-center justify-center rounded-full shadow-none">
+              <History className="h-3.5 w-3.5 text-inherit" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold tracking-tight text-foreground">
-              {loading ? (
-                <Skeleton className="h-8 w-24" />
-              ) : (
-                `~ ${smsCredits.toLocaleString()} SMS`
-              )}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">Based on UGX 45 / SMS average rate</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-secondary/20 shadow-none">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Pricing Tier</CardTitle>
-            <div className="h-7 w-7 rounded-full bg-secondary text-secondary-foreground shadow-none flex items-center justify-center shrink-0">
-              <History className="w-3.5 h-3.5 text-inherit" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold tracking-tight text-foreground">
-              Standard
-            </div>
+            <div className="text-foreground text-3xl font-bold tracking-tight">Standard</div>
             <div className="mt-1">
-              <Link href="/wallet/pricing" className="text-xs text-brand-blue dark:text-brand-yellow hover:underline font-semibold">
+              <Link
+                href="/wallet/pricing"
+                className="text-brand-blue dark:text-brand-yellow text-xs font-semibold hover:underline"
+              >
                 View coverage pricing &rarr;
               </Link>
             </div>
@@ -365,10 +389,12 @@ export default function WalletPage() {
 
       {/* Recent Transactions Card */}
       <Card className="border-secondary/20 shadow-none">
-        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <CardHeader className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
             <CardTitle className="text-lg">Recent Transactions</CardTitle>
-            <CardDescription>Your latest wallet deposits, campaign deductions, and refunds.</CardDescription>
+            <CardDescription>
+              Your latest wallet deposits, campaign deductions, and refunds.
+            </CardDescription>
           </div>
           <Button variant="outline" size="sm" asChild>
             <Link href="/wallet/transactions">View All</Link>
@@ -376,7 +402,11 @@ export default function WalletPage() {
         </CardHeader>
         <CardContent className="p-0 sm:p-6">
           {loading ? (
-            <div className="space-y-3 p-4 sm:p-0 py-4" role="status" aria-label="Loading transactions">
+            <div
+              className="space-y-3 p-4 py-4 sm:p-0"
+              role="status"
+              aria-label="Loading transactions"
+            >
               <span className="sr-only">Loading transactions...</span>
               {[1, 2, 3, 4].map((i) => (
                 <Skeleton key={i} className="h-12 w-full" />
@@ -390,7 +420,7 @@ export default function WalletPage() {
               action={
                 <Button
                   size="sm"
-                  className="bg-primary text-primary-foreground font-bold hover:bg-primary/90"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold"
                   onClick={() => setIsDepositOpen(true)}
                 >
                   <Plus className="mr-1.5 h-4 w-4" /> Deposit Funds Now
@@ -400,7 +430,7 @@ export default function WalletPage() {
           ) : (
             <>
               {/* Mobile View: High-density transaction cards */}
-              <div className="block md:hidden divide-y divide-border">
+              <div className="divide-border block divide-y md:hidden">
                 {transactions.map((tx) => {
                   const isDeposit = tx.type === 'DEPOSIT';
                   const isRefund = tx.type === 'REFUND';
@@ -408,15 +438,15 @@ export default function WalletPage() {
                   const balAfterVal = Number(tx.balanceAfter || 0);
 
                   return (
-                    <div key={tx.id} className="p-4 space-y-2 hover:bg-muted/20 transition-colors">
+                    <div key={tx.id} className="hover:bg-muted/20 space-y-2 p-4 transition-colors">
                       <div className="flex items-center justify-between">
                         <span
                           className={`flex items-center text-xs font-semibold ${
                             isDeposit
                               ? 'text-emerald-600 dark:text-emerald-400'
                               : isRefund
-                              ? 'text-blue-600 dark:text-blue-400'
-                              : 'text-red-600 dark:text-red-400'
+                                ? 'text-blue-600 dark:text-blue-400'
+                                : 'text-red-600 dark:text-red-400'
                           }`}
                         >
                           {isDeposit ? (
@@ -431,8 +461,8 @@ export default function WalletPage() {
                             tx.status === 'COMPLETED'
                               ? 'default'
                               : tx.status === 'FAILED'
-                              ? 'destructive'
-                              : 'outline'
+                                ? 'destructive'
+                                : 'outline'
                           }
                           className="text-[11px]"
                         >
@@ -446,27 +476,22 @@ export default function WalletPage() {
                             isDeposit
                               ? 'text-emerald-600 dark:text-emerald-400'
                               : isRefund
-                              ? 'text-blue-600 dark:text-blue-400'
-                              : 'text-red-600 dark:text-red-400'
+                                ? 'text-blue-600 dark:text-blue-400'
+                                : 'text-red-600 dark:text-red-400'
                           }`}
                         >
                           {isDeposit ? '+' : '-'}
                           {currency} {amountVal.toLocaleString()}
                         </span>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-muted-foreground text-xs">
                           Bal: {currency} {balAfterVal.toLocaleString()}
                         </span>
                       </div>
 
-                      <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1 border-t border-border/40">
-                        <span className="font-mono truncate max-w-[180px]">{tx.reference}</span>
+                      <div className="text-muted-foreground border-border/40 flex items-center justify-between border-t pt-1 text-[11px]">
+                        <span className="max-w-[180px] truncate font-mono">{tx.reference}</span>
                         <span>
-                          {new Date(tx.createdAt).toLocaleDateString(undefined, {
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
+                          {formatDateTimeTz(tx.createdAt)}
                         </span>
                       </div>
                     </div>
@@ -475,7 +500,7 @@ export default function WalletPage() {
               </div>
 
               {/* Desktop View: Full data table */}
-              <div className="hidden md:block w-full overflow-x-auto">
+              <div className="hidden w-full overflow-x-auto md:block">
                 <Table className="min-w-[650px]">
                   <TableHeader>
                     <TableRow>
@@ -502,8 +527,8 @@ export default function WalletPage() {
                                 isDeposit
                                   ? 'text-emerald-600 dark:text-emerald-400'
                                   : isRefund
-                                  ? 'text-blue-600 dark:text-blue-400'
-                                  : 'text-red-600 dark:text-red-400'
+                                    ? 'text-blue-600 dark:text-blue-400'
+                                    : 'text-red-600 dark:text-red-400'
                               }`}
                             >
                               {isDeposit ? (
@@ -514,7 +539,7 @@ export default function WalletPage() {
                               {tx.type}
                             </span>
                           </TableCell>
-                          <TableCell className="font-mono text-xs text-muted-foreground">
+                          <TableCell className="text-muted-foreground font-mono text-xs">
                             {tx.reference}
                           </TableCell>
                           <TableCell
@@ -522,8 +547,8 @@ export default function WalletPage() {
                               isDeposit
                                 ? 'text-emerald-600 dark:text-emerald-400'
                                 : isRefund
-                                ? 'text-blue-600 dark:text-blue-400'
-                                : 'text-red-600 dark:text-red-400'
+                                  ? 'text-blue-600 dark:text-blue-400'
+                                  : 'text-red-600 dark:text-red-400'
                             }`}
                           >
                             {isDeposit ? '+' : '-'}
@@ -532,14 +557,8 @@ export default function WalletPage() {
                           <TableCell className="text-sm font-medium">
                             {currency} {balAfterVal.toLocaleString()}
                           </TableCell>
-                          <TableCell className="text-xs text-muted-foreground">
-                            {new Date(tx.createdAt).toLocaleDateString(undefined, {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
+                          <TableCell className="text-muted-foreground text-xs">
+                            {formatDateTimeTz(tx.createdAt)}
                           </TableCell>
                           <TableCell>
                             <Badge
@@ -547,8 +566,8 @@ export default function WalletPage() {
                                 tx.status === 'COMPLETED'
                                   ? 'default'
                                   : tx.status === 'FAILED'
-                                  ? 'destructive'
-                                  : 'outline'
+                                    ? 'destructive'
+                                    : 'outline'
                               }
                             >
                               {tx.status || 'COMPLETED'}
@@ -567,3 +586,5 @@ export default function WalletPage() {
     </div>
   );
 }
+
+

@@ -35,6 +35,7 @@ export type UserMinAggregateOutputType = {
   mfaEnabled: boolean | null
   mfaSecret: string | null
   screenLockPin: string | null
+  timezone: string | null
   telegramChatId: string | null
   whatsappConsent: boolean | null
   phone: string | null
@@ -53,6 +54,7 @@ export type UserMaxAggregateOutputType = {
   mfaEnabled: boolean | null
   mfaSecret: string | null
   screenLockPin: string | null
+  timezone: string | null
   telegramChatId: string | null
   whatsappConsent: boolean | null
   phone: string | null
@@ -71,6 +73,7 @@ export type UserCountAggregateOutputType = {
   mfaEnabled: number
   mfaSecret: number
   screenLockPin: number
+  timezone: number
   telegramChatId: number
   whatsappConsent: number
   phone: number
@@ -91,6 +94,7 @@ export type UserMinAggregateInputType = {
   mfaEnabled?: true
   mfaSecret?: true
   screenLockPin?: true
+  timezone?: true
   telegramChatId?: true
   whatsappConsent?: true
   phone?: true
@@ -109,6 +113,7 @@ export type UserMaxAggregateInputType = {
   mfaEnabled?: true
   mfaSecret?: true
   screenLockPin?: true
+  timezone?: true
   telegramChatId?: true
   whatsappConsent?: true
   phone?: true
@@ -127,6 +132,7 @@ export type UserCountAggregateInputType = {
   mfaEnabled?: true
   mfaSecret?: true
   screenLockPin?: true
+  timezone?: true
   telegramChatId?: true
   whatsappConsent?: true
   phone?: true
@@ -218,6 +224,7 @@ export type UserGroupByOutputType = {
   mfaEnabled: boolean
   mfaSecret: string | null
   screenLockPin: string | null
+  timezone: string
   telegramChatId: string | null
   whatsappConsent: boolean
   phone: string | null
@@ -257,6 +264,7 @@ export type UserWhereInput = {
   mfaEnabled?: Prisma.BoolFilter<"User"> | boolean
   mfaSecret?: Prisma.StringNullableFilter<"User"> | string | null
   screenLockPin?: Prisma.StringNullableFilter<"User"> | string | null
+  timezone?: Prisma.StringFilter<"User"> | string
   telegramChatId?: Prisma.StringNullableFilter<"User"> | string | null
   whatsappConsent?: Prisma.BoolFilter<"User"> | boolean
   phone?: Prisma.StringNullableFilter<"User"> | string | null
@@ -303,6 +311,7 @@ export type UserOrderByWithRelationInput = {
   mfaEnabled?: Prisma.SortOrder
   mfaSecret?: Prisma.SortOrderInput | Prisma.SortOrder
   screenLockPin?: Prisma.SortOrderInput | Prisma.SortOrder
+  timezone?: Prisma.SortOrder
   telegramChatId?: Prisma.SortOrderInput | Prisma.SortOrder
   whatsappConsent?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -354,6 +363,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   mfaEnabled?: Prisma.BoolFilter<"User"> | boolean
   mfaSecret?: Prisma.StringNullableFilter<"User"> | string | null
   screenLockPin?: Prisma.StringNullableFilter<"User"> | string | null
+  timezone?: Prisma.StringFilter<"User"> | string
   whatsappConsent?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -398,6 +408,7 @@ export type UserOrderByWithAggregationInput = {
   mfaEnabled?: Prisma.SortOrder
   mfaSecret?: Prisma.SortOrderInput | Prisma.SortOrder
   screenLockPin?: Prisma.SortOrderInput | Prisma.SortOrder
+  timezone?: Prisma.SortOrder
   telegramChatId?: Prisma.SortOrderInput | Prisma.SortOrder
   whatsappConsent?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -422,6 +433,7 @@ export type UserScalarWhereWithAggregatesInput = {
   mfaEnabled?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   mfaSecret?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   screenLockPin?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  timezone?: Prisma.StringWithAggregatesFilter<"User"> | string
   telegramChatId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   whatsappConsent?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   phone?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -440,6 +452,7 @@ export type UserCreateInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -486,6 +499,7 @@ export type UserUncheckedCreateInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -532,6 +546,7 @@ export type UserUpdateInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -578,6 +593,7 @@ export type UserUncheckedUpdateInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -624,6 +640,7 @@ export type UserCreateManyInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -642,6 +659,7 @@ export type UserUpdateManyMutationInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -660,6 +678,7 @@ export type UserUncheckedUpdateManyInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -678,6 +697,7 @@ export type UserCountOrderByAggregateInput = {
   mfaEnabled?: Prisma.SortOrder
   mfaSecret?: Prisma.SortOrder
   screenLockPin?: Prisma.SortOrder
+  timezone?: Prisma.SortOrder
   telegramChatId?: Prisma.SortOrder
   whatsappConsent?: Prisma.SortOrder
   phone?: Prisma.SortOrder
@@ -696,6 +716,7 @@ export type UserMaxOrderByAggregateInput = {
   mfaEnabled?: Prisma.SortOrder
   mfaSecret?: Prisma.SortOrder
   screenLockPin?: Prisma.SortOrder
+  timezone?: Prisma.SortOrder
   telegramChatId?: Prisma.SortOrder
   whatsappConsent?: Prisma.SortOrder
   phone?: Prisma.SortOrder
@@ -714,6 +735,7 @@ export type UserMinOrderByAggregateInput = {
   mfaEnabled?: Prisma.SortOrder
   mfaSecret?: Prisma.SortOrder
   screenLockPin?: Prisma.SortOrder
+  timezone?: Prisma.SortOrder
   telegramChatId?: Prisma.SortOrder
   whatsappConsent?: Prisma.SortOrder
   phone?: Prisma.SortOrder
@@ -1164,6 +1186,7 @@ export type UserCreateWithoutSessionsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -1209,6 +1232,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -1270,6 +1294,7 @@ export type UserUpdateWithoutSessionsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1315,6 +1340,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1360,6 +1386,7 @@ export type UserCreateWithoutDevicesInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -1405,6 +1432,7 @@ export type UserUncheckedCreateWithoutDevicesInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -1466,6 +1494,7 @@ export type UserUpdateWithoutDevicesInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1511,6 +1540,7 @@ export type UserUncheckedUpdateWithoutDevicesInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1556,6 +1586,7 @@ export type UserCreateWithoutAuthenticatorsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -1601,6 +1632,7 @@ export type UserUncheckedCreateWithoutAuthenticatorsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -1662,6 +1694,7 @@ export type UserUpdateWithoutAuthenticatorsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1707,6 +1740,7 @@ export type UserUncheckedUpdateWithoutAuthenticatorsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1752,6 +1786,7 @@ export type UserCreateWithoutRolesInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -1797,6 +1832,7 @@ export type UserUncheckedCreateWithoutRolesInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -1858,6 +1894,7 @@ export type UserUpdateWithoutRolesInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1903,6 +1940,7 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1948,6 +1986,7 @@ export type UserCreateWithoutAuditLogsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -1993,6 +2032,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -2054,6 +2094,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2099,6 +2140,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2144,6 +2186,7 @@ export type UserCreateWithoutTelegramLinkingTokensInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -2189,6 +2232,7 @@ export type UserUncheckedCreateWithoutTelegramLinkingTokensInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -2250,6 +2294,7 @@ export type UserUpdateWithoutTelegramLinkingTokensInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2295,6 +2340,7 @@ export type UserUncheckedUpdateWithoutTelegramLinkingTokensInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2340,6 +2386,7 @@ export type UserCreateWithoutNotificationPreferencesInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -2385,6 +2432,7 @@ export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -2446,6 +2494,7 @@ export type UserUpdateWithoutNotificationPreferencesInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2491,6 +2540,7 @@ export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2536,6 +2586,7 @@ export type UserCreateWithoutNotificationsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -2581,6 +2632,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -2642,6 +2694,7 @@ export type UserUpdateWithoutNotificationsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2687,6 +2740,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2732,6 +2786,7 @@ export type UserCreateWithoutClientInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -2777,6 +2832,7 @@ export type UserUncheckedCreateWithoutClientInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -2838,6 +2894,7 @@ export type UserUpdateWithoutClientInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2883,6 +2940,7 @@ export type UserUncheckedUpdateWithoutClientInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2928,6 +2986,7 @@ export type UserCreateWithoutAgentInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -2973,6 +3032,7 @@ export type UserUncheckedCreateWithoutAgentInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -3034,6 +3094,7 @@ export type UserUpdateWithoutAgentInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3079,6 +3140,7 @@ export type UserUncheckedUpdateWithoutAgentInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3124,6 +3186,7 @@ export type UserCreateWithoutContactsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -3169,6 +3232,7 @@ export type UserUncheckedCreateWithoutContactsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -3230,6 +3294,7 @@ export type UserUpdateWithoutContactsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3275,6 +3340,7 @@ export type UserUncheckedUpdateWithoutContactsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3320,6 +3386,7 @@ export type UserCreateWithoutContactGroupsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -3365,6 +3432,7 @@ export type UserUncheckedCreateWithoutContactGroupsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -3426,6 +3494,7 @@ export type UserUpdateWithoutContactGroupsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3471,6 +3540,7 @@ export type UserUncheckedUpdateWithoutContactGroupsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3516,6 +3586,7 @@ export type UserCreateWithoutContactTagsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -3561,6 +3632,7 @@ export type UserUncheckedCreateWithoutContactTagsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -3622,6 +3694,7 @@ export type UserUpdateWithoutContactTagsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3667,6 +3740,7 @@ export type UserUncheckedUpdateWithoutContactTagsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3712,6 +3786,7 @@ export type UserCreateWithoutContactSegmentsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -3757,6 +3832,7 @@ export type UserUncheckedCreateWithoutContactSegmentsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -3818,6 +3894,7 @@ export type UserUpdateWithoutContactSegmentsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3863,6 +3940,7 @@ export type UserUncheckedUpdateWithoutContactSegmentsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3908,6 +3986,7 @@ export type UserCreateWithoutContactImportsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -3953,6 +4032,7 @@ export type UserUncheckedCreateWithoutContactImportsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -4014,6 +4094,7 @@ export type UserUpdateWithoutContactImportsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4059,6 +4140,7 @@ export type UserUncheckedUpdateWithoutContactImportsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4104,6 +4186,7 @@ export type UserCreateWithoutSenderIdsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -4149,6 +4232,7 @@ export type UserUncheckedCreateWithoutSenderIdsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -4210,6 +4294,7 @@ export type UserUpdateWithoutSenderIdsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4255,6 +4340,7 @@ export type UserUncheckedUpdateWithoutSenderIdsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4300,6 +4386,7 @@ export type UserCreateWithoutSmsTemplatesInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -4345,6 +4432,7 @@ export type UserUncheckedCreateWithoutSmsTemplatesInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -4406,6 +4494,7 @@ export type UserUpdateWithoutSmsTemplatesInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4451,6 +4540,7 @@ export type UserUncheckedUpdateWithoutSmsTemplatesInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4496,6 +4586,7 @@ export type UserCreateWithoutCampaignsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -4541,6 +4632,7 @@ export type UserUncheckedCreateWithoutCampaignsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -4602,6 +4694,7 @@ export type UserUpdateWithoutCampaignsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4647,6 +4740,7 @@ export type UserUncheckedUpdateWithoutCampaignsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4692,6 +4786,7 @@ export type UserCreateWithoutMessagesInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -4737,6 +4832,7 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -4798,6 +4894,7 @@ export type UserUpdateWithoutMessagesInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4843,6 +4940,7 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4888,6 +4986,7 @@ export type UserCreateWithoutWalletsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -4933,6 +5032,7 @@ export type UserUncheckedCreateWithoutWalletsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -4994,6 +5094,7 @@ export type UserUpdateWithoutWalletsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5039,6 +5140,7 @@ export type UserUncheckedUpdateWithoutWalletsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5084,6 +5186,7 @@ export type UserCreateWithoutTransactionsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -5129,6 +5232,7 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -5190,6 +5294,7 @@ export type UserUpdateWithoutTransactionsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5235,6 +5340,7 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5280,6 +5386,7 @@ export type UserCreateWithoutApiKeysInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -5325,6 +5432,7 @@ export type UserUncheckedCreateWithoutApiKeysInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -5386,6 +5494,7 @@ export type UserUpdateWithoutApiKeysInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5431,6 +5540,7 @@ export type UserUncheckedUpdateWithoutApiKeysInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5476,6 +5586,7 @@ export type UserCreateWithoutWebhooksInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -5521,6 +5632,7 @@ export type UserUncheckedCreateWithoutWebhooksInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -5582,6 +5694,7 @@ export type UserUpdateWithoutWebhooksInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5627,6 +5740,7 @@ export type UserUncheckedUpdateWithoutWebhooksInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5672,6 +5786,7 @@ export type UserCreateWithoutSupportTicketsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -5717,6 +5832,7 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -5778,6 +5894,7 @@ export type UserUpdateWithoutSupportTicketsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5823,6 +5940,7 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5868,6 +5986,7 @@ export type UserCreateWithoutScheduledMessagesInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -5913,6 +6032,7 @@ export type UserUncheckedCreateWithoutScheduledMessagesInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -5974,6 +6094,7 @@ export type UserUpdateWithoutScheduledMessagesInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6019,6 +6140,7 @@ export type UserUncheckedUpdateWithoutScheduledMessagesInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6064,6 +6186,7 @@ export type UserCreateWithoutGatewaysInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -6109,6 +6232,7 @@ export type UserUncheckedCreateWithoutGatewaysInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -6170,6 +6294,7 @@ export type UserUpdateWithoutGatewaysInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6215,6 +6340,7 @@ export type UserUncheckedUpdateWithoutGatewaysInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6260,6 +6386,7 @@ export type UserCreateWithoutSmsDraftsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -6305,6 +6432,7 @@ export type UserUncheckedCreateWithoutSmsDraftsInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -6366,6 +6494,7 @@ export type UserUpdateWithoutSmsDraftsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6411,6 +6540,7 @@ export type UserUncheckedUpdateWithoutSmsDraftsInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6456,6 +6586,7 @@ export type UserCreateWithoutCustomVariablesInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -6501,6 +6632,7 @@ export type UserUncheckedCreateWithoutCustomVariablesInput = {
   mfaEnabled?: boolean
   mfaSecret?: string | null
   screenLockPin?: string | null
+  timezone?: string
   telegramChatId?: string | null
   whatsappConsent?: boolean
   phone?: string | null
@@ -6562,6 +6694,7 @@ export type UserUpdateWithoutCustomVariablesInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6607,6 +6740,7 @@ export type UserUncheckedUpdateWithoutCustomVariablesInput = {
   mfaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   mfaSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   screenLockPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   whatsappConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6899,6 +7033,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   mfaEnabled?: boolean
   mfaSecret?: boolean
   screenLockPin?: boolean
+  timezone?: boolean
   telegramChatId?: boolean
   whatsappConsent?: boolean
   phone?: boolean
@@ -6946,6 +7081,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   mfaEnabled?: boolean
   mfaSecret?: boolean
   screenLockPin?: boolean
+  timezone?: boolean
   telegramChatId?: boolean
   whatsappConsent?: boolean
   phone?: boolean
@@ -6964,6 +7100,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   mfaEnabled?: boolean
   mfaSecret?: boolean
   screenLockPin?: boolean
+  timezone?: boolean
   telegramChatId?: boolean
   whatsappConsent?: boolean
   phone?: boolean
@@ -6982,6 +7119,7 @@ export type UserSelectScalar = {
   mfaEnabled?: boolean
   mfaSecret?: boolean
   screenLockPin?: boolean
+  timezone?: boolean
   telegramChatId?: boolean
   whatsappConsent?: boolean
   phone?: boolean
@@ -6989,7 +7127,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "passwordHash" | "status" | "emailVerifiedAt" | "lastLoginAt" | "mfaEnabled" | "mfaSecret" | "screenLockPin" | "telegramChatId" | "whatsappConsent" | "phone" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "passwordHash" | "status" | "emailVerifiedAt" | "lastLoginAt" | "mfaEnabled" | "mfaSecret" | "screenLockPin" | "timezone" | "telegramChatId" | "whatsappConsent" | "phone" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   roles?: boolean | Prisma.User$rolesArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
@@ -7067,6 +7205,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     mfaEnabled: boolean
     mfaSecret: string | null
     screenLockPin: string | null
+    timezone: string
     telegramChatId: string | null
     whatsappConsent: boolean
     phone: string | null
@@ -7533,6 +7672,7 @@ export interface UserFieldRefs {
   readonly mfaEnabled: Prisma.FieldRef<"User", 'Boolean'>
   readonly mfaSecret: Prisma.FieldRef<"User", 'String'>
   readonly screenLockPin: Prisma.FieldRef<"User", 'String'>
+  readonly timezone: Prisma.FieldRef<"User", 'String'>
   readonly telegramChatId: Prisma.FieldRef<"User", 'String'>
   readonly whatsappConsent: Prisma.FieldRef<"User", 'Boolean'>
   readonly phone: Prisma.FieldRef<"User", 'String'>

@@ -6,6 +6,15 @@ import { NavWalletBadge } from '@/components/navigation/nav-wallet-badge';
 import { useWallet, notifyWalletUpdated, WALLET_UPDATED_EVENT } from '@/hooks/use-wallet';
 import { renderHook } from '@testing-library/react';
 
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+  })
+}));
+
 describe('NavWalletBadge & useWallet Integration', () => {
   beforeEach(() => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
@@ -51,13 +60,11 @@ describe('NavWalletBadge & useWallet Integration', () => {
 
     const desktopBadge = document.getElementById('top-nav-wallet-badge-desktop');
     expect(desktopBadge).not.toBeNull();
-    expect(desktopBadge?.getAttribute('href')).toBe('/wallet');
     expect(screen.getAllByText(/Balance/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/Top Up/i)).toBeDefined();
 
     const mobileBadge = document.getElementById('top-nav-wallet-badge-mobile');
     expect(mobileBadge).not.toBeNull();
-    expect(mobileBadge?.getAttribute('href')).toBe('/wallet');
   });
 
   it('renders drawer variant with full width top-up button', () => {
@@ -65,9 +72,8 @@ describe('NavWalletBadge & useWallet Integration', () => {
     render(React.createElement(NavWalletBadge, { variant: 'drawer', onNavigate }));
 
     expect(screen.getByText(/Wallet Balance/i)).toBeDefined();
-    const topUpBtn = screen.getByRole('link', { name: /Top Up Credits/i });
+    const topUpBtn = screen.getByRole('button', { name: /Top Up Credits/i });
     expect(topUpBtn).toBeDefined();
-    expect(topUpBtn.getAttribute('href')).toBe('/wallet');
 
     topUpBtn.click();
     expect(onNavigate).toHaveBeenCalled();

@@ -20,6 +20,7 @@ import {
 } from '@/app/(dashboard)/settings/security/actions';
 import { MfaSetupForm, MfaActionForm, ScreenLockPinForm } from '@/components/forms/security-forms';
 import { ShieldCheck, Smartphone, Laptop, AlertTriangle } from 'lucide-react';
+import { formatDateTimeTz } from '@/lib/timezone';
 
 const messages: Record<string, string> = {
   setup: 'Scan the QR code and enter a code from your authenticator to finish setup.',
@@ -218,7 +219,7 @@ export default async function SecuritySettingsPage({
                       </div>
                       <div className="text-muted-foreground text-[11px] mt-0.5">
                         IP: {s.ipAddress || '127.0.0.1'} • Started{' '}
-                        {new Date(s.createdAt).toLocaleDateString()}
+                        {formatDateTimeTz(s.createdAt)}
                       </div>
                     </div>
                   </div>
@@ -275,7 +276,7 @@ export default async function SecuritySettingsPage({
                       </div>
                       <div className="text-muted-foreground text-[11px] mt-0.5">
                         IP: {d.ipAddress || '127.0.0.1'} • Last active{' '}
-                        {new Date(d.lastLoginAt).toLocaleDateString()}
+                        {formatDateTimeTz(d.lastLoginAt)}
                       </div>
                     </div>
                   </div>

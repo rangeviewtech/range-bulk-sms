@@ -48,6 +48,7 @@ import { useTableState } from '@/hooks/use-table-state';
 import { SmsDraft } from '@/types/sms-draft';
 import { cn } from '@/lib/utils';
 import { TemplateHighlighter } from '@/components/sms/template-highlighter';
+import { formatDateTimeTz } from '@/lib/timezone';
 
 const ConfirmationDialog = dynamic(
   () => import('@/components/feedback/confirmation-dialog').then((mod) => mod.ConfirmationDialog),
@@ -517,7 +518,7 @@ export default function DraftsPage() {
 
                         {/* Updated */}
                         <TableCell className="align-top py-3.5">
-                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground" title={new Date(draft.updatedAt).toLocaleString()}>
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground" title={formatDateTimeTz(draft.updatedAt)}>
                             <Clock className="w-3.5 h-3.5 shrink-0" />
                             <span>{formatRelativeTime(draft.updatedAt)}</span>
                           </div>
@@ -583,7 +584,7 @@ export default function DraftsPage() {
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <span className="font-mono text-[10px] bg-muted px-1.5 py-0.2 rounded">v{draft.version}</span>
                           <span>•</span>
-                          <span title={new Date(draft.updatedAt).toLocaleString()}>{formatRelativeTime(draft.updatedAt)}</span>
+                          <span title={formatDateTimeTz(draft.updatedAt)}>{formatRelativeTime(draft.updatedAt)}</span>
                         </div>
                       </div>
                       <Badge variant="outline" className="text-xs shrink-0">

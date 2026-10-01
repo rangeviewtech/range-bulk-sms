@@ -201,8 +201,8 @@ export function RangeAppsDropdown({ className, align = "end" }: RangeAppsDropdow
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="ghost"
-          size="icon"
+            variant="ghost"
+            size="icon"
           id="top-nav-range-apps-trigger"
           aria-label="Range View apps"
           title="Range View apps"
@@ -216,7 +216,7 @@ export function RangeAppsDropdown({ className, align = "end" }: RangeAppsDropdow
             isPointerDownRef.current = false;
           }}
           className={cn(
-            "h-9 w-9 rounded-full transition-transform active:scale-95 text-muted-foreground hover:text-foreground hover:bg-accent/80",
+            "h-9 w-9 rounded-full transition-all duration-200 active:scale-95 text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/15",
             open && "bg-accent text-foreground",
             className
           )}
@@ -266,7 +266,7 @@ export function RangeAppsDropdown({ className, align = "end" }: RangeAppsDropdow
             const href = app.isCurrentApp && isLocal ? "/dashboard" : app.url;
 
             const itemContent = (
-              <div className="flex flex-col items-center justify-start text-center p-1.5 rounded-xl transition-all duration-150 hover:bg-accent/80 group cursor-pointer relative w-full h-[96px]">
+              <div className="flex flex-col items-center justify-start text-center p-1.5 rounded-xl transition-all duration-150 hover:bg-brand-blue/10 dark:hover:bg-brand-yellow/15 group cursor-pointer relative w-full h-[96px]">
                 {/* Active Indicator Badge for Current App */}
                 {app.isCurrentApp && (
                   <span className="absolute top-1 right-1 flex items-center gap-0.5 px-1 py-0.2 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
@@ -279,8 +279,8 @@ export function RangeAppsDropdown({ className, align = "end" }: RangeAppsDropdow
                   className={cn(
                     "w-11 h-11 rounded-2xl flex items-center justify-center p-2 transition-all duration-200 group-hover:scale-105 border shrink-0",
                     app.isCurrentApp
-                      ? "bg-primary/10 border-primary/30 shadow-xs"
-                      : "bg-muted/60 dark:bg-muted/30 border-border/60 group-hover:border-primary/30 group-hover:bg-accent"
+                      ? "bg-brand-blue/10 dark:bg-brand-yellow/15 border-brand-blue/30 dark:border-brand-yellow/30 shadow-xs"
+                      : "bg-muted/60 dark:bg-muted/30 border-border/60 group-hover:border-brand-blue/30 dark:group-hover:border-brand-yellow/30 group-hover:bg-brand-blue/5 dark:group-hover:bg-brand-yellow/10"
                   )}
                 >
                   <Image
@@ -349,16 +349,15 @@ export function RangeAppsDropdown({ className, align = "end" }: RangeAppsDropdow
 
         {/* Footer */}
         <DropdownMenuSeparator className="-mx-1 my-1.5 h-px bg-border/50" />
-        <DropdownMenuItem
-          asChild
-          className="flex items-center justify-between rounded-xl px-2.5 py-2 text-xs cursor-pointer transition-colors focus:bg-accent focus:text-accent-foreground group"
+        <DropdownMenuItem asChild
+          className="flex items-center justify-between rounded-xl px-2.5 py-2 text-xs cursor-pointer transition-colors group"
         >
           <a
             href="https://www.rangeview.com"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setOpen(false)}
-            className="w-full flex items-center justify-between text-muted-foreground hover:text-foreground"
+            className="w-full flex items-center justify-between text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/15"
           >
             <div className="flex items-center gap-2">
               <ExternalLink className="h-3.5 w-3.5 text-brand-blue dark:text-brand-yellow group-hover:scale-110 transition-transform" />

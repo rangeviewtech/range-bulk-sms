@@ -1375,7 +1375,7 @@ export function RangeSidebar({ user }: RangeSidebarProps) {
               type="button"
               id="universalSelectorSearchIcon"
               onClick={() => setIsSearchOpen(true)}
-              className="h-9 w-9 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-all duration-200 cursor-pointer active:scale-95 shrink-0"
+              className="h-9 w-9 rounded-full flex items-center justify-center text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/15 transition-all duration-200 cursor-pointer active:scale-95 shrink-0"
               title="Search Screens (Ctrl+K)"
               aria-label="Search Screens"
             >

@@ -6,6 +6,7 @@ export default defineConfig({
     environment: 'node', // We are testing backend core services for now
     testTimeout: 30000,
     include: ['src/__tests__/**/*.test.ts', 'src/__tests__/**/*.spec.ts'],
+    setupFiles: ['./vitest.setup.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

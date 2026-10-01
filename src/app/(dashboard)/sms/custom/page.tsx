@@ -34,6 +34,8 @@ import {
   Send,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTimezone } from '@/providers/timezone-provider';
+import { formatTimeTz } from '@/lib/timezone';
 import { InputError } from '@/components/ui/input-error';
 import { TemplateHighlighter } from '@/components/sms/template-highlighter';
 import {
@@ -129,6 +131,7 @@ function parseCSV(text: string): { headers: string[]; rows: Record<string, strin
 }
 
 export default function CustomSmsPage() {
+  const { timezone } = useTimezone();
   const router = useRouter();
   const [fileName, setFileName] = useState<string>('');
   const [headers, setHeaders] = useState<string[]>([]);
@@ -233,10 +236,10 @@ export default function CustomSmsPage() {
 
   // Load initial sample on mount so user immediately sees a rich, working experience
   useEffect(() => {
-    setCurrentTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    setCurrentTime(formatTimeTz(new Date(), timezone));
     loadDataset('tuition');
     fetchSenderIds();
-  }, [loadDataset, fetchSenderIds]);
+  }, [loadDataset, fetchSenderIds, timezone]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

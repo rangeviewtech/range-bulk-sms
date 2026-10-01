@@ -92,7 +92,7 @@ export function SupportChatbox() {
           </div>
 
           {/* Footer Input */}
-          <div className="chatbox__footer bg-white p-2 flex items-center gap-2">
+          <div className="chatbox__footer bg-background p-3 flex items-center gap-2 border-t border-border/40">
             <input 
               type="text" 
               className="input__box focus:outline-none flex-1 px-2 py-1 text-sm border border-gray-200 rounded" 

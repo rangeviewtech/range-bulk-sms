@@ -19,6 +19,7 @@ import { TableSkeletonRows } from '@/components/blocks/ui/skeleton-layouts';
 import { useTableState } from '@/hooks/use-table-state';
 import { SortableHeader } from '@/components/ui/sortable-header';
 import { Pagination } from '@/components/ui/pagination';
+import { formatDateTimeTz } from '@/lib/timezone';
 
 interface UserSenderId {
   id: string;
@@ -244,7 +245,7 @@ export default function SenderIdsPage() {
                     onSort={toggleSort}
                   />
                 </TableHead>
-                <TableHead>
+                <TableHead className="hidden md:table-cell">
                   <SortableHeader
                     column="purpose"
                     label="Purpose"
@@ -262,7 +263,7 @@ export default function SenderIdsPage() {
                     onSort={toggleSort}
                   />
                 </TableHead>
-                <TableHead>
+                <TableHead className="hidden lg:table-cell">
                   <SortableHeader
                     column="createdAt"
                     label="Requested On"
@@ -271,7 +272,7 @@ export default function SenderIdsPage() {
                     onSort={toggleSort}
                   />
                 </TableHead>
-                <TableHead>
+                <TableHead className="hidden lg:table-cell">
                   <SortableHeader
                     column="approvedAt"
                     label="Approved On"
@@ -323,24 +324,16 @@ export default function SenderIdsPage() {
                     <TableCell className="font-mono font-bold text-base tracking-wider text-foreground">
                       {item.senderId}
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground max-w-[240px] truncate">
+                    <TableCell className="text-sm text-muted-foreground max-w-[240px] truncate hidden md:table-cell">
                       {item.purpose || 'General notifications & alerts'}
                     </TableCell>
                     <TableCell>{getStatusBadge(item.status)}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {new Date(item.createdAt).toLocaleDateString(undefined, {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
+                    <TableCell className="text-sm text-muted-foreground hidden lg:table-cell">
+                      {formatDateTimeTz(item.createdAt)}
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
+                    <TableCell className="text-sm text-muted-foreground hidden lg:table-cell">
                       {item.approvedAt
-                        ? new Date(item.approvedAt).toLocaleDateString(undefined, {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                          })
+                        ? formatDateTimeTz(item.approvedAt)
                         : '-'}
                     </TableCell>
                   </TableRow>

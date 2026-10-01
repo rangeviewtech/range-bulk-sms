@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifySession } from '@/lib/auth/session';
+import { formatInTimezone } from '@/lib/timezone';
 
 export async function GET() {
   try {
@@ -30,13 +31,13 @@ export async function GET() {
     for (let i = 6; i >= 0; i--) {
       const d = new Date(now);
       d.setDate(d.getDate() - i);
-      const label = d.toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' });
+      const label = formatInTimezone(d, { weekday: 'short', month: 'numeric', day: 'numeric' }, session.user.timezone);
       dayMap[label] = { requests: 0, success: 0, errors: 0, avgLatency: 0, totalLatency: 0 };
     }
 
     for (const r of requests) {
       const d = new Date(r.createdAt);
-      const label = d.toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' });
+      const label = formatInTimezone(d, { weekday: 'short', month: 'numeric', day: 'numeric' }, session.user.timezone);
       if (dayMap[label]) {
         dayMap[label].requests += 1;
         if (r.statusCode >= 200 && r.statusCode < 400) {

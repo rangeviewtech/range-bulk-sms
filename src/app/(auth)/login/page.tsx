@@ -14,6 +14,7 @@ import { toastCatalog } from '@/lib/notifications/toast-catalog';
 import { loginSchema } from '@/lib/validations/auth';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { isDev, formatErrorForEnv } from '@/lib/env';
+import { getClientTimezone } from '@/lib/timezone';
 import { appConfig } from '@/config/app';
 import { appAssets } from '@/config/assets';
 import { socialLogin, login as loginAction, forgotPassword } from '@/app/(auth)/actions';
@@ -145,6 +146,7 @@ export default function LoginPage() {
       formData.set('email', data.email);
       formData.set('password', data.password);
       if (data.rememberMe) formData.set('rememberMe', 'true');
+      formData.set('timezone', getClientTimezone());
       if (turnstileToken) formData.set('turnstileToken', turnstileToken);
 
       if (typeof window !== 'undefined') {

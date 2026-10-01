@@ -28,6 +28,7 @@ import { ConfirmationDialog } from '@/components/feedback/confirmation-dialog';
 import { useUnsavedChanges } from '@/hooks/use-unsaved-changes';
 import { Plus, Filter, Trash2, Play, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatDateTimeTz } from '@/lib/timezone';
 
 interface SegmentItem {
   id: string;
@@ -315,7 +316,7 @@ export default function SegmentsPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
-                        {new Date(seg.createdAt).toLocaleDateString()}
+                        {formatDateTimeTz(seg.createdAt)}
                       </TableCell>
                       <TableCell className="text-right">
                         <Button

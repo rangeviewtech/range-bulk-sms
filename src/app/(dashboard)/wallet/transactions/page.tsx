@@ -22,6 +22,7 @@ import { buildSanitizedCsv } from '@/lib/security/csv-sanitizer';
 import { useTableState } from '@/hooks/use-table-state';
 import { SortableHeader } from '@/components/ui/sortable-header';
 import { Pagination } from '@/components/ui/pagination';
+import { formatDateTimeTz } from '@/lib/timezone';
 
 interface Transaction {
   id: string;
@@ -365,12 +366,7 @@ export default function TransactionsPage() {
                       <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1 border-t border-border/40">
                         <span className="font-mono truncate max-w-[180px]">{tx.reference}</span>
                         <span>
-                          {new Date(tx.createdAt).toLocaleDateString(undefined, {
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
+                          {formatDateTimeTz(tx.createdAt)}
                         </span>
                       </div>
                     </div>
@@ -496,13 +492,7 @@ export default function TransactionsPage() {
                             UGX {balAfterVal.toLocaleString()}
                           </TableCell>
                           <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                            {new Date(tx.createdAt).toLocaleDateString(undefined, {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
+                            {formatDateTimeTz(tx.createdAt)}
                           </TableCell>
                           <TableCell>
                             <Badge

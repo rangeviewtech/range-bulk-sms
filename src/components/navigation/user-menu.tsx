@@ -63,7 +63,7 @@ export function UserMenu({ user }: UserMenuProps) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-destructive cursor-pointer" onSelect={(e) => {
+        <DropdownMenuItem className="text-destructive cursor-pointer group" onSelect={(e) => {
           e.preventDefault();
           handleSignOut();
         }}>
