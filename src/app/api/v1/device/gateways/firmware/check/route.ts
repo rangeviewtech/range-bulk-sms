@@ -7,35 +7,37 @@ const FIRMWARE_DOWNLOAD_URL = "https://your-firmware-bucket.s3.amazonaws.com/fir
 // Alternatively, serve it from your public folder:
 // const FIRMWARE_DOWNLOAD_URL = "https://your-domain.com/firmware.bin";
 
-export const POST = withDeviceAuth(async (req: NextRequest, { gateway }) => {
-  try {
-    const body = await req.json().catch(() => ({}));
-    const currentVersion = body.currentVersion || "0.0.0";
-    const hardwareModel = body.hardwareModel || "UNKNOWN";
+export async function POST(req: NextRequest) {
+  return withDeviceAuth(req, async (req, { gatewayId }) => {
+    try {
+      const body = await req.json().catch(() => ({}));
+      const currentVersion = body.currentVersion || "0.0.0";
+      const hardwareModel = body.hardwareModel || "UNKNOWN";
 
-    // Only provide updates for the ESP32 Gateway
-    if (hardwareModel !== "ESP32-GSM-GW") {
-      return Response.json({ updateAvailable: false, reason: "Unsupported hardware model" });
+      // Only provide updates for the ESP32 Gateway
+      if (hardwareModel !== "ESP32-GSM-GW") {
+        return Response.json({ updateAvailable: false, reason: "Unsupported hardware model" });
+      }
+
+      // Simple semver comparison (assuming x.y.z)
+      const isUpdateAvailable = compareVersions(LATEST_FIRMWARE_VERSION, currentVersion) > 0;
+
+      if (isUpdateAvailable) {
+        return Response.json({
+          updateAvailable: true,
+          version: LATEST_FIRMWARE_VERSION,
+          downloadUrl: FIRMWARE_DOWNLOAD_URL,
+          releaseNotes: "Performance improvements and new OTA feature."
+        });
+      }
+
+      return Response.json({ updateAvailable: false });
+    } catch (error) {
+      console.error('[FIRMWARE_CHECK_ERROR]', error);
+      return Response.json({ error: 'Internal Server Error' }, { status: 500 });
     }
-
-    // Simple semver comparison (assuming x.y.z)
-    const isUpdateAvailable = compareVersions(LATEST_FIRMWARE_VERSION, currentVersion) > 0;
-
-    if (isUpdateAvailable) {
-      return Response.json({
-        updateAvailable: true,
-        version: LATEST_FIRMWARE_VERSION,
-        downloadUrl: FIRMWARE_DOWNLOAD_URL,
-        releaseNotes: "Performance improvements and new OTA feature."
-      });
-    }
-
-    return Response.json({ updateAvailable: false });
-  } catch (error) {
-    console.error('[FIRMWARE_CHECK_ERROR]', error);
-    return Response.json({ error: 'Internal Server Error' }, { status: 500 });
-  }
-});
+  });
+}
 
 // Helper for basic semver comparison
 function compareVersions(v1: string, v2: string) {
