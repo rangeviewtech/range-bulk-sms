@@ -189,8 +189,17 @@ export async function createSession(
  * 4. Active user status
  */
 export async function verifySession() {
-  const cookieStore = await cookies();
-  const cookie = cookieStore.get('session')?.value;
+  const cookieStore = await cookies().catch(() => null);
+  let cookie = cookieStore?.get('session')?.value;
+
+  if (!cookie) {
+    const headersList = await import('next/headers').then((m) => m.headers()).catch(() => null);
+    const authHeader = headersList?.get('authorization');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      cookie = authHeader.substring(7).trim();
+    }
+  }
+
   const sessionData = cookie ? await decrypt(cookie).catch(() => null) : null;
 
   if (!sessionData || typeof sessionData.sessionId !== 'string') {

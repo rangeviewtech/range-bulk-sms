@@ -27,6 +27,7 @@
     "db:logs": "docker compose logs -f postgres",
     "db:migrate": "prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
+    "db:test": "tsx scripts/test-database.ts",
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset",
     "db:seed": "prisma db seed"
@@ -128,9 +129,6 @@
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.11",
     "vitest-mock-extended": "^5.1.1"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
   },
   "overrides": {
     "@prisma/config": {

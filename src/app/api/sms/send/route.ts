@@ -50,16 +50,47 @@ export async function POST(req: Request) {
       validSenderIdId = validSender.id;
     }
 
-    // Cost calculation (10 units/currency per recipient)
-    const units = recipients.length;
-    const cost = units * 10;
-    const decimalCost = new Prisma.Decimal(cost);
+    // Calculate segments and dynamically price each recipient
+    const { countSms } = await import('@/lib/sms/counter');
+    const { analyzePhone } = await import('@/lib/sms/phone-analyzer');
+    const { PricingEngine } = await import('@/lib/wallet/pricing');
+
+    const { segments } = countSms(message);
+    
+    let totalCostNum = 0;
+    let totalUnitsNum = 0;
+    const pricingCache = new Map<string, import('@/generated/prisma/client').Prisma.Decimal>();
+    const recipientDetails = [];
+    
+    const userClient = await prisma.user.findUnique({ where: { id: session.userId }, select: { client: { select: { id: true } } } });
+    const clientId = userClient?.client?.id;
+
+    for (const phone of recipients) {
+      const analysis = analyzePhone(phone);
+      const countryCode = analysis.country?.calling_code ? `+${analysis.country.calling_code}` : '+256';
+      
+      let costPerUnit = pricingCache.get(countryCode);
+      if (!costPerUnit) {
+         const priceInfo = await PricingEngine.getPrice({ countryCode, clientId });
+         costPerUnit = priceInfo.sellingPrice;
+         pricingCache.set(countryCode, costPerUnit);
+      }
+      
+      const units = segments;
+      const recCost = costPerUnit.mul(units);
+      totalUnitsNum += units;
+      totalCostNum += recCost.toNumber();
+      
+      recipientDetails.push({ phone, units, cost: recCost.toNumber() });
+    }
+
+    const decimalCost = new Prisma.Decimal(totalCostNum);
 
     // Enforce ledger integrity via WalletService.deduct with row-level locking
     const wallet = await WalletService.getOrCreateWallet({ userId: session.userId });
     await WalletService.deduct(wallet.id, decimalCost, {
       userId: session.userId,
-      description: `SMS Outbound dispatch (${units} recipients)`,
+      description: `SMS Outbound dispatch (${totalUnitsNum} units across ${recipients.length} recipients)`,
       idempotencyKey: idempotencyKey ? `sms-wallet-${idempotencyKey}` : undefined,
     });
 
@@ -70,19 +101,19 @@ export async function POST(req: Request) {
         senderIdId: validSenderIdId,
         message,
         recipientCount: recipients.length,
-        totalUnits: units,
-        totalCost: cost,
+        totalUnits: totalUnitsNum,
+        totalCost: totalCostNum,
         status: 'QUEUED',
         idempotencyKey,
       },
     });
 
     await prisma.messageRecipient.createMany({
-      data: recipients.map((phone) => ({
+      data: recipientDetails.map((rec) => ({
         messageId: msg.id,
-        phone,
+        phone: rec.phone,
         status: 'PENDING',
-        cost: 10,
+        cost: rec.cost,
       })),
     });
 

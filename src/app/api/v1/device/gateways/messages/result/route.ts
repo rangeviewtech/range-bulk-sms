@@ -1,12 +1,12 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { withDeviceAuth } from '@/lib/gateways/device-auth';
 import { MessageStatus } from '@/generated/prisma/client';
 
 export const POST = async (req: NextRequest) => {
-  return withDeviceAuth(req, async (req, { gatewayId }) => {
+  return withDeviceAuth(req, async (req, { gatewayId, gatewaySecret, body, isE2EE }) => {
     try {
-      const { attemptId, status, providerMsgId, errorCode, errorMessage, hasCarrierDlr, simSlot } = await req.json();
+      const { attemptId, status, providerMsgId, errorCode, errorMessage, hasCarrierDlr, simSlot } = body;
 
       if (!attemptId || !status) {
         return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -100,9 +100,30 @@ export const POST = async (req: NextRequest) => {
             }
           });
         }
+
+        // Record first-class GatewayLog audit entry for real-time telemetry
+        await tx.gatewayLog.create({
+          data: {
+            gatewayId,
+            level: status === 'FAILED' ? 'ERROR' : 'INFO',
+            event: `SMS_${status}`,
+            message: `Message ${attempt.messageId} attempt ${attemptId} reported as ${status}${hasCarrierDlr ? ' (Carrier DLR verified)' : ''}${errorMessage ? ': ' + errorMessage : ''}`,
+            metadata: {
+              attemptId,
+              messageId: attempt.messageId,
+              status,
+              hasCarrierDlr: Boolean(hasCarrierDlr),
+              simSlot: simSlot !== undefined ? simSlot : attempt.simSlot,
+              errorCode: errorCode || null,
+              errorMessage: errorMessage || null,
+              providerMsgId: providerMsgId || null,
+            }
+          }
+        });
       });
 
-      return NextResponse.json({ success: true, effectiveStatus: effectiveMessageStatus });
+      const { sendGatewayResponse } = require('@/lib/gateways/device-auth');
+      return sendGatewayResponse({ success: true, effectiveStatus: effectiveMessageStatus }, gatewaySecret, isE2EE);
 
     } catch (error: unknown) {
       console.error('Gateway Result Error:', error);
