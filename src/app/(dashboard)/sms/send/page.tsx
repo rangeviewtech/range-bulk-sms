@@ -1427,24 +1427,26 @@ function SendSmsContent() {
                         </Select>
                       </div>
 
-                      <div className="space-y-1.5">
-                        <div className="flex items-center justify-between min-h-8">
-                          <Label htmlFor="import-gateway" className="text-sm font-medium">Route via Gateway</Label>
+                      {gatewayOptions.length > 0 && (
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between min-h-8">
+                            <Label htmlFor="import-gateway" className="text-sm font-medium">Route via Gateway</Label>
+                          </div>
+                          <Select name="import-gateway" value={gatewayId || 'system'} onValueChange={setGatewayId}>
+                            <SelectTrigger id="import-gateway" aria-label="Gateway" className="h-10 text-xs sm:text-sm">
+                              <SelectValue placeholder="System Default" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="system">System Default Route</SelectItem>
+                              {gatewayOptions.map((gw) => (
+                                <SelectItem key={gw.id} value={gw.id}>
+                                  {gw.name} ({gw.type})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
-                        <Select name="import-gateway" value={gatewayId || 'system'} onValueChange={setGatewayId}>
-                          <SelectTrigger id="import-gateway" aria-label="Gateway" className="h-10 text-xs sm:text-sm">
-                            <SelectValue placeholder="System Default" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="system">System Default Route</SelectItem>
-                            {gatewayOptions.map((gw) => (
-                              <SelectItem key={gw.id} value={gw.id}>
-                                {gw.name} ({gw.type})
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-2 mt-0 sm:mt-9">
@@ -1616,24 +1618,26 @@ function SendSmsContent() {
                       </Select>
                     </div>
 
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between min-h-8">
-                        <Label htmlFor="gateway" className="text-sm font-medium">Route via Gateway</Label>
+                    {gatewayOptions.length > 0 && (
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between min-h-8">
+                          <Label htmlFor="gateway" className="text-sm font-medium">Route via Gateway</Label>
+                        </div>
+                        <Select name="gateway" value={gatewayId || 'system'} onValueChange={setGatewayId}>
+                          <SelectTrigger id="gateway" aria-label="Gateway" className="h-10 text-xs sm:text-sm">
+                            <SelectValue placeholder="System Default" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="system">System Default Route</SelectItem>
+                            {gatewayOptions.map((gw) => (
+                              <SelectItem key={gw.id} value={gw.id}>
+                                {gw.name} ({gw.type})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
-                      <Select name="gateway" value={gatewayId || 'system'} onValueChange={setGatewayId}>
-                        <SelectTrigger id="gateway" aria-label="Gateway" className="h-10 text-xs sm:text-sm">
-                          <SelectValue placeholder="System Default" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="system">System Default Route</SelectItem>
-                          {gatewayOptions.map((gw) => (
-                            <SelectItem key={gw.id} value={gw.id}>
-                              {gw.name} ({gw.type})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    )}
                   </div>
 
                   {/* Recipient Configuration Column */}
