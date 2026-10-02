@@ -5853,6 +5853,7 @@ export const CampaignScalarFieldEnum = {
   userId: 'userId',
   clientId: 'clientId',
   senderIdId: 'senderIdId',
+  gatewayId: 'gatewayId',
   name: 'name',
   message: 'message',
   variables: 'variables',

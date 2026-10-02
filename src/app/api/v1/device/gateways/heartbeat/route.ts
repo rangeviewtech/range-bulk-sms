@@ -14,7 +14,7 @@ import { withDeviceAuth } from '@/lib/gateways/device-auth';
  * totalSmsSent/Delivered/Failed/Incoming
  */
 export const POST = async (req: NextRequest) => {
-  return withDeviceAuth(req, async (req, { gatewayId, gatewaySecret, body }) => {
+  return withDeviceAuth(req, async (req, { gatewayId, gatewaySecret, body, isE2EE }) => {
     try {
 
       // Extract legacy fields for GatewayDevice model

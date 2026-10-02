@@ -55,6 +55,7 @@ export type CampaignMinAggregateOutputType = {
   userId: string | null
   clientId: string | null
   senderIdId: string | null
+  gatewayId: string | null
   name: string | null
   message: string | null
   status: $Enums.CampaignStatus | null
@@ -83,6 +84,7 @@ export type CampaignMaxAggregateOutputType = {
   userId: string | null
   clientId: string | null
   senderIdId: string | null
+  gatewayId: string | null
   name: string | null
   message: string | null
   status: $Enums.CampaignStatus | null
@@ -111,6 +113,7 @@ export type CampaignCountAggregateOutputType = {
   userId: number
   clientId: number
   senderIdId: number
+  gatewayId: number
   name: number
   message: number
   variables: number
@@ -167,6 +170,7 @@ export type CampaignMinAggregateInputType = {
   userId?: true
   clientId?: true
   senderIdId?: true
+  gatewayId?: true
   name?: true
   message?: true
   status?: true
@@ -195,6 +199,7 @@ export type CampaignMaxAggregateInputType = {
   userId?: true
   clientId?: true
   senderIdId?: true
+  gatewayId?: true
   name?: true
   message?: true
   status?: true
@@ -223,6 +228,7 @@ export type CampaignCountAggregateInputType = {
   userId?: true
   clientId?: true
   senderIdId?: true
+  gatewayId?: true
   name?: true
   message?: true
   variables?: true
@@ -340,6 +346,7 @@ export type CampaignGroupByOutputType = {
   userId: string
   clientId: string | null
   senderIdId: string | null
+  gatewayId: string | null
   name: string
   message: string
   variables: string[]
@@ -393,6 +400,7 @@ export type CampaignWhereInput = {
   userId?: Prisma.StringFilter<"Campaign"> | string
   clientId?: Prisma.StringNullableFilter<"Campaign"> | string | null
   senderIdId?: Prisma.StringNullableFilter<"Campaign"> | string | null
+  gatewayId?: Prisma.StringNullableFilter<"Campaign"> | string | null
   name?: Prisma.StringFilter<"Campaign"> | string
   message?: Prisma.StringFilter<"Campaign"> | string
   variables?: Prisma.StringNullableListFilter<"Campaign">
@@ -428,6 +436,7 @@ export type CampaignOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   clientId?: Prisma.SortOrderInput | Prisma.SortOrder
   senderIdId?: Prisma.SortOrderInput | Prisma.SortOrder
+  gatewayId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   message?: Prisma.SortOrder
   variables?: Prisma.SortOrder
@@ -466,6 +475,7 @@ export type CampaignWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.StringFilter<"Campaign"> | string
   clientId?: Prisma.StringNullableFilter<"Campaign"> | string | null
   senderIdId?: Prisma.StringNullableFilter<"Campaign"> | string | null
+  gatewayId?: Prisma.StringNullableFilter<"Campaign"> | string | null
   name?: Prisma.StringFilter<"Campaign"> | string
   message?: Prisma.StringFilter<"Campaign"> | string
   variables?: Prisma.StringNullableListFilter<"Campaign">
@@ -501,6 +511,7 @@ export type CampaignOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   clientId?: Prisma.SortOrderInput | Prisma.SortOrder
   senderIdId?: Prisma.SortOrderInput | Prisma.SortOrder
+  gatewayId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   message?: Prisma.SortOrder
   variables?: Prisma.SortOrder
@@ -539,6 +550,7 @@ export type CampaignScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"Campaign"> | string
   clientId?: Prisma.StringNullableWithAggregatesFilter<"Campaign"> | string | null
   senderIdId?: Prisma.StringNullableWithAggregatesFilter<"Campaign"> | string | null
+  gatewayId?: Prisma.StringNullableWithAggregatesFilter<"Campaign"> | string | null
   name?: Prisma.StringWithAggregatesFilter<"Campaign"> | string
   message?: Prisma.StringWithAggregatesFilter<"Campaign"> | string
   variables?: Prisma.StringNullableListFilter<"Campaign">
@@ -566,6 +578,7 @@ export type CampaignScalarWhereWithAggregatesInput = {
 
 export type CampaignCreateInput = {
   id?: string
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -601,6 +614,7 @@ export type CampaignUncheckedCreateInput = {
   userId: string
   clientId?: string | null
   senderIdId?: string | null
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -630,6 +644,7 @@ export type CampaignUncheckedCreateInput = {
 
 export type CampaignUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -665,6 +680,7 @@ export type CampaignUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -697,6 +713,7 @@ export type CampaignCreateManyInput = {
   userId: string
   clientId?: string | null
   senderIdId?: string | null
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -724,6 +741,7 @@ export type CampaignCreateManyInput = {
 
 export type CampaignUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -754,6 +772,7 @@ export type CampaignUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -794,6 +813,7 @@ export type CampaignCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
   senderIdId?: Prisma.SortOrder
+  gatewayId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   message?: Prisma.SortOrder
   variables?: Prisma.SortOrder
@@ -836,6 +856,7 @@ export type CampaignMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
   senderIdId?: Prisma.SortOrder
+  gatewayId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   message?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -864,6 +885,7 @@ export type CampaignMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
   senderIdId?: Prisma.SortOrder
+  gatewayId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   message?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -1084,6 +1106,7 @@ export type CampaignUpdateOneWithoutMessagesNestedInput = {
 
 export type CampaignCreateWithoutUserInput = {
   id?: string
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -1117,6 +1140,7 @@ export type CampaignUncheckedCreateWithoutUserInput = {
   id?: string
   clientId?: string | null
   senderIdId?: string | null
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -1178,6 +1202,7 @@ export type CampaignScalarWhereInput = {
   userId?: Prisma.StringFilter<"Campaign"> | string
   clientId?: Prisma.StringNullableFilter<"Campaign"> | string | null
   senderIdId?: Prisma.StringNullableFilter<"Campaign"> | string | null
+  gatewayId?: Prisma.StringNullableFilter<"Campaign"> | string | null
   name?: Prisma.StringFilter<"Campaign"> | string
   message?: Prisma.StringFilter<"Campaign"> | string
   variables?: Prisma.StringNullableListFilter<"Campaign">
@@ -1205,6 +1230,7 @@ export type CampaignScalarWhereInput = {
 
 export type CampaignCreateWithoutClientInput = {
   id?: string
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -1238,6 +1264,7 @@ export type CampaignUncheckedCreateWithoutClientInput = {
   id?: string
   userId: string
   senderIdId?: string | null
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -1293,6 +1320,7 @@ export type CampaignUpdateManyWithWhereWithoutClientInput = {
 
 export type CampaignCreateWithoutSenderIdInput = {
   id?: string
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -1326,6 +1354,7 @@ export type CampaignUncheckedCreateWithoutSenderIdInput = {
   id?: string
   userId: string
   clientId?: string | null
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -1381,6 +1410,7 @@ export type CampaignUpdateManyWithWhereWithoutSenderIdInput = {
 
 export type CampaignCreateWithoutGroupsInput = {
   id?: string
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -1415,6 +1445,7 @@ export type CampaignUncheckedCreateWithoutGroupsInput = {
   userId: string
   clientId?: string | null
   senderIdId?: string | null
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -1459,6 +1490,7 @@ export type CampaignUpdateToOneWithWhereWithoutGroupsInput = {
 
 export type CampaignUpdateWithoutGroupsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -1493,6 +1525,7 @@ export type CampaignUncheckedUpdateWithoutGroupsInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -1521,6 +1554,7 @@ export type CampaignUncheckedUpdateWithoutGroupsInput = {
 
 export type CampaignCreateWithoutMessagesInput = {
   id?: string
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -1555,6 +1589,7 @@ export type CampaignUncheckedCreateWithoutMessagesInput = {
   userId: string
   clientId?: string | null
   senderIdId?: string | null
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -1599,6 +1634,7 @@ export type CampaignUpdateToOneWithWhereWithoutMessagesInput = {
 
 export type CampaignUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -1633,6 +1669,7 @@ export type CampaignUncheckedUpdateWithoutMessagesInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -1663,6 +1700,7 @@ export type CampaignCreateManyUserInput = {
   id?: string
   clientId?: string | null
   senderIdId?: string | null
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -1690,6 +1728,7 @@ export type CampaignCreateManyUserInput = {
 
 export type CampaignUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -1723,6 +1762,7 @@ export type CampaignUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -1754,6 +1794,7 @@ export type CampaignUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -1783,6 +1824,7 @@ export type CampaignCreateManyClientInput = {
   id?: string
   userId: string
   senderIdId?: string | null
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -1810,6 +1852,7 @@ export type CampaignCreateManyClientInput = {
 
 export type CampaignUpdateWithoutClientInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -1843,6 +1886,7 @@ export type CampaignUncheckedUpdateWithoutClientInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -1874,6 +1918,7 @@ export type CampaignUncheckedUpdateManyWithoutClientInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -1903,6 +1948,7 @@ export type CampaignCreateManySenderIdInput = {
   id?: string
   userId: string
   clientId?: string | null
+  gatewayId?: string | null
   name: string
   message: string
   variables?: Prisma.CampaignCreatevariablesInput | string[]
@@ -1930,6 +1976,7 @@ export type CampaignCreateManySenderIdInput = {
 
 export type CampaignUpdateWithoutSenderIdInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -1963,6 +2010,7 @@ export type CampaignUncheckedUpdateWithoutSenderIdInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -1994,6 +2042,7 @@ export type CampaignUncheckedUpdateManyWithoutSenderIdInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   variables?: Prisma.CampaignUpdatevariablesInput | string[]
@@ -2064,6 +2113,7 @@ export type CampaignSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   userId?: boolean
   clientId?: boolean
   senderIdId?: boolean
+  gatewayId?: boolean
   name?: boolean
   message?: boolean
   variables?: boolean
@@ -2100,6 +2150,7 @@ export type CampaignSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   userId?: boolean
   clientId?: boolean
   senderIdId?: boolean
+  gatewayId?: boolean
   name?: boolean
   message?: boolean
   variables?: boolean
@@ -2133,6 +2184,7 @@ export type CampaignSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   userId?: boolean
   clientId?: boolean
   senderIdId?: boolean
+  gatewayId?: boolean
   name?: boolean
   message?: boolean
   variables?: boolean
@@ -2166,6 +2218,7 @@ export type CampaignSelectScalar = {
   userId?: boolean
   clientId?: boolean
   senderIdId?: boolean
+  gatewayId?: boolean
   name?: boolean
   message?: boolean
   variables?: boolean
@@ -2191,7 +2244,7 @@ export type CampaignSelectScalar = {
   updatedAt?: boolean
 }
 
-export type CampaignOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "clientId" | "senderIdId" | "name" | "message" | "variables" | "status" | "type" | "cronExpression" | "maxOccurrences" | "currentOccurrence" | "scheduledAt" | "startedAt" | "completedAt" | "cancelledAt" | "totalRecipients" | "totalSmsUnits" | "totalCost" | "sentCount" | "deliveredCount" | "failedCount" | "pendingCount" | "metadata" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["campaign"]>
+export type CampaignOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "clientId" | "senderIdId" | "gatewayId" | "name" | "message" | "variables" | "status" | "type" | "cronExpression" | "maxOccurrences" | "currentOccurrence" | "scheduledAt" | "startedAt" | "completedAt" | "cancelledAt" | "totalRecipients" | "totalSmsUnits" | "totalCost" | "sentCount" | "deliveredCount" | "failedCount" | "pendingCount" | "metadata" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["campaign"]>
 export type CampaignInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   client?: boolean | Prisma.Campaign$clientArgs<ExtArgs>
@@ -2225,6 +2278,7 @@ export type $CampaignPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     userId: string
     clientId: string | null
     senderIdId: string | null
+    gatewayId: string | null
     name: string
     message: string
     variables: string[]
@@ -2680,6 +2734,7 @@ export interface CampaignFieldRefs {
   readonly userId: Prisma.FieldRef<"Campaign", 'String'>
   readonly clientId: Prisma.FieldRef<"Campaign", 'String'>
   readonly senderIdId: Prisma.FieldRef<"Campaign", 'String'>
+  readonly gatewayId: Prisma.FieldRef<"Campaign", 'String'>
   readonly name: Prisma.FieldRef<"Campaign", 'String'>
   readonly message: Prisma.FieldRef<"Campaign", 'String'>
   readonly variables: Prisma.FieldRef<"Campaign", 'String[]'>
