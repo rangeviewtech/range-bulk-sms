@@ -901,6 +901,7 @@ model Campaign {
   userId            String
   clientId          String?
   senderIdId        String?
+  gatewayId         String?
   name              String
   message           String         @db.Text
   variables         String[]       @default([])

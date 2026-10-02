@@ -13,6 +13,7 @@ const sendDirectMessageSchema = z.object({
   recipients: z.array(z.string().min(1)).min(1).max(100),
   message: z.string().min(1).max(1600),
   senderId: z.string().min(1).max(11),
+  gatewayId: z.string().optional(),
   purpose: z.enum(["MARKETING", "TRANSACTIONAL", "SYSTEM"]).default("TRANSACTIONAL"),
   externalId: z.string().optional(),
 });
@@ -122,6 +123,7 @@ export async function POST(req: Request) {
         userId: user.id,
         name: `API Batch: ${new Date().toISOString()}`,
         senderIdId: validSender.id,
+        gatewayId: parsed.data.gatewayId,
         message,
         status: 'RUNNING',
         totalRecipients: eligibleRecipients.length,
@@ -143,6 +145,7 @@ export async function POST(req: Request) {
           campaignId: systemCampaign.id,
           userId: user.id,
           senderIdId: validSender.id,
+          gatewayId: parsed.data.gatewayId,
           message,
           status: 'PENDING',
           segmentCount: segments,

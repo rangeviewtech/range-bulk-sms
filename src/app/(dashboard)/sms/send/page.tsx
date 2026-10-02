@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect, useRef, useMemo, useCallback, Suspense } from 'react';
 import dynamic from 'next/dynamic';
@@ -143,6 +143,14 @@ interface SenderOption {
   status: string;
 }
 
+interface GatewayOption {
+  id: string;
+  name: string;
+  type: string;
+  status: string;
+  isOnline: boolean;
+}
+
 interface GroupOption {
   id: string;
   name: string;
@@ -196,6 +204,8 @@ function SendSmsContent() {
 
   const [senderId, setSenderId] = useState('RANGESMS');
   const [senderOptions, setSenderOptions] = useState<SenderOption[]>([]);
+  const [gatewayId, setGatewayId] = useState<string | null>(null);
+  const [gatewayOptions, setGatewayOptions] = useState<GatewayOption[]>([]);
   const [groups, setGroups] = useState<GroupOption[]>(INITIAL_GROUPS);
   const [deliveryMode, setDeliveryMode] = useState<'manual' | 'groups' | 'import'>('manual');
   const [manualRecipients, setManualRecipients] = useState('');
@@ -448,10 +458,16 @@ function SendSmsContent() {
   useEffect(() => {
     async function loadResources() {
       try {
-        const [sendersRes, groupsRes] = await Promise.all([
+        const [sendersRes, groupsRes, gatewaysRes] = await Promise.all([
           fetch('/api/sender-ids'),
           fetch('/api/contacts/groups'),
+          fetch('/api/v1/gateways'),
         ]);
+
+        if (gatewaysRes.ok) {
+          const json = await gatewaysRes.json();
+          setGatewayOptions(json.gateways || []);
+        }
 
         if (sendersRes.ok) {
           const json = await sendersRes.json();
@@ -963,6 +979,7 @@ function SendSmsContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           senderId,
+          gatewayId: gatewayId === 'system' ? undefined : gatewayId,
           recipients: recipientsToSend,
           message: msgToUse,
           flash: isFlashSms,
@@ -1032,6 +1049,7 @@ function SendSmsContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           senderId,
+          gatewayId: gatewayId === 'system' ? undefined : gatewayId,
           recipients: recipientsToSend,
           message: msgToUse,
           flash: isFlashSms,
@@ -1123,6 +1141,7 @@ function SendSmsContent() {
         body: JSON.stringify({
           id: editScheduledId,
           senderId,
+          gatewayId: gatewayId === 'system' ? undefined : gatewayId,
           recipients: recipientsToSend,
           message: msgToUse,
           flash: isFlashSms,
@@ -1405,6 +1424,22 @@ function SendSmsContent() {
                           )}
                         </SelectContent>
                       </Select>
+                      <div className="pt-2">
+                        <Label htmlFor="import-gateway" className="text-xs">Route via Gateway</Label>
+                        <Select name="import-gateway" value={gatewayId || 'system'} onValueChange={setGatewayId}>
+                          <SelectTrigger id="import-gateway" aria-label="Gateway" className="h-10 text-xs sm:text-sm mt-1.5">
+                            <SelectValue placeholder="System Default" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="system">System Default Route</SelectItem>
+                            {gatewayOptions.map((gw) => (
+                              <SelectItem key={gw.id} value={gw.id}>
+                                {gw.name} ({gw.type})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -1573,6 +1608,22 @@ function SendSmsContent() {
                         )}
                       </SelectContent>
                     </Select>
+                    <div className="pt-2">
+                      <Label htmlFor="gateway" className="text-xs">Route via Gateway</Label>
+                      <Select name="gateway" value={gatewayId || 'system'} onValueChange={setGatewayId}>
+                        <SelectTrigger id="gateway" aria-label="Gateway" className="h-10 text-xs sm:text-sm mt-1.5">
+                          <SelectValue placeholder="System Default" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="system">System Default Route</SelectItem>
+                          {gatewayOptions.map((gw) => (
+                            <SelectItem key={gw.id} value={gw.id}>
+                              {gw.name} ({gw.type})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
                   {/* Recipient Configuration Column */}
@@ -2747,6 +2798,7 @@ export default function SendSmsPage() {
     </Suspense>
   );
 }
+
 
 
 
