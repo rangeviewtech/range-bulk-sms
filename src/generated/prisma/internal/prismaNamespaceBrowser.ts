@@ -169,6 +169,8 @@ export const SessionScalarFieldEnum = {
   mfaVerified: 'mfaVerified',
   deviceInfo: 'deviceInfo',
   ipAddress: 'ipAddress',
+  location: 'location',
+  deviceName: 'deviceName',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -655,6 +657,7 @@ export const CampaignScalarFieldEnum = {
   userId: 'userId',
   clientId: 'clientId',
   senderIdId: 'senderIdId',
+  gatewayId: 'gatewayId',
   name: 'name',
   message: 'message',
   variables: 'variables',
@@ -1061,6 +1064,7 @@ export const GatewayDeviceScalarFieldEnum = {
   hardwareModel: 'hardwareModel',
   lastHeartbeatAt: 'lastHeartbeatAt',
   ipAddress: 'ipAddress',
+  location: 'location',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

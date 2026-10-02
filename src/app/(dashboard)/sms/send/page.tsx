@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect, useRef, useMemo, useCallback, Suspense } from 'react';
 import dynamic from 'next/dynamic';
@@ -143,6 +143,14 @@ interface SenderOption {
   status: string;
 }
 
+interface GatewayOption {
+  id: string;
+  name: string;
+  type: string;
+  status: string;
+  isOnline: boolean;
+}
+
 interface GroupOption {
   id: string;
   name: string;
@@ -196,6 +204,8 @@ function SendSmsContent() {
 
   const [senderId, setSenderId] = useState('RANGESMS');
   const [senderOptions, setSenderOptions] = useState<SenderOption[]>([]);
+  const [gatewayId, setGatewayId] = useState<string | null>(null);
+  const [gatewayOptions, setGatewayOptions] = useState<GatewayOption[]>([]);
   const [groups, setGroups] = useState<GroupOption[]>(INITIAL_GROUPS);
   const [deliveryMode, setDeliveryMode] = useState<'manual' | 'groups' | 'import'>('manual');
   const [manualRecipients, setManualRecipients] = useState('');
@@ -448,10 +458,16 @@ function SendSmsContent() {
   useEffect(() => {
     async function loadResources() {
       try {
-        const [sendersRes, groupsRes] = await Promise.all([
+        const [sendersRes, groupsRes, gatewaysRes] = await Promise.all([
           fetch('/api/sender-ids'),
           fetch('/api/contacts/groups'),
+          fetch('/api/v1/gateways'),
         ]);
+
+        if (gatewaysRes.ok) {
+          const json = await gatewaysRes.json();
+          setGatewayOptions(json.gateways || []);
+        }
 
         if (sendersRes.ok) {
           const json = await sendersRes.json();
@@ -963,6 +979,7 @@ function SendSmsContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           senderId,
+          gatewayId: gatewayId === 'system' ? undefined : gatewayId,
           recipients: recipientsToSend,
           message: msgToUse,
           flash: isFlashSms,
@@ -1032,6 +1049,7 @@ function SendSmsContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           senderId,
+          gatewayId: gatewayId === 'system' ? undefined : gatewayId,
           recipients: recipientsToSend,
           message: msgToUse,
           flash: isFlashSms,
@@ -1123,6 +1141,7 @@ function SendSmsContent() {
         body: JSON.stringify({
           id: editScheduledId,
           senderId,
+          gatewayId: gatewayId === 'system' ? undefined : gatewayId,
           recipients: recipientsToSend,
           message: msgToUse,
           flash: isFlashSms,
@@ -1377,37 +1396,60 @@ function SendSmsContent() {
                 /* Import Mode: Row 1 = Sender ID + Template Download Action, Row 2 = Full Width Spreadsheet / CSV Recipients */
                 <div className="space-y-4">
                   {/* Row 1: Sender ID & Template Download */}
-                  <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-                    <div className="space-y-1.5 w-full sm:max-w-xs">
-                      <div className="flex items-center justify-between min-h-8">
-                        <Label htmlFor="import-sender" required>Sender ID</Label>
-                        <Badge variant="outline" className="text-[10px] font-normal px-1.5 py-0 h-4 border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
-                          Approved
-                        </Badge>
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full sm:max-w-xl">
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between min-h-8">
+                          <Label htmlFor="import-sender" required>Sender ID</Label>
+                          <Badge variant="outline" className="text-[10px] font-normal px-1.5 py-0 h-4 border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
+                            Approved
+                          </Badge>
+                        </div>
+                        <Select name="import-sender" value={senderId} onValueChange={setSenderId}>
+                          <SelectTrigger id="import-sender" name="import-sender" aria-label="Sender ID" className="h-10 text-xs sm:text-sm">
+                            <SelectValue placeholder="Select sender ID" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {senderOptions.length > 0 ? (
+                              senderOptions.map((s) => (
+                                <SelectItem key={s.id} value={s.senderId}>
+                                  {s.senderId} (Approved)
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <>
+                                <SelectItem value="RANGESMS">RANGESMS (Default)</SelectItem>
+                                <SelectItem value="INFO">INFO (Transactional)</SelectItem>
+                                <SelectItem value="RANGE">RANGE (Alphanumeric)</SelectItem>
+                              </>
+                            )}
+                          </SelectContent>
+                        </Select>
                       </div>
-                      <Select name="import-sender" value={senderId} onValueChange={setSenderId}>
-                        <SelectTrigger id="import-sender" name="import-sender" aria-label="Sender ID" className="h-10 text-xs sm:text-sm">
-                          <SelectValue placeholder="Select sender ID" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {senderOptions.length > 0 ? (
-                            senderOptions.map((s) => (
-                              <SelectItem key={s.id} value={s.senderId}>
-                                {s.senderId} (Approved)
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <>
-                              <SelectItem value="RANGESMS">RANGESMS (Default)</SelectItem>
-                              <SelectItem value="INFO">INFO (Transactional)</SelectItem>
-                              <SelectItem value="RANGE">RANGE (Alphanumeric)</SelectItem>
-                            </>
-                          )}
-                        </SelectContent>
-                      </Select>
+
+                      {gatewayOptions.length > 0 && (
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between min-h-8">
+                            <Label htmlFor="import-gateway" className="text-sm font-medium">Route via Gateway</Label>
+                          </div>
+                          <Select name="import-gateway" value={gatewayId || 'system'} onValueChange={setGatewayId}>
+                            <SelectTrigger id="import-gateway" aria-label="Gateway" className="h-10 text-xs sm:text-sm">
+                              <SelectValue placeholder="System Default" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="system">System Default Route</SelectItem>
+                              {gatewayOptions.map((gw) => (
+                                <SelectItem key={gw.id} value={gw.id}>
+                                  {gw.name} ({gw.type})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mt-0 sm:mt-9">
                       <Button
                         type="button"
                         variant="outline"
@@ -1546,33 +1588,56 @@ function SendSmsContent() {
                 /* Manual and Contact Groups Modes (Side-by-side on md+) */
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-5">
                   {/* Sender ID */}
-                  <div className="space-y-1.5 md:col-span-2">
-                    <div className="flex items-center justify-between min-h-8">
-                      <Label htmlFor="sender" required>Sender ID</Label>
-                      <Badge variant="outline" className="text-[10px] font-normal px-1.5 py-0 h-4 border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
-                        Approved
-                      </Badge>
+                  <div className="space-y-4 md:col-span-2">
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between min-h-8">
+                        <Label htmlFor="sender" required>Sender ID</Label>
+                        <Badge variant="outline" className="text-[10px] font-normal px-1.5 py-0 h-4 border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
+                          Approved
+                        </Badge>
+                      </div>
+                      <Select name="sender" value={senderId} onValueChange={setSenderId}>
+                        <SelectTrigger id="sender" name="sender" aria-label="Sender ID" className="h-10 text-xs sm:text-sm">
+                          <SelectValue placeholder="Select sender ID" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {senderOptions.length > 0 ? (
+                            senderOptions.map((s) => (
+                              <SelectItem key={s.id} value={s.senderId}>
+                                {s.senderId} (Approved)
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <>
+                              <SelectItem value="RANGESMS">RANGESMS (Default)</SelectItem>
+                              <SelectItem value="INFO">INFO (Transactional)</SelectItem>
+                              <SelectItem value="RANGE">RANGE (Alphanumeric)</SelectItem>
+                            </>
+                          )}
+                        </SelectContent>
+                      </Select>
                     </div>
-                    <Select name="sender" value={senderId} onValueChange={setSenderId}>
-                      <SelectTrigger id="sender" name="sender" aria-label="Sender ID" className="h-10 text-xs sm:text-sm">
-                        <SelectValue placeholder="Select sender ID" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {senderOptions.length > 0 ? (
-                          senderOptions.map((s) => (
-                            <SelectItem key={s.id} value={s.senderId}>
-                              {s.senderId} (Approved)
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <>
-                            <SelectItem value="RANGESMS">RANGESMS (Default)</SelectItem>
-                            <SelectItem value="INFO">INFO (Transactional)</SelectItem>
-                            <SelectItem value="RANGE">RANGE (Alphanumeric)</SelectItem>
-                          </>
-                        )}
-                      </SelectContent>
-                    </Select>
+
+                    {gatewayOptions.length > 0 && (
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between min-h-8">
+                          <Label htmlFor="gateway" className="text-sm font-medium">Route via Gateway</Label>
+                        </div>
+                        <Select name="gateway" value={gatewayId || 'system'} onValueChange={setGatewayId}>
+                          <SelectTrigger id="gateway" aria-label="Gateway" className="h-10 text-xs sm:text-sm">
+                            <SelectValue placeholder="System Default" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="system">System Default Route</SelectItem>
+                            {gatewayOptions.map((gw) => (
+                              <SelectItem key={gw.id} value={gw.id}>
+                                {gw.name} ({gw.type})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                   </div>
 
                   {/* Recipient Configuration Column */}
@@ -2747,6 +2812,7 @@ export default function SendSmsPage() {
     </Suspense>
   );
 }
+
 
 
 

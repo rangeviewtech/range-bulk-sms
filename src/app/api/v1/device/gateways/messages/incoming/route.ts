@@ -1,12 +1,12 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { withDeviceAuth } from '@/lib/gateways/device-auth';
 import { JobWorker } from '@/lib/queue/worker';
 
 export const POST = async (req: NextRequest) => {
-  return withDeviceAuth(req, async (req, { gatewayId }) => {
+  return withDeviceAuth(req, async (req, { gatewayId, gatewaySecret, body, isE2EE }) => {
     try {
-      const { from, to, message, timestamp, simSlot } = await req.json();
+      const { from, to, message, timestamp, simSlot } = body;
 
       if (!from || !message) {
         return NextResponse.json({ error: 'Missing required fields (from, message)' }, { status: 400 });
@@ -56,7 +56,8 @@ export const POST = async (req: NextRequest) => {
         });
       }
 
-      return NextResponse.json({ success: true, dispatchedWebhooks: webhooks.length });
+      const { sendGatewayResponse } = require('@/lib/gateways/device-auth');
+      return sendGatewayResponse({ success: true, dispatchedWebhooks: webhooks.length }, gatewaySecret, isE2EE);
     } catch (error: unknown) {
       console.error('Gateway Incoming SMS Error:', error);
       return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

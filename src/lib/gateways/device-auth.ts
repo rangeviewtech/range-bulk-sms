@@ -15,7 +15,7 @@ export function generateGatewayToken(): { token: string; hash: string } {
 /**
  * Validates a raw gateway token and returns the associated gatewayId.
  */
-export async function verifyGatewayToken(token: string): Promise<{ isValid: boolean; gatewayId?: string }> {
+export async function verifyGatewayToken(token: string): Promise<{ isValid: boolean; gatewayId?: string; gatewaySecret?: string }> {
   if (!token || !token.startsWith('gt_')) return { isValid: false };
   
   const secret = token.replace('gt_', '');
@@ -41,7 +41,8 @@ export async function verifyGatewayToken(token: string): Promise<{ isValid: bool
   
   return {
     isValid: true,
-    gatewayId: tokenRecord.gatewayId
+    gatewayId: tokenRecord.gatewayId,
+    gatewaySecret: secret
   };
 }
 
@@ -50,7 +51,7 @@ export async function verifyGatewayToken(token: string): Promise<{ isValid: bool
  */
 export async function withDeviceAuth(
   req: NextRequest,
-  handler: (req: NextRequest, context: { gatewayId: string }) => Promise<Response>
+  handler: (req: NextRequest, context: { gatewayId: string; gatewaySecret: string; body?: any; isE2EE?: boolean }) => Promise<Response>
 ): Promise<Response> {
   const authHeader = req.headers.get('Authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -60,10 +61,38 @@ export async function withDeviceAuth(
   const token = authHeader.replace('Bearer ', '').trim();
   const verification = await verifyGatewayToken(token);
 
-  if (!verification.isValid || !verification.gatewayId) {
+  if (!verification.isValid || !verification.gatewayId || !verification.gatewaySecret) {
     return Response.json({ error: 'Unauthorized: Invalid or expired Gateway Token' }, { status: 401 });
   }
 
-  return handler(req, { gatewayId: verification.gatewayId });
+  let body: any = null;
+  let isE2EE = req.headers.get('x-e2ee') === 'true';
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    try {
+      const rawBody = await req.json().catch(() => ({}));
+      if (rawBody.e2ee) {
+        // Late import to avoid circular dependencies if any
+        const { decryptGatewayPayload } = require('./encryption');
+        body = decryptGatewayPayload(rawBody.e2ee, verification.gatewaySecret);
+        isE2EE = true;
+      } else {
+        body = rawBody;
+      }
+    } catch (e) {
+      return Response.json({ error: 'Bad Request: Failed to parse or decrypt payload' }, { status: 400 });
+    }
+  }
+
+  const response = await handler(req, { gatewayId: verification.gatewayId, gatewaySecret: verification.gatewaySecret, body, isE2EE });
+  
+  return response;
+}
+
+export function sendGatewayResponse(data: any, gatewaySecret?: string, useE2EE = false) {
+  if (useE2EE && gatewaySecret) {
+    const { encryptGatewayPayload } = require('./encryption');
+    return Response.json({ e2ee: encryptGatewayPayload(data, gatewaySecret) });
+  }
+  return Response.json(data);
 }
 

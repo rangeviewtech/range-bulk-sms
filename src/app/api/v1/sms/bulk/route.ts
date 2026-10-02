@@ -52,12 +52,47 @@ export async function POST(req: NextRequest) {
       }
 
       // Calculate total units & cost
+      const { countSms } = await import('@/lib/sms/counter');
+      const { analyzePhone } = await import('@/lib/sms/phone-analyzer');
+      const { PricingEngine } = await import('@/lib/wallet/pricing');
+
       let totalRecipients = 0;
-      for (const msg of messages) {
+      let totalCostNum = 0;
+      
+      const pricingCache = new Map<string, import('@/generated/prisma/client').Prisma.Decimal>();
+      
+      // We will need to store recipient pricing for the create step
+      // itemIndex -> recipientPhone -> { units, cost }
+      const batchRecipientDetails = new Map<number, { phone: string, units: number, cost: number }[]>();
+
+      for (let i = 0; i < messages.length; i++) {
+        const msg = messages[i];
+        const { segments } = countSms(msg.message);
         totalRecipients += msg.recipients.length;
+        
+        const recDetails = [];
+        
+        for (const phone of msg.recipients) {
+          const analysis = analyzePhone(phone);
+          const countryCode = analysis.country?.calling_code ? `+${analysis.country.calling_code}` : '+256';
+          
+          let costPerUnit = pricingCache.get(countryCode);
+          if (!costPerUnit) {
+             const priceInfo = await PricingEngine.getPrice({ countryCode, clientId });
+             costPerUnit = priceInfo.sellingPrice;
+             pricingCache.set(countryCode, costPerUnit);
+          }
+          
+          const units = segments;
+          const recCost = costPerUnit.mul(units);
+          totalCostNum += recCost.toNumber();
+          
+          recDetails.push({ phone, units, cost: recCost.toNumber() });
+        }
+        batchRecipientDetails.set(i, recDetails);
       }
-      const totalCost = totalRecipients * 10;
-      const decimalCost = new Prisma.Decimal(totalCost);
+
+      const decimalCost = new Prisma.Decimal(totalCostNum);
 
       const wallet = await WalletService.getOrCreateWallet({ userId, clientId });
       await WalletService.deduct(wallet.id, decimalCost, {
@@ -68,7 +103,9 @@ export async function POST(req: NextRequest) {
 
       const messageIds: string[] = [];
 
-      for (const item of messages) {
+      for (let i = 0; i < messages.length; i++) {
+        const item = messages[i];
+        
         // Validate senderId if present
         if (item.senderId) {
           const validSender = await prisma.senderId.findFirst({
@@ -86,14 +123,18 @@ export async function POST(req: NextRequest) {
           }
         }
 
+        const recDetails = batchRecipientDetails.get(i) || [];
+        const msgUnits = recDetails.reduce((acc, r) => acc + r.units, 0);
+        const msgCost = recDetails.reduce((acc, r) => acc + r.cost, 0);
+
         const msgRecord = await prisma.message.create({
           data: {
             userId: messageUserId,
             senderIdId: item.senderId || null,
             message: item.message,
             recipientCount: item.recipients.length,
-            totalUnits: item.recipients.length,
-            totalCost: item.recipients.length * 10,
+            totalUnits: msgUnits,
+            totalCost: msgCost,
             status: 'QUEUED',
             idempotencyKey: item.idempotencyKey,
           },
@@ -102,11 +143,11 @@ export async function POST(req: NextRequest) {
         messageIds.push(msgRecord.id);
 
         await prisma.messageRecipient.createMany({
-          data: item.recipients.map((phone) => ({
+          data: recDetails.map((rec) => ({
             messageId: msgRecord.id,
-            phone,
+            phone: rec.phone,
             status: 'PENDING',
-            cost: 10,
+            cost: rec.cost,
           })),
         });
 

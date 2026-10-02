@@ -239,17 +239,52 @@ export async function resetApiKeyQuota(apiKeyId: string): Promise<{ success: boo
   return { success: true, nextResetAt: nextReset };
 }
 
+import { decrypt } from '@/lib/auth/session';
+
 export async function withApiKey(
   req: NextRequest, 
   requiredScope: string, 
   handler: (req: NextRequest, context: ApiKeyContext) => Promise<Response>
 ): Promise<Response> {
   const authHeader = req.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  let token: string | null = null;
+
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.replace('Bearer ', '').trim();
+  } else {
+    const cookie = req.cookies.get('session')?.value;
+    if (cookie) {
+      token = cookie;
+    }
+  }
+
+  if (!token) {
     return Response.json({ error: 'Unauthorized: Missing or invalid token format' }, { status: 401 });
   }
 
-  const token = authHeader.replace('Bearer ', '').trim();
+  // 1. Check if token is a valid User Session JWT (Mobile Bearer token or web cookie)
+  try {
+    const sessionData = await decrypt(token);
+    if (sessionData && typeof sessionData.sessionId === 'string' && typeof sessionData.userId === 'string') {
+      const session = await prisma.session.findUnique({
+        where: { id: sessionData.sessionId },
+        include: { user: true },
+      });
+
+      if (session && !session.revokedAt && session.expiresAt > new Date() && session.user.status === 'ACTIVE') {
+        return handler(req, {
+          userId: session.userId,
+          appName: 'Mobile App / Web Session',
+          environment: 'production',
+          scopes: ['*'],
+        });
+      }
+    }
+  } catch {
+    // Not a JWT or expired, continue to API key verification
+  }
+
+  // 2. Verify as Developer API Key
   const forwardedFor = req.headers.get('x-forwarded-for');
   const clientIp = forwardedFor
     ? forwardedFor.split(',')[0].trim()

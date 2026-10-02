@@ -90,6 +90,8 @@ model Session {
 
   deviceInfo String?
   ipAddress  String?
+  location   String?
+  deviceName String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -899,6 +901,7 @@ model Campaign {
   userId            String
   clientId          String?
   senderIdId        String?
+  gatewayId         String?
   name              String
   message           String         @db.Text
   variables         String[]       @default([])
@@ -1474,6 +1477,7 @@ model GatewayDevice {
 
   lastHeartbeatAt DateTime?
   ipAddress       String?
+  location        String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1807,3 +1811,4 @@ model CustomVariable {
   @@unique([userId, key])
   @@index([userId])
 }
+

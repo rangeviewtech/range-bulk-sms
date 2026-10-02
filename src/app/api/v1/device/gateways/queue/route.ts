@@ -1,9 +1,9 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { withDeviceAuth } from '@/lib/gateways/device-auth';
 
 export const GET = async (req: NextRequest) => {
-  return withDeviceAuth(req, async (req, { gatewayId }) => {
+  return withDeviceAuth(req, async (req, { gatewayId, gatewaySecret, isE2EE }) => {
     try {
       const url = new URL(req.url);
       const limit = parseInt(url.searchParams.get('limit') || '10', 10);
@@ -59,7 +59,8 @@ export const GET = async (req: NextRequest) => {
       });
 
       if (pendingAttempts.length === 0) {
-        return NextResponse.json({ success: true, messages: [] });
+        const { sendGatewayResponse } = require('@/lib/gateways/device-auth');
+        return sendGatewayResponse({ success: true, messages: [] }, gatewaySecret, isE2EE);
       }
 
       // Format for the device
@@ -75,7 +76,8 @@ export const GET = async (req: NextRequest) => {
         }));
       });
 
-      return NextResponse.json({ success: true, messages, maxThroughput: gateway.maxThroughput });
+      const { sendGatewayResponse } = require('@/lib/gateways/device-auth');
+      return sendGatewayResponse({ success: true, messages, maxThroughput: gateway.maxThroughput }, gatewaySecret, isE2EE);
 
     } catch (error: unknown) {
       console.error('Gateway Queue Error:', error);
