@@ -52,6 +52,7 @@ export type GatewayDeviceMinAggregateOutputType = {
   hardwareModel: string | null
   lastHeartbeatAt: Date | null
   ipAddress: string | null
+  location: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -70,6 +71,7 @@ export type GatewayDeviceMaxAggregateOutputType = {
   hardwareModel: string | null
   lastHeartbeatAt: Date | null
   ipAddress: string | null
+  location: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -88,6 +90,7 @@ export type GatewayDeviceCountAggregateOutputType = {
   hardwareModel: number
   lastHeartbeatAt: number
   ipAddress: number
+  location: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -120,6 +123,7 @@ export type GatewayDeviceMinAggregateInputType = {
   hardwareModel?: true
   lastHeartbeatAt?: true
   ipAddress?: true
+  location?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -138,6 +142,7 @@ export type GatewayDeviceMaxAggregateInputType = {
   hardwareModel?: true
   lastHeartbeatAt?: true
   ipAddress?: true
+  location?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -156,6 +161,7 @@ export type GatewayDeviceCountAggregateInputType = {
   hardwareModel?: true
   lastHeartbeatAt?: true
   ipAddress?: true
+  location?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -261,6 +267,7 @@ export type GatewayDeviceGroupByOutputType = {
   hardwareModel: string | null
   lastHeartbeatAt: Date | null
   ipAddress: string | null
+  location: string | null
   createdAt: Date
   updatedAt: Date
   _count: GatewayDeviceCountAggregateOutputType | null
@@ -302,6 +309,7 @@ export type GatewayDeviceWhereInput = {
   hardwareModel?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
   lastHeartbeatAt?: Prisma.DateTimeNullableFilter<"GatewayDevice"> | Date | string | null
   ipAddress?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
+  location?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
   createdAt?: Prisma.DateTimeFilter<"GatewayDevice"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GatewayDevice"> | Date | string
   gateway?: Prisma.XOR<Prisma.GatewayScalarRelationFilter, Prisma.GatewayWhereInput>
@@ -321,6 +329,7 @@ export type GatewayDeviceOrderByWithRelationInput = {
   hardwareModel?: Prisma.SortOrderInput | Prisma.SortOrder
   lastHeartbeatAt?: Prisma.SortOrderInput | Prisma.SortOrder
   ipAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  location?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   gateway?: Prisma.GatewayOrderByWithRelationInput
@@ -343,6 +352,7 @@ export type GatewayDeviceWhereUniqueInput = Prisma.AtLeast<{
   hardwareModel?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
   lastHeartbeatAt?: Prisma.DateTimeNullableFilter<"GatewayDevice"> | Date | string | null
   ipAddress?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
+  location?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
   createdAt?: Prisma.DateTimeFilter<"GatewayDevice"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GatewayDevice"> | Date | string
   gateway?: Prisma.XOR<Prisma.GatewayScalarRelationFilter, Prisma.GatewayWhereInput>
@@ -362,6 +372,7 @@ export type GatewayDeviceOrderByWithAggregationInput = {
   hardwareModel?: Prisma.SortOrderInput | Prisma.SortOrder
   lastHeartbeatAt?: Prisma.SortOrderInput | Prisma.SortOrder
   ipAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  location?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.GatewayDeviceCountOrderByAggregateInput
@@ -388,6 +399,7 @@ export type GatewayDeviceScalarWhereWithAggregatesInput = {
   hardwareModel?: Prisma.StringNullableWithAggregatesFilter<"GatewayDevice"> | string | null
   lastHeartbeatAt?: Prisma.DateTimeNullableWithAggregatesFilter<"GatewayDevice"> | Date | string | null
   ipAddress?: Prisma.StringNullableWithAggregatesFilter<"GatewayDevice"> | string | null
+  location?: Prisma.StringNullableWithAggregatesFilter<"GatewayDevice"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"GatewayDevice"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"GatewayDevice"> | Date | string
 }
@@ -405,6 +417,7 @@ export type GatewayDeviceCreateInput = {
   hardwareModel?: string | null
   lastHeartbeatAt?: Date | string | null
   ipAddress?: string | null
+  location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   gateway: Prisma.GatewayCreateNestedOneWithoutDevicesInput
@@ -424,6 +437,7 @@ export type GatewayDeviceUncheckedCreateInput = {
   hardwareModel?: string | null
   lastHeartbeatAt?: Date | string | null
   ipAddress?: string | null
+  location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -441,6 +455,7 @@ export type GatewayDeviceUpdateInput = {
   hardwareModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   gateway?: Prisma.GatewayUpdateOneRequiredWithoutDevicesNestedInput
@@ -460,6 +475,7 @@ export type GatewayDeviceUncheckedUpdateInput = {
   hardwareModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -478,6 +494,7 @@ export type GatewayDeviceCreateManyInput = {
   hardwareModel?: string | null
   lastHeartbeatAt?: Date | string | null
   ipAddress?: string | null
+  location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -495,6 +512,7 @@ export type GatewayDeviceUpdateManyMutationInput = {
   hardwareModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -513,6 +531,7 @@ export type GatewayDeviceUncheckedUpdateManyInput = {
   hardwareModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -541,6 +560,7 @@ export type GatewayDeviceCountOrderByAggregateInput = {
   hardwareModel?: Prisma.SortOrder
   lastHeartbeatAt?: Prisma.SortOrder
   ipAddress?: Prisma.SortOrder
+  location?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -565,6 +585,7 @@ export type GatewayDeviceMaxOrderByAggregateInput = {
   hardwareModel?: Prisma.SortOrder
   lastHeartbeatAt?: Prisma.SortOrder
   ipAddress?: Prisma.SortOrder
+  location?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -583,6 +604,7 @@ export type GatewayDeviceMinOrderByAggregateInput = {
   hardwareModel?: Prisma.SortOrder
   lastHeartbeatAt?: Prisma.SortOrder
   ipAddress?: Prisma.SortOrder
+  location?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -648,6 +670,7 @@ export type GatewayDeviceCreateWithoutGatewayInput = {
   hardwareModel?: string | null
   lastHeartbeatAt?: Date | string | null
   ipAddress?: string | null
+  location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -665,6 +688,7 @@ export type GatewayDeviceUncheckedCreateWithoutGatewayInput = {
   hardwareModel?: string | null
   lastHeartbeatAt?: Date | string | null
   ipAddress?: string | null
+  location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -712,6 +736,7 @@ export type GatewayDeviceScalarWhereInput = {
   hardwareModel?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
   lastHeartbeatAt?: Prisma.DateTimeNullableFilter<"GatewayDevice"> | Date | string | null
   ipAddress?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
+  location?: Prisma.StringNullableFilter<"GatewayDevice"> | string | null
   createdAt?: Prisma.DateTimeFilter<"GatewayDevice"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GatewayDevice"> | Date | string
 }
@@ -729,6 +754,7 @@ export type GatewayDeviceCreateManyGatewayInput = {
   hardwareModel?: string | null
   lastHeartbeatAt?: Date | string | null
   ipAddress?: string | null
+  location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -746,6 +772,7 @@ export type GatewayDeviceUpdateWithoutGatewayInput = {
   hardwareModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -763,6 +790,7 @@ export type GatewayDeviceUncheckedUpdateWithoutGatewayInput = {
   hardwareModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -780,6 +808,7 @@ export type GatewayDeviceUncheckedUpdateManyWithoutGatewayInput = {
   hardwareModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -800,6 +829,7 @@ export type GatewayDeviceSelect<ExtArgs extends runtime.Types.Extensions.Interna
   hardwareModel?: boolean
   lastHeartbeatAt?: boolean
   ipAddress?: boolean
+  location?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   gateway?: boolean | Prisma.GatewayDefaultArgs<ExtArgs>
@@ -819,6 +849,7 @@ export type GatewayDeviceSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   hardwareModel?: boolean
   lastHeartbeatAt?: boolean
   ipAddress?: boolean
+  location?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   gateway?: boolean | Prisma.GatewayDefaultArgs<ExtArgs>
@@ -838,6 +869,7 @@ export type GatewayDeviceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   hardwareModel?: boolean
   lastHeartbeatAt?: boolean
   ipAddress?: boolean
+  location?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   gateway?: boolean | Prisma.GatewayDefaultArgs<ExtArgs>
@@ -857,11 +889,12 @@ export type GatewayDeviceSelectScalar = {
   hardwareModel?: boolean
   lastHeartbeatAt?: boolean
   ipAddress?: boolean
+  location?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type GatewayDeviceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "gatewayId" | "batteryLevel" | "isCharging" | "signalStrength" | "networkOperator" | "simSlotCount" | "appVersion" | "osVersion" | "fcmToken" | "hardwareModel" | "lastHeartbeatAt" | "ipAddress" | "createdAt" | "updatedAt", ExtArgs["result"]["gatewayDevice"]>
+export type GatewayDeviceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "gatewayId" | "batteryLevel" | "isCharging" | "signalStrength" | "networkOperator" | "simSlotCount" | "appVersion" | "osVersion" | "fcmToken" | "hardwareModel" | "lastHeartbeatAt" | "ipAddress" | "location" | "createdAt" | "updatedAt", ExtArgs["result"]["gatewayDevice"]>
 export type GatewayDeviceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   gateway?: boolean | Prisma.GatewayDefaultArgs<ExtArgs>
 }
@@ -891,6 +924,7 @@ export type $GatewayDevicePayload<ExtArgs extends runtime.Types.Extensions.Inter
     hardwareModel: string | null
     lastHeartbeatAt: Date | null
     ipAddress: string | null
+    location: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["gatewayDevice"]>
@@ -1330,6 +1364,7 @@ export interface GatewayDeviceFieldRefs {
   readonly hardwareModel: Prisma.FieldRef<"GatewayDevice", 'String'>
   readonly lastHeartbeatAt: Prisma.FieldRef<"GatewayDevice", 'DateTime'>
   readonly ipAddress: Prisma.FieldRef<"GatewayDevice", 'String'>
+  readonly location: Prisma.FieldRef<"GatewayDevice", 'String'>
   readonly createdAt: Prisma.FieldRef<"GatewayDevice", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"GatewayDevice", 'DateTime'>
 }

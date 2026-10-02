@@ -25,6 +25,18 @@ export async function GET(req: NextRequest) {
                 select: { name: true }
               }
             }
+          },
+          sessions: {
+            where: { revokedAt: null, expiresAt: { gt: new Date() } },
+            select: {
+              id: true,
+              deviceInfo: true,
+              deviceName: true,
+              ipAddress: true,
+              location: true,
+              lastActivityAt: true,
+            },
+            orderBy: { lastActivityAt: 'desc' }
           }
         }
       });

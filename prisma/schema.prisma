@@ -90,6 +90,8 @@ model Session {
 
   deviceInfo String?
   ipAddress  String?
+  location   String?
+  deviceName String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1474,6 +1476,7 @@ model GatewayDevice {
 
   lastHeartbeatAt DateTime?
   ipAddress       String?
+  location        String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1807,3 +1810,4 @@ model CustomVariable {
   @@unique([userId, key])
   @@index([userId])
 }
+

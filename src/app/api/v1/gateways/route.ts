@@ -17,7 +17,23 @@ export const GET = async (_req: NextRequest) => {
       orderBy: { createdAt: 'desc' }
     });
 
-    return NextResponse.json({ success: true, gateways });
+    // Compute online status based on last heartbeat (2 minutes threshold)
+    const TWO_MINUTES = 2 * 60 * 1000;
+    const gatewaysWithOnlineStatus = gateways.map((gw) => {
+      let isOnline = false;
+      if (gw.devices && gw.devices.length > 0) {
+        const lastHeartbeat = gw.devices[0].lastHeartbeatAt;
+        if (lastHeartbeat) {
+          isOnline = (new Date().getTime() - new Date(lastHeartbeat).getTime()) < TWO_MINUTES;
+        }
+      }
+      return {
+        ...gw,
+        isOnline
+      };
+    });
+
+    return NextResponse.json({ success: true, gateways: gatewaysWithOnlineStatus });
   } catch (error: unknown) {
     console.error('List Gateways Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

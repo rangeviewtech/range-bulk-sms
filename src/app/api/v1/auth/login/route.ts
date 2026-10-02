@@ -63,7 +63,20 @@ export async function POST(req: NextRequest) {
 
     const roles = user.roles.map((r) => r.role.name);
     const expiresAt = new Date(Date.now() + REMEMBER_ME_DURATION_MS); // 30 days for mobile session
-    const userAgent = req.headers.get('user-agent')?.substring(0, 250) || 'Range SMS Mobile Client';
+    const userAgent = req.headers.get('user-agent') || 'Range SMS Mobile Client';
+    const location = req.headers.get('x-vercel-ip-country') 
+      ? `${req.headers.get('x-vercel-ip-city') || 'Unknown'}, ${req.headers.get('x-vercel-ip-country')}`
+      : 'Local/Unknown';
+      
+    // Simple basic parse for deviceName (can be replaced with UAParser)
+    let deviceName = body.deviceName || 'Unknown Device';
+    if (!body.deviceName) {
+      if (userAgent.includes('Android')) deviceName = 'Android Device';
+      else if (userAgent.includes('iPhone')) deviceName = 'iPhone';
+      else if (userAgent.includes('Windows')) deviceName = 'Windows PC';
+      else if (userAgent.includes('Mac')) deviceName = 'Mac';
+      else if (userAgent.includes('Linux')) deviceName = 'Linux PC';
+    }
 
     // Create database-backed persistent session
     const session = await prisma.session.create({
@@ -76,6 +89,8 @@ export async function POST(req: NextRequest) {
         mfaVerified: true,
         deviceInfo: userAgent,
         ipAddress: ip,
+        location,
+        deviceName
       }
     });
 

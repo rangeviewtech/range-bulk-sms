@@ -37,6 +37,10 @@ export const POST = async (req: NextRequest) => {
         req.headers.get('remote-addr') ||
         undefined;
 
+      const location = req.headers.get('x-vercel-ip-country') 
+        ? `${req.headers.get('x-vercel-ip-city') || 'Unknown'}, ${req.headers.get('x-vercel-ip-country')}`
+        : 'Local/Unknown';
+
       const deviceData = {
         batteryLevel,
         isCharging: isCharging ?? false,
@@ -47,6 +51,7 @@ export const POST = async (req: NextRequest) => {
         appVersion: body.firmwareVersion || undefined,
         lastHeartbeatAt: new Date(),
         ipAddress,
+        location,
       };
 
       if (device) {

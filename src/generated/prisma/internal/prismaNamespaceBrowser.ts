@@ -169,6 +169,8 @@ export const SessionScalarFieldEnum = {
   mfaVerified: 'mfaVerified',
   deviceInfo: 'deviceInfo',
   ipAddress: 'ipAddress',
+  location: 'location',
+  deviceName: 'deviceName',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1061,6 +1063,7 @@ export const GatewayDeviceScalarFieldEnum = {
   hardwareModel: 'hardwareModel',
   lastHeartbeatAt: 'lastHeartbeatAt',
   ipAddress: 'ipAddress',
+  location: 'location',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
