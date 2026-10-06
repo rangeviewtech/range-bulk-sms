@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect, useRef, useMemo, useCallback, Suspense } from 'react';
 import dynamic from 'next/dynamic';
@@ -80,7 +80,7 @@ import {
   PauseCircle,
   Sun,
   Moon,
-} from 'lucide-react';
+  X } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -94,7 +94,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogBody } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogBody, DialogClose } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { useTimezone } from '@/providers/timezone-provider';
@@ -212,6 +212,13 @@ function SendSmsContent() {
   const recipientsInputRef = useRef<PhoneRecipientsInputHandle>(null);
   const [selectedDialCode, setSelectedDialCode] = useState<string | undefined>(undefined);
   const [isGroupLoading, setIsGroupLoading] = useState(false);
+
+  const selectedGatewayType = useMemo(() => {
+    if (!gatewayId || gatewayId === 'system') return null;
+    return gatewayOptions.find((g) => g.id === gatewayId)?.type;
+  }, [gatewayId, gatewayOptions]);
+
+  const isHardwareGatewaySelected = selectedGatewayType === 'ESP32_GSM' || selectedGatewayType === 'ANDROID';
 
   const [selectedGroupId, setSelectedGroupId] = useState('g1');
   const [message, setMessage] = useState('');
@@ -1204,6 +1211,134 @@ function SendSmsContent() {
     toast.info('Form cleared for new broadcast');
   };
 
+  const renderSmartphoneSimulator = () => (
+    <>
+              {/* Smartphone Frame respecting active theme */}
+              <div className={cn(
+                "w-[335px] rounded-[46px] border-[6px] shadow-2xl p-4 flex flex-col justify-between relative overflow-hidden min-h-[620px] transition-colors duration-200",
+                isHandsetDark
+                  ? "border-slate-700/80 bg-brand-navy text-slate-100"
+                  : "border-slate-300/90 bg-white text-slate-900"
+              )}>
+                {/* Camera Punch Hole */}
+                <div className={cn(
+                  "w-2.5 h-2.5 rounded-full mx-auto -mb-1 z-10 transition-colors",
+                  isHandsetDark ? "bg-black ring-1 ring-slate-800/80" : "bg-slate-900 ring-1 ring-slate-300"
+                )} />
+
+                {/* Handset Status Bar */}
+                <div className={cn(
+                  "flex items-center justify-between text-[11px] font-medium px-3 pb-3 transition-colors",
+                  isHandsetDark ? "text-slate-300" : "text-slate-600"
+                )}>
+                  <span>{simulatorTime}</span>
+                  <div className="flex items-center gap-1.5">
+                    <Signal className="w-3 h-3" />
+                    <Wifi className="w-3 h-3" />
+                    <Battery className="w-3.5 h-3.5" />
+                  </div>
+                </div>
+
+                {/* SMS Sender Header */}
+                <div className={cn(
+                  "text-center pb-3 border-b transition-colors",
+                  isHandsetDark ? "border-slate-800/60" : "border-slate-200"
+                )}>
+                  <div className={cn(
+                    "w-12 h-12 rounded-full font-bold text-sm flex items-center justify-center mx-auto mb-1.5 shadow-none transition-colors",
+                    isHandsetDark
+                      ? "bg-brand-yellow/20 border border-brand-yellow/40 text-brand-yellow"
+                      : "bg-brand-blue/10 border border-brand-blue/25 text-brand-blue"
+                  )}>
+                    {(senderId || 'RA').slice(0, 2).toUpperCase()}
+                  </div>
+                  <div className={cn(
+                    "text-sm font-bold flex items-center justify-center gap-1.5 transition-colors",
+                    isHandsetDark ? "text-slate-100" : "text-slate-900"
+                  )}>
+                    <span>{senderId || 'RANGESMS'}</span>
+                    <ShieldCheck className={cn(
+                      "w-3.5 h-3.5 shrink-0",
+                      isHandsetDark ? "text-emerald-400" : "text-emerald-600"
+                    )} />
+                  </div>
+                  <div className={cn(
+                    "text-[10px] mt-0.5 transition-colors",
+                    isHandsetDark ? "text-slate-400" : "text-slate-500"
+                  )}>
+                    Text Message &bull; Today {simulatorTime}
+                  </div>
+                </div>
+
+                {/* Message Bubble Simulator Area */}
+                <div className="flex-1 py-4 overflow-y-auto space-y-2">
+                  {isFlashSms && (
+                    <div className={cn(
+                      "px-2 py-0.5 rounded text-[9px] font-bold text-center border transition-colors",
+                      isHandsetDark
+                        ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                        : "bg-amber-500/15 text-amber-800 border-amber-500/30"
+                    )}>
+                      ⚡ CLASS 0 FLASH SMS
+                    </div>
+                  )}
+
+                  <div className={cn(
+                    "rounded-2xl rounded-tl-sm p-4 text-xs shadow-none leading-relaxed space-y-1 transition-colors border",
+                    isHandsetDark
+                      ? "bg-slate-900/90 border-slate-800/80 text-slate-100"
+                      : "bg-slate-100 border-slate-200 text-slate-900"
+                  )}>
+                    {effectiveMessage ? (
+                      <TemplateHighlighter
+                        text={effectiveMessage}
+                        resolveSampleValues={previewMode !== 'raw'}
+                        variant={previewMode === 'realistic' ? 'plain' : 'badge'}
+                      />
+                    ) : (
+                      <span className={cn(
+                        "italic text-[11px] transition-colors",
+                        isHandsetDark ? "text-slate-400" : "text-slate-500"
+                      )}>
+                        Message preview will appear live as you type...
+                      </span>
+                    )}
+                  </div>
+                  <div className={cn(
+                    "text-[10px] text-right pr-1 pt-1 font-sans transition-colors",
+                    isHandsetDark ? "text-slate-400" : "text-slate-500"
+                  )}>
+                    Now
+                  </div>
+                </div>
+
+                {/* Handset Footer Stats & Indicator */}
+                <div className={cn(
+                  "pt-3 border-t text-center space-y-2 transition-colors",
+                  isHandsetDark ? "border-slate-800/50" : "border-slate-200"
+                )}>
+                  <div className={cn(
+                    "text-xs font-mono flex items-center justify-between px-2 transition-colors",
+                    isHandsetDark ? "text-slate-400" : "text-slate-600"
+                  )}>
+                    <span>{charCount} chars</span>
+                    <span>{segments} {segments === 1 ? 'segment' : 'segments'}</span>
+                    <span className={cn(
+                      "font-bold font-mono transition-colors",
+                      isHandsetDark ? "text-brand-yellow" : "text-brand-blue"
+                    )}>
+                      {cost} UGX
+                    </span>
+                  </div>
+                  {/* Home Bar Indicator */}
+                  <div className={cn(
+                    "h-1 w-28 rounded-full mx-auto mt-2 transition-colors",
+                    isHandsetDark ? "bg-slate-600/40" : "bg-slate-300"
+                  )} />
+                </div>
+              </div>
+    </>
+);
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       {/* Page Header with Real-Time Autosave Status and Draft Navigation */}
@@ -1396,39 +1531,40 @@ function SendSmsContent() {
                 /* Import Mode: Row 1 = Sender ID + Template Download Action, Row 2 = Full Width Spreadsheet / CSV Recipients */
                 <div className="space-y-4">
                   {/* Row 1: Sender ID & Template Download */}
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full sm:max-w-xl">
-                      <div className="space-y-1.5">
-                        <div className="flex items-center justify-between min-h-8">
-                          <Label htmlFor="import-sender" required>Sender ID</Label>
-                          <Badge variant="outline" className="text-[10px] font-normal px-1.5 py-0 h-4 border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
-                            Approved
-                          </Badge>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                      {!isHardwareGatewaySelected && (
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between min-h-8">
+                            <Label htmlFor="import-sender" required>Sender ID</Label>
+                            <Badge variant="outline" className="text-[10px] font-normal px-1.5 py-0 h-4 border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
+                              Approved
+                            </Badge>
+                          </div>
+                          <Select name="import-sender" value={senderId} onValueChange={setSenderId}>
+                            <SelectTrigger id="import-sender" name="import-sender" aria-label="Sender ID" className="h-10 text-xs sm:text-sm">
+                              <SelectValue placeholder="Select sender ID" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {senderOptions.length > 0 ? (
+                                senderOptions.map((s) => (
+                                  <SelectItem key={s.id} value={s.senderId}>
+                                    {s.senderId} (Approved)
+                                  </SelectItem>
+                                ))
+                              ) : (
+                                <>
+                                  <SelectItem value="RANGESMS">RANGESMS (Default)</SelectItem>
+                                  <SelectItem value="INFO">INFO (Transactional)</SelectItem>
+                                  <SelectItem value="RANGE">RANGE (Alphanumeric)</SelectItem>
+                                </>
+                              )}
+                            </SelectContent>
+                          </Select>
                         </div>
-                        <Select name="import-sender" value={senderId} onValueChange={setSenderId}>
-                          <SelectTrigger id="import-sender" name="import-sender" aria-label="Sender ID" className="h-10 text-xs sm:text-sm">
-                            <SelectValue placeholder="Select sender ID" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {senderOptions.length > 0 ? (
-                              senderOptions.map((s) => (
-                                <SelectItem key={s.id} value={s.senderId}>
-                                  {s.senderId} (Approved)
-                                </SelectItem>
-                              ))
-                            ) : (
-                              <>
-                                <SelectItem value="RANGESMS">RANGESMS (Default)</SelectItem>
-                                <SelectItem value="INFO">INFO (Transactional)</SelectItem>
-                                <SelectItem value="RANGE">RANGE (Alphanumeric)</SelectItem>
-                              </>
-                            )}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      )}
 
                       {gatewayOptions.length > 0 && (
-                        <div className="space-y-1.5">
+                        <div className={cn("space-y-1.5", isHardwareGatewaySelected ? "sm:col-span-2" : "")}>
                           <div className="flex items-center justify-between min-h-8">
                             <Label htmlFor="import-gateway" className="text-sm font-medium">Route via Gateway</Label>
                           </div>
@@ -1438,48 +1574,61 @@ function SendSmsContent() {
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="system">System Default Route</SelectItem>
-                              {gatewayOptions.map((gw) => (
-                                <SelectItem key={gw.id} value={gw.id}>
-                                  {gw.name} ({gw.type})
-                                </SelectItem>
-                              ))}
+                              {gatewayOptions.map((gw) => {
+                                const isMobileOrHardware = gw.type === 'ESP32_GSM' || gw.type === 'ANDROID';
+                                
+                                return (
+                                  <SelectItem key={gw.id} value={gw.id}>
+                                    <div className="flex items-center gap-2">
+                                      {isMobileOrHardware && (
+                                        <div className={`w-1.5 h-1.5 rounded-full ${
+                                          (!gw.isOnline || gw.status === 'OFFLINE') ? 'bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.6)]' :
+                                          gw.status === 'DEGRADED' ? 'bg-yellow-500 shadow-[0_0_5px_rgba(234,179,8,0.6)]' : 
+                                          'bg-green-500 shadow-[0_0_5px_rgba(34,197,94,0.6)]'
+                                        }`} />
+                                      )}
+                                      <span className="font-medium truncate max-w-[120px] sm:max-w-[160px]">{gw.name}</span>
+                                      <span className="text-muted-foreground text-[10px] sm:text-[11px] opacity-80 shrink-0">
+                                        {isMobileOrHardware 
+                                          ? `(${!gw.isOnline || gw.status === 'OFFLINE' ? 'Offline' : gw.status === 'DEGRADED' ? 'Busy' : 'Online'})`
+                                          : `(${gw.type})`
+                                        }
+                                      </span>
+                                    </div>
+                                  </SelectItem>
+                                );
+                              })}
                             </SelectContent>
                           </Select>
                         </div>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2 mt-0 sm:mt-9">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="h-10 text-xs px-4 rounded-full border-border/60 hover:bg-muted/40 font-semibold gap-1.5 shadow-none transition-all duration-150 text-muted-foreground hover:text-foreground cursor-pointer"
-                        onClick={handleDownloadSampleCsv}
-                        title="Download sample spreadsheet template with phone numbers"
-                      >
-                        <Download className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow shrink-0" />
-                        <span>Download Sample CSV Template</span>
-                      </Button>
-                    </div>
-                  </div>
-
                   {/* Row 2: Spreadsheet / CSV Recipients (Full Width on Larger Screens) */}
                   <div className="space-y-1.5 w-full">
                     <div className="flex justify-between items-center min-h-8">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <Label required>Spreadsheet / CSV Recipients</Label>
                         <span className="text-[11px] text-muted-foreground hidden sm:inline">
                           (.xlsx, .xls, .csv, .tsv)
                         </span>
                       </div>
-                      {importRowCount !== null && (
-                        <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-4">
+                        {importRowCount !== null && (
                           <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 font-medium px-2 py-0.5">
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             {importRowCount} contacts parsed
                           </Badge>
-                        </div>
-                      )}
+                        )}
+                        <button
+                          type="button"
+                          onClick={handleDownloadSampleCsv}
+                          className="text-[11px] font-medium text-brand-blue hover:text-brand-blue/80 dark:text-brand-yellow dark:hover:text-brand-yellow/80 hover:underline flex items-center gap-1 transition-colors cursor-pointer"
+                        >
+                          <Download className="w-3 h-3" />
+                          Download Sample CSV
+                        </button>
+                      </div>
                     </div>
 
                     {/* Hidden file input */}
@@ -1511,7 +1660,7 @@ function SendSmsContent() {
                               </Badge>
                             </div>
                             <p className="text-xs text-muted-foreground">
-                              Ready for dispatch â€¢ Phone numbers automatically parsed and deduplicated
+                              Ready for dispatch &bull; Phone numbers automatically parsed and deduplicated
                             </p>
                           </div>
                         </div>
@@ -1589,34 +1738,36 @@ function SendSmsContent() {
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-5">
                   {/* Sender ID */}
                   <div className="space-y-4 md:col-span-2">
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between min-h-8">
-                        <Label htmlFor="sender" required>Sender ID</Label>
-                        <Badge variant="outline" className="text-[10px] font-normal px-1.5 py-0 h-4 border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
-                          Approved
-                        </Badge>
+                    {!isHardwareGatewaySelected && (
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between min-h-8">
+                          <Label htmlFor="sender" required>Sender ID</Label>
+                          <Badge variant="outline" className="text-[10px] font-normal px-1.5 py-0 h-4 border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
+                            Approved
+                          </Badge>
+                        </div>
+                        <Select name="sender" value={senderId} onValueChange={setSenderId}>
+                          <SelectTrigger id="sender" name="sender" aria-label="Sender ID" className="h-10 text-xs sm:text-sm">
+                            <SelectValue placeholder="Select sender ID" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {senderOptions.length > 0 ? (
+                              senderOptions.map((s) => (
+                                <SelectItem key={s.id} value={s.senderId}>
+                                  {s.senderId} (Approved)
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <>
+                                <SelectItem value="RANGESMS">RANGESMS (Default)</SelectItem>
+                                <SelectItem value="INFO">INFO (Transactional)</SelectItem>
+                                <SelectItem value="RANGE">RANGE (Alphanumeric)</SelectItem>
+                              </>
+                            )}
+                          </SelectContent>
+                        </Select>
                       </div>
-                      <Select name="sender" value={senderId} onValueChange={setSenderId}>
-                        <SelectTrigger id="sender" name="sender" aria-label="Sender ID" className="h-10 text-xs sm:text-sm">
-                          <SelectValue placeholder="Select sender ID" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {senderOptions.length > 0 ? (
-                            senderOptions.map((s) => (
-                              <SelectItem key={s.id} value={s.senderId}>
-                                {s.senderId} (Approved)
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <>
-                              <SelectItem value="RANGESMS">RANGESMS (Default)</SelectItem>
-                              <SelectItem value="INFO">INFO (Transactional)</SelectItem>
-                              <SelectItem value="RANGE">RANGE (Alphanumeric)</SelectItem>
-                            </>
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    )}
 
                     {gatewayOptions.length > 0 && (
                       <div className="space-y-1.5">
@@ -1629,11 +1780,30 @@ function SendSmsContent() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="system">System Default Route</SelectItem>
-                            {gatewayOptions.map((gw) => (
-                              <SelectItem key={gw.id} value={gw.id}>
-                                {gw.name} ({gw.type})
-                              </SelectItem>
-                            ))}
+                            {gatewayOptions.map((gw) => {
+                              const isMobileOrHardware = gw.type === 'ESP32_GSM' || gw.type === 'ANDROID';
+                              
+                              return (
+                                <SelectItem key={gw.id} value={gw.id}>
+                                  <div className="flex items-center gap-2">
+                                    {isMobileOrHardware && (
+                                      <div className={`w-1.5 h-1.5 rounded-full ${
+                                        (!gw.isOnline || gw.status === 'OFFLINE') ? 'bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.6)]' :
+                                        gw.status === 'DEGRADED' ? 'bg-yellow-500 shadow-[0_0_5px_rgba(234,179,8,0.6)]' : 
+                                        'bg-green-500 shadow-[0_0_5px_rgba(34,197,94,0.6)]'
+                                      }`} />
+                                    )}
+                                    <span className="font-medium truncate max-w-[120px] sm:max-w-[160px]">{gw.name}</span>
+                                    <span className="text-muted-foreground text-[10px] sm:text-[11px] opacity-80 shrink-0">
+                                      {isMobileOrHardware 
+                                        ? `(${!gw.isOnline || gw.status === 'OFFLINE' ? 'Offline' : gw.status === 'DEGRADED' ? 'Busy' : 'Online'})`
+                                        : `(${gw.type})`
+                                      }
+                                    </span>
+                                  </div>
+                                </SelectItem>
+                              );
+                            })}
                           </SelectContent>
                         </Select>
                       </div>
@@ -1980,7 +2150,7 @@ function SendSmsContent() {
                     </div>
                     {isSchedulePastDue ? (
                       <Badge variant="outline" className="text-[11px] border-red-500/40 text-red-600 dark:text-red-400 bg-red-500/10">
-                        Time Passed â€” Update Required
+                        Time Passed &mdash; Update Required
                       </Badge>
                     ) : (
                       <Badge variant="outline" className="text-[11px] border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10">
@@ -2266,130 +2436,7 @@ function SendSmsContent() {
               </div>
             </CardHeader>
             <CardContent className="p-5 sm:p-6 flex justify-center bg-muted/10 dark:bg-muted/5 transition-colors">
-              {/* Smartphone Frame respecting active theme */}
-              <div className={cn(
-                "w-[335px] rounded-[46px] border-[6px] shadow-2xl p-4 flex flex-col justify-between relative overflow-hidden min-h-[620px] transition-colors duration-200",
-                isHandsetDark
-                  ? "border-slate-700/80 bg-brand-navy text-slate-100"
-                  : "border-slate-300/90 bg-white text-slate-900"
-              )}>
-                {/* Camera Punch Hole */}
-                <div className={cn(
-                  "w-2.5 h-2.5 rounded-full mx-auto -mb-1 z-10 transition-colors",
-                  isHandsetDark ? "bg-black ring-1 ring-slate-800/80" : "bg-slate-900 ring-1 ring-slate-300"
-                )} />
-
-                {/* Handset Status Bar */}
-                <div className={cn(
-                  "flex items-center justify-between text-[11px] font-medium px-3 pb-3 transition-colors",
-                  isHandsetDark ? "text-slate-300" : "text-slate-600"
-                )}>
-                  <span>{simulatorTime}</span>
-                  <div className="flex items-center gap-1.5">
-                    <Signal className="w-3 h-3" />
-                    <Wifi className="w-3 h-3" />
-                    <Battery className="w-3.5 h-3.5" />
-                  </div>
-                </div>
-
-                {/* SMS Sender Header */}
-                <div className={cn(
-                  "text-center pb-3 border-b transition-colors",
-                  isHandsetDark ? "border-slate-800/60" : "border-slate-200"
-                )}>
-                  <div className={cn(
-                    "w-12 h-12 rounded-full font-bold text-sm flex items-center justify-center mx-auto mb-1.5 shadow-none transition-colors",
-                    isHandsetDark
-                      ? "bg-brand-yellow/20 border border-brand-yellow/40 text-brand-yellow"
-                      : "bg-brand-blue/10 border border-brand-blue/25 text-brand-blue"
-                  )}>
-                    {(senderId || 'RA').slice(0, 2).toUpperCase()}
-                  </div>
-                  <div className={cn(
-                    "text-sm font-bold flex items-center justify-center gap-1.5 transition-colors",
-                    isHandsetDark ? "text-slate-100" : "text-slate-900"
-                  )}>
-                    <span>{senderId || 'RANGESMS'}</span>
-                    <ShieldCheck className={cn(
-                      "w-3.5 h-3.5 shrink-0",
-                      isHandsetDark ? "text-emerald-400" : "text-emerald-600"
-                    )} />
-                  </div>
-                  <div className={cn(
-                    "text-[10px] mt-0.5 transition-colors",
-                    isHandsetDark ? "text-slate-400" : "text-slate-500"
-                  )}>
-                    Text Message â€¢ Today {simulatorTime}
-                  </div>
-                </div>
-
-                {/* Message Bubble Simulator Area */}
-                <div className="flex-1 py-4 overflow-y-auto space-y-2">
-                  {isFlashSms && (
-                    <div className={cn(
-                      "px-2 py-0.5 rounded text-[9px] font-bold text-center border transition-colors",
-                      isHandsetDark
-                        ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
-                        : "bg-amber-500/15 text-amber-800 border-amber-500/30"
-                    )}>
-                      âš¡ CLASS 0 FLASH SMS
-                    </div>
-                  )}
-
-                  <div className={cn(
-                    "rounded-2xl rounded-tl-sm p-4 text-xs shadow-none leading-relaxed space-y-1 transition-colors border",
-                    isHandsetDark
-                      ? "bg-slate-900/90 border-slate-800/80 text-slate-100"
-                      : "bg-slate-100 border-slate-200 text-slate-900"
-                  )}>
-                    {effectiveMessage ? (
-                      <TemplateHighlighter
-                        text={effectiveMessage}
-                        resolveSampleValues={previewMode !== 'raw'}
-                        variant={previewMode === 'realistic' ? 'plain' : 'badge'}
-                      />
-                    ) : (
-                      <span className={cn(
-                        "italic text-[11px] transition-colors",
-                        isHandsetDark ? "text-slate-400" : "text-slate-500"
-                      )}>
-                        Message preview will appear live as you type...
-                      </span>
-                    )}
-                  </div>
-                  <div className={cn(
-                    "text-[10px] text-right pr-1 pt-1 font-sans transition-colors",
-                    isHandsetDark ? "text-slate-400" : "text-slate-500"
-                  )}>
-                    Now
-                  </div>
-                </div>
-
-                {/* Handset Footer Stats & Indicator */}
-                <div className={cn(
-                  "pt-3 border-t text-center space-y-2 transition-colors",
-                  isHandsetDark ? "border-slate-800/50" : "border-slate-200"
-                )}>
-                  <div className={cn(
-                    "text-xs font-mono flex items-center justify-between px-2 transition-colors",
-                    isHandsetDark ? "text-slate-400" : "text-slate-600"
-                  )}>
-                    <span>{charCount} chars</span>
-                    <span>{segments} {segments === 1 ? 'segment' : 'segments'}</span>
-                    <span className={cn(
-                      "font-bold font-mono transition-colors",
-                      isHandsetDark ? "text-brand-yellow" : "text-brand-blue"
-                    )}>
-                      {cost} UGX
-                    </span>
-                  </div>
-                  {/* Home Bar Indicator */}
-                  <div className={cn(
-                    "h-1 w-28 rounded-full mx-auto mt-2 transition-colors",
-                    isHandsetDark ? "bg-slate-600/40" : "bg-slate-300"
-                  )} />
-                </div>
-              </div>
+              {renderSmartphoneSimulator()}
             </CardContent>
           </Card>
 
@@ -2446,127 +2493,45 @@ function SendSmsContent() {
 
       {/* Message Preview Modal (Primarily for Mobile / Tablet Viewports) */}
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0 overflow-hidden">
-          <DialogHeader className="p-4 sm:p-5 pb-2">
-            <DialogTitle className="text-base sm:text-lg flex items-center gap-2">
-              <Smartphone className="w-4 h-4 text-brand-blue dark:text-brand-yellow" />
-              Live Simulator Preview
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
-              Simulated preview of how your message renders on a recipient smartphone with sample variable values.
-            </DialogDescription>
-          </DialogHeader>
-
-          <DialogBody className="p-4 sm:p-5 pt-2 space-y-3">
-            {/* View Mode Switcher */}
-            <div className="flex items-center justify-between gap-2 p-1.5 rounded-full bg-muted/50 dark:bg-muted/30 border border-border/60 text-xs shadow-inner">
-              <span className="text-[11px] font-medium text-muted-foreground px-2 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                Preview Mode:
-              </span>
-              <div className="flex items-center gap-1">
+        <DialogContent hideCloseButton className="w-auto max-w-[335px] p-0 border-none bg-transparent shadow-none outline-none flex justify-center">
+          <div className="relative">
+            {/* View Mode Switcher floating above the phone on mobile */}
+            <div className="absolute -top-14 left-0 right-0 flex items-center justify-center gap-1 p-1.5 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/10 text-xs shadow-2xl z-50">
                 <button
                   type="button"
                   onClick={() => setPreviewMode('sample')}
                   className={cn(
-                    'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer active:scale-[0.98]',
-                    previewMode === 'sample'
-                      ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
-                      : 'text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/10'
+                    'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150',
+                    previewMode === 'sample' ? 'bg-brand-blue text-white shadow-sm' : 'text-slate-300 hover:text-white'
                   )}
                 >
-                  Sample Data
+                  Sample
                 </button>
                 <button
                   type="button"
                   onClick={() => setPreviewMode('realistic')}
                   className={cn(
-                    'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer active:scale-[0.98]',
-                    previewMode === 'realistic'
-                      ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
-                      : 'text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/10'
+                    'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150',
+                    previewMode === 'realistic' ? 'bg-brand-blue text-white shadow-sm' : 'text-slate-300 hover:text-white'
                   )}
                 >
-                  Realistic SMS
+                  Realistic
                 </button>
                 <button
                   type="button"
                   onClick={() => setPreviewMode('raw')}
                   className={cn(
-                    'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer active:scale-[0.98]',
-                    previewMode === 'raw'
-                      ? 'bg-brand-blue text-white border border-brand-blue shadow-sm dark:bg-brand-yellow dark:text-brand-navy dark:border-brand-yellow font-bold'
-                      : 'text-muted-foreground hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:text-brand-yellow dark:hover:bg-brand-yellow/10'
+                    'h-7 px-3 rounded-full text-xs font-semibold transition-all duration-150',
+                    previewMode === 'raw' ? 'bg-brand-blue text-white shadow-sm' : 'text-slate-300 hover:text-white'
                   )}
                 >
-                  Raw Tags
+                  Raw
                 </button>
-              </div>
             </div>
-
-            {/* Handset Message Bubble */}
-            <div className="p-4 bg-muted/60 dark:bg-slate-900/60 rounded-2xl min-h-[120px] whitespace-pre-wrap font-sans text-sm border shadow-inner">
-              <div className="text-[11px] font-mono text-muted-foreground mb-3 pb-2 border-b border-border/50 flex items-center justify-between">
-                <span className="font-semibold text-foreground flex items-center gap-1">
-                  FROM: {senderId}
-                  {isFlashSms && <Badge variant="secondary" className="text-[9px] px-1 py-0 bg-amber-500/20 text-amber-600">FLASH</Badge>}
-                </span>
-                <span className="text-[10px]">NOW</span>
-              </div>
-              <div className="text-foreground leading-relaxed">
-                {effectiveMessage ? (
-                  <TemplateHighlighter
-                    text={effectiveMessage}
-                    resolveSampleValues={previewMode !== 'raw'}
-                    variant={previewMode === 'realistic' ? 'plain' : 'badge'}
-                  />
-                ) : (
-                  <span className="text-muted-foreground italic">Your message preview will appear here.</span>
-                )}
-              </div>
-            </div>
-
-            {/* Recipient & Metric Details */}
-            <div className="grid grid-cols-2 gap-2 text-xs bg-muted/20 p-2.5 rounded-2xl border">
-              <div>
-                <span className="text-[10px] uppercase font-semibold text-muted-foreground block">
-                  Simulated Recipient
-                </span>
-                <span className="font-medium text-foreground truncate block">
-                  John Doe (+256 700 123456)
-                </span>
-              </div>
-              <div>
-                <span className="text-[10px] uppercase font-semibold text-muted-foreground block">
-                  Rendered Length
-                </span>
-                <span className="font-medium text-foreground block">
-                  {renderPreviewWithSamples(effectiveMessage || '').length} chars â€¢ {segments} {segments === 1 ? 'segment' : 'segments'}
-                </span>
-              </div>
-            </div>
-          </DialogBody>
-
-          <DialogFooter className="p-4 sm:p-5 pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 border-t bg-muted/10">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCopyPreview}
-              disabled={!effectiveMessage}
-              className="h-10 px-5 text-sm font-semibold rounded-full shadow-none border-border/60 hover:bg-muted/40 transition-all duration-150 gap-2"
-            >
-              {copiedPreview ? <Check className="w-4 h-4 text-emerald-500 shrink-0" /> : <Copy className="w-4 h-4 shrink-0" />}
-              {copiedPreview ? 'Copied' : 'Copy Sample Text'}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setPreviewOpen(false)}
-              className="h-10 px-5 text-sm font-semibold rounded-full shadow-none transition-all duration-150 hover:brightness-110"
-            >
-              Close Preview
-            </Button>
-          </DialogFooter>
+            
+            {renderSmartphoneSimulator()}
+          </div>
+          <DialogClose className="fixed top-4 right-4 z-[110] p-2.5 bg-slate-900/40 hover:bg-slate-900/80 text-white rounded-full backdrop-blur-md transition-all border border-white/10 shadow-2xl"><X className="w-5 h-5" /></DialogClose>
         </DialogContent>
       </Dialog>
 
@@ -2812,7 +2777,3 @@ export default function SendSmsPage() {
     </Suspense>
   );
 }
-
-
-
-

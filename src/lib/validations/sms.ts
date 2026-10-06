@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
 export const sendSmsSchema = z.object({
-  senderId: z.string().min(1, 'Sender ID is required').max(11, 'Sender ID max 11 chars'),
+  senderId: z.string().max(11, 'Sender ID max 11 chars').optional(),
+  gatewayId: z.string().optional(),
   recipients: z.array(z.string().min(1)).min(1, 'At least one recipient is required').max(10000, 'Maximum 10,000 recipients per request'),
   message: z.string().min(1, 'Message is required').max(3200, 'Message too long (max 20 segments)'),
   templateId: z.string().uuid().optional(),
@@ -25,7 +26,7 @@ export const scheduleSmsSchema = sendSmsSchema.extend({
 // Campaign creation schema
 export const createCampaignSchema = z.object({
   name: z.string().min(2, 'Campaign name required').max(100),
-  senderId: z.string().min(1, 'Sender ID required').max(11),
+  senderId: z.string().max(11).optional().nullable(),
   message: z.string().min(1, 'Message required').max(3200),
   variables: z.array(z.string()).default([]),
   groupIds: z.array(z.string().uuid()).default([]),

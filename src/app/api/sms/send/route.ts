@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       );
     }
     
-    const { senderId, recipients, message, idempotencyKey, draftId, personalizedMessages } = parsed.data;
+    const { senderId, gatewayId, recipients, message, idempotencyKey, draftId, personalizedMessages } = parsed.data;
 
     if (idempotencyKey) {
       const existing = await prisma.message.findUnique({
@@ -31,9 +31,60 @@ export async function POST(req: Request) {
       }
     }
 
+    // Validate gatewayId if provided
+    let validGatewayId: string | undefined = undefined;
+    if (gatewayId) {
+      const gateway = await prisma.gateway.findUnique({
+        where: { id: gatewayId },
+        include: { devices: true }
+      });
+      
+      if (!gateway || gateway.userId !== session.userId) {
+        return NextResponse.json(
+          { success: false, error: 'Specified Gateway is invalid or does not belong to you' },
+          { status: 400 }
+        );
+      }
+
+      // Check if it's explicitly OFFLINE or hasn't had a heartbeat in 2 minutes
+      let isOnline = gateway.status !== 'OFFLINE' && gateway.status !== 'SUSPENDED';
+      
+      if (isOnline && (gateway.type === 'ESP32_GSM' || gateway.type === 'ANDROID')) {
+        const lastHeartbeat = gateway.devices?.[0]?.lastHeartbeatAt;
+        if (!lastHeartbeat || (new Date().getTime() - new Date(lastHeartbeat).getTime() > 2 * 60 * 1000)) {
+          isOnline = false;
+        }
+      }
+
+      if (!isOnline) {
+        return NextResponse.json(
+          { success: false, error: `The selected gateway "${gateway.name}" is currently offline. Please wait for it to connect or select a different route.` },
+          { status: 400 }
+        );
+      }
+      
+      validGatewayId = gateway.id;
+    }
+
+    if (!validGatewayId && !senderId) {
+      return NextResponse.json(
+        { success: false, error: 'A Sender ID is required when routing through the cloud system.' },
+        { status: 400 }
+      );
+    }
+    
+    // Check if the selected gateway is a hardware type that ignores sender ID
+    let isHardwareGateway = false;
+    if (gatewayId) {
+      const g = await prisma.gateway.findUnique({ where: { id: gatewayId }});
+      if (g && (g.type === 'ESP32_GSM' || g.type === 'ANDROID')) {
+        isHardwareGateway = true;
+      }
+    }
+
     // Validate senderId ownership and approval status
     let validSenderIdId: string | null = null;
-    if (senderId) {
+    if (senderId && !isHardwareGateway) {
       const validSender = await prisma.senderId.findFirst({
         where: {
           OR: [{ id: senderId }, { senderId }],
@@ -99,6 +150,7 @@ export async function POST(req: Request) {
       data: {
         userId: session.userId,
         senderIdId: validSenderIdId,
+        gatewayId: validGatewayId,
         message,
         recipientCount: recipients.length,
         totalUnits: totalUnitsNum,

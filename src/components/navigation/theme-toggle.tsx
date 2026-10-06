@@ -34,7 +34,7 @@ export function ThemeToggle() {
           className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs cursor-pointer transition-colors group"
         >
           <div className="flex items-center gap-2">
-            <Sun className="h-4 w-4 group-focus:text-brand-blue dark:group-focus:text-brand-yellow" />
+            <Sun className={`h-4 w-4 ${theme === 'light' ? 'text-brand-blue dark:text-brand-yellow' : 'text-muted-foreground group-focus:text-brand-blue dark:group-focus:text-brand-yellow'}`} />
             <span className={`font-medium ${theme === 'light' ? 'text-brand-blue dark:text-brand-yellow' : 'text-foreground group-focus:text-brand-blue dark:group-focus:text-brand-yellow'}`}>Light</span>
           </div>
           {theme === "light" && <Check className="h-4 w-4 text-brand-blue dark:text-brand-yellow" />}
@@ -44,7 +44,7 @@ export function ThemeToggle() {
           className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs cursor-pointer transition-colors group"
         >
           <div className="flex items-center gap-2">
-            <Moon className="h-4 w-4 group-focus:text-brand-blue dark:group-focus:text-brand-yellow" />
+            <Moon className={`h-4 w-4 ${theme === 'dark' ? 'text-brand-blue dark:text-brand-yellow' : 'text-muted-foreground group-focus:text-brand-blue dark:group-focus:text-brand-yellow'}`} />
             <span className={`font-medium ${theme === 'dark' ? 'text-brand-blue dark:text-brand-yellow' : 'text-foreground group-focus:text-brand-blue dark:group-focus:text-brand-yellow'}`}>Dark</span>
           </div>
           {theme === "dark" && <Check className="h-4 w-4 text-brand-blue dark:text-brand-yellow" />}
@@ -54,7 +54,7 @@ export function ThemeToggle() {
           className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs cursor-pointer transition-colors group"
         >
           <div className="flex items-center gap-2">
-            <Monitor className="h-4 w-4 group-focus:text-brand-blue dark:group-focus:text-brand-yellow" />
+            <Monitor className={`h-4 w-4 ${theme === 'system' ? 'text-brand-blue dark:text-brand-yellow' : 'text-muted-foreground group-focus:text-brand-blue dark:group-focus:text-brand-yellow'}`} />
             <span className={`font-medium ${theme === 'system' ? 'text-brand-blue dark:text-brand-yellow' : 'text-foreground group-focus:text-brand-blue dark:group-focus:text-brand-yellow'}`}>System</span>
           </div>
           {theme === "system" && <Check className="h-4 w-4 text-brand-blue dark:text-brand-yellow" />}

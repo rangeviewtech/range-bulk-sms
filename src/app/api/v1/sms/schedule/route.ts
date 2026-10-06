@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const { senderId, recipients, message, scheduledAt, timezone, isRecurring, cronExpression } = parsed.data;
+      const { senderId, gatewayId, recipients, message, scheduledAt, timezone, isRecurring, cronExpression } = parsed.data;
 
       // Check if request is sandbox execution
       const sandbox = isSandboxRequest({
