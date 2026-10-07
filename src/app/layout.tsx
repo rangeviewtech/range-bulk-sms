@@ -7,7 +7,19 @@ import './globals.css';
 import './range-legacy.css';
 import './chatbot-legacy.css';
 
+import { Viewport } from 'next';
+
 export const metadata = createMetadata();
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: '#09090b' },
+  ],
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1, // Prevents auto-zoom on form focus on iOS
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
