@@ -1,0 +1,31 @@
+{
+  "name": "Range View Technology Services",
+  "short_name": "Range View",
+  "icons": [
+    {
+      "src": "pwa-icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "../../03-Icon-Masters/Shared-Platform-Raster/range-view-shared-light-512x512-42dd6059.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "../../03-Icon-Masters/Shared-Platform-Raster/range-view-shared-brand-blue-192x192-e641ae3d.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "../../03-Icon-Masters/Shared-Platform-Raster/range-view-shared-brand-blue-512x512-d76f9ea1.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#04648C",
+  "background_color": "#FFFFFF",
+  "display": "standalone"
+}
