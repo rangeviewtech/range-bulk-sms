@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ThemeToggle } from '@/components/navigation/theme-toggle';
 import { LanguageToggle } from '@/components/navigation/language-toggle';
+import { TopBar } from '@/components/navigation/top-bar';
 import {
   Search,
   Key,
@@ -63,6 +64,7 @@ export function DocsHeader({
         borderColor: PORTAL_COLORS.border,
       }}
     >
+      <TopBar />
       {/* Main Navbar Bar */}
       <div className="max-w-[1600px] mx-auto px-2 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-1.5 sm:gap-4">
         {/* Left Section: Brand Logo */}

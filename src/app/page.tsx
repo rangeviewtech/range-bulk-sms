@@ -20,6 +20,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Badge } from '@/components/ui/badge';
 import { RangeLogo } from '@/components/brand/range-logo';
 import { MarketingHeaderAuth } from '@/components/navigation/marketing-header-auth';
+import { TopBar } from '@/components/navigation/top-bar';
+import {
+  FacebookSolid,
+  InstagramSolid,
+  XSolid,
+  TikTokSolid,
+  WhatsAppSolid,
+  YouTubeSolid,
+  LinkedInSolid,
+  ThreadsSolid,
+  GitHubSolid,
+  TelegramSolid,
+} from '@/components/icons/social-icons';
 import { verifySession } from '@/lib/auth/session';
 
 export const metadata = createMetadata({
@@ -208,7 +221,8 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       {/* Sticky Enterprise Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/85 backdrop-blur-md">
+      <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/95 backdrop-blur-md">
+        <TopBar />
         <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-6">
             <RangeLogo variant="auto" size="sm" asLink href="/" />
@@ -580,8 +594,40 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-            <p>© {new Date().getFullYear()} Range View Technology Services. All rights reserved.</p>
+          <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+            <p>© {new Date().getFullYear()} Range View Technology Services Uganda Limited. All rights reserved.</p>
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <a href="https://facebook.com/rangeviewtech" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" aria-label="Facebook">
+                <FacebookSolid className="h-4 w-4" />
+              </a>
+              <a href="https://instagram.com/rangeviewtech" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" aria-label="Instagram">
+                <InstagramSolid className="h-4 w-4" />
+              </a>
+              <a href="https://x.com/rangeviewtech" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" aria-label="X (Twitter)">
+                <XSolid className="h-4 w-4" />
+              </a>
+              <a href="https://tiktok.com/@rangeviewtech" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" aria-label="TikTok">
+                <TikTokSolid className="h-4 w-4" />
+              </a>
+              <a href="https://wa.me/256783100930" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" aria-label="WhatsApp">
+                <WhatsAppSolid className="h-4 w-4" />
+              </a>
+              <a href="https://youtube.com/@rangeviewtech" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" aria-label="YouTube">
+                <YouTubeSolid className="h-4 w-4" />
+              </a>
+              <a href="https://linkedin.com/company/rangeviewtech" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" aria-label="LinkedIn">
+                <LinkedInSolid className="h-4 w-4" />
+              </a>
+              <a href="https://threads.net/@rangeviewtech" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" aria-label="Threads">
+                <ThreadsSolid className="h-4 w-4" />
+              </a>
+              <a href="https://github.com/rangeviewtech" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" aria-label="GitHub">
+                <GitHubSolid className="h-4 w-4" />
+              </a>
+              <a href="https://t.me/rangeviewtech" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" aria-label="Telegram">
+                <TelegramSolid className="h-4 w-4" />
+              </a>
+            </div>
             <div className="flex items-center gap-6">
               <Link href="/terms" className="hover:text-foreground">Terms</Link>
               <Link href="/privacy" className="hover:text-foreground">Privacy</Link>
