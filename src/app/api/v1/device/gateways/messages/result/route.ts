@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { withDeviceAuth } from '@/lib/gateways/device-auth';
+import { withDeviceAuth, sendGatewayResponse } from '@/lib/gateways/device-auth';
 import { MessageStatus } from '@/generated/prisma/client';
 
 export const POST = async (req: NextRequest) => {
@@ -122,7 +122,7 @@ export const POST = async (req: NextRequest) => {
         });
       });
 
-      const { sendGatewayResponse } = require('@/lib/gateways/device-auth');
+      
       return sendGatewayResponse({ success: true, effectiveStatus: effectiveMessageStatus }, gatewaySecret, isE2EE);
 
     } catch (error: unknown) {

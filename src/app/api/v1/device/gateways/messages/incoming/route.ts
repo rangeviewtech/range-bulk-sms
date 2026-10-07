@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { withDeviceAuth } from '@/lib/gateways/device-auth';
+import { withDeviceAuth, sendGatewayResponse } from '@/lib/gateways/device-auth';
 import { JobWorker } from '@/lib/queue/worker';
 
 export const POST = async (req: NextRequest) => {
@@ -56,7 +56,7 @@ export const POST = async (req: NextRequest) => {
         });
       }
 
-      const { sendGatewayResponse } = require('@/lib/gateways/device-auth');
+      
       return sendGatewayResponse({ success: true, dispatchedWebhooks: webhooks.length }, gatewaySecret, isE2EE);
     } catch (error: unknown) {
       console.error('Gateway Incoming SMS Error:', error);

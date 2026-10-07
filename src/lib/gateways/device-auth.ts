@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { NextRequest } from 'next/server';
+import { decryptGatewayPayload, encryptGatewayPayload } from './encryption';
 
 /**
  * Generates a raw token and its SHA-256 hash for Gateway authentication.
@@ -51,6 +52,7 @@ export async function verifyGatewayToken(token: string): Promise<{ isValid: bool
  */
 export async function withDeviceAuth(
   req: NextRequest,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handler: (req: NextRequest, context: { gatewayId: string; gatewaySecret: string; body?: any; isE2EE?: boolean }) => Promise<Response>
 ): Promise<Response> {
   const authHeader = req.headers.get('Authorization');
@@ -65,20 +67,18 @@ export async function withDeviceAuth(
     return Response.json({ error: 'Unauthorized: Invalid or expired Gateway Token' }, { status: 401 });
   }
 
-  let body: any = null;
+  let body: unknown = null;
   let isE2EE = req.headers.get('x-e2ee') === 'true';
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     try {
       const rawBody = await req.json().catch(() => ({}));
       if (rawBody.e2ee) {
-        // Late import to avoid circular dependencies if any
-        const { decryptGatewayPayload } = require('./encryption');
         body = decryptGatewayPayload(rawBody.e2ee, verification.gatewaySecret);
         isE2EE = true;
       } else {
         body = rawBody;
       }
-    } catch (e) {
+    } catch (_e) {
       return Response.json({ error: 'Bad Request: Failed to parse or decrypt payload' }, { status: 400 });
     }
   }
@@ -88,9 +88,8 @@ export async function withDeviceAuth(
   return response;
 }
 
-export function sendGatewayResponse(data: any, gatewaySecret?: string, useE2EE = false) {
+export function sendGatewayResponse(data: unknown, gatewaySecret?: string, useE2EE = false) {
   if (useE2EE && gatewaySecret) {
-    const { encryptGatewayPayload } = require('./encryption');
     return Response.json({ e2ee: encryptGatewayPayload(data, gatewaySecret) });
   }
   return Response.json(data);

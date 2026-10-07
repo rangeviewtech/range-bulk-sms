@@ -8,7 +8,7 @@ const FIRMWARE_DOWNLOAD_URL = "https://your-firmware-bucket.s3.amazonaws.com/fir
 // const FIRMWARE_DOWNLOAD_URL = "https://your-domain.com/firmware.bin";
 
 export async function POST(req: NextRequest) {
-  return withDeviceAuth(req, async (req, { gatewayId }) => {
+  return withDeviceAuth(req, async (req, { gatewayId: _gatewayId }) => {
     try {
       const body = await req.json().catch(() => ({}));
       const currentVersion = body.currentVersion || "0.0.0";

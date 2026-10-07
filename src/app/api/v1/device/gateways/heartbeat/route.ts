@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma, Prisma } from '@/lib/prisma';
-import { withDeviceAuth } from '@/lib/gateways/device-auth';
+import { withDeviceAuth, sendGatewayResponse } from '@/lib/gateways/device-auth';
 
 /**
  * Enhanced Gateway Heartbeat
@@ -135,7 +135,6 @@ export const POST = async (req: NextRequest) => {
         adminCommands.adminActions = existingConfig.adminActions;
       }
 
-      const { sendGatewayResponse } = require('@/lib/gateways/device-auth');
       return sendGatewayResponse({
         success: true,
         timestamp: new Date().toISOString(),

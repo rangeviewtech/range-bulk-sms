@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { withDeviceAuth } from '@/lib/gateways/device-auth';
+import { withDeviceAuth, sendGatewayResponse } from '@/lib/gateways/device-auth';
 
 export const GET = async (req: NextRequest) => {
   return withDeviceAuth(req, async (req, { gatewayId, gatewaySecret, isE2EE }) => {
@@ -59,7 +59,7 @@ export const GET = async (req: NextRequest) => {
       });
 
       if (pendingAttempts.length === 0) {
-        const { sendGatewayResponse } = require('@/lib/gateways/device-auth');
+
         return sendGatewayResponse({ success: true, messages: [] }, gatewaySecret, isE2EE);
       }
 
@@ -76,7 +76,7 @@ export const GET = async (req: NextRequest) => {
         }));
       });
 
-      const { sendGatewayResponse } = require('@/lib/gateways/device-auth');
+
       return sendGatewayResponse({ success: true, messages, maxThroughput: gateway.maxThroughput }, gatewaySecret, isE2EE);
 
     } catch (error: unknown) {

@@ -8,7 +8,7 @@ export function deriveGatewayMacKey(secret: string): Buffer {
   return crypto.createHash('sha256').update(secret + "_E2EE_MAC").digest();
 }
 
-export function encryptGatewayPayload(payload: any, secret: string): string {
+export function encryptGatewayPayload(payload: unknown, secret: string): string {
   const key = deriveGatewayEncryptionKey(secret);
   const macKey = deriveGatewayMacKey(secret);
   const iv = crypto.randomBytes(16); // CBC needs 16 bytes IV
@@ -27,7 +27,7 @@ export function encryptGatewayPayload(payload: any, secret: string): string {
   return `${iv.toString('hex')}:${mac}:${ciphertext}`;
 }
 
-export function decryptGatewayPayload(encryptedString: string, secret: string): any {
+export function decryptGatewayPayload(encryptedString: string, secret: string): unknown {
   try {
     const parts = encryptedString.split(':');
     if (parts.length !== 3) throw new Error('Invalid E2EE format');
@@ -52,7 +52,7 @@ export function decryptGatewayPayload(encryptedString: string, secret: string): 
     decrypted += decipher.final('utf8');
     
     return JSON.parse(decrypted);
-  } catch (error) {
+  } catch (_error) {
     throw new Error('Decryption failed');
   }
 }

@@ -1,9 +1,9 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect, useRef, useMemo, useCallback, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { extractVariablesFromText, renderPreviewWithSamples } from '@/lib/sms/custom-variables';
+import { extractVariablesFromText } from '@/lib/sms/custom-variables';
 import { useSmsDraft } from '@/hooks/use-sms-draft';
 import { useRealTime } from '@/hooks/use-real-time';
 import { DraftsDrawer } from '@/components/sms/drafts-drawer';
@@ -60,9 +60,7 @@ import {
   Activity,
   Loader2,
   Smartphone,
-  Copy,
   Bookmark,
-  Check,
   FileText,
   Plus,
   FileSpreadsheet,
@@ -253,7 +251,6 @@ function SendSmsContent() {
   const [previewMode, setPreviewMode] = useState<'sample' | 'realistic' | 'raw'>('realistic');
   const [handsetTheme, setHandsetTheme] = useState<'auto' | 'light' | 'dark'>('auto');
   const isHandsetDark = handsetTheme === 'dark' || (handsetTheme === 'auto' && (mounted ? resolvedTheme === 'dark' : false));
-  const [copiedPreview, setCopiedPreview] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [scheduleDate, setScheduleDate] = useState('');
   const [scheduleError, setScheduleError] = useState('');
@@ -853,15 +850,6 @@ function SendSmsContent() {
         setMessageTouched(true);
       }
     );
-  };
-
-  const handleCopyPreview = () => {
-    const textToCopy = renderPreviewWithSamples(effectiveMessage || '');
-    if (!textToCopy) return;
-    navigator.clipboard.writeText(textToCopy);
-    setCopiedPreview(true);
-    toast.success('Sample preview text copied to clipboard');
-    setTimeout(() => setCopiedPreview(false), 2000);
   };
 
   const validateScheduleDate = (dateStr: string) => {
