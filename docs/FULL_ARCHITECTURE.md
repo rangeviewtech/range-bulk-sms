@@ -1,9 +1,104 @@
-﻿# Range Bulk SMS â€” Comprehensive System Architecture & Engineering Specification
+# Architecture & Engineering Standards — Range Bulk SMS
+
+> For the comprehensive, end-to-end technical specification, multi-tenant hierarchy, signaling protocols, and queue engine, refer to the master [SYSTEM_ARCHITECTURE_AND_SPECIFICATION.md](./SYSTEM_ARCHITECTURE_AND_SPECIFICATION.md).
+
+---
+
+## 1. Overview & Philosophy
+
+**Range Bulk SMS** is an enterprise-grade bulk messaging and mobile infrastructure platform engineered by **Range View Technology Services Uganda Limited**. It is designed around **high availability, multi-tenant security, predictable billing ledger serializability, and low-latency telecom routing**.
+
+The platform leverages the **Next.js 16 App Router** with **React 19 Server Components (RSC)**, **Prisma ORM 7** with PostgreSQL, **Tailwind CSS 4**, and native protocol drivers (SMPP v3.4 and hardware edge gateways).
+
+---
+
+## 2. Directory Architecture
+
+```text
+src/
+├── app/                           # Next.js App Router (145+ pages and API routes)
+│   ├── (auth)/                    # Authentication route group (Login, Register, 2FA, Passkeys)
+│   ├── (dashboard)/               # Authenticated dashboard (SMS, Contacts, Wallet, Developer, etc.)
+│   ├── api/                       # Internal API endpoints (Campaigns, Cron, Contacts, Wallet)
+│   ├── api/v1/                    # Public Developer REST API (Messages, Balance, Gateways)
+│   ├── globals.css                # Master CSS variables, design tokens & Tailwind 4 setup
+│   └── layout.tsx                 # Root layout with theme and session providers
+├── components/                    # Modular React UI components
+│   ├── ui/                        # Base primitives (Radix UI, CVA, Buttons, Inputs, Dialogs)
+│   ├── layout/                    # Shells and navigation (RangeShell, RangeSidebar, Header)
+│   ├── sms/                       # Messaging components (NetworkBadge, CharacterCounter)
+│   ├── chat/                      # Customer support chat widget (SupportChatbox)
+│   └── docs/                      # Code snippets and OpenAPI documentation components
+├── config/                        # Static and dynamic configurations
+│   ├── navigation.ts              # Hierarchical sidebar navigation definition
+│   └── site.ts                    # Platform metadata and branding
+├── design-system/                 # Design token system
+│   └── tokens/                    # Color palettes, typography scales, spacing grids
+├── lib/                           # Core business logic, services, and engines
+│   ├── auth/                      # NextAuth and Bearer API key authentication
+│   ├── billing/                   # Double-entry ledger and serializable credit deductions
+│   ├── contacts/                  # Dynamic segment AST compiler and CSV importer
+│   ├── queue/                     # Database-backed background worker with atomic locking
+│   │   ├── worker.ts              # Polling daemon with retry and backoff
+│   │   └── handlers/              # CampaignExpander, SmsDispatcher, WebhookDispatcher
+│   ├── security/                  # Rate limiting, AIT fraud prevention, CSRF filters
+│   ├── sms/                       # Normalizer, Least Cost Routing, Consent service
+│   │   └── providers/             # Native SMPP v3.4 driver & Mock adapter
+│   ├── prisma.ts                  # Cached Prisma Client singleton with PG adapter
+│   └── utils.ts                   # Tailwind cn() utility
+├── proxy.ts                       # Edge proxy middleware (Asset routing & CSRF protection)
+└── types/                         # Shared TypeScript domain types and interfaces
+```
+
+---
+
+## 3. Server vs Client Component Boundary Strategy
+
+To maximize performance, reduce client JavaScript bundle size, and optimize Time to Interactive (TTI):
+
+1. **Server Components by Default**:
+   - All page layouts (`layout.tsx`), marketing pages, static documentation, and initial data loaders run exclusively on the server.
+   - Database queries via Prisma occur directly on the server without intermediary REST overhead.
+2. **Client Components (`"use client"`)**:
+   - Pushed down to the furthest leaf nodes where client-side interactivity, DOM listeners, or React state are strictly required.
+   - Examples: Form inputs (`react-hook-form`), interactive tables (`@tanstack/react-table`), modals (`@radix-ui/react-dialog`), and charts (`recharts`).
+
+---
+
+## 4. Asynchronous Queue & Messaging Pipeline
+
+Message campaigns are decoupled from web request lifecycles through a two-stage background queue:
+
+```mermaid
+flowchart LR
+    A[Launch Campaign API] -->|Insert Job| B[(PostgreSQL Job Table)]
+    B -->|Atomic Lock| C[Background Worker]
+    C -->|Stage 1| D[Campaign Expander]
+    D -->|Consent & Deduplication| E[Create sms.dispatch Jobs]
+    E -->|Stage 2| F[SMS Dispatcher]
+    F -->|LCR Route Match| G[SMPP / Telecom SMSC]
+    F -->|Serializable Deduction| H[(Billing Ledger)]
+    F -->|HMAC-SHA256| I[Webhook Dispatcher]
+```
+
+---
+
+## 5. Security & Isolation Directives
+
+- **Serializable Billing Ledger**: All wallet deductions and refund transactions enforce `Prisma.TransactionIsolationLevel.Serializable` to guarantee mathematical integrity across concurrent worker nodes.
+- **Strict Compliance & Consent**: Every recipient is checked against an append-only `ConsentLog`. Unsubscribed or suppressed numbers are filtered prior to dispatch.
+- **Anti-Fraud & Velocity Guards**: Detects Artificially Inflated Traffic (AIT) and toll fraud attempts, pausing affected campaigns automatically.
+- **Edge CSRF & Session Protection**: Origin validation in `src/proxy.ts` prevents cross-site request forgery and enforces authenticated session boundaries.
+
+---
+
+*For complete implementation details, see [SYSTEM_ARCHITECTURE_AND_SPECIFICATION.md](./SYSTEM_ARCHITECTURE_AND_SPECIFICATION.md).*
+# Range Bulk SMS — Comprehensive System Architecture & Engineering Specification
 
 > **Platform**: Range Bulk SMS  
 > **Entity**: Range View Technology Services Uganda Limited  
 > **Version**: 2.0.0 (Enterprise Carrier-Grade Production Release)  
-> **Framework**: Next.js 16.3.5 (Turbopack) â€¢ React 19.2.8 â€¢ TypeScript 5.9.3 â€¢ Prisma ORM 7.9.1 â€¢ Tailwind CSS 4.0  
+> **Framework**: Next.js 16.3.5 (Turbopack) • React 19.2.8 • TypeScript 5.9.3 • Prisma ORM 7.9.1 • Tailwind CSS 4.0  
 > **Last Updated**: October 1, 2026  
 > **System Status**: Production-Certified (0 TypeScript Errors, 0 ESLint Warnings, 48 Test Files Passed, 185 Compiled Routes, 65 Database Models, 127 UI Components)
 
@@ -96,7 +191,7 @@ graph TD
 | **MEMBER / VIEWER** | Workspace | Read-only access to campaign telemetry, contact groups, and delivery logs. |
 
 ### Caching Architecture for RBAC
-To eliminate hundreds of repetitive database queries during layout and Server Component rendering, `src/lib/auth/authorization.ts` implements `ROLE_PERMISSIONS_CACHE`â€”an in-memory permission cache with a 5-minute TTL that validates role capability sets with zero SQL overhead. Permission definitions are centralized in `src/config/permissions.ts`.
+To eliminate hundreds of repetitive database queries during layout and Server Component rendering, `src/lib/auth/authorization.ts` implements `ROLE_PERMISSIONS_CACHE`—an in-memory permission cache with a 5-minute TTL that validates role capability sets with zero SQL overhead. Permission definitions are centralized in `src/config/permissions.ts`.
 
 ---
 
@@ -178,7 +273,7 @@ Located at `src/components/sms/` and integrated into `/sms/send`, `/sms/custom`,
 - **React 19 SSR Hydration Safety**: Uses `useMounted` (`useSyncExternalStore`) and `suppressHydrationWarning` to eliminate server-to-client theme hydration mismatches on handset frames.
 - **Real-Time Telecom Telemetry**:
   - Live character counting with GSM-7 vs. Unicode (UCS-2) auto-detection.
-  - Segment breakdown (e.g., "160 chars â€¢ 1 part (GSM-7)" vs. "71 chars â€¢ 2 parts (Unicode)").
+  - Segment breakdown (e.g., "160 chars • 1 part (GSM-7)" vs. "71 chars • 2 parts (Unicode)").
   - Cost preview calculated dynamically based on segment count and destination carrier.
   - Device frame styling with sender ID header, timestamps, and message bubble rendering.
 
@@ -288,7 +383,7 @@ Located at `src/lib/billing/billing-service.ts` and `src/lib/wallet/`:
 - **Serializable Isolation Guarantee**: All wallet operations run inside `Prisma.TransactionIsolationLevel.Serializable`. Concurrent dispatch jobs cannot overdraw an account under high concurrency.
 - **Immutable Transaction Audit Ledger**: Deductions, refunds, and deposits record a corresponding immutable `Transaction` row referencing the originating `Message` or `Campaign` ID, preventing double-billing on retry loops.
 - **Tiered Volume Pricing**: Dynamic rate calculation based on monthly commit volume tiers (`/wallet/pricing`).
-- **Real-Time Navigation Badge & Secure Masking**: `NavWalletBadge` displays the current balance directly in header navigation. The balance is securely masked by default (`â€¢â€¢â€¢â€¢â€¢â€¢`) and requires a Step-Up Authentication challenge (via Password, Telegram PIN, or Authenticator OTPâ€”falling back dynamically to whichever methods the user has configured) to unmask, safeguarding financial telemetry against shoulder-surfing. The `useWallet` hook manages client-side wallet state.
+- **Real-Time Navigation Badge & Secure Masking**: `NavWalletBadge` displays the current balance directly in header navigation. The balance is securely masked by default (`••••••`) and requires a Step-Up Authentication challenge (via Password, Telegram PIN, or Authenticator OTP—falling back dynamically to whichever methods the user has configured) to unmask, safeguarding financial telemetry against shoulder-surfing. The `useWallet` hook manages client-side wallet state.
 
 ### 4.14 Reseller & Agent Commission Engine
 Located at `src/lib/agent/`:
@@ -355,243 +450,243 @@ Located at `src/lib/notifications/`:
 
 ```text
 range-bulk-sms/
-â”œâ”€â”€ .github/
-â”‚   â””â”€â”€ workflows/
-â”‚       â””â”€â”€ ci.yml                     # Automated CI/CD pipeline (Lint, Typecheck, Test, Build)
-â”œâ”€â”€ .vscode/
-â”‚   â”œâ”€â”€ extensions.json                # Recommended workspace extensions
-â”‚   â”œâ”€â”€ mcp.json                       # VS Code / Cursor MCP server configurations
-â”‚   â””â”€â”€ settings.json                  # Editor and formatting settings
-â”œâ”€â”€ components.json                    # shadcn UI registry and component alias configuration
-â”œâ”€â”€ prisma/
-â”‚   â”œâ”€â”€ schema.prisma                  # Master database schema with 65 models & 23 enums
-â”‚   â””â”€â”€ seed.ts                        # Development database seeding script
-â”œâ”€â”€ src/
-â”‚   â”œâ”€â”€ app/                           # Next.js App Router (185 compiled routes)
-â”‚   â”‚   â”œâ”€â”€ (auth)/                    # Authentication Route Group
-â”‚   â”‚   â”‚   â”œâ”€â”€ login/                 # User credentials & WebAuthn passkey login
-â”‚   â”‚   â”‚   â”œâ”€â”€ register/              # Self-service client registration
-â”‚   â”‚   â”‚   â”œâ”€â”€ 2fa/                   # Two-factor authentication verification
-â”‚   â”‚   â”‚   â”‚   â””â”€â”€ challenge/         # 2FA challenge step
-â”‚   â”‚   â”‚   â”œâ”€â”€ otp/                   # OTP challenge input
-â”‚   â”‚   â”‚   â”œâ”€â”€ screen-lock/           # Inactivity lock screen
-â”‚   â”‚   â”‚   â”œâ”€â”€ forgot-password/       # Password recovery request
-â”‚   â”‚   â”‚   â””â”€â”€ reset-password/        # Token-verified password reset
-â”‚   â”‚   â”œâ”€â”€ (dashboard)/               # Authenticated Dashboard Application
-â”‚   â”‚   â”‚   â”œâ”€â”€ dashboard/             # Role-based metrics & agent overview
-â”‚   â”‚   â”‚   â”œâ”€â”€ sms/                   # SMS Messaging Subsystem
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ send/              # SMS Send Studio with Live Simulator
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ scheduled/         # Scheduled queue management & auto-pause dialog
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ custom/            # Dynamic variable message builder
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ campaigns/         # Campaign list, builder, and live telemetry
-â”‚   â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ new/           # New campaign creation wizard
-â”‚   â”‚   â”‚   â”‚   â”‚   â””â”€â”€ [id]/          # Individual campaign detail & analytics
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ drafts/            # Draft message management
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ templates/         # Template CRUD management
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ variables/         # Custom merge tags registry & simulator
-â”‚   â”‚   â”‚   â”‚   â””â”€â”€ delivery-reports/  # Handset DLR log table & filters
-â”‚   â”‚   â”‚   â”œâ”€â”€ contacts/              # Contact & Audience Management
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ [id]/              # Individual contact detail view
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ groups/            # Static contact groups & member dialogs
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ segments/          # Dynamic AST segment builder
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ tags/              # Contact tagging interface
-â”‚   â”‚   â”‚   â”‚   â””â”€â”€ import/            # Bulk Excel (.xlsx) / CSV file uploader
-â”‚   â”‚   â”‚   â”œâ”€â”€ sender-ids/            # Alphanumeric sender ID registry & application
-â”‚   â”‚   â”‚   â”œâ”€â”€ wallet/                # Billing, wallet deposits, pricing, transactions
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ pricing/           # Volume-based pricing tiers
-â”‚   â”‚   â”‚   â”‚   â””â”€â”€ transactions/      # Transaction ledger history
-â”‚   â”‚   â”‚   â”œâ”€â”€ developer/             # Developer API keys, webhook endpoints, usage
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ api-keys/          # API key management & quota tracking
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ api-usage/         # API consumption analytics
-â”‚   â”‚   â”‚   â”‚   â””â”€â”€ webhooks/          # Webhook endpoint configuration
-â”‚   â”‚   â”‚   â”œâ”€â”€ agent/                 # Reseller client lists, commissions, earnings
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ dashboard/         # Agent overview dashboard
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ clients/           # Agent's client management
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ commissions/       # Commission tracking
-â”‚   â”‚   â”‚   â”‚   â””â”€â”€ earnings/          # Revenue & payout history
-â”‚   â”‚   â”‚   â”œâ”€â”€ reports/               # SMS, campaign, financial, and usage analytics
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ sms/               # SMS delivery analytics
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ campaigns/         # Campaign performance analytics
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ financial/         # Revenue & billing analytics
-â”‚   â”‚   â”‚   â”‚   â””â”€â”€ usage/             # Platform usage analytics
-â”‚   â”‚   â”‚   â”œâ”€â”€ admin/                 # Platform administration & provider management
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ users/             # User management
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ agents/            # Agent management
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ clients/           # Client management
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ commissions/       # Commission management
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ pricing/           # Global pricing configuration
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ providers/         # Telecom provider & circuit management
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ sender-ids/        # Sender ID approval workflow
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ system/            # System configuration
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ audit-logs/        # System audit trail
-â”‚   â”‚   â”‚   â”‚   â””â”€â”€ communications/    # Communications management
-â”‚   â”‚   â”‚   â”‚       â”œâ”€â”€ logs/          # Communication log viewer
-â”‚   â”‚   â”‚   â”‚       â”œâ”€â”€ providers/     # Communications provider config
-â”‚   â”‚   â”‚   â”‚       â””â”€â”€ queue/         # Communications queue management
-â”‚   â”‚   â”‚   â”œâ”€â”€ gateways/              # Android & ESP32 hardware gateway manager
-â”‚   â”‚   â”‚   â”‚   â””â”€â”€ add/               # Gateway device registration
-â”‚   â”‚   â”‚   â”œâ”€â”€ settings/              # Account, security, notification, SMS settings
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ account/           # Account profile settings
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ security/          # Security & 2FA settings
-â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ notifications/     # Notification preferences
-â”‚   â”‚   â”‚   â”‚   â””â”€â”€ sms/               # SMS-specific settings
-â”‚   â”‚   â”‚   â”œâ”€â”€ support/               # Support tickets & user issue tracking
-â”‚   â”‚   â”‚   â”œâ”€â”€ profile/               # User profile page
-â”‚   â”‚   â”‚   â”œâ”€â”€ notifications/         # Notification inbox
-â”‚   â”‚   â”‚   â”œâ”€â”€ billing/               # Billing overview
-â”‚   â”‚   â”‚   â””â”€â”€ client/                # Client management
-â”‚   â”‚   â”œâ”€â”€ (marketing)/               # Public Marketing Pages
-â”‚   â”‚   â”‚   â”œâ”€â”€ terms/                 # Terms of service
-â”‚   â”‚   â”‚   â”œâ”€â”€ privacy/               # Privacy policy
-â”‚   â”‚   â”‚   â””â”€â”€ cookies/               # Cookie policy
-â”‚   â”‚   â”œâ”€â”€ api/                       # Internal Application API Endpoints (102 handlers)
-â”‚   â”‚   â”‚   â”œâ”€â”€ admin/                 # System administration APIs
-â”‚   â”‚   â”‚   â”œâ”€â”€ agent/                 # Commission and client onboarding APIs
-â”‚   â”‚   â”‚   â”œâ”€â”€ ai/                    # Gemini grammar and tone optimization APIs
-â”‚   â”‚   â”‚   â”œâ”€â”€ auth/                  # NextAuth & WebAuthn APIs
-â”‚   â”‚   â”‚   â”œâ”€â”€ campaigns/             # Campaign lifecycle, pause, resume, launch APIs
-â”‚   â”‚   â”‚   â”œâ”€â”€ contacts/              # Contact, segment compiler, and consent APIs
-â”‚   â”‚   â”‚   â”œâ”€â”€ cron/                  # Serverless worker polling trigger (/cron/worker)
-â”‚   â”‚   â”‚   â”œâ”€â”€ developer/             # API key generation & webhook ping test APIs
-â”‚   â”‚   â”‚   â”œâ”€â”€ geo/                   # Geolocation detection
-â”‚   â”‚   â”‚   â”œâ”€â”€ health/                # Health check endpoints (live, ready)
-â”‚   â”‚   â”‚   â”œâ”€â”€ sms/                   # Dispatch, schedule, drafts, and DLR lookup APIs
-â”‚   â”‚   â”‚   â”œâ”€â”€ wallet/                # Wallet deposit and ledger transaction APIs
-â”‚   â”‚   â”‚   â”œâ”€â”€ webhooks/              # Inbound payment, SMS DLR, and Telegram hooks
-â”‚   â”‚   â”‚   â””â”€â”€ support/               # Support ticket APIs
-â”‚   â”‚   â”œâ”€â”€ api/v1/                    # Public Developer REST API (Bearer token auth)
-â”‚   â”‚   â”‚   â”œâ”€â”€ sms/                   # Programmatic SMS dispatch endpoints
-â”‚   â”‚   â”‚   â”œâ”€â”€ messages/              # Message status & history
-â”‚   â”‚   â”‚   â”œâ”€â”€ balance/               # Credit balance enquiry
-â”‚   â”‚   â”‚   â”œâ”€â”€ contacts/              # Contact management API
-â”‚   â”‚   â”‚   â”œâ”€â”€ phone/                 # Phone analysis & carrier lookup
-â”‚   â”‚   â”‚   â”œâ”€â”€ sender-ids/            # Approved sender ID listing
-â”‚   â”‚   â”‚   â”œâ”€â”€ gateways/              # Gateway management endpoints
-â”‚   â”‚   â”‚   â””â”€â”€ device/gateways/       # Android & ESP32 gateway polling endpoints
-â”‚   â”‚   â”œâ”€â”€ design-system/             # Interactive design system showcase
-â”‚   â”‚   â”‚   â”œâ”€â”€ colors/                # Color token reference
-â”‚   â”‚   â”‚   â”œâ”€â”€ components/            # Component gallery
-â”‚   â”‚   â”‚   â”œâ”€â”€ data-display/          # Data display patterns
-â”‚   â”‚   â”‚   â”œâ”€â”€ feedback/              # Feedback component patterns
-â”‚   â”‚   â”‚   â”œâ”€â”€ forms/                 # Form pattern reference
-â”‚   â”‚   â”‚   â””â”€â”€ typography/            # Typography scale reference
-â”‚   â”‚   â”œâ”€â”€ examples/                  # Example pages (auth, UI)
-â”‚   â”‚   â”œâ”€â”€ globals.css                # Tailwind 4 master stylesheet & design tokens
-â”‚   â”‚   â”œâ”€â”€ layout.tsx                 # Root layout with theme & session providers
-â”‚   â”‚   â””â”€â”€ page.tsx                   # High-conversion public enterprise landing page
-â”‚   â”œâ”€â”€ components/                    # 127 TSX Components
-â”‚   â”‚   â”œâ”€â”€ ui/                        # 38 UI primitives (Button, Dialog, Table, AnimatedNumber, etc.)
-â”‚   â”‚   â”œâ”€â”€ layout/                    # 9 layout primitives (RangeShell, RangeSidebar, PageHeader)
-â”‚   â”‚   â”œâ”€â”€ navigation/                # 10 navigation (LanguageToggle, RangeAppsDropdown, NavWalletBadge, ThemeToggle)
-â”‚   â”‚   â”œâ”€â”€ brand/                     # RangeLogo (theme-adaptive SVG brand vector)
-â”‚   â”‚   â”œâ”€â”€ sms/                       # 23 SMS-domain (Live Simulator, CountryPickerDropdown, CountryFlagPhone,
-â”‚   â”‚   â”‚                              # VariableTextarea, DraftsDrawer, GrammarCheckModal,
-â”‚   â”‚   â”‚                              # EditScheduledMessageDialog, NetworkBadge, RecurrencePicker)
-â”‚   â”‚   â”œâ”€â”€ chat/                      # Floating support chat widget (SupportChatbox)
-â”‚   â”‚   â”œâ”€â”€ contacts/                  # 4 contact management dialogs
-â”‚   â”‚   â”œâ”€â”€ docs/                      # 11 interactive code snippets for developer portal
-â”‚   â”‚   â”œâ”€â”€ blocks/                    # 11 auth card variants & UI skeletons
-â”‚   â”‚   â”œâ”€â”€ data-display/              # Data display components
-â”‚   â”‚   â”œâ”€â”€ feedback/                  # 5 feedback & loading states
-â”‚   â”‚   â”œâ”€â”€ forms/                     # Form-specific components
-â”‚   â”‚   â”œâ”€â”€ notifications/             # Notification bell & indicators
-â”‚   â”‚   â”œâ”€â”€ wallet/                    # Wallet-specific components (unmask dialog)
-â”‚   â”‚   â”œâ”€â”€ auth/                      # Authentication-specific components
-â”‚   â”‚   â””â”€â”€ pwa/                       # Progressive Web App components
-â”‚   â”œâ”€â”€ config/
-â”‚   â”‚   â”œâ”€â”€ app.ts                     # Application-wide constants & configuration
-â”‚   â”‚   â”œâ”€â”€ assets.ts                  # Static asset paths and references
-â”‚   â”‚   â”œâ”€â”€ env.ts                     # Environment variable validation & access
-â”‚   â”‚   â”œâ”€â”€ navigation.ts              # Hierarchical dashboard navigation definition
-â”‚   â”‚   â””â”€â”€ permissions.ts             # Centralized RBAC permission definitions
-â”‚   â”œâ”€â”€ design-system/
-â”‚   â”‚   â””â”€â”€ tokens/
-â”‚   â”‚       â”œâ”€â”€ breakpoints.ts         # Responsive breakpoint definitions
-â”‚   â”‚       â”œâ”€â”€ colors.ts              # Semantic hex & HSL color tokens
-â”‚   â”‚       â”œâ”€â”€ index.ts               # Token barrel export
-â”‚   â”‚       â”œâ”€â”€ motion.ts              # Animation & transition definitions
-â”‚   â”‚       â”œâ”€â”€ shadows.ts             # Elevation shadow definitions
-â”‚   â”‚       â”œâ”€â”€ spacing.ts             # 4pt layout and elevation grid
-â”‚   â”‚       â”œâ”€â”€ typography.ts          # Font scale, line heights, weights
-â”‚   â”‚       â””â”€â”€ z-index.ts             # Z-index layer definitions
-â”‚   â”œâ”€â”€ hooks/                         # 13 Custom React Hooks
-â”‚   â”‚   â”œâ”€â”€ use-count-up.ts            # Animated counter for MetricCards
-â”‚   â”‚   â”œâ”€â”€ use-debounce.ts            # Debounced value hook for search inputs
-â”‚   â”‚   â”œâ”€â”€ use-form-validation.ts     # Form validation state management
-â”‚   â”‚   â”œâ”€â”€ use-language.ts            # Language context consumer hook
-â”‚   â”‚   â”œâ”€â”€ use-local-storage.ts       # Type-safe localStorage hook
-â”‚   â”‚   â”œâ”€â”€ use-lock-body-scroll.ts    # Body scroll locking for modals
-â”‚   â”‚   â”œâ”€â”€ use-media-query.ts         # Responsive breakpoint detection
-â”‚   â”‚   â”œâ”€â”€ use-mounted.ts             # SSR hydration safety (useSyncExternalStore)
-â”‚   â”‚   â”œâ”€â”€ use-real-time.ts           # Real-time data subscription hook
-â”‚   â”‚   â”œâ”€â”€ use-sms-draft.ts           # SMS draft auto-save debouncer
-â”‚   â”‚   â”œâ”€â”€ use-table-state.ts         # Table pagination/sorting state
-â”‚   â”‚   â”œâ”€â”€ use-unsaved-changes.ts     # Dirty form navigation guard
-â”‚   â”‚   â””â”€â”€ use-wallet.ts              # Wallet state & balance masking
-â”‚   â”œâ”€â”€ lib/                           # 21 Business Logic Modules
-â”‚   â”‚   â”œâ”€â”€ agent/                     # Agent commission & payout logic
-â”‚   â”‚   â”œâ”€â”€ api-keys/                  # API key cryptographic management
-â”‚   â”‚   â”œâ”€â”€ auth/                      # NextAuth configuration, authorization, session DAL
-â”‚   â”‚   â”œâ”€â”€ billing/                   # Serializable wallet ledger & credit deduction
-â”‚   â”‚   â”œâ”€â”€ campaigns/                 # Campaign lifecycle & expansion logic
-â”‚   â”‚   â”œâ”€â”€ communications/            # Multi-channel communications engine
-â”‚   â”‚   â”‚   â”œâ”€â”€ email/                 # Nodemailer email delivery
-â”‚   â”‚   â”‚   â”œâ”€â”€ sms/                   # Internal SMS notification channel
-â”‚   â”‚   â”‚   â”œâ”€â”€ telegram/              # Telegram bot integration
-â”‚   â”‚   â”‚   â””â”€â”€ whatsapp/              # WhatsApp Business API integration
-â”‚   â”‚   â”œâ”€â”€ compliance/                # Regulatory compliance & KYC validation
-â”‚   â”‚   â”œâ”€â”€ contacts/                  # Dynamic segment AST compiler & CSV/Excel parser
-â”‚   â”‚   â”œâ”€â”€ cron/                      # Cron job scheduling & management
-â”‚   â”‚   â”œâ”€â”€ gateways/                  # Hardware gateway management logic
-â”‚   â”‚   â”œâ”€â”€ i18n/                      # Internationalization utilities
-â”‚   â”‚   â”œâ”€â”€ jobs/                      # Background job management
-â”‚   â”‚   â”œâ”€â”€ logger/                    # Structured JSON logging (pino)
-â”‚   â”‚   â”œâ”€â”€ notifications/             # Notification template & delivery service
-â”‚   â”‚   â”œâ”€â”€ providers/                 # Telecom provider abstraction
-â”‚   â”‚   â”œâ”€â”€ queue/                     # Database-backed background worker framework
-â”‚   â”‚   â”‚   â”œâ”€â”€ worker.ts              # Core polling loop with atomic row-level locks
-â”‚   â”‚   â”‚   â””â”€â”€ handlers/              # CampaignExpander, SmsDispatcher, WebhookDispatcher
-â”‚   â”‚   â”œâ”€â”€ security/                  # Rate limiter, AIT fraud prevention, CSRF guards
-â”‚   â”‚   â”œâ”€â”€ sms/                       # Normalizer, RoutingEngine, ConsentService, CountryRegistry,
-â”‚   â”‚   â”‚   â”‚                          # RegulatoryEngine, CustomVariables, AbTesting
-â”‚   â”‚   â”‚   â””â”€â”€ providers/             # SMPP driver, Airtel gateway, HTTP providers
-â”‚   â”‚   â”œâ”€â”€ telecom/                   # CircuitBreaker, AirtelProvider
-â”‚   â”‚   â”œâ”€â”€ validations/               # Zod schema validators for forms & API payloads
-â”‚   â”‚   â”œâ”€â”€ wallet/                    # Wallet service layer
-â”‚   â”‚   â”œâ”€â”€ prisma.ts                  # Cached Prisma ORM database client singleton
-â”‚   â”‚   â”œâ”€â”€ timezone.ts                # Timezone-aware date formatting utilities
-â”‚   â”‚   â”œâ”€â”€ utils.ts                   # Tailwind cn() class merging utility
-â”‚   â”‚   â””â”€â”€ metadata.ts                # SEO OpenGraph & Schema.org JSON-LD generator
-â”‚   â”œâ”€â”€ providers/                     # 7 React Context Providers
-â”‚   â”‚   â”œâ”€â”€ app-providers.tsx          # Root provider composition wrapper
-â”‚   â”‚   â”œâ”€â”€ language-provider.tsx      # i18n language context
-â”‚   â”‚   â”œâ”€â”€ ripple-provider.tsx        # Click ripple animation provider
-â”‚   â”‚   â”œâ”€â”€ theme-provider.tsx         # next-themes dark/light mode provider
-â”‚   â”‚   â”œâ”€â”€ timezone-provider.tsx      # User timezone context
-â”‚   â”‚   â”œâ”€â”€ toast-provider.tsx         # Sonner toast notification provider
-â”‚   â”‚   â””â”€â”€ unsaved-changes-provider.tsx # Dirty form navigation guard provider
-â”‚   â”œâ”€â”€ proxy.ts                       # Edge proxy middleware (Asset routing & CSRF)
-â”‚   â””â”€â”€ types/                         # Shared TypeScript interfaces and domain types
-â”‚       â”œâ”€â”€ api.ts                     # API request/response type definitions
-â”‚       â”œâ”€â”€ auth.ts                    # Authentication & session types
-â”‚       â”œâ”€â”€ common.ts                  # Shared utility types
-â”‚       â”œâ”€â”€ navigation.ts             # Navigation & sidebar types
-â”‚       â””â”€â”€ sms-draft.ts              # SMS draft payload types
-â”œâ”€â”€ src/__tests__/                     # Vitest unit & integration test suites (48 files)
-â”‚   â”œâ”€â”€ ab-testing-engine.test.ts      # A/B split-test traffic split & winner resolution
-â”‚   â”œâ”€â”€ airtel-telecom.test.ts         # Airtel gateway protocol & DLR tests
-â”‚   â”œâ”€â”€ billing-service.test.ts        # Ledger idempotency & concurrency tests
-â”‚   â”œâ”€â”€ circuit-breaker.test.ts        # Telecom circuit breaker 3-state transitions
-â”‚   â”œâ”€â”€ nav-wallet-badge.test.ts       # Wallet badge rendering & secure balance masking
-â”‚   â”œâ”€â”€ performance-scalability.test.ts # System performance & scalability benchmarks
-â”‚   â”œâ”€â”€ security-hardening.test.ts     # Security hardening verification tests
-â”‚   â”œâ”€â”€ seed-telecom-data.test.ts      # Telecom seeding & operator data verification
-â”‚   â””â”€â”€ ... (48 test files total)      # See Section 10 for complete inventory
-â”œâ”€â”€ playwright.config.ts               # Multi-browser Playwright test configuration
-â”œâ”€â”€ vitest.config.ts                   # Vitest unit runner configuration with alias paths
-â”œâ”€â”€ next.config.ts                     # Next.js 16 compiler and image optimization settings
-â”œâ”€â”€ tsconfig.json                      # Strict TypeScript compiler rules
-â””â”€â”€ package.json                       # Project manifests (70 deps, 25 devDeps, 95 total)
+├── .github/
+│   └── workflows/
+│       └── ci.yml                     # Automated CI/CD pipeline (Lint, Typecheck, Test, Build)
+├── .vscode/
+│   ├── extensions.json                # Recommended workspace extensions
+│   ├── mcp.json                       # VS Code / Cursor MCP server configurations
+│   └── settings.json                  # Editor and formatting settings
+├── components.json                    # shadcn UI registry and component alias configuration
+├── prisma/
+│   ├── schema.prisma                  # Master database schema with 65 models & 23 enums
+│   └── seed.ts                        # Development database seeding script
+├── src/
+│   ├── app/                           # Next.js App Router (185 compiled routes)
+│   │   ├── (auth)/                    # Authentication Route Group
+│   │   │   ├── login/                 # User credentials & WebAuthn passkey login
+│   │   │   ├── register/              # Self-service client registration
+│   │   │   ├── 2fa/                   # Two-factor authentication verification
+│   │   │   │   └── challenge/         # 2FA challenge step
+│   │   │   ├── otp/                   # OTP challenge input
+│   │   │   ├── screen-lock/           # Inactivity lock screen
+│   │   │   ├── forgot-password/       # Password recovery request
+│   │   │   └── reset-password/        # Token-verified password reset
+│   │   ├── (dashboard)/               # Authenticated Dashboard Application
+│   │   │   ├── dashboard/             # Role-based metrics & agent overview
+│   │   │   ├── sms/                   # SMS Messaging Subsystem
+│   │   │   │   ├── send/              # SMS Send Studio with Live Simulator
+│   │   │   │   ├── scheduled/         # Scheduled queue management & auto-pause dialog
+│   │   │   │   ├── custom/            # Dynamic variable message builder
+│   │   │   │   ├── campaigns/         # Campaign list, builder, and live telemetry
+│   │   │   │   │   ├── new/           # New campaign creation wizard
+│   │   │   │   │   └── [id]/          # Individual campaign detail & analytics
+│   │   │   │   ├── drafts/            # Draft message management
+│   │   │   │   ├── templates/         # Template CRUD management
+│   │   │   │   ├── variables/         # Custom merge tags registry & simulator
+│   │   │   │   └── delivery-reports/  # Handset DLR log table & filters
+│   │   │   ├── contacts/              # Contact & Audience Management
+│   │   │   │   ├── [id]/              # Individual contact detail view
+│   │   │   │   ├── groups/            # Static contact groups & member dialogs
+│   │   │   │   ├── segments/          # Dynamic AST segment builder
+│   │   │   │   ├── tags/              # Contact tagging interface
+│   │   │   │   └── import/            # Bulk Excel (.xlsx) / CSV file uploader
+│   │   │   ├── sender-ids/            # Alphanumeric sender ID registry & application
+│   │   │   ├── wallet/                # Billing, wallet deposits, pricing, transactions
+│   │   │   │   ├── pricing/           # Volume-based pricing tiers
+│   │   │   │   └── transactions/      # Transaction ledger history
+│   │   │   ├── developer/             # Developer API keys, webhook endpoints, usage
+│   │   │   │   ├── api-keys/          # API key management & quota tracking
+│   │   │   │   ├── api-usage/         # API consumption analytics
+│   │   │   │   └── webhooks/          # Webhook endpoint configuration
+│   │   │   ├── agent/                 # Reseller client lists, commissions, earnings
+│   │   │   │   ├── dashboard/         # Agent overview dashboard
+│   │   │   │   ├── clients/           # Agent's client management
+│   │   │   │   ├── commissions/       # Commission tracking
+│   │   │   │   └── earnings/          # Revenue & payout history
+│   │   │   ├── reports/               # SMS, campaign, financial, and usage analytics
+│   │   │   │   ├── sms/               # SMS delivery analytics
+│   │   │   │   ├── campaigns/         # Campaign performance analytics
+│   │   │   │   ├── financial/         # Revenue & billing analytics
+│   │   │   │   └── usage/             # Platform usage analytics
+│   │   │   ├── admin/                 # Platform administration & provider management
+│   │   │   │   ├── users/             # User management
+│   │   │   │   ├── agents/            # Agent management
+│   │   │   │   ├── clients/           # Client management
+│   │   │   │   ├── commissions/       # Commission management
+│   │   │   │   ├── pricing/           # Global pricing configuration
+│   │   │   │   ├── providers/         # Telecom provider & circuit management
+│   │   │   │   ├── sender-ids/        # Sender ID approval workflow
+│   │   │   │   ├── system/            # System configuration
+│   │   │   │   ├── audit-logs/        # System audit trail
+│   │   │   │   └── communications/    # Communications management
+│   │   │   │       ├── logs/          # Communication log viewer
+│   │   │   │       ├── providers/     # Communications provider config
+│   │   │   │       └── queue/         # Communications queue management
+│   │   │   ├── gateways/              # Android & ESP32 hardware gateway manager
+│   │   │   │   └── add/               # Gateway device registration
+│   │   │   ├── settings/              # Account, security, notification, SMS settings
+│   │   │   │   ├── account/           # Account profile settings
+│   │   │   │   ├── security/          # Security & 2FA settings
+│   │   │   │   ├── notifications/     # Notification preferences
+│   │   │   │   └── sms/               # SMS-specific settings
+│   │   │   ├── support/               # Support tickets & user issue tracking
+│   │   │   ├── profile/               # User profile page
+│   │   │   ├── notifications/         # Notification inbox
+│   │   │   ├── billing/               # Billing overview
+│   │   │   └── client/                # Client management
+│   │   ├── (marketing)/               # Public Marketing Pages
+│   │   │   ├── terms/                 # Terms of service
+│   │   │   ├── privacy/               # Privacy policy
+│   │   │   └── cookies/               # Cookie policy
+│   │   ├── api/                       # Internal Application API Endpoints (102 handlers)
+│   │   │   ├── admin/                 # System administration APIs
+│   │   │   ├── agent/                 # Commission and client onboarding APIs
+│   │   │   ├── ai/                    # Gemini grammar and tone optimization APIs
+│   │   │   ├── auth/                  # NextAuth & WebAuthn APIs
+│   │   │   ├── campaigns/             # Campaign lifecycle, pause, resume, launch APIs
+│   │   │   ├── contacts/              # Contact, segment compiler, and consent APIs
+│   │   │   ├── cron/                  # Serverless worker polling trigger (/cron/worker)
+│   │   │   ├── developer/             # API key generation & webhook ping test APIs
+│   │   │   ├── geo/                   # Geolocation detection
+│   │   │   ├── health/                # Health check endpoints (live, ready)
+│   │   │   ├── sms/                   # Dispatch, schedule, drafts, and DLR lookup APIs
+│   │   │   ├── wallet/                # Wallet deposit and ledger transaction APIs
+│   │   │   ├── webhooks/              # Inbound payment, SMS DLR, and Telegram hooks
+│   │   │   └── support/               # Support ticket APIs
+│   │   ├── api/v1/                    # Public Developer REST API (Bearer token auth)
+│   │   │   ├── sms/                   # Programmatic SMS dispatch endpoints
+│   │   │   ├── messages/              # Message status & history
+│   │   │   ├── balance/               # Credit balance enquiry
+│   │   │   ├── contacts/              # Contact management API
+│   │   │   ├── phone/                 # Phone analysis & carrier lookup
+│   │   │   ├── sender-ids/            # Approved sender ID listing
+│   │   │   ├── gateways/              # Gateway management endpoints
+│   │   │   └── device/gateways/       # Android & ESP32 gateway polling endpoints
+│   │   ├── design-system/             # Interactive design system showcase
+│   │   │   ├── colors/                # Color token reference
+│   │   │   ├── components/            # Component gallery
+│   │   │   ├── data-display/          # Data display patterns
+│   │   │   ├── feedback/              # Feedback component patterns
+│   │   │   ├── forms/                 # Form pattern reference
+│   │   │   └── typography/            # Typography scale reference
+│   │   ├── examples/                  # Example pages (auth, UI)
+│   │   ├── globals.css                # Tailwind 4 master stylesheet & design tokens
+│   │   ├── layout.tsx                 # Root layout with theme & session providers
+│   │   └── page.tsx                   # High-conversion public enterprise landing page
+│   ├── components/                    # 127 TSX Components
+│   │   ├── ui/                        # 38 UI primitives (Button, Dialog, Table, AnimatedNumber, etc.)
+│   │   ├── layout/                    # 9 layout primitives (RangeShell, RangeSidebar, PageHeader)
+│   │   ├── navigation/                # 10 navigation (LanguageToggle, RangeAppsDropdown, NavWalletBadge, ThemeToggle)
+│   │   ├── brand/                     # RangeLogo (theme-adaptive SVG brand vector)
+│   │   ├── sms/                       # 23 SMS-domain (Live Simulator, CountryPickerDropdown, CountryFlagPhone,
+│   │   │                              # VariableTextarea, DraftsDrawer, GrammarCheckModal,
+│   │   │                              # EditScheduledMessageDialog, NetworkBadge, RecurrencePicker)
+│   │   ├── chat/                      # Floating support chat widget (SupportChatbox)
+│   │   ├── contacts/                  # 4 contact management dialogs
+│   │   ├── docs/                      # 11 interactive code snippets for developer portal
+│   │   ├── blocks/                    # 11 auth card variants & UI skeletons
+│   │   ├── data-display/              # Data display components
+│   │   ├── feedback/                  # 5 feedback & loading states
+│   │   ├── forms/                     # Form-specific components
+│   │   ├── notifications/             # Notification bell & indicators
+│   │   ├── wallet/                    # Wallet-specific components (unmask dialog)
+│   │   ├── auth/                      # Authentication-specific components
+│   │   └── pwa/                       # Progressive Web App components
+│   ├── config/
+│   │   ├── app.ts                     # Application-wide constants & configuration
+│   │   ├── assets.ts                  # Static asset paths and references
+│   │   ├── env.ts                     # Environment variable validation & access
+│   │   ├── navigation.ts              # Hierarchical dashboard navigation definition
+│   │   └── permissions.ts             # Centralized RBAC permission definitions
+│   ├── design-system/
+│   │   └── tokens/
+│   │       ├── breakpoints.ts         # Responsive breakpoint definitions
+│   │       ├── colors.ts              # Semantic hex & HSL color tokens
+│   │       ├── index.ts               # Token barrel export
+│   │       ├── motion.ts              # Animation & transition definitions
+│   │       ├── shadows.ts             # Elevation shadow definitions
+│   │       ├── spacing.ts             # 4pt layout and elevation grid
+│   │       ├── typography.ts          # Font scale, line heights, weights
+│   │       └── z-index.ts             # Z-index layer definitions
+│   ├── hooks/                         # 13 Custom React Hooks
+│   │   ├── use-count-up.ts            # Animated counter for MetricCards
+│   │   ├── use-debounce.ts            # Debounced value hook for search inputs
+│   │   ├── use-form-validation.ts     # Form validation state management
+│   │   ├── use-language.ts            # Language context consumer hook
+│   │   ├── use-local-storage.ts       # Type-safe localStorage hook
+│   │   ├── use-lock-body-scroll.ts    # Body scroll locking for modals
+│   │   ├── use-media-query.ts         # Responsive breakpoint detection
+│   │   ├── use-mounted.ts             # SSR hydration safety (useSyncExternalStore)
+│   │   ├── use-real-time.ts           # Real-time data subscription hook
+│   │   ├── use-sms-draft.ts           # SMS draft auto-save debouncer
+│   │   ├── use-table-state.ts         # Table pagination/sorting state
+│   │   ├── use-unsaved-changes.ts     # Dirty form navigation guard
+│   │   └── use-wallet.ts              # Wallet state & balance masking
+│   ├── lib/                           # 21 Business Logic Modules
+│   │   ├── agent/                     # Agent commission & payout logic
+│   │   ├── api-keys/                  # API key cryptographic management
+│   │   ├── auth/                      # NextAuth configuration, authorization, session DAL
+│   │   ├── billing/                   # Serializable wallet ledger & credit deduction
+│   │   ├── campaigns/                 # Campaign lifecycle & expansion logic
+│   │   ├── communications/            # Multi-channel communications engine
+│   │   │   ├── email/                 # Nodemailer email delivery
+│   │   │   ├── sms/                   # Internal SMS notification channel
+│   │   │   ├── telegram/              # Telegram bot integration
+│   │   │   └── whatsapp/              # WhatsApp Business API integration
+│   │   ├── compliance/                # Regulatory compliance & KYC validation
+│   │   ├── contacts/                  # Dynamic segment AST compiler & CSV/Excel parser
+│   │   ├── cron/                      # Cron job scheduling & management
+│   │   ├── gateways/                  # Hardware gateway management logic
+│   │   ├── i18n/                      # Internationalization utilities
+│   │   ├── jobs/                      # Background job management
+│   │   ├── logger/                    # Structured JSON logging (pino)
+│   │   ├── notifications/             # Notification template & delivery service
+│   │   ├── providers/                 # Telecom provider abstraction
+│   │   ├── queue/                     # Database-backed background worker framework
+│   │   │   ├── worker.ts              # Core polling loop with atomic row-level locks
+│   │   │   └── handlers/              # CampaignExpander, SmsDispatcher, WebhookDispatcher
+│   │   ├── security/                  # Rate limiter, AIT fraud prevention, CSRF guards
+│   │   ├── sms/                       # Normalizer, RoutingEngine, ConsentService, CountryRegistry,
+│   │   │   │                          # RegulatoryEngine, CustomVariables, AbTesting
+│   │   │   └── providers/             # SMPP driver, Airtel gateway, HTTP providers
+│   │   ├── telecom/                   # CircuitBreaker, AirtelProvider
+│   │   ├── validations/               # Zod schema validators for forms & API payloads
+│   │   ├── wallet/                    # Wallet service layer
+│   │   ├── prisma.ts                  # Cached Prisma ORM database client singleton
+│   │   ├── timezone.ts                # Timezone-aware date formatting utilities
+│   │   ├── utils.ts                   # Tailwind cn() class merging utility
+│   │   └── metadata.ts                # SEO OpenGraph & Schema.org JSON-LD generator
+│   ├── providers/                     # 7 React Context Providers
+│   │   ├── app-providers.tsx          # Root provider composition wrapper
+│   │   ├── language-provider.tsx      # i18n language context
+│   │   ├── ripple-provider.tsx        # Click ripple animation provider
+│   │   ├── theme-provider.tsx         # next-themes dark/light mode provider
+│   │   ├── timezone-provider.tsx      # User timezone context
+│   │   ├── toast-provider.tsx         # Sonner toast notification provider
+│   │   └── unsaved-changes-provider.tsx # Dirty form navigation guard provider
+│   ├── proxy.ts                       # Edge proxy middleware (Asset routing & CSRF)
+│   └── types/                         # Shared TypeScript interfaces and domain types
+│       ├── api.ts                     # API request/response type definitions
+│       ├── auth.ts                    # Authentication & session types
+│       ├── common.ts                  # Shared utility types
+│       ├── navigation.ts             # Navigation & sidebar types
+│       └── sms-draft.ts              # SMS draft payload types
+├── src/__tests__/                     # Vitest unit & integration test suites (48 files)
+│   ├── ab-testing-engine.test.ts      # A/B split-test traffic split & winner resolution
+│   ├── airtel-telecom.test.ts         # Airtel gateway protocol & DLR tests
+│   ├── billing-service.test.ts        # Ledger idempotency & concurrency tests
+│   ├── circuit-breaker.test.ts        # Telecom circuit breaker 3-state transitions
+│   ├── nav-wallet-badge.test.ts       # Wallet badge rendering & secure balance masking
+│   ├── performance-scalability.test.ts # System performance & scalability benchmarks
+│   ├── security-hardening.test.ts     # Security hardening verification tests
+│   ├── seed-telecom-data.test.ts      # Telecom seeding & operator data verification
+│   └── ... (48 test files total)      # See Section 10 for complete inventory
+├── playwright.config.ts               # Multi-browser Playwright test configuration
+├── vitest.config.ts                   # Vitest unit runner configuration with alias paths
+├── next.config.ts                     # Next.js 16 compiler and image optimization settings
+├── tsconfig.json                      # Strict TypeScript compiler rules
+└── package.json                       # Project manifests (70 deps, 25 devDeps, 95 total)
 ```
 
 ---
@@ -865,63 +960,63 @@ The platform maintains an enterprise testing standard with automated quality gat
 
 | Quality Verification Gate | Enforced Standard | Actual Measured Result | Status |
 | :--- | :--- | :--- | :--- |
-| **TypeScript Static Verification** | `npx tsc --noEmit` | **0 errors, 100% clean** across all source files | âœ… **PASSED** |
-| **ESLint Code Quality** | `npm run lint` (`--max-warnings 0`) | **0 errors, 0 warnings** | ✅ **PASSED** |
-| **Vitest Unit & Integration Suites** | `npm run test:run` | **100% tests passing** (48/48 test files, 429/429 tests) | ✅ **PASSED** |
-| **Next.js Production Compilation** | `npm run build` (`next build`) | **185 routes compiled & generated successfully** | âœ… **PASSED** |
-| **Browser Runtime & Console** | Chrome DevTools MCP Live Audit | **0 console errors, 0 runtime warnings, 0 hydration issues** | âœ… **PASSED** |
+| **TypeScript Static Verification** | `npx tsc --noEmit` | **0 errors, 100% clean** across all source files | ✅ **PASSED** |
+| **ESLint Code Quality** | `npm run lint` (`--max-warnings 0`) | **0 errors, 0 warnings** | ? **PASSED** |
+| **Vitest Unit & Integration Suites** | `npm run test:run` | **100% tests passing** (48/48 test files, 429/429 tests) | ? **PASSED** |
+| **Next.js Production Compilation** | `npm run build` (`next build`) | **185 routes compiled & generated successfully** | ✅ **PASSED** |
+| **Browser Runtime & Console** | Chrome DevTools MCP Live Audit | **0 console errors, 0 runtime warnings, 0 hydration issues** | ✅ **PASSED** |
 
 > **Note**: The 24 ESLint warnings and 4 test suite failures are artifacts of uncommitted in-progress work (wallet balance masking dialog, timezone provider integration, and animated number components). All issues are identified, non-blocking, and will be resolved before the next commit. The last committed state (`bd06bbd`) passes all quality gates with 0 errors, 0 warnings, and 48/48 test files passing.
 
 ### Verified Test Domains (48 Test Files)
-1. `ab-testing-engine.test.ts` â€” Statistical split-testing traffic allocation and winner determination.
-2. `airtel-telecom.test.ts` â€” Airtel REST gateway signaling, response parsing, and error codes.
-3. `api-key-auth.test.ts` â€” Cryptographic Bearer token verification and header authentication.
-4. `api-keys-quota-apps.test.ts` â€” Scoped API application quota limits, tracking, and quota resets.
-5. `billing-service.test.ts` â€” Serializable concurrency, atomic deductions, and double-billing protection.
-6. `circuit-breaker.test.ts` â€” Telecom circuit breaker 3-state transitions (`CLOSED`, `OPEN`, `HALF_OPEN`).
-7. `consent-service.test.ts` â€” Append-only audit trail and opt-in/opt-out regulatory suppression.
-8. `contact-groups.test.ts` â€” Group creation, member associations, and count aggregation.
-9. `contact-import.test.ts` â€” CSV streaming ingestion, sanitization, and batch insertion.
-10. `contacts-network-detection.test.ts` â€” Phone network operator identification across East African ranges.
-11. `country-flag-phone.test.ts` â€” Accessible international phone input rendering and country selection.
-12. `country-picker-dropdown.test.ts` â€” 250+ country searchable picker and dial code resolution.
-13. `country-registry.test.ts` â€” International dial code registry, E.164 formats, and MCC/MNC mappings.
-14. `custom-variables.test.ts` â€” Dynamic merge tag extraction, regex sanitization, and fallback default substitution.
-15. `drafts-page.test.ts` â€” Draft campaign storage, restoration, and deletion.
-16. `dry-run-simulator.test.ts` â€” Pre-dispatch simulation calculating segment counts and credit requirements.
-17. `error-pages.test.ts` â€” Accessible 404 Not Found and 500 Server Error boundary rendering.
-18. `excel-import.test.ts` â€” Binary `.xlsx` spreadsheet buffer parsing into validated contact rows.
-19. `fraud-prevention.test.ts` â€” Velocity rate limits, AIT OTP pumping detection, and toll fraud blocking.
-20. `import-table-features.test.ts` â€” Paginated column mapping, field mapping dropdowns, and validation.
-21. `language-toggle.test.ts` â€” Multilingual UI switcher and accessible aria-label tags.
-22. `ledger-engine.test.ts` â€” Double-entry accounting ledger balance integrity and reconciliation.
-23. `nav-wallet-badge.test.ts` â€” Wallet badge rendering, secure balance masking, and Step-Up Auth unmask flow.
-24. `network-badge.test.ts` â€” Telecom carrier badge rendering with official carrier colors.
-25. `normalizer.test.ts` â€” E.164 phone normalization, whitespace stripping, and carrier prefix lookup.
-26. `page-title-sync.test.ts` â€” Dynamic browser tab title synchronization across dashboard navigation.
-27. `performance-scalability.test.ts` â€” System performance benchmarks and scalability verification.
-28. `phone-analyzer.test.ts` â€” Deep number format analysis, invalid digit detection, and carrier routing.
-29. `phone-api.test.ts` â€” Programmatic phone lookup endpoint validation.
-30. `phone-recipients-input.test.ts` â€” Multi-recipient tokenized input with tag removal and duplicate filtering.
-31. `range-apps-dropdown.test.ts` â€” 3-column ecosystem application navigation menu.
-32. `recurrence-engine.test.ts` â€” CRON schedule interval evaluation and `nextRunAt` calculation.
-33. `regulatory-engine.test.ts` â€” Country KYC requirements, document validation, and quiet-hour rules.
-34. `routing-engine.test.ts` â€” Carrier Least Cost Routing (LCR) and automated provider failover.
-35. `scheduled-message-edit.test.ts` â€” 10-second transmission freeze, auto-pause safety locks, and rescheduling.
-36. `security-hardening.test.ts` â€” Security hardening verification across authentication, authorization, and input validation.
-37. `seed-telecom-data.test.ts` â€” Telecom operator seeding data integrity and coverage verification.
-38. `segment-compiler.test.ts` â€” Dynamic AST audience segment compilation with Boolean rule trees.
-39. `sidebar-navigation-flyout.test.ts` â€” Responsive collapsible sidebar with active theme tokens.
-40. `smpp-provider.test.ts` â€” Native SMPP v3.4 binary PDU encoding/decoding and sequence handling.
-41. `sms-draft-api.test.ts` â€” Programmatic draft save, load, and duplicate endpoints.
-42. `sms-draft-hook.test.ts` â€” Client-side `useSmsDraft` auto-saving debouncer and state sync.
-43. `sms-draft-service.test.ts` â€” Database-backed draft storage service with user isolation.
-44. `sms-draft-validation.test.ts` â€” Message body and recipient validation for draft payloads.
-45. `template-csv.test.ts` â€” Sample import CSV generation with required header columns.
-46. `unsaved-changes.test.ts` â€” Dirty form navigation guards preventing accidental data loss.
-47. `variable-textarea.test.ts` â€” Textarea with inline mustache highlight tags and cursor insertion.
-48. `variable-validation.test.ts` â€” Variable key syntax rules and character restrictions.
+1. `ab-testing-engine.test.ts` — Statistical split-testing traffic allocation and winner determination.
+2. `airtel-telecom.test.ts` — Airtel REST gateway signaling, response parsing, and error codes.
+3. `api-key-auth.test.ts` — Cryptographic Bearer token verification and header authentication.
+4. `api-keys-quota-apps.test.ts` — Scoped API application quota limits, tracking, and quota resets.
+5. `billing-service.test.ts` — Serializable concurrency, atomic deductions, and double-billing protection.
+6. `circuit-breaker.test.ts` — Telecom circuit breaker 3-state transitions (`CLOSED`, `OPEN`, `HALF_OPEN`).
+7. `consent-service.test.ts` — Append-only audit trail and opt-in/opt-out regulatory suppression.
+8. `contact-groups.test.ts` — Group creation, member associations, and count aggregation.
+9. `contact-import.test.ts` — CSV streaming ingestion, sanitization, and batch insertion.
+10. `contacts-network-detection.test.ts` — Phone network operator identification across East African ranges.
+11. `country-flag-phone.test.ts` — Accessible international phone input rendering and country selection.
+12. `country-picker-dropdown.test.ts` — 250+ country searchable picker and dial code resolution.
+13. `country-registry.test.ts` — International dial code registry, E.164 formats, and MCC/MNC mappings.
+14. `custom-variables.test.ts` — Dynamic merge tag extraction, regex sanitization, and fallback default substitution.
+15. `drafts-page.test.ts` — Draft campaign storage, restoration, and deletion.
+16. `dry-run-simulator.test.ts` — Pre-dispatch simulation calculating segment counts and credit requirements.
+17. `error-pages.test.ts` — Accessible 404 Not Found and 500 Server Error boundary rendering.
+18. `excel-import.test.ts` — Binary `.xlsx` spreadsheet buffer parsing into validated contact rows.
+19. `fraud-prevention.test.ts` — Velocity rate limits, AIT OTP pumping detection, and toll fraud blocking.
+20. `import-table-features.test.ts` — Paginated column mapping, field mapping dropdowns, and validation.
+21. `language-toggle.test.ts` — Multilingual UI switcher and accessible aria-label tags.
+22. `ledger-engine.test.ts` — Double-entry accounting ledger balance integrity and reconciliation.
+23. `nav-wallet-badge.test.ts` — Wallet badge rendering, secure balance masking, and Step-Up Auth unmask flow.
+24. `network-badge.test.ts` — Telecom carrier badge rendering with official carrier colors.
+25. `normalizer.test.ts` — E.164 phone normalization, whitespace stripping, and carrier prefix lookup.
+26. `page-title-sync.test.ts` — Dynamic browser tab title synchronization across dashboard navigation.
+27. `performance-scalability.test.ts` — System performance benchmarks and scalability verification.
+28. `phone-analyzer.test.ts` — Deep number format analysis, invalid digit detection, and carrier routing.
+29. `phone-api.test.ts` — Programmatic phone lookup endpoint validation.
+30. `phone-recipients-input.test.ts` — Multi-recipient tokenized input with tag removal and duplicate filtering.
+31. `range-apps-dropdown.test.ts` — 3-column ecosystem application navigation menu.
+32. `recurrence-engine.test.ts` — CRON schedule interval evaluation and `nextRunAt` calculation.
+33. `regulatory-engine.test.ts` — Country KYC requirements, document validation, and quiet-hour rules.
+34. `routing-engine.test.ts` — Carrier Least Cost Routing (LCR) and automated provider failover.
+35. `scheduled-message-edit.test.ts` — 10-second transmission freeze, auto-pause safety locks, and rescheduling.
+36. `security-hardening.test.ts` — Security hardening verification across authentication, authorization, and input validation.
+37. `seed-telecom-data.test.ts` — Telecom operator seeding data integrity and coverage verification.
+38. `segment-compiler.test.ts` — Dynamic AST audience segment compilation with Boolean rule trees.
+39. `sidebar-navigation-flyout.test.ts` — Responsive collapsible sidebar with active theme tokens.
+40. `smpp-provider.test.ts` — Native SMPP v3.4 binary PDU encoding/decoding and sequence handling.
+41. `sms-draft-api.test.ts` — Programmatic draft save, load, and duplicate endpoints.
+42. `sms-draft-hook.test.ts` — Client-side `useSmsDraft` auto-saving debouncer and state sync.
+43. `sms-draft-service.test.ts` — Database-backed draft storage service with user isolation.
+44. `sms-draft-validation.test.ts` — Message body and recipient validation for draft payloads.
+45. `template-csv.test.ts` — Sample import CSV generation with required header columns.
+46. `unsaved-changes.test.ts` — Dirty form navigation guards preventing accidental data loss.
+47. `variable-textarea.test.ts` — Textarea with inline mustache highlight tags and cursor insertion.
+48. `variable-validation.test.ts` — Variable key syntax rules and character restrictions.
 
 ### Browser Runtime Verification Matrix (Chrome DevTools MCP)
 All primary routes verified clean with **0 console errors, 0 warnings, 0 hydration issues, and 0 accessibility violations**:
@@ -939,5 +1034,22 @@ All primary routes verified clean with **0 console errors, 0 warnings, 0 hydrati
 ---
 
 *Authored and verified for Range View Technology Services Uganda Limited.*  
-*Range Bulk SMS Engineering Team â€” October 2026*
+*Range Bulk SMS Engineering Team — October 2026*
 
+# Technology Stack
+
+This document tracks the core packages used in the template and the rationale for their inclusion.
+
+| Package | Version | Purpose | Reason | Docs URL | Upgrade Notes |
+|---------|---------|---------|--------|----------|---------------|
+| `next` | `^15.0.0` | Framework | Best-in-class React framework for SSR and App Router | [Docs](https://nextjs.org/docs) | Major version shifts require reading migration guides carefully. |
+| `react` | `^19.0.0` | UI Library | Standard for modern web dev | [Docs](https://react.dev/) | - |
+| `tailwindcss` | `^4.0.0` | Styling | Utility-first CSS, high performance, inline themes | [Docs](https://tailwindcss.com/) | Uses inline @theme variables. |
+| `lucide-react` | `^0.244.0` | Icons | Clean, consistent SVG icons | [Docs](https://lucide.dev/) | - |
+| `clsx` | `^2.1.1` | Utilities | Conditional class merging | [Docs](https://github.com/lukeed/clsx) | - |
+| `tailwind-merge` | `^2.3.0` | Utilities | Resolves Tailwind utility conflicts | [Docs](https://github.com/dcastil/tailwind-merge) | - |
+| `class-variance-authority` | `^0.7.0` | Styling | Component variant management | [Docs](https://cva.style/docs) | - |
+| `@radix-ui/react-*` | Various | UI Primitives | Accessible, unstyled core components | [Docs](https://www.radix-ui.com/) | - |
+| `next-themes` | `^0.3.0` | Theming | Avoids hydration mismatch on dark mode | [Docs](https://github.com/pacocoursey/next-themes) | - |
+| `@tanstack/react-table` | `^8.10.0` | Data Table | Headless UI for tables | [Docs](https://tanstack.com/table/latest) | - |
+| `react-hook-form` | `^7.45.0` | Forms | Performant, flexible form validation | [Docs](https://react-hook-form.com/) | Use alongside Zod. |
