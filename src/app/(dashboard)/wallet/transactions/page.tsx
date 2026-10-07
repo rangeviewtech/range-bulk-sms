@@ -44,7 +44,7 @@ export default function TransactionsPage() {
   const fetchTransactions = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/wallet/transactions?limit=250');
+      const res = await fetch('/api/v1/wallet/transactions?limit=250');
       if (!res.ok) throw new Error('Failed to fetch transactions');
       const json = await res.json();
       const data = json.data;

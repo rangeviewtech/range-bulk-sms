@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
@@ -102,8 +102,8 @@ export default function WalletPage() {
   const fetchWalletData = useCallback(async () => {
     try {
       const [walletRes, txnRes] = await Promise.all([
-        fetch('/api/wallet'),
-        fetch('/api/wallet/transactions?limit=5'),
+        fetch('/api/v1/wallet'),
+        fetch('/api/v1/wallet/transactions?limit=5'),
       ]);
 
       if (walletRes.ok) {
@@ -150,7 +150,7 @@ export default function WalletPage() {
 
     try {
       setSubmittingDeposit(true);
-      const res = await fetch('/api/wallet/deposit', {
+      const res = await fetch('/api/v1/wallet/deposit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -235,7 +235,7 @@ This document defines the single source of truth for the visual language and int
 We utilize a semantic color system across all platforms:
 
 - **Brand Primary (Blue):** `#04648C` (Web: `var(--color-brand-blue)`, Mobile: `text-brand-blue`)
-- **Brand Secondary (Yellow):** `#F2C94C` (Web: `var(--color-brand-yellow)`, Mobile: `text-brand-yellow`)
+- **Brand Secondary (Yellow):** `#FBCA07` (Web: `var(--color-brand-yellow)`, Mobile: `text-brand-yellow`)
 - **Brand Dark (Navy):** `#07163D` (Web: `var(--color-brand-navy)`, Mobile: `text-brand-navy`)
 - **Backgrounds:** `#f8fafc` (slate-50) for app backgrounds, `#ffffff` for elevated surfaces.
 
