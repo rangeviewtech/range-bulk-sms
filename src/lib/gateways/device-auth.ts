@@ -76,20 +76,26 @@ export async function withDeviceAuth(
         body = decryptGatewayPayload(rawBody.e2ee, verification.gatewaySecret);
         isE2EE = true;
       } else {
-        body = rawBody;
+        // Enforce strict E2EE encryption policy to ensure WhatsApp and SMS messages are secure
+        return Response.json({ error: 'Bad Request: Strict E2EE encryption is required' }, { status: 400 });
       }
     } catch (_e) {
-      return Response.json({ error: 'Bad Request: Failed to parse or decrypt payload' }, { status: 400 });
+      return Response.json({ error: 'Bad Request: Failed to parse or decrypt E2EE payload' }, { status: 400 });
+    }
+  } else {
+    // For GET/HEAD, require the X-E2EE header
+    if (!isE2EE) {
+      return Response.json({ error: 'Bad Request: Strict E2EE encryption header required' }, { status: 400 });
     }
   }
 
-  const response = await handler(req, { gatewayId: verification.gatewayId, gatewaySecret: verification.gatewaySecret, body, isE2EE });
+  const response = await handler(req, { gatewayId: verification.gatewayId, gatewaySecret: verification.gatewaySecret, body, isE2EE: true });
   
   return response;
 }
 
-export function sendGatewayResponse(data: unknown, gatewaySecret?: string, useE2EE = false) {
-  if (useE2EE && gatewaySecret) {
+export function sendGatewayResponse(data: unknown, gatewaySecret?: string, useE2EE = true) {
+  if (gatewaySecret) {
     return Response.json({ e2ee: encryptGatewayPayload(data, gatewaySecret) });
   }
   return Response.json(data);
