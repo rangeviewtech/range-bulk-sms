@@ -6,6 +6,8 @@ import { POST as sendV1 } from '@/app/api/v1/sms/send/route';
 import { POST as bulkV1 } from '@/app/api/v1/sms/bulk/route';
 import { NextRequest } from 'next/server';
 import { prismaMock } from '../../unit/prismaMock';
+import { WalletService } from '@/lib/wallet/service';
+import { enqueueJob } from '@/lib/jobs/db';
 
 vi.mock('@/lib/api-keys/service', () => ({
   withApiKey: vi.fn().mockImplementation(async (req: NextRequest, _scope: string, handler) => {
@@ -92,6 +94,46 @@ describe('v1 Public SMS API Endpoints', () => {
       expect(json.status).toBe('QUEUED');
       expect(json.recipientCount).toBe(1);
       expect(json.totalUnits).toBe(1);
+      expect(prismaMock.$transaction).toHaveBeenCalledOnce();
+      expect(WalletService.deduct).toHaveBeenCalledWith(
+        'wallet-v1',
+        expect.anything(),
+        expect.objectContaining({ tx: prismaMock }),
+      );
+      expect(enqueueJob).toHaveBeenCalledWith(expect.objectContaining({ tx: prismaMock }));
+    });
+
+    it('rejects reuse of a message key for different content without charging again', async () => {
+      prismaMock.message.findUnique.mockResolvedValue({
+        id: 'existing-message',
+        userId: 'v1-user-123',
+        message: 'Original message',
+        senderIdId: 'RANGE_SMS',
+        senderId: { senderId: 'RANGE_SMS' },
+        gatewayId: null,
+        recipientCount: 1,
+        totalUnits: 1,
+        status: 'QUEUED',
+        recipients: [{ phone: '+256700000001' }],
+      } as never);
+
+      const req = new NextRequest('http://localhost:3000/api/v1/sms/send', {
+        method: 'POST',
+        headers: {
+          authorization: 'Bearer valid-token',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          senderId: 'RANGE_SMS',
+          recipients: ['+256700000001'],
+          message: 'Changed message',
+          idempotencyKey: 'same-request-key',
+        }),
+      });
+
+      const res = await sendV1(req);
+      expect(res.status).toBe(409);
+      expect(WalletService.deduct).not.toHaveBeenCalled();
     });
 
     it('rejects unsupported cloud or SMPP gateway selection before charging', async () => {
@@ -121,6 +163,59 @@ describe('v1 Public SMS API Endpoints', () => {
       const res = await sendV1(req);
       expect(res.status).toBe(400);
       expect(prismaMock.message.create).not.toHaveBeenCalled();
+    });
+
+    it('rejects invalid recipients before reserving wallet funds', async () => {
+      prismaMock.senderId.findFirst.mockResolvedValue({
+        id: 'RANGE_SMS',
+        senderId: 'RANGE_SMS',
+        status: 'APPROVED',
+        userId: 'v1-user-123',
+      } as never);
+
+      const req = new NextRequest('http://localhost:3000/api/v1/sms/send', {
+        method: 'POST',
+        headers: {
+          authorization: 'Bearer valid-token',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          senderId: 'RANGE_SMS',
+          recipients: ['not-a-phone-number'],
+          message: 'Do not charge for invalid destinations',
+        }),
+      });
+
+      const res = await sendV1(req);
+      expect(res.status).toBe(400);
+      expect(WalletService.deduct).not.toHaveBeenCalled();
+      expect(prismaMock.message.create).not.toHaveBeenCalled();
+    });
+
+    it('does not expose internal exception details when sending fails', async () => {
+      prismaMock.senderId.findFirst.mockRejectedValueOnce(new Error('database credential details'));
+      const logSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const req = new NextRequest('http://localhost:3000/api/v1/sms/send', {
+        method: 'POST',
+        headers: {
+          authorization: 'Bearer valid-token',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          senderId: 'RANGE_SMS',
+          recipients: ['+256700000001'],
+          message: 'Do not reveal internal errors',
+        }),
+      });
+
+      const res = await sendV1(req);
+      const json = await res.json();
+      logSpy.mockRestore();
+
+      expect(res.status).toBe(500);
+      expect(json.error).toBe('Unable to send messages right now. Please try again.');
+      expect(JSON.stringify(json)).not.toContain('database credential details');
     });
   });
 

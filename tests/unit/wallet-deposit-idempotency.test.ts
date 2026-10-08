@@ -32,4 +32,41 @@ describe('wallet deposit idempotency', () => {
       idempotencyKey: 'payment-reference',
     })).rejects.toBeInstanceOf(ConflictError);
   });
+
+  it('runs deductions on the caller transaction without opening a nested transaction', async () => {
+    const tx = {
+      transaction: { findFirst: vi.fn().mockResolvedValue(null), create: vi.fn() },
+      $queryRaw: vi.fn().mockResolvedValue([{ id: 'wallet-1', balance: new Prisma.Decimal(20) }]),
+      wallet: { update: vi.fn() },
+    };
+
+    const { WalletService } = await import('@/lib/wallet/service');
+    const result = await WalletService.deduct('wallet-1', new Prisma.Decimal(5), {
+      userId: 'user-1',
+      idempotencyKey: 'sms-request',
+      tx: tx as never,
+    });
+
+    expect(result.balanceAfter.equals(new Prisma.Decimal(15))).toBe(true);
+    expect(tx.transaction.create).toHaveBeenCalledOnce();
+    expect(db.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('rejects a deduction idempotency key reused for different billing details', async () => {
+    db.transaction.findFirst.mockResolvedValue({
+      walletId: 'wallet-original',
+      userId: 'user-1',
+      type: 'DEDUCTION',
+      amount: new Prisma.Decimal(5),
+      balanceBefore: new Prisma.Decimal(20),
+      balanceAfter: new Prisma.Decimal(15),
+      reference: 'transaction-original',
+    });
+
+    const { WalletService } = await import('@/lib/wallet/service');
+    await expect(WalletService.deduct('wallet-other', new Prisma.Decimal(8), {
+      userId: 'user-1',
+      idempotencyKey: 'sms-request',
+    })).rejects.toBeInstanceOf(ConflictError);
+  });
 });

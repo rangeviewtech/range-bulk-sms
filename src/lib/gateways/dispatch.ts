@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { prisma, type PrismaTransactionClient } from '@/lib/prisma';
 
 /**
  * Assign one hardware delivery attempt per recipient. The device queue uses
@@ -8,11 +8,13 @@ import { prisma } from '@/lib/prisma';
 export async function assignRecipientsToHardwareGateway(
   messageId: string,
   gatewayId: string,
-  recipientIds: string[]
+  recipientIds: string[],
+  tx?: PrismaTransactionClient,
 ) {
   if (recipientIds.length === 0) return;
 
-  await prisma.messageAttempt.createMany({
+  const client = tx ?? prisma;
+  await client.messageAttempt.createMany({
     data: recipientIds.map((messageRecipientId) => ({
       messageId,
       messageRecipientId,

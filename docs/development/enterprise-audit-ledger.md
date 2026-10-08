@@ -1053,3 +1053,109 @@ hardware, provider, Android SDK, Firefox, and Deep Scan limitations remain.
   This focused pass does not close the endpoint-by-endpoint API, persistence,
   provider, or cross-project audit.
 
+## Mobile and gateway API contract continuation — 2026-10-08
+
+### Cross-project route map reviewed
+
+- Mobile `lib/api.ts` uses one `EXPO_PUBLIC_API_URL` base resolved by
+  `lib/api-config.ts` to `/api/v1`. The reviewed mobile calls map to the web
+  auth/MFA, dashboard, SMS send, message history, report summary, balance,
+  wallet transactions/MoMo, sender-ID, contacts/groups, and gateway routes.
+- Android gateway `src/lib/apiConfig.ts` uses the same `/api/v1` resolution.
+  Pairing calls `/device/gateways/register`; background sync calls heartbeat,
+  queue, message result, and incoming SMS handlers. The ESP32 firmware uses
+  those same device paths plus the registration path, with the API prefix
+  configured by its setup flow.
+- The reviewed Android, firmware, and web gateway-auth code agree on the
+  `gt_` token shape, use of the secret suffix for payload encryption, key
+  derivation suffixes, AES-256-CBC encryption, HMAC-SHA256, and the `e2ee`
+  envelope. This is source-level contract review; physical hardware traffic
+  has not been verified in this continuation.
+
+### Findings and fixes
+
+- The mobile app sends campaigns to `POST /api/v1/sms/send`. That handler
+  deducted wallet funds before separately creating the message, recipients,
+  and queue jobs or hardware attempts. A later write failure could leave a
+  charge without dispatch. The deduction and all those records now share one
+  serializable transaction; the transaction-aware wallet and hardware dispatch
+  helpers avoid opening nested transactions.
+- The mobile-send path accumulated per-recipient charges through JavaScript
+  floating-point numbers. It now sums Prisma Decimal values directly and
+  stores the correct encoding and segment count on the message row.
+- A repeated mobile request key previously returned any message with that key,
+  even if the sender, content, recipient list, gateway, or account differed.
+  The API now returns the original result only for matching request details and
+  returns 409 for mismatched reuse. Unique-key/serialization races re-read the
+  committed message to make same-request retries idempotent.
+- The mobile composer previously generated a new key for every retry. It now
+  retains the key after a failed request and clears it when the draft changes or
+  the send succeeds, so a retry of an unchanged draft can resolve an uncertain
+  response without charging or sending twice.
+- Android gateway heartbeats previously sent a hard-coded FCM placeholder,
+  `-60` signal strength, and the Wi-Fi/cellular connectivity type as a network
+  operator. The backend persisted these as real device fields. Heartbeats now
+  send measured battery/charging values and a separately named
+  `connectivityMethod`, and omit unavailable FCM/signal/operator values.
+
+### Verification and remaining work
+
+- `tests/integration/api/v1-sms.test.ts` and
+  `tests/unit/wallet-deposit-idempotency.test.ts` pass 10/10. Coverage includes
+  transaction participation, idempotency mismatch rejection, invalid
+  recipients before charging, safe error responses, caller-owned wallet
+  deduction transactions, and conflicting financial key reuse.
+- Web TypeScript and scoped ESLint passed for the route, wallet, gateway
+  dispatch, and test files. The production build passed after the final web
+  source changes and generated all 174 static pages.
+- Mobile TypeScript and scoped ESLint passed for the changed campaign screen.
+  The project-wide `expo lint` command fails because its configured path list
+  includes a missing `components` directory. Android gateway TypeScript and
+  scoped ESLint passed for the heartbeat worker.
+- No source calls to another backend were found in the mobile/API wrapper or
+  gateway/firmware request clients during the path comparison. This does not
+  establish complete feature parity: the mobile app exposes a smaller set of
+  screens and workflows than the web application. A route-by-route parity
+  matrix and device/browser journeys remain open.
+- Firmware compile, Android native build, staging API calls, device pairing,
+  SMS modem delivery, and carrier callbacks were not run in this continuation.
+
+### Open business and reliability findings
+
+- `POST /api/v1/sms/send` does not run the same fraud and regulatory checks at
+  request acceptance as `POST /api/v1/messages`. Cloud dispatch has a later
+  compliance check that defaults missing message purpose to `MARKETING`, while
+  the hardware dispatch route does not show the same centralized check. The
+  mobile composer does not collect purpose. Applying a guessed purpose could
+  change quiet-hour, consent, and personal-hardware-gateway eligibility. Add a
+  purpose selection and align both dispatch paths after the product owner
+  confirms the intended classification and explicit-consent requirements for
+  ad-hoc phone numbers. Until then, do not treat the two send routes as
+  policy-equivalent.
+- `sendSmsSchema` allows up to 10,000 recipients, while the mobile send route
+  creates each cloud dispatch job serially inside a single serializable
+  transaction. Large batches may exceed interactive-transaction time limits.
+  Before reducing the documented API limit or changing batch acceptance, agree
+  on the supported per-request batch size and desired partial-batch behavior;
+  then implement bounded/bulk job insertion and test representative sizes.
+- Android gateway jobs and delivery reports remain vulnerable to ambiguous
+  outcomes if the app/process stops after the modem accepts an SMS but before
+  its status report is durably acknowledged. Automatic replay could duplicate
+  SMS, so reconcile this with a durable report outbox and an explicit
+  uncertain-delivery state rather than blind retries.
+- The generic payment callback finding above remains a release blocker until
+  provider reference creation and authoritative charge verification are
+  documented and implemented.
+
+### Status update — 2026-10-09
+
+- SMS-send now rejects invalid destination numbers before billing and returns
+  a generic 500 response for unexpected internal failures, while preserving
+  safe client errors for known conflicts and insufficient wallet funds.
+- Final targeted web coverage passed 10/10, the production build generated 174
+  pages, web and gateway type/lint checks passed, and mobile type plus changed
+  screen lint passed. The repository-wide mobile lint command still references
+  a missing `components` directory; the changed screen's scoped lint passed.
+- This update does not close the cross-project, route-by-route, staging,
+  hardware, or payment-provider review items above.
+
