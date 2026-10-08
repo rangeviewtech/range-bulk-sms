@@ -26,7 +26,7 @@ function verifySignature(req: Request, rawBody: string): boolean {
       Buffer.from(signature),
       Buffer.from(expectedSignature)
     );
-  } catch (e) {
+  } catch {
     return false;
   }
 }
@@ -83,8 +83,6 @@ export async function POST(req: Request) {
             // Processing incoming WhatsApp message
             const from = message.from; // Sender's phone number
             const messageId = message.id;
-            const text = message.text?.body;
-            
             // Queue for internal secure processing
             console.log(`[WhatsApp] Securely received message ${messageId} from ${from}`);
           }

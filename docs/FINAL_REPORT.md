@@ -26,7 +26,7 @@ During the deep check, the following critical issues were identified:
 - **Wallet Architecture Review:** Confirmed that `WalletService.deposit` and `WalletService.deduct` are exceptionally robust. They securely harness raw Postgres `SELECT FOR UPDATE` queries within atomic Prisma `$transaction` blocks to physically lock rows, preventing race conditions from simultaneous requests.
 - **Mathematical Safety:** Verified that zod's `.positive()` strictness correctly blocks negative integer manipulation at the controller level before hitting the `Decimal` conversions.
 - **Authentication Bridge:** Confirmed that `withApiKey` acts as a dual-auth bridge, securely cracking and validating Mobile JWT tokens (Bearer) and Developer API keys within the identical security boundary.
-- **Rate Limiting:** Verified `checkRateLimit` correctly implements Upstash Redis sliding windows with a seamless graceful degradation to local memory bounds.
+- **Rate Limiting:** Uses Upstash Redis sliding windows in production. Requests fail closed if shared Redis is missing or unavailable; process-local fallback is limited to development and tests.
 
 ## 5. Remaining Concerns & Future Improvements
 - **Duplicate Dashboard Hooks:** The `useWallet` hook currently lacks `SWR` or `React Query` implementations, meaning `window.addEventListener('focus')` forces overlapping REST requests on visibility change. Introducing React Query would fix this natively.

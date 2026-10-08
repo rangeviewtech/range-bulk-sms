@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { verifySession } from "@/lib/auth/session";
+import { verifyAuthenticatedSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/auth/authorization";
 import { z } from "zod";
 
@@ -12,7 +12,11 @@ const privacyRequestSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await verifySession();
+    const session = await verifyAuthenticatedSession();
+    if (!session) {
+      return NextResponse.json({ error: "Sign in to submit a privacy request." }, { status: 401 });
+    }
+
     const body = await req.json().catch(() => ({}));
     const parsed = privacyRequestSchema.safeParse(body);
 
@@ -21,53 +25,56 @@ export async function POST(req: NextRequest) {
     }
 
     const { requestType, reason, contactEmail } = parsed.data;
-    const effectiveEmail = contactEmail || session?.user?.email;
+    const effectiveEmail = session.user.email;
 
-    // Record an audit log for the privacy / compliance request
-    const auditRecord = await prisma.auditLog.create({
-      data: {
-        eventName: `PRIVACY_REQUEST_${requestType}`,
-        category: "COMPLIANCE",
-        severity: "INFO",
-        outcome: "SUCCESS",
-        actorType: session ? "USER" : "ANONYMOUS",
-        actorId: session?.userId || "anonymous",
-        action: `PRIVACY_REQUEST_${requestType}`,
-        resourceType: "UserPrivacy",
-        resourceId: effectiveEmail || "system",
-        timestamp: new Date(),
-        reasonCode: requestType,
-        sourceIp: (req.headers.get("x-forwarded-for") || req.headers.get("remote-addr") || undefined),
-        description: reason,
-        newVersion: {
-          requestType,
-          reason,
-          contactEmail: effectiveEmail,
-          submittedAt: new Date().toISOString(),
+    if (contactEmail && contactEmail.trim().toLowerCase() !== effectiveEmail.toLowerCase()) {
+      return NextResponse.json(
+        { error: "Use the email address on your signed-in account." },
+        { status: 403 }
+      );
+    }
+
+    const auditRecord = await prisma.$transaction(async (tx) => {
+      const record = await tx.auditLog.create({
+        data: {
+          eventName: `PRIVACY_REQUEST_${requestType}`,
+          category: "COMPLIANCE",
+          severity: "INFO",
+          outcome: "SUCCESS",
+          actorType: "USER",
+          actorId: session.userId,
+          action: `PRIVACY_REQUEST_${requestType}`,
+          resourceType: "UserPrivacy",
+          resourceId: effectiveEmail,
+          timestamp: new Date(),
+          reasonCode: requestType,
+          sourceIp: (req.headers.get("x-forwarded-for") || req.headers.get("remote-addr") || undefined),
+          description: reason,
+          newVersion: {
+            requestType,
+            reason,
+            contactEmail: effectiveEmail,
+            submittedAt: new Date().toISOString(),
+          },
         },
-      },
-    });
-
-    // If REVOKE_ALL_CONSENT, mark all contacts associated with this email / user as opted out
-    if (requestType === "REVOKE_ALL_CONSENT" && contactEmail) {
-      const user = await prisma.user.findUnique({
-        where: { email: contactEmail },
       });
 
-      if (user) {
-        await prisma.contact.updateMany({
-          where: { userId: user.id },
+      if (requestType === "REVOKE_ALL_CONSENT") {
+        await tx.contact.updateMany({
+          where: { userId: session.userId },
           data: {
             optedOut: true,
             consentGiven: false,
           },
         });
       }
-    }
+
+      return record;
+    });
 
     return NextResponse.json({
       success: true,
-      message: `Privacy request (${requestType}) recorded successfully under UCC/GDPR data subject rights.`,
+      message: "Your privacy request has been recorded.",
       ticketId: auditRecord.id,
     });
   } catch (error) {
@@ -78,7 +85,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const session = await verifySession();
+    const session = await verifyAuthenticatedSession();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized: Active session required to view privacy requests" }, { status: 401 });
     }

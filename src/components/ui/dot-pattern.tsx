@@ -102,8 +102,8 @@ export function DotPattern({
       return {
         x: col * width + cx + x,
         y: row * height + cy + y,
-        delay: Math.random() * 5,
-        duration: Math.random() * 3 + 2,
+        delay: ((col * 17 + row * 31) % 50) / 10,
+        duration: 2 + ((col * 13 + row * 7) % 30) / 10,
       }
     }
   )

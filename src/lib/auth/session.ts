@@ -302,7 +302,9 @@ export async function verifySession() {
     sessionId: session.id,
     userId: session.userId,
     user: session.user,
-    mfaVerified: session.mfaVerified || sessionData.mfaVerified === true,
+    // The database record is authoritative. A signed cookie must not be able
+    // to upgrade a pre-authentication session after it has been created.
+    mfaVerified: session.mfaVerified,
     rememberMe: session.rememberMe,
     expiresAt: session.expiresAt,
     idleExpiresAt: session.idleExpiresAt,
@@ -415,6 +417,18 @@ export async function requireAuth() {
   }
   if (session.screenLocked) {
     throw new AppError('Unlock your session.', 403, 'SCREEN_LOCKED');
+  }
+  return session;
+}
+
+/**
+ * Returns an authenticated, MFA-complete, unlocked session for API handlers
+ * that need to respond with their own 401/403 shape instead of throwing.
+ */
+export async function verifyAuthenticatedSession() {
+  const session = await verifySession();
+  if (!session || !session.mfaVerified || session.screenLocked) {
+    return null;
   }
   return session;
 }

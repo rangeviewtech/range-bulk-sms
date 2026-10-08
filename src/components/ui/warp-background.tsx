@@ -27,8 +27,9 @@ const Beam = ({
   delay: number
   duration: number
 }) => {
-  const hue = Math.floor(Math.random() * 360)
-  const ar = Math.floor(Math.random() * 10) + 1
+  const seed = Number(String(x).replace(/\D/g, "")) || 1
+  const hue = (seed * 47) % 360
+  const ar = (seed % 10) + 1
 
   return (
     <motion.div
@@ -72,7 +73,7 @@ export const WarpBackground: React.FC<WarpBackgroundProps> = ({
 
     for (let i = 0; i < beamsPerSide; i++) {
       const x = Math.floor(i * step)
-      const delay = Math.random() * (beamDelayMax - beamDelayMin) + beamDelayMin
+      const delay = beamDelayMin + ((i * 37) % 100) / 100 * (beamDelayMax - beamDelayMin)
       beams.push({ x, delay })
     }
     return beams

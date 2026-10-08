@@ -1,11 +1,12 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import { getMasterGroupMembers } from '@/lib/contacts/master-directory';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const members = getMasterGroupMembers(params.id);
+    const { id } = await params;
+    const members = getMasterGroupMembers(id);
     return NextResponse.json({ success: true, members });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Unable to load group members.' }, { status: 500 });
   }
 }

@@ -113,14 +113,14 @@ export function getDefaultRoleDashboard(roles: RoleInput): string {
   const roleNames = extractRoleNames(roles);
 
   if (roleNames.includes('ADMIN')) {
-    return '/admin';
+    return '/admin/system';
   }
 
   if (roleNames.includes('AGENT')) {
-    return '/agent';
+    return '/agent/dashboard';
   }
 
-  return '/client';
+  return '/dashboard';
 }
 
 /**

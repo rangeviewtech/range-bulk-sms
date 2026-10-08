@@ -1,11 +1,8 @@
 import { NextRequest } from 'next/server';
 import { withDeviceAuth } from '@/lib/gateways/device-auth';
 
-// For production, you could read this from a database or a config file
-const LATEST_FIRMWARE_VERSION = "1.0.1"; // Increment this to trigger an OTA
-const FIRMWARE_DOWNLOAD_URL = "https://your-firmware-bucket.s3.amazonaws.com/firmware-v1.0.1.bin";
-// Alternatively, serve it from your public folder:
-// const FIRMWARE_DOWNLOAD_URL = "https://your-domain.com/firmware.bin";
+const LATEST_FIRMWARE_VERSION = process.env.ESP32_FIRMWARE_VERSION;
+const FIRMWARE_DOWNLOAD_URL = process.env.ESP32_FIRMWARE_DOWNLOAD_URL;
 
 export async function POST(req: NextRequest) {
   return withDeviceAuth(req, async (req, { gatewayId: _gatewayId }) => {
@@ -20,13 +17,23 @@ export async function POST(req: NextRequest) {
       }
 
       // Simple semver comparison (assuming x.y.z)
+      let firmwareUrl: URL | null = null;
+      try {
+        firmwareUrl = FIRMWARE_DOWNLOAD_URL ? new URL(FIRMWARE_DOWNLOAD_URL) : null;
+      } catch {
+        firmwareUrl = null;
+      }
+      if (!LATEST_FIRMWARE_VERSION || !firmwareUrl || firmwareUrl.protocol !== 'https:' || firmwareUrl.username || firmwareUrl.password) {
+        return Response.json({ updateAvailable: false });
+      }
+
       const isUpdateAvailable = compareVersions(LATEST_FIRMWARE_VERSION, currentVersion) > 0;
 
       if (isUpdateAvailable) {
         return Response.json({
           updateAvailable: true,
           version: LATEST_FIRMWARE_VERSION,
-          downloadUrl: FIRMWARE_DOWNLOAD_URL,
+          downloadUrl: firmwareUrl.toString(),
           releaseNotes: "Performance improvements and new OTA feature."
         });
       }

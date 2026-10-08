@@ -50,7 +50,7 @@
 | **Repudiation (R)** | Administrative Actions & Balance Changes | User or admin denies performing configuration change, refund, or credit | Medium | Centralized `AuditLog` records actor ID, action type, IP address, timestamp, resource type, and before/after metadata. | **MITIGATED** |
 | **Information Disclosure (I)** | API Error Responses | Stack traces or SQL errors leak internal database structure | Medium | RFC 9457 Problem Details standardizes error serialization; stack traces omitted in non-development environments. | **MITIGATED** |
 | **Information Disclosure (I)** | Session Cookies | Session tokens intercepted via network sniffing or XSS | High | Cookies use `httpOnly: true`, `secure: true`, `sameSite: strict`. Screen lock PIN re-authenticates inactive sessions. | **MITIGATED** |
-| **Denial of Service (D)** | Public & Auth APIs | Distributed botnet exhausts application CPU or database connections | High | Upstash Redis sliding-window limiter (5 req/15m auth, 100 req/min API) with local fallback window and Cloudflare Turnstile bot challenges. | **MITIGATED** |
+| **Denial of Service (D)** | Public & Auth APIs | Distributed botnet exhausts application CPU or database connections | High | Upstash Redis sliding-window limiter (5 req/15m auth, 100 req/min API) and Cloudflare Turnstile bot challenges. Production requests fail closed if Redis is unavailable; dev/test use bounded local fallback windows. | **MITIGATED WITH REDIS CONFIGURATION REQUIRED IN PRODUCTION** |
 | **Elevation of Privilege (E)** | RBAC & Admin Endpoints | Regular user accesses `/api/admin/*` management tools | High | `verifySession()` combined with `hasPermission(session.userId, permission)` verifies specific permission grants in database. | **MITIGATED** |
 
 ---

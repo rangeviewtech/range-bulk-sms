@@ -155,7 +155,7 @@ The platform unifies commercial bulk SMS campaigns, automated contact directory 
 
 ### Strategic Differentiators
 - **Direct Telecom Interconnects**: Direct SMPP v3.4 signaling drivers to mobile network operator Short Message Service Centers (SMSC) alongside high-speed Airtel and MTN HTTP/REST aggregators.
-- **Telecom Circuit Breaker**: Resilient 3-state circuit breaker (`CLOSED`, `OPEN`, `HALF_OPEN`) with exponential cooldowns and automatic fallback routing to prevent message stalls during carrier gateway degradation.
+- **Telecom Circuit Breaker**: Redis-shared 3-state circuit breaker (`CLOSED`, `OPEN`, `HALF_OPEN`) with locked state transitions, a shared emergency halt, cooldowns and fallback routing across web and worker processes.
 - **Hardware Gateway Bridging**: Support for native Android GSM gateways (dual-SIM slots) and remote ESP32 SIM800L microcontroller hardware modules for off-grid operations.
 - **Strict Compliance & Consent**: Regulatory compliance aligning with Uganda Communications Commission (UCC), GDPR, and TCPA guidelines via immutable, append-only consent tracking (`ConsentLog`).
 - **Financial Security**: Strict double-entry transactional accounting with serializable database transaction isolation (`Prisma.TransactionIsolationLevel.Serializable`) to prevent double-spending or credit race conditions. Wallet balance securely masked with Step-Up Authentication unmask challenge.
@@ -393,7 +393,7 @@ Located at `src/lib/agent/`:
 
 ### 4.15 Security, Anti-Fraud, Distributed Rate Limiting & WebAuthn
 - **AIT Fraud & OTP Pumping Guard** (`src/lib/security/fraud-prevention.ts`): Velocity throttling detecting automated bots, toll fraud blocking against high-cost premium international numbers, and automatic campaign circuit breaking.
-- **Distributed Rate Limiting** (`src/lib/security/rate-limiter.ts`): `@upstash/ratelimit` with Redis sliding-window algorithms and local in-memory fallback for graceful degradation when Redis is unavailable.
+- **Distributed Rate Limiting** (`src/lib/security/rate-limit.ts`, `src/lib/security/rate-limiter.ts`): `@upstash/ratelimit` sliding windows use shared Redis in production and fail closed if that dependency is missing or unavailable. Process-local fallback is limited to development and tests.
 - **Authentication & Credential Protection**:
   - WebAuthn / Passkeys (`@simplewebauthn`) for biometric hardware-bound login.
   - Time-based One-Time Passwords (TOTP via `otplib`) and SMS OTP challenge verification with QR code generation (`qrcode`).

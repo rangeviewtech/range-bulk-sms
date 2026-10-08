@@ -8,7 +8,6 @@ import { SparklesText } from "@/components/ui/sparkles-text";
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 import { RetroGrid } from "@/components/ui/retro-grid";
 import { DotPattern } from "@/components/ui/dot-pattern";
-import { FlickeringGrid } from "@/components/ui/flickering-grid";
 import { Terminal, TypingAnimation, AnimatedSpan } from "@/components/ui/terminal";
 import { NeonGradientCard } from "@/components/ui/neon-gradient-card";
 import { Meteors } from "@/components/ui/meteors";

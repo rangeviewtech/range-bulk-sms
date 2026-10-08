@@ -1,6 +1,7 @@
 ﻿"use client"
 
 import { useEffect, useMemo, useState } from "react"
+import Image from "next/image"
 
 import { cn } from "@/lib/utils"
 
@@ -82,7 +83,8 @@ export const PixelImage = ({
         ${col * (100 / cols)}% ${(row + 1) * (100 / rows)}%
       )`
 
-      const delay = Math.random() * maxAnimationDelay
+      // Keep the stagger stable across renders and identical on server/client.
+      const delay = ((index * 37) % 100) / 100 * maxAnimationDelay
       return {
         clipPath,
         delay,
@@ -105,9 +107,12 @@ export const PixelImage = ({
             transitionDuration: `${pixelFadeInDuration}ms`,
           }}
         >
-          <img
+          <Image
             src={src}
             alt={`Pixel image piece ${index + 1}`}
+            fill
+            sizes="(max-width: 768px) 288px, 384px"
+            unoptimized
             className={cn(
               "z-1 rounded-[2.5rem] object-cover",
               grayscaleAnimation && (showColor ? "grayscale-0" : "grayscale")

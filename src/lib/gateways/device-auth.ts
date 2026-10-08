@@ -95,7 +95,7 @@ export async function withDeviceAuth(
 }
 
 export function sendGatewayResponse(data: unknown, gatewaySecret?: string, useE2EE = true) {
-  if (gatewaySecret) {
+  if (gatewaySecret && useE2EE) {
     return Response.json({ e2ee: encryptGatewayPayload(data, gatewaySecret) });
   }
   return Response.json(data);

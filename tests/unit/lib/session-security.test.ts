@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, it, expect, vi } from 'vitest';
-import { encrypt, requireAuth, verifySession } from '@/lib/auth/session';
+import { encrypt, requireAuth, verifyAuthenticatedSession, verifySession } from '@/lib/auth/session';
 import { prismaMock } from '../prismaMock';
 import { cookies } from 'next/headers';
 vi.mock('next/headers', () => ({
@@ -20,6 +20,11 @@ async function session(
   prismaMock.session.findUnique.mockResolvedValue({
     id: 's1',
     userId: 'u1',
+    mfaVerified,
+    rememberMe: false,
+    idleExpiresAt: null,
+    lastActivityAt: new Date(),
+    revokedAt: null,
     token: 'random',
     expiresAt: new Date(Date.now() + 60_000),
     deviceInfo: null,
@@ -41,10 +46,12 @@ describe('Server session enforcement', () => {
   it('rejects incomplete MFA', async () => {
     await session(false);
     await expect(requireAuth()).rejects.toMatchObject({ code: 'MFA_REQUIRED' });
+    expect(await verifyAuthenticatedSession()).toBeNull();
   });
   it('rejects a signed screen lock even without the legacy cookie', async () => {
     await session(true, true);
     await expect(requireAuth()).rejects.toMatchObject({ code: 'SCREEN_LOCKED' });
+    expect(await verifyAuthenticatedSession()).toBeNull();
   });
   it('rejects a suspended account', async () => {
     await session(true, false, 'SUSPENDED');
@@ -53,12 +60,14 @@ describe('Server session enforcement', () => {
   it('allows a complete active session and queries only safe user fields', async () => {
     await session();
     expect(await requireAuth()).toMatchObject({ userId: 'u1' });
+    expect(await verifyAuthenticatedSession()).toMatchObject({ userId: 'u1' });
     const query = prismaMock.session.findUnique.mock.calls[0][0];
     expect(query?.include?.user).toEqual({
       select: {
         id: true,
         name: true,
         email: true,
+        timezone: true,
         status: true,
         createdAt: true,
         mfaEnabled: true,
@@ -69,5 +78,16 @@ describe('Server session enforcement', () => {
         },
       },
     });
+  });
+
+  it('does not let a signed cookie elevate a database pre-authentication session', async () => {
+    await session(false);
+    const token = await encrypt({ sessionId: 's1', userId: 'u1', mfaVerified: true });
+    vi.mocked(cookies).mockResolvedValue({
+      get: (key: string) => (key === 'session' ? { value: token } : undefined),
+    } as Awaited<ReturnType<typeof cookies>>);
+
+    expect(await verifySession()).toMatchObject({ mfaVerified: false });
+    expect(await verifyAuthenticatedSession()).toBeNull();
   });
 });

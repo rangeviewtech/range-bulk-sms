@@ -73,7 +73,7 @@ export const dispatchSmsHandler = async (payload: Record<string, unknown>, _jobI
   });
 
   // 7. Report Outcome to Provider Circuit Breaker
-  RoutingEngine.reportOutcome(route.providerId, result.success);
+  await RoutingEngine.reportOutcome(route.providerId, result.success);
 
   // 8. Balanced Ledger Settlement / Deduction
   if (result.success && message.userId) {

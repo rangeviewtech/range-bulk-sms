@@ -1,6 +1,6 @@
 ﻿"use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import {
   animate,
   motion,
@@ -138,7 +138,7 @@ export function DiaTextReveal({
   fixedWidth = false,
   ...props
 }: DiaTextRevealProps) {
-  const texts = Array.isArray(text) ? text : [text]
+  const texts = useMemo(() => Array.isArray(text) ? text : [text], [text])
   const isMulti = texts.length > 1
   const prefersReducedMotion = useReducedMotion()
 
@@ -152,15 +152,9 @@ export function DiaTextReveal({
     repeatDelay,
     texts,
   })
-  optsRef.current = {
-    colors,
-    textColor,
-    duration,
-    delay,
-    repeat,
-    repeatDelay,
-    texts,
-  }
+  useEffect(() => {
+    optsRef.current = { colors, textColor, duration, delay, repeat, repeatDelay, texts }
+  }, [colors, textColor, duration, delay, repeat, repeatDelay, texts])
 
   const indexRef = useRef(0)
   const hasPlayedRef = useRef(false)
@@ -183,9 +177,10 @@ export function DiaTextReveal({
     const el = spanRef.current
     if (!el || !isMulti) return
     setMeasuredWidths(measureWidths(el, texts))
-  }, [Array.isArray(text) ? text.join("\0") : text])
+  }, [isMulti, texts])
 
-  playRef.current = () => {
+  useEffect(() => {
+    playRef.current = () => {
     const { duration, delay, repeat, repeatDelay, texts } = optsRef.current
 
     sweepPos.set(SWEEP_START)
@@ -206,7 +201,8 @@ export function DiaTextReveal({
     })
 
     stopRef.current = () => controls.stop()
-  }
+    }
+  }, [sweepPos])
 
   useEffect(() => {
     if (prefersReducedMotion) {

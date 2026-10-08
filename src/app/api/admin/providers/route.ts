@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { verifySession } from '@/lib/auth/session';
+import { verifyAuthenticatedSession } from '@/lib/auth/session';
 import { hasPermission } from '@/lib/auth/authorization';
 import { smsProviderSchema } from '@/lib/validations/sender-id';
 
 export async function GET(_req: Request) {
-  const session = await verifySession();
+  const session = await verifyAuthenticatedSession();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -19,7 +19,7 @@ export async function GET(_req: Request) {
 }
 
 export async function POST(req: Request) {
-  const session = await verifySession();
+  const session = await verifyAuthenticatedSession();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

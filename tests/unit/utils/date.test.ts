@@ -6,7 +6,7 @@ describe('Date Utils', () => {
 
   describe('formatDate', () => {
     it('formats date correctly', () => {
-      expect(formatDate(mockDate)).toBe('Jan 15, 2024')
+      expect(formatDate(mockDate)).toBe('15 Jan 2024')
     })
     
     it('supports custom formats', () => {

@@ -1,11 +1,11 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getMasterGroups } from '@/lib/contacts/master-directory';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const groups = getMasterGroups();
     return NextResponse.json({ success: true, groups });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Unable to load contact groups.' }, { status: 500 });
   }
 }

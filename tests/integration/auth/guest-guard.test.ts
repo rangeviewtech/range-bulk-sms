@@ -1,12 +1,80 @@
 // @vitest-environment node
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { proxy } from '@/proxy';
 import { encrypt } from '@/lib/auth/session';
+import { checkRateLimit } from '@/lib/security/rate-limit';
+
+vi.mock('@/lib/security/rate-limit', () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({
+    success: true,
+    limit: 100,
+    remaining: 99,
+    reset: Date.now() + 60_000,
+  }),
+}));
 
 describe('Edge Route Guards & Intelligent Redirects (proxy.ts)', () => {
   beforeEach(() => {
     process.env.AUTH_SECRET = 'a'.repeat(32);
+    vi.clearAllMocks();
+    vi.mocked(checkRateLimit).mockResolvedValue({
+      success: true,
+      limit: 100,
+      remaining: 99,
+      reset: Date.now() + 60_000,
+    });
+  });
+
+  it.each(['/api/health', '/api/health/live', '/api/health/ready'])(
+    'keeps health route %s reachable when Redis-backed rate limiting is unavailable',
+    async (path) => {
+      vi.mocked(checkRateLimit).mockResolvedValue({
+        success: false,
+        limit: 100,
+        remaining: 0,
+        reset: Date.now() + 60_000,
+      });
+
+      const response = await proxy(new NextRequest(`http://localhost:3000${path}`));
+
+      expect(response.status).toBe(200);
+      expect(checkRateLimit).not.toHaveBeenCalled();
+    }
+  );
+
+  describe('CSRF protection for versioned APIs', () => {
+    it('rejects cross-origin session-authenticated API requests', async () => {
+      const req = new NextRequest('http://localhost:3000/api/v1/wallet/deposit', {
+        method: 'POST',
+        headers: {
+          origin: 'https://attacker.example',
+          host: 'localhost:3000',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ amount: 1000 }),
+      });
+
+      const res = await proxy(req);
+
+      expect(res.status).toBe(403);
+      await expect(res.json()).resolves.toMatchObject({
+        success: false,
+        error: { code: 'FORBIDDEN', message: 'CSRF violation' },
+      });
+    });
+
+    it('allows server-to-server API requests without browser origin headers', async () => {
+      const req = new NextRequest('http://localhost:3000/api/v1/wallet/deposit', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ amount: 1000 }),
+      });
+
+      const res = await proxy(req);
+
+      expect(res.status).toBe(200);
+    });
   });
 
   describe('Guest Route Guarding (/login, /register, /forgot-password)', () => {

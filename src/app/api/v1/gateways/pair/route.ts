@@ -1,17 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { randomInt } from 'node:crypto';
 import { prisma, Prisma } from '@/lib/prisma';
-import { verifySession } from '@/lib/auth/session';
+import { verifyAuthenticatedSession } from '@/lib/auth/session';
+import { checkRateLimit } from '@/lib/security/rate-limit';
+
+const PAIRING_TTL_MS = 10 * 60 * 1000;
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await verifySession();
+    const session = await verifyAuthenticatedSession();
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { gatewayId } = await req.json();
-    if (!gatewayId) {
+    const payload: unknown = await req.json().catch(() => null);
+    const gatewayId = payload && typeof payload === 'object' && 'gatewayId' in payload
+      ? payload.gatewayId
+      : null;
+    if (typeof gatewayId !== 'string' || gatewayId.length === 0 || gatewayId.length > 128) {
       return NextResponse.json({ error: 'Gateway ID required' }, { status: 400 });
+    }
+
+    const forwardedFor = req.headers.get('x-forwarded-for');
+    const ip = forwardedFor?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown';
+    const rateLimit = await checkRateLimit('auth', `gateway-pair:${session.user.id}:${ip}`);
+    if (!rateLimit.success) {
+      return NextResponse.json({ error: 'Too many pairing requests. Please try again later.' }, { status: 429 });
     }
 
     const gateway = await prisma.gateway.findUnique({
@@ -27,12 +41,14 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate a short numeric code
-    const pairingCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const pairingCode = randomInt(100000, 1_000_000).toString();
+    const pairingExpiresAt = new Date(Date.now() + PAIRING_TTL_MS).toISOString();
 
     const config: Record<string, unknown> = (gateway.config && typeof gateway.config === 'object' && !Array.isArray(gateway.config))
       ? { ...(gateway.config as Record<string, unknown>) }
       : {};
     config.pairingCode = pairingCode;
+    config.pairingExpiresAt = pairingExpiresAt;
 
     await prisma.gateway.update({
       where: { id: gatewayId },
@@ -42,7 +58,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ 
       success: true, 
       pairingCode, 
-      expiresIn: '10 minutes',
+      expiresIn: 600,
+      expiresAt: pairingExpiresAt,
       message: 'Enter this code in the Android App or ESP32 config portal.'
     });
 

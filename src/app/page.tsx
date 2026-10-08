@@ -1,10 +1,10 @@
 ﻿import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { createMetadata } from '@/lib/metadata';
+import { getPublicApiBaseUrl } from '@/lib/api-docs';
 import { RetroGrid } from "@/components/ui/retro-grid";
 import { SparklesText } from "@/components/ui/sparkles-text";
 import { RainbowButton } from "@/components/ui/rainbow-button";
-import { BorderBeam } from "@/components/ui/border-beam";
 import { Safari } from "@/components/ui/safari";
 import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
 import { Terminal, TypingAnimation, AnimatedSpan } from "@/components/ui/terminal";
@@ -531,18 +531,18 @@ export default async function HomePage() {
 
             <div className="w-full">
               <Terminal>
-                <TypingAnimation>&gt; curl -X POST https://api.rangesms.com/api/v1/sms/send \</TypingAnimation>
+                <TypingAnimation>{`> curl -X POST ${getPublicApiBaseUrl()}/sms/send \\`}</TypingAnimation>
                 <AnimatedSpan delay={300} className="text-gray-400">
-                  <span>  -H "Authorization: Bearer rsk_live_9948271a" \</span>
+                  <span>{`  -H "Authorization: Bearer YOUR_API_KEY" \\`}</span>
                 </AnimatedSpan>
                 <AnimatedSpan delay={600} className="text-gray-400">
-                  <span>  -H "Content-Type: application/json" \</span>
+                  <span>{`  -H "Content-Type: application/json" \\`}</span>
                 </AnimatedSpan>
                 <AnimatedSpan delay={900} className="text-gray-400">
-                  <span>  -d '{'{'}"to": "+256700123456", "from": "RANGESMS", "message": "Your verification code is 849201."{'}'}'</span>
+                  <span>{`  -d '{"recipients": ["+256700123456"], "senderId": "RANGE", "message": "Your verification code is 849201."}'`}</span>
                 </AnimatedSpan>
                 <AnimatedSpan delay={1500} className="text-emerald-500 mt-2">
-                  <span>{'{'}"status": "success", "message_id": "msg_93f82a1"{'}'}</span>
+                  <span>{`{"status": "success", "message_id": "msg_93f82a1"}`}</span>
                 </AnimatedSpan>
               </Terminal>
             </div>

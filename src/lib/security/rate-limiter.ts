@@ -8,12 +8,14 @@ export interface RateLimitResult {
 }
 
 /**
- * Enterprise Rate Limiter supporting distributed Upstash Redis sliding windows
- * with in-memory fallback for local development or disconnected modes.
+ * Enterprise Rate Limiter supporting distributed Upstash Redis sliding windows.
+ * Process-local fallback is limited to development and tests; production fails
+ * closed when shared Redis is unavailable.
  */
 export class RateLimiter {
   private static store = new Map<string, number[]>();
   private static upstashLimiters = new Map<string, Ratelimit>();
+  private static readonly isProduction = process.env.NODE_ENV === 'production';
 
   /**
    * Check if a request is allowed based on the limit and window.
@@ -42,13 +44,29 @@ export class RateLimiter {
           resetTime: res.reset,
         };
       } catch (err) {
-        console.warn('Upstash rate limiter error, falling back to local window:', err);
+        const errorName = err instanceof Error ? err.name : 'UnknownError';
+        console.error(`[RateLimiter] Redis check failed (${errorName}).`);
+        if (this.isProduction) {
+          return { allowed: false, remaining: 0, resetTime: Date.now() + windowSec * 1000 };
+        }
       }
+    } else if (this.isProduction) {
+      return { allowed: false, remaining: 0, resetTime: Date.now() + windowSec * 1000 };
     }
 
     // In-memory fallback
     const now = Date.now();
     const windowStart = now - windowSec * 1000;
+
+    for (const [storedKey, timestamps] of this.store) {
+      const active = timestamps.filter((time) => time > windowStart);
+      if (active.length === 0) this.store.delete(storedKey);
+      else if (active.length !== timestamps.length) this.store.set(storedKey, active);
+    }
+
+    if (!this.store.has(key) && this.store.size >= 10_000) {
+      return { allowed: false, remaining: 0, resetTime: now + windowSec * 1000 };
+    }
 
     let requests = this.store.get(key) || [];
     requests = requests.filter((time) => time > windowStart);

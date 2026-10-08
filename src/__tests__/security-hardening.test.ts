@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, it, expect, vi, beforeAll } from 'vitest';
 import {
   isPrivateOrReservedIpv4,
@@ -7,6 +8,16 @@ import {
 import { sanitizeCsvField, buildSanitizedCsv, sanitizeSpreadsheetField } from '@/lib/security/csv-sanitizer';
 import { verifyEdgeSession } from '@/lib/auth/edge-session';
 import { SignJWT } from 'jose';
+import { webcrypto } from 'node:crypto';
+
+const importHmacSigningKey = (secret: string) =>
+  webcrypto.subtle.importKey(
+    'raw',
+    Buffer.from(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
@@ -220,7 +231,7 @@ describe('Production Security Hardening Suite', () => {
         idleExpiresAt: null,
       };
 
-      const key = new TextEncoder().encode(testSecret);
+      const key = await importHmacSigningKey(testSecret);
       const token = await new SignJWT(payload)
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
@@ -244,7 +255,7 @@ describe('Production Security Hardening Suite', () => {
         idleExpiresAt: null,
       };
 
-      const key = new TextEncoder().encode(testSecret);
+      const key = await importHmacSigningKey(testSecret);
       const token = await new SignJWT(payload)
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
@@ -265,7 +276,7 @@ describe('Production Security Hardening Suite', () => {
         idleExpiresAt: null,
       };
 
-      const attackerKey = new TextEncoder().encode('attacker-provided-secret-key-at-least-32-chars-long');
+      const attackerKey = await importHmacSigningKey('attacker-provided-secret-key-at-least-32-chars-long');
       const token = await new SignJWT(payload)
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
@@ -295,4 +306,3 @@ describe('Production Security Hardening Suite', () => {
     });
   });
 });
-

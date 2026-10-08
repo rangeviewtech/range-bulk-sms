@@ -47,16 +47,18 @@ export async function GET() {
         latencyMs: Math.round(performance.now() - redisStart),
       };
     } catch (error) {
-      // Degraded if Redis is unreachable (caching layer failure should not take down entire service if memory fallback exists)
+      const redisRequired = process.env.NODE_ENV === 'production';
+      if (redisRequired) isHealthy = false;
       checks.redis = {
-        status: 'degraded',
-        error: error instanceof Error ? error.message : 'Redis ping failed',
+        status: redisRequired ? 'unhealthy' : 'degraded',
+        error: error instanceof Error ? error.name : 'Redis ping failed',
       };
     }
   } else {
     checks.redis = {
-      status: 'in_memory_fallback',
+      status: process.env.NODE_ENV === 'production' ? 'unhealthy' : 'in_memory_fallback',
     };
+    if (process.env.NODE_ENV === 'production') isHealthy = false;
   }
 
   const totalLatencyMs = Math.round(performance.now() - startTime);

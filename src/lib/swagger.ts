@@ -1,4 +1,5 @@
 import { createSwaggerSpec } from 'next-swagger-doc';
+import { getPublicApiBaseUrl } from '@/lib/api-docs';
 
 export const getApiDocs = async () => {
   const spec = createSwaggerSpec({
@@ -27,7 +28,7 @@ export const getApiDocs = async () => {
           description: '🧪 Sandbox Environment (Default: Deterministic non-routable numbers +999000000001 - +999000000006, non-billable)',
         },
         {
-          url: 'https://api.rangesms.com/v1',
+          url: getPublicApiBaseUrl(),
           description: '⚠️ Production Environment (Real carrier network dispatch, billable)',
         },
       ],

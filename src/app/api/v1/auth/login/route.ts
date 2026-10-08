@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { verifyPassword } from '@/lib/auth/password';
-import { encrypt, REMEMBER_ME_DURATION_MS } from '@/lib/auth/session';
 import { checkRateLimit } from '@/lib/security/rate-limit';
+import { getEffectiveMfaRequirement } from '@/lib/auth/mfa-policy';
+import { createMobileMfaChallenge, issueMobileSession, sendMobileOtp } from '@/lib/auth/mobile-mfa';
+import type { VerificationMethod } from '@/lib/auth/mfa-policy';
 
 export async function POST(req: NextRequest) {
   try {
@@ -61,63 +62,44 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const roles = user.roles.map((r) => r.role.name);
-    const expiresAt = new Date(Date.now() + REMEMBER_ME_DURATION_MS); // 30 days for mobile session
-    const userAgent = req.headers.get('user-agent') || 'Range SMS Mobile Client';
-    const location = req.headers.get('x-vercel-ip-country') 
-      ? `${req.headers.get('x-vercel-ip-city') || 'Unknown'}, ${req.headers.get('x-vercel-ip-country')}`
-      : 'Local/Unknown';
-      
-    // Simple basic parse for deviceName (can be replaced with UAParser)
-    let deviceName = body.deviceName || 'Unknown Device';
-    if (!body.deviceName) {
-      if (userAgent.includes('Android')) deviceName = 'Android Device';
-      else if (userAgent.includes('iPhone')) deviceName = 'iPhone';
-      else if (userAgent.includes('Windows')) deviceName = 'Windows PC';
-      else if (userAgent.includes('Mac')) deviceName = 'Mac';
-      else if (userAgent.includes('Linux')) deviceName = 'Linux PC';
+    const mfaRequirement = await getEffectiveMfaRequirement(user.id);
+    const mobileMethods: Exclude<VerificationMethod, 'WEBAUTHN'>[] = mfaRequirement.allowedMethods.filter(
+      (method): method is Exclude<VerificationMethod, 'WEBAUTHN'> => method !== 'WEBAUTHN'
+    );
+    if (mfaRequirement.required) {
+      if (mobileMethods.length === 0) {
+        return NextResponse.json(
+          { success: false, code: 'MFA_METHOD_UNAVAILABLE', error: 'Complete passkey verification in the web app or configure an authenticator method supported on mobile.' },
+          { status: 403 }
+        );
+      }
+
+      const selectedMethod: Exclude<VerificationMethod, 'WEBAUTHN'> = mobileMethods.includes(
+        mfaRequirement.defaultMethod as Exclude<VerificationMethod, 'WEBAUTHN'>
+      )
+        ? mfaRequirement.defaultMethod as Exclude<VerificationMethod, 'WEBAUTHN'>
+        : mobileMethods[0]!;
+      const challenge = await createMobileMfaChallenge(user.id, selectedMethod);
+      if (selectedMethod !== 'APP') {
+        await sendMobileOtp(user.id, selectedMethod, challenge.id);
+      }
+
+      return NextResponse.json({
+        success: true,
+        status: 'MFA_REQUIRED',
+        challengeId: challenge.id,
+        challengeToken: challenge.token,
+        method: selectedMethod,
+        allowedMethods: mobileMethods,
+        maskedContact: mfaRequirement.maskedContact,
+        expiresAt: challenge.expiresAt.toISOString(),
+      });
     }
 
-    // Create database-backed persistent session
-    const session = await prisma.session.create({
-      data: {
-        userId: user.id,
-        token: crypto.randomUUID(),
-        expiresAt,
-        lastActivityAt: new Date(),
-        rememberMe: true,
-        mfaVerified: true,
-        deviceInfo: userAgent,
-        ipAddress: ip,
-        location,
-        deviceName
-      }
-    });
-
-    // Encrypt mobile JWT
-    const token = await encrypt({
-      sessionId: session.id,
-      userId: user.id,
-      mfaVerified: true,
-      rememberMe: true,
-      roles,
-      expiresAt: expiresAt.toISOString(),
-    }, '30d');
-
-    return NextResponse.json({
-      success: true,
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        status: user.status,
-        timezone: user.timezone,
-        roles,
-      }
-    });
+    const result = await issueMobileSession(user.id, req, body.deviceName);
+    return NextResponse.json({ success: true, status: 'AUTHENTICATED', ...result });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Authentication failed';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    console.error('[MobileAuth] Login failed', error);
+    return NextResponse.json({ success: false, error: 'Unable to sign in right now. Please try again.' }, { status: 500 });
   }
 }

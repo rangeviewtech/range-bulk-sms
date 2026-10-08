@@ -1,10 +1,10 @@
 import { NextRequest } from 'next/server';
 import { WalletService } from '@/lib/wallet/service';
-import { verifySession } from '@/lib/auth/session';
+import { verifyAuthenticatedSession } from '@/lib/auth/session';
 
 export async function GET(_req: NextRequest) {
   try {
-    const session = await verifySession();
+    const session = await verifyAuthenticatedSession();
     if (!session || !session.userId) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const wallet = await WalletService.getOrCreateWallet({ userId: session.userId });

@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { verifySession } from '@/lib/auth/session';
+import { verifyAuthenticatedSession } from '@/lib/auth/session';
 import { AgentService } from '@/lib/agent/service';
 import { CommissionStatus } from '@/generated/prisma/client';
 
 export async function GET(req: Request) {
   try {
-    const session = await verifySession();
+    const session = await verifyAuthenticatedSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

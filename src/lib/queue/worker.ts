@@ -144,7 +144,7 @@ export class JobWorker {
    * 1. Global emergency shutdown check.
    * 2. Stale worker crash recovery.
    * 3. Tenant fairness interleaving.
-   * 4. Multi-node per-queue distributed Redis locking with local fallback.
+   * 4. Multi-node per-queue distributed Redis locking (required in production).
    * 5. Bounded concurrent batch processing.
    */
   static async processQueue(
@@ -154,7 +154,7 @@ export class JobWorker {
     const targetQueue = typeof optionsOrBatchSize === 'object' ? optionsOrBatchSize.queue : undefined;
     const concurrency = typeof optionsOrBatchSize === 'object' ? Math.min(Math.max(1, optionsOrBatchSize.concurrency ?? 5), 20) : 5;
 
-    if (ProviderCircuitBreaker.isGloballyHalted()) {
+    if (await ProviderCircuitBreaker.isGloballyHalted()) {
       return [{ id: "global-halt", status: "SKIPPED", reason: "Global emergency dispatch halt is engaged." }];
     }
 

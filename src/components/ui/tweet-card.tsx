@@ -1,8 +1,9 @@
-﻿import { Suspense } from "react"
+import { Suspense } from "react"
 import { enrichTweet, type EnrichedTweet, type TweetProps } from "react-tweet"
 import { getTweet, type Tweet } from "react-tweet/api"
 
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 interface TwitterIconProps {
   className?: string
@@ -103,13 +104,14 @@ export const TweetHeader = ({ tweet }: { tweet: EnrichedTweet }) => (
         rel="noreferrer"
         className="shrink-0"
       >
-        <img
+        <Image
           title={`Profile picture of ${tweet.user.name}`}
           alt={tweet.user.screen_name}
           height={48}
           width={48}
           src={tweet.user.profile_image_url_https}
           className="border-border/50 overflow-hidden rounded-full border"
+          unoptimized
         />
       </a>
       <div className="flex flex-col gap-0.5">
@@ -199,7 +201,7 @@ export const TweetMedia = ({ tweet }: { tweet: EnrichedTweet }) => {
         <div className="relative flex transform-gpu snap-x snap-mandatory gap-4 overflow-x-auto">
           <div className="shrink-0 snap-center sm:w-2" />
           {tweet.photos.map((photo) => (
-            <img
+            <Image
               key={photo.url}
               src={photo.url}
               width={photo.width}
@@ -216,7 +218,7 @@ export const TweetMedia = ({ tweet }: { tweet: EnrichedTweet }) => {
         !tweet.photos &&
         // @ts-expect-error package doesn't have type definitions
         tweet?.card?.binding_values?.thumbnail_image_large?.image_value.url && (
-          <img
+          <Image
             src={
               // @ts-expect-error package doesn't have type definitions
               tweet.card.binding_values.thumbnail_image_large.image_value.url

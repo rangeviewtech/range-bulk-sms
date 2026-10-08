@@ -1,18 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { verifySession } from '@/lib/auth/session';
+import { verifyAuthenticatedSession } from '@/lib/auth/session';
 
 export const GET = async (_req: NextRequest) => {
   try {
-    const session = await verifySession();
+    const session = await verifyAuthenticatedSession();
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const gateways = await prisma.gateway.findMany({
       where: { userId: session.user.id },
-      include: {
-        devices: true,
+      select: {
+        id: true,
+        name: true,
+        type: true,
+        status: true,
+        maxThroughput: true,
+        createdAt: true,
+        updatedAt: true,
+        devices: {
+          select: {
+            batteryLevel: true,
+            lastHeartbeatAt: true,
+          },
+        },
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -44,7 +56,7 @@ import { createGatewaySchema } from '@/lib/validations/gateway';
 
 export const POST = async (req: NextRequest) => {
   try {
-    const session = await verifySession();
+    const session = await verifyAuthenticatedSession();
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

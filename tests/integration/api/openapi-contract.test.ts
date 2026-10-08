@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { getApiDocs } from '@/lib/swagger';
+import { getPublicApiBaseUrl } from '@/lib/api-docs';
 
 describe('OpenAPI 3.0.3 Authoritative Contract Specification', () => {
   it('generates a valid OpenAPI 3.0.3 document', async () => {
@@ -32,8 +33,8 @@ describe('OpenAPI 3.0.3 Authoritative Contract Specification', () => {
     expect(sandboxServer).toBeDefined();
     expect(sandboxServer?.url).toBe('/api/v1');
     expect(prodServer).toBeDefined();
-    expect(prodServer?.url).toContain('https://api.rangesms.com/v1');
-  });
+    expect(prodServer?.url).toBe(getPublicApiBaseUrl());
+  }, 15_000);
 
   it('documents all required public v1 endpoints with operationIds', async () => {
     const spec = await getApiDocs() as {

@@ -1,5 +1,6 @@
-const fs = require('fs');
-const path = require('path');
+void (async () => {
+const fs = await import('node:fs');
+const path = await import('node:path');
 
 const pages = [
   {
@@ -598,4 +599,8 @@ pages.forEach(page => {
   }
   fs.writeFileSync(fullPath, page.content);
   console.log('Created:', fullPath);
+});
+})().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
 });

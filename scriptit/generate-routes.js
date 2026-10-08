@@ -1,5 +1,6 @@
-const fs = require('fs');
-const path = require('path');
+void (async () => {
+const fs = await import('node:fs');
+const path = await import('node:path');
 
 const routes = [
   {
@@ -285,4 +286,8 @@ routes.forEach(route => {
   }
   fs.writeFileSync(fullPath, route.content);
   console.log('Created:', fullPath);
+});
+})().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
 });

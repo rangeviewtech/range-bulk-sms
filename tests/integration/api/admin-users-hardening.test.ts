@@ -7,7 +7,7 @@ import { prismaMock } from '../../unit/prismaMock';
 
 
 vi.mock('@/lib/auth/session', () => ({
-  verifySession: vi.fn(),
+  verifyAuthenticatedSession: vi.fn(),
 }));
 
 vi.mock('@/lib/auth/authorization', () => ({
@@ -18,7 +18,7 @@ vi.mock('@/lib/security/audit', () => ({
   logAudit: vi.fn().mockResolvedValue(undefined),
 }));
 
-import { verifySession } from '@/lib/auth/session';
+import { verifyAuthenticatedSession } from '@/lib/auth/session';
 import { hasPermission } from '@/lib/auth/authorization';
 
 describe('Admin Users Route Hardening (/api/admin/users POST)', () => {
@@ -27,9 +27,11 @@ describe('Admin Users Route Hardening (/api/admin/users POST)', () => {
   });
 
   it('rejects unauthorized users with 403 Forbidden', async () => {
-    vi.mocked(verifySession).mockResolvedValueOnce({
+    vi.mocked(verifyAuthenticatedSession).mockResolvedValueOnce({
       userId: 'user-regular',
       sessionId: 'sess-1',
+      mfaVerified: true,
+      screenLocked: false,
     } as never);
     vi.mocked(hasPermission).mockResolvedValueOnce(false);
 
@@ -44,9 +46,11 @@ describe('Admin Users Route Hardening (/api/admin/users POST)', () => {
   });
 
   it('rejects invalid email with 400 Bad Request', async () => {
-    vi.mocked(verifySession).mockResolvedValueOnce({
+    vi.mocked(verifyAuthenticatedSession).mockResolvedValueOnce({
       userId: 'admin-1',
       sessionId: 'sess-1',
+      mfaVerified: true,
+      screenLocked: false,
     } as never);
     vi.mocked(hasPermission).mockResolvedValueOnce(true);
 
@@ -63,9 +67,11 @@ describe('Admin Users Route Hardening (/api/admin/users POST)', () => {
   });
 
   it('generates a secure temporary password when password is not supplied', async () => {
-    vi.mocked(verifySession).mockResolvedValueOnce({
+    vi.mocked(verifyAuthenticatedSession).mockResolvedValueOnce({
       userId: 'admin-1',
       sessionId: 'sess-1',
+      mfaVerified: true,
+      screenLocked: false,
     } as never);
     vi.mocked(hasPermission).mockResolvedValueOnce(true);
 
@@ -93,5 +99,27 @@ describe('Admin Users Route Hardening (/api/admin/users POST)', () => {
     expect(json.success).toBe(true);
     expect(json.temporaryPassword).toBeDefined();
     expect(json.temporaryPassword).toMatch(/^Tmp_[A-Za-z0-9_-]+!9$/);
+  });
+
+  it('does not create a user when the selected role is not available', async () => {
+    vi.mocked(verifyAuthenticatedSession).mockResolvedValueOnce({
+      userId: 'admin-1',
+      sessionId: 'sess-1',
+      mfaVerified: true,
+      screenLocked: false,
+    } as never);
+    vi.mocked(hasPermission).mockResolvedValueOnce(true);
+    prismaMock.user.findUnique.mockResolvedValueOnce(null);
+    prismaMock.role.findFirst.mockResolvedValueOnce(null);
+
+    const req = new Request('http://localhost:3000/api/admin/users', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 'Client User', email: 'client@example.com', roleName: 'VIEWER' }),
+    });
+
+    const res = await createUserRoute(req);
+    expect(res.status).toBe(400);
+    expect(prismaMock.user.create).not.toHaveBeenCalled();
   });
 });
