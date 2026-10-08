@@ -1,6 +1,13 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { createMetadata } from '@/lib/metadata';
+import { RetroGrid } from "@/components/ui/retro-grid";
+import { SparklesText } from "@/components/ui/sparkles-text";
+import { RainbowButton } from "@/components/ui/rainbow-button";
+import { BorderBeam } from "@/components/ui/border-beam";
+import { Safari } from "@/components/ui/safari";
+import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
+import { Terminal, TypingAnimation, AnimatedSpan } from "@/components/ui/terminal";
 import {
   ArrowRight,
   MessageSquare,
@@ -260,19 +267,18 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-20 pb-16 md:pt-28 md:pb-24 border-b border-border/40">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_35%_at_50%_0%,rgba(251,202,7,0.12),transparent_70%)]" />
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center">
+        <RetroGrid className="opacity-40" />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs sm:text-sm font-medium text-foreground mb-8">
-            <Zap className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow" />
-            <span>Carrier-Grade Bulk SMS &amp; Mobile Infrastructure • East Africa</span>
+            <Zap className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow animate-pulse" />
+            <span>Carrier-Grade Bulk SMS &amp; Mobile Infrastructure Ã¢â‚¬â€ East Africa</span>
           </div>
 
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-foreground mb-6 leading-[1.1]">
-            Send Millions of SMS with{' '}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-[#FBCA07] to-[#04648C]">
-              Carrier-Grade
-            </span>{' '}
-            Precision
+            Send Millions of SMS with <br className="hidden sm:block" />
+            <SparklesText className="inline-block mt-2 text-4xl sm:text-6xl md:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-[#FBCA07] to-[#04648C]">
+              Carrier-Grade Precision
+            </SparklesText>
           </h1>
 
           <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed">
@@ -281,14 +287,22 @@ export default async function HomePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-            <Button asChild size="lg" className="w-full sm:w-auto h-12 px-8 text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-md">
-              <Link href="/register">
-                Start Free Trial <ArrowRight className="w-4 h-4 ml-2" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="w-full sm:w-auto h-12 px-8 text-base">
+            <Link href="/register" className="w-full sm:w-auto">
+              <RainbowButton className="w-full sm:w-auto h-12 px-8 text-base font-semibold shadow-2xl">
+                Start Free Trial <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+              </RainbowButton>
+            </Link>
+            <Button asChild size="lg" variant="outline" className="w-full sm:w-auto h-12 px-8 text-base bg-background/50 backdrop-blur-md">
               <Link href="/dashboard">Launch Dashboard</Link>
             </Button>
+          </div>
+          
+          <div className="mt-16 sm:mt-24 w-full max-w-5xl mx-auto">
+            <Safari
+              url="rangesms.com"
+              className="w-full border shadow-2xl"
+              imageSrc="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2940&auto=format&fit=crop"
+            />
           </div>
         </div>
 
@@ -324,26 +338,20 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((item) => (
-            <Card
+        <BentoGrid className="lg:grid-cols-3 md:auto-rows-[18rem]">
+          {features.map((item, i) => (
+            <BentoCard
               key={item.title}
-              className="border-border/60 bg-card hover:border-primary/40 hover:shadow-md transition-all group"
-            >
-              <CardHeader>
-                <div className="w-12 h-12 rounded-xl bg-brand-blue/10 text-brand-blue dark:bg-brand-yellow/15 dark:text-brand-yellow flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <item.icon className="w-6 h-6" />
-                </div>
-                <CardTitle className="text-lg font-bold">{item.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {item.description}
-                </p>
-              </CardContent>
-            </Card>
+              name={item.title}
+              description={item.description}
+              Icon={item.icon}
+              href="/register"
+              cta="Learn more"
+              className={i === 0 || i === 3 || i === 6 ? "lg:col-span-2" : "lg:col-span-1"}
+              background={<div className="absolute inset-0 bg-brand-blue/5 dark:bg-brand-yellow/5 transition-opacity group-hover:opacity-50" />}
+            />
           ))}
-        </div>
+        </BentoGrid>
       </section>
 
       {/* Hardware Gateways Spotlight */}
@@ -395,7 +403,7 @@ export default async function HomePage() {
                   <Smartphone className="w-4 h-4 text-blue-500" />
                   <span>MTN Gateway #1 (Android 14)</span>
                 </div>
-                <span className="text-emerald-500 font-semibold">● ONLINE</span>
+                <span className="text-emerald-500 font-semibold">Ã¢â€”Â ONLINE</span>
               </div>
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between">
@@ -519,21 +527,22 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="bg-slate-950 text-slate-100 rounded-xl p-5 border border-slate-800 shadow-xl overflow-x-auto text-xs font-mono">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-slate-400">
-                <span>cURL • Send Message Request</span>
-                <span className="text-[10px]">POST /api/v1/sms/send</span>
-              </div>
-              <pre className="pt-3 leading-relaxed">
-{`curl -X POST https://api.rangesms.com/api/v1/sms/send \\
-  -H "Authorization: Bearer rsk_live_9948271a" \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "to": "+256700123456",
-    "from": "RANGESMS",
-    "message": "Your verification code is 849201."
-  }'`}
-              </pre>
+            <div className="w-full">
+              <Terminal>
+                <TypingAnimation>&gt; curl -X POST https://api.rangesms.com/api/v1/sms/send \</TypingAnimation>
+                <AnimatedSpan delay={300} className="text-gray-400">
+                  <span>  -H "Authorization: Bearer rsk_live_9948271a" \</span>
+                </AnimatedSpan>
+                <AnimatedSpan delay={600} className="text-gray-400">
+                  <span>  -H "Content-Type: application/json" \</span>
+                </AnimatedSpan>
+                <AnimatedSpan delay={900} className="text-gray-400">
+                  <span>  -d '{'{'}"to": "+256700123456", "from": "RANGESMS", "message": "Your verification code is 849201."{'}'}'</span>
+                </AnimatedSpan>
+                <AnimatedSpan delay={1500} className="text-emerald-500 mt-2">
+                  <span>{'{'}"status": "success", "message_id": "msg_93f82a1"{'}'}</span>
+                </AnimatedSpan>
+              </Terminal>
             </div>
           </div>
         </div>
@@ -551,7 +560,7 @@ export default async function HomePage() {
                 Powering mission-critical SMS alerts, marketing, and hardware telemetry across Uganda.
               </p>
               <div className="text-xs text-muted-foreground space-y-1">
-                <p>Kampala, Uganda • East Africa</p>
+                <p>Kampala, Uganda Ã¢â‚¬Â¢ East Africa</p>
                 <p>Support: support@rangesms.com</p>
               </div>
             </div>
@@ -595,7 +604,7 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-            <p>© {new Date().getFullYear()} Range View Technology Services Uganda Limited. All rights reserved.</p>
+            <p>Ã‚Â© {new Date().getFullYear()} Range View Technology Services Uganda Limited. All rights reserved.</p>
             <div className="flex items-center gap-1.5 sm:gap-2">
               <a href="https://facebook.com/rangeviewtech" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" aria-label="Facebook">
                 <FacebookSolid className="h-4 w-4" />
@@ -639,3 +648,5 @@ export default async function HomePage() {
     </div>
   );
 }
+
+
