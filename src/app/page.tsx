@@ -25,6 +25,8 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { FaqSection } from '@/components/blocks/FaqSection';
+import { TestimonialSection } from '@/components/blocks/TestimonialSection';
 import { RangeLogo } from '@/components/brand/range-logo';
 import { MarketingHeaderAuth } from '@/components/navigation/marketing-header-auth';
 import { TopBar } from '@/components/navigation/top-bar';
@@ -547,6 +549,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <FaqSection />
+      <TestimonialSection />
 
       {/* Comprehensive Enterprise Footer */}
       <footer className="border-t border-border bg-card text-foreground mt-auto">
