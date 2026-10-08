@@ -97,7 +97,7 @@ const features = [
   {
     title: 'Mobile Money Top-ups',
     description:
-      'Instant prepaid wallet funding via MTN Mobile Money and Airtel Money with automatic billing receipts.',
+      'Request an MTN MoMo top-up and receive wallet credit after the payment is confirmed.',
     icon: CreditCard,
   },
   {
@@ -440,8 +440,8 @@ export default async function HomePage() {
             Volume-Based Pricing in Uganda Shillings (UGX)
           </h2>
           <p className="text-muted-foreground text-base sm:text-lg">
-            No hidden setup fees, no monthly maintenance charges. Top up on-demand via MTN MoMo or
-            Airtel Money.
+            No hidden setup fees or monthly maintenance charges. MTN MoMo top-ups are confirmed
+            before funds are added to your wallet.
           </p>
         </div>
 

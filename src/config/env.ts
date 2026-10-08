@@ -9,6 +9,15 @@ const envSchema = z.object({
   // Optional but recommended
   UPSTASH_REDIS_REST_URL: z.string().url().optional(),
   UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
+
+  // MTN MoMo Collection credentials (server-only; leave empty to disable top-ups)
+  MTN_MOMO_ENVIRONMENT: z.enum(['sandbox', 'production']).optional(),
+  MTN_MOMO_COLLECTION_SUBSCRIPTION_KEY: z.string().optional(),
+  MTN_MOMO_API_USER: z.string().optional(),
+  MTN_MOMO_API_KEY: z.string().optional(),
+  MTN_MOMO_CALLBACK_URL: z.string().url().or(z.literal('')).optional(),
+  MTN_MOMO_TARGET_ENVIRONMENT: z.string().optional(),
+  MTN_MOMO_CURRENCY: z.string().length(3).or(z.literal('')).optional(),
   
   // Webhooks
   TELEGRAM_WEBHOOK_SECRET: z.string().optional(),
