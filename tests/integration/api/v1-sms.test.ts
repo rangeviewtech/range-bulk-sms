@@ -90,6 +90,37 @@ describe('v1 Public SMS API Endpoints', () => {
       expect(json.success).toBe(true);
       expect(json.messageId).toBe('v1-msg-real-999');
       expect(json.status).toBe('QUEUED');
+      expect(json.recipientCount).toBe(1);
+      expect(json.totalUnits).toBe(1);
+    });
+
+    it('rejects unsupported cloud or SMPP gateway selection before charging', async () => {
+      prismaMock.gateway.findUnique.mockResolvedValue({
+        id: 'unsupported-provider-gateway',
+        userId: 'v1-user-123',
+        type: 'SMPP',
+        status: 'ONLINE',
+        name: 'Provider route',
+        devices: [],
+      } as never);
+
+      const req = new NextRequest('http://localhost:3000/api/v1/sms/send', {
+        method: 'POST',
+        headers: {
+          authorization: 'Bearer valid-token',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          gatewayId: 'unsupported-provider-gateway',
+          senderId: 'RANGE_SMS',
+          recipients: ['+256700000001'],
+          message: 'Do not silently route through a different provider',
+        }),
+      });
+
+      const res = await sendV1(req);
+      expect(res.status).toBe(400);
+      expect(prismaMock.message.create).not.toHaveBeenCalled();
     });
   });
 

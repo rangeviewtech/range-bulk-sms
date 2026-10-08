@@ -7,6 +7,7 @@ import { PandoraSmsProvider } from '@/lib/providers/pandora';
 import { TelegramProvider } from '@/lib/providers/telegram';
 import { WhatsAppProvider } from '@/lib/providers/whatsapp';
 import { InAppProvider } from '@/lib/providers/in-app';
+import { reconcileMessageStatus } from '@/lib/sms/reconcile-message-status';
 
 export async function processJobsBatch(batchSize: number = 10) {
   await recoverStuckJobs();
@@ -124,14 +125,21 @@ export async function processJobsBatch(batchSize: number = 10) {
         }
         case 'send-sms': {
           const smsResult = await PandoraSmsProvider.send(recipient, resolved.body);
-          if (payload.recipientId) {
-            await prisma.messageRecipient.updateMany({
-              where: { id: payload.recipientId },
-              data: {
-                status: 'SENT',
-                providerMsgId: smsResult?.messageId ? String(smsResult.messageId) : undefined,
-                sentAt: new Date(),
-              },
+          const recipientId = payload.recipientId;
+          const messageId = payload.messageId;
+          if (recipientId && messageId) {
+            await prisma.$transaction(async (tx) => {
+              await tx.messageRecipient.updateMany({
+                where: { id: recipientId, messageId },
+                data: {
+                  status: 'SENT',
+                  providerMsgId: smsResult?.messageId ? String(smsResult.messageId) : undefined,
+                  sentAt: new Date(),
+                },
+              });
+              await reconcileMessageStatus(tx, messageId, {
+                providerMessageId: smsResult?.messageId ? String(smsResult.messageId) : undefined,
+              });
             });
           }
           break;
@@ -161,14 +169,25 @@ export async function processJobsBatch(batchSize: number = 10) {
       try {
         const { decryptPayload } = await import('@/lib/jobs/db');
         const p = decryptPayload(job.payload) as Record<string, unknown>;
-        if (status === 'DEAD_LETTER' && typeof p?.recipientId === 'string') {
-          await prisma.messageRecipient.updateMany({
-            where: { id: p.recipientId },
-            data: {
-              status: 'FAILED',
-              failedAt: new Date(),
-              failureReason: lastError,
-            },
+        const recipientId = p?.recipientId;
+        const messageId = p?.messageId;
+        if (
+          status === 'DEAD_LETTER' &&
+          typeof recipientId === 'string' &&
+          typeof messageId === 'string'
+        ) {
+          await prisma.$transaction(async (tx) => {
+            await tx.messageRecipient.updateMany({
+              where: { id: recipientId, messageId },
+              data: {
+                status: 'FAILED',
+                failedAt: new Date(),
+                failureReason: lastError,
+              },
+            });
+            await reconcileMessageStatus(tx, messageId, {
+              failureReason: lastError || undefined,
+            });
           });
         }
       } catch {

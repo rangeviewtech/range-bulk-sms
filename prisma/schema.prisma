@@ -567,6 +567,7 @@ enum MessageStatus {
   SENT
   DELIVERED
   FAILED
+  PARTIAL
   EXPIRED
   REJECTED
 }
@@ -1019,8 +1020,9 @@ model MessageRecipient {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
-  message Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  contact Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  message  Message          @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  contact  Contact?         @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  attempts MessageAttempt[]
 
   @@index([messageId])
   @@index([contactId])
@@ -1115,21 +1117,21 @@ enum MomoPaymentStatus {
 }
 
 model MomoPayment {
-  id                 String            @id @default(uuid())
-  walletId           String
-  userId             String
-  amount             Decimal           @db.Decimal(15, 4)
-  currency           String
-  phone              String
-  status             MomoPaymentStatus @default(PENDING)
-  providerReference  String            @unique
-  idempotencyKey     String?           @unique
-  providerStatus     String?
-  failureReason      String?
-  transactionId      String?           @unique
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
-  completedAt        DateTime?
+  id                String            @id @default(uuid())
+  walletId          String
+  userId            String
+  amount            Decimal           @db.Decimal(15, 4)
+  currency          String
+  phone             String
+  status            MomoPaymentStatus @default(PENDING)
+  providerReference String            @unique
+  idempotencyKey    String?           @unique
+  providerStatus    String?
+  failureReason     String?
+  transactionId     String?           @unique
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  completedAt       DateTime?
 
   wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -1559,12 +1561,14 @@ model GatewayLog {
 
 // ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ MESSAGE ATTEMPT (ROUTING / FAILOVER) ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
 model MessageAttempt {
-  id        String               @id @default(uuid())
-  messageId String
-  gatewayId String
-  simSlot   Int?
-  status    MessageAttemptStatus @default(PENDING)
-  expiresAt DateTime?
+  id                 String               @id @default(uuid())
+  messageId          String
+  messageRecipientId String?
+  gatewayId          String
+  attemptNumber      Int                  @default(1)
+  simSlot            Int?
+  status             MessageAttemptStatus @default(PENDING)
+  expiresAt          DateTime?
 
   providerMsgId String?
   errorCode     String?
@@ -1578,9 +1582,11 @@ model MessageAttempt {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  gateway Gateway @relation(fields: [gatewayId], references: [id], onDelete: Cascade)
+  message          Message           @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  gateway          Gateway           @relation(fields: [gatewayId], references: [id], onDelete: Cascade)
+  messageRecipient MessageRecipient? @relation(fields: [messageRecipientId], references: [id], onDelete: Cascade)
 
+  @@unique([messageRecipientId, attemptNumber])
   @@index([messageId])
   @@index([gatewayId])
   @@index([gatewayId, status, createdAt])
@@ -1843,4 +1849,3 @@ model CustomVariable {
   @@unique([userId, key])
   @@index([userId])
 }
-

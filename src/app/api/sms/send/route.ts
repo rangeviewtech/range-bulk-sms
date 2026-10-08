@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   try {
     const session = await requirePermission('sms.send');
     const body = await req.json().catch(() => ({}));
-    
+
     const parsed = sendSmsSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
@@ -19,26 +19,39 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-    
-    const { senderId, gatewayId, recipients, message, idempotencyKey, draftId, personalizedMessages } = parsed.data;
+
+    const {
+      senderId,
+      gatewayId,
+      recipients,
+      message,
+      idempotencyKey,
+      draftId,
+      personalizedMessages,
+    } = parsed.data;
 
     if (idempotencyKey) {
       const existing = await prisma.message.findUnique({
         where: { idempotencyKey },
       });
       if (existing) {
-        return NextResponse.json({ success: true, messageId: existing.id, status: existing.status });
+        return NextResponse.json({
+          success: true,
+          messageId: existing.id,
+          status: existing.status,
+        });
       }
     }
 
     // Validate gatewayId if provided
     let validGatewayId: string | undefined = undefined;
+    let isHardwareGateway = false;
     if (gatewayId) {
       const gateway = await prisma.gateway.findUnique({
         where: { id: gatewayId },
-        include: { devices: true }
+        include: { devices: true },
       });
-      
+
       if (!gateway || gateway.userId !== session.userId) {
         return NextResponse.json(
           { success: false, error: 'Specified Gateway is invalid or does not belong to you' },
@@ -47,23 +60,40 @@ export async function POST(req: Request) {
       }
 
       // Check if it's explicitly OFFLINE or hasn't had a heartbeat in 2 minutes
-      let isOnline = gateway.status !== 'OFFLINE' && gateway.status !== 'SUSPENDED';
-      
+      let isOnline = gateway.status === 'ONLINE';
+
       if (isOnline && (gateway.type === 'ESP32_GSM' || gateway.type === 'ANDROID')) {
         const lastHeartbeat = gateway.devices?.[0]?.lastHeartbeatAt;
-        if (!lastHeartbeat || (new Date().getTime() - new Date(lastHeartbeat).getTime() > 2 * 60 * 1000)) {
+        if (
+          !lastHeartbeat ||
+          new Date().getTime() - new Date(lastHeartbeat).getTime() > 2 * 60 * 1000
+        ) {
           isOnline = false;
         }
       }
 
       if (!isOnline) {
         return NextResponse.json(
-          { success: false, error: `The selected gateway "${gateway.name}" is currently offline. Please wait for it to connect or select a different route.` },
+          {
+            success: false,
+            error: `The selected gateway "${gateway.name}" is currently offline. Please wait for it to connect or select a different route.`,
+          },
           { status: 400 }
         );
       }
-      
+
       validGatewayId = gateway.id;
+      isHardwareGateway = gateway.type === 'ESP32_GSM' || gateway.type === 'ANDROID';
+      if (!isHardwareGateway) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              'Cloud and SMPP gateway selection is not supported by this dispatch route yet. Omit the gateway to use the configured cloud SMS provider, or select an Android/ESP32 gateway.',
+          },
+          { status: 400 }
+        );
+      }
     }
 
     if (!validGatewayId && !senderId) {
@@ -71,15 +101,6 @@ export async function POST(req: Request) {
         { success: false, error: 'A Sender ID is required when routing through the cloud system.' },
         { status: 400 }
       );
-    }
-    
-    // Check if the selected gateway is a hardware type that ignores sender ID
-    let isHardwareGateway = false;
-    if (gatewayId) {
-      const g = await prisma.gateway.findUnique({ where: { id: gatewayId }});
-      if (g && (g.type === 'ESP32_GSM' || g.type === 'ANDROID')) {
-        isHardwareGateway = true;
-      }
     }
 
     // Validate senderId ownership and approval status
@@ -94,7 +115,10 @@ export async function POST(req: Request) {
       });
       if (!validSender) {
         return NextResponse.json(
-          { success: false, error: 'Specified Sender ID is invalid, unapproved, or does not belong to you' },
+          {
+            success: false,
+            error: 'Specified Sender ID is invalid, unapproved, or does not belong to you',
+          },
           { status: 400 }
         );
       }
@@ -107,31 +131,36 @@ export async function POST(req: Request) {
     const { PricingEngine } = await import('@/lib/wallet/pricing');
 
     const { segments } = countSms(message);
-    
+
     let totalCostNum = 0;
     let totalUnitsNum = 0;
     const pricingCache = new Map<string, import('@/generated/prisma/client').Prisma.Decimal>();
     const recipientDetails = [];
-    
-    const userClient = await prisma.user.findUnique({ where: { id: session.userId }, select: { client: { select: { id: true } } } });
+
+    const userClient = await prisma.user.findUnique({
+      where: { id: session.userId },
+      select: { client: { select: { id: true } } },
+    });
     const clientId = userClient?.client?.id;
 
     for (const phone of recipients) {
       const analysis = analyzePhone(phone);
-      const countryCode = analysis.country?.calling_code ? `+${analysis.country.calling_code}` : '+256';
-      
+      const countryCode = analysis.country?.calling_code
+        ? `+${analysis.country.calling_code}`
+        : '+256';
+
       let costPerUnit = pricingCache.get(countryCode);
       if (!costPerUnit) {
-         const priceInfo = await PricingEngine.getPrice({ countryCode, clientId });
-         costPerUnit = priceInfo.sellingPrice;
-         pricingCache.set(countryCode, costPerUnit);
+        const priceInfo = await PricingEngine.getPrice({ countryCode, clientId });
+        costPerUnit = priceInfo.sellingPrice;
+        pricingCache.set(countryCode, costPerUnit);
       }
-      
+
       const units = segments;
       const recCost = costPerUnit.mul(units);
       totalUnitsNum += units;
       totalCostNum += recCost.toNumber();
-      
+
       recipientDetails.push({ phone, units, cost: recCost.toNumber() });
     }
 
@@ -173,21 +202,31 @@ export async function POST(req: Request) {
       where: { messageId: msg.id },
     });
 
-    for (const rec of recipientRecords) {
-      const customMsg = personalizedMessages?.find(p => p.phone === rec.phone)?.message || message;
-      await enqueueJob({
-        type: 'send-sms',
-        queue: 'sms-default',
-        priority: 'NORMAL',
-        payload: {
-          recipient: rec.phone,
-          template: 'direct',
-          templateData: { body: customMsg },
-          messageId: msg.id,
-          recipientId: rec.id,
-        },
-        idempotencyKey: idempotencyKey ? `job-${idempotencyKey}-${rec.id}` : undefined,
-      });
+    if (isHardwareGateway && validGatewayId) {
+      const { assignRecipientsToHardwareGateway } = await import('@/lib/gateways/dispatch');
+      await assignRecipientsToHardwareGateway(
+        msg.id,
+        validGatewayId,
+        recipientRecords.map((rec) => rec.id)
+      );
+    } else {
+      for (const rec of recipientRecords) {
+        const customMsg =
+          personalizedMessages?.find((p) => p.phone === rec.phone)?.message || message;
+        await enqueueJob({
+          type: 'send-sms',
+          queue: 'sms-default',
+          priority: 'NORMAL',
+          payload: {
+            recipient: rec.phone,
+            template: 'direct',
+            templateData: { body: customMsg },
+            messageId: msg.id,
+            recipientId: rec.id,
+          },
+          idempotencyKey: idempotencyKey ? `job-${idempotencyKey}-${rec.id}` : undefined,
+        });
+      }
     }
 
     if (draftId) {
@@ -199,9 +238,6 @@ export async function POST(req: Request) {
   } catch (error) {
     const status = error instanceof AppError ? error.statusCode : 500;
     const message = error instanceof Error ? error.message : 'Internal Server Error';
-    return NextResponse.json(
-      { success: false, error: message },
-      { status }
-    );
+    return NextResponse.json({ success: false, error: message }, { status });
   }
 }

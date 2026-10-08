@@ -43,12 +43,42 @@ export async function POST(req: NextRequest) {
       // Target user ID for the message records
       let messageUserId = userId;
       if (!messageUserId && clientId) {
-        const client = await prisma.client.findUnique({ where: { id: clientId }, select: { userId: true } });
+        const client = await prisma.client.findUnique({
+          where: { id: clientId },
+          select: { userId: true },
+        });
         if (client) messageUserId = client.userId;
       }
 
       if (!messageUserId) {
-        return Response.json({ error: 'Unable to associate message with an active user account' }, { status: 400 });
+        return Response.json(
+          { error: 'Unable to associate message with an active user account' },
+          { status: 400 }
+        );
+      }
+
+      // Validate the full batch before any wallet mutation. Skipping an invalid
+      // sender after charging the batch would debit funds for messages never queued.
+      for (const item of messages) {
+        if (!item.senderId) continue;
+        const validSender = await prisma.senderId.findFirst({
+          where: {
+            id: item.senderId,
+            status: 'APPROVED',
+            OR: [...(userId ? [{ userId }] : []), ...(clientId ? [{ clientId }] : [])],
+          },
+          select: { id: true },
+        });
+        if (!validSender) {
+          return Response.json(
+            {
+              success: false,
+              error:
+                'A sender ID in the batch is invalid, unapproved, or does not belong to your account.',
+            },
+            { status: 400 }
+          );
+        }
       }
 
       // Calculate total units & cost
@@ -58,35 +88,40 @@ export async function POST(req: NextRequest) {
 
       let totalRecipients = 0;
       let totalCostNum = 0;
-      
+
       const pricingCache = new Map<string, import('@/generated/prisma/client').Prisma.Decimal>();
-      
+
       // We will need to store recipient pricing for the create step
       // itemIndex -> recipientPhone -> { units, cost }
-      const batchRecipientDetails = new Map<number, { phone: string, units: number, cost: number }[]>();
+      const batchRecipientDetails = new Map<
+        number,
+        { phone: string; units: number; cost: number }[]
+      >();
 
       for (let i = 0; i < messages.length; i++) {
         const msg = messages[i];
         const { segments } = countSms(msg.message);
         totalRecipients += msg.recipients.length;
-        
+
         const recDetails = [];
-        
+
         for (const phone of msg.recipients) {
           const analysis = analyzePhone(phone);
-          const countryCode = analysis.country?.calling_code ? `+${analysis.country.calling_code}` : '+256';
-          
+          const countryCode = analysis.country?.calling_code
+            ? `+${analysis.country.calling_code}`
+            : '+256';
+
           let costPerUnit = pricingCache.get(countryCode);
           if (!costPerUnit) {
-             const priceInfo = await PricingEngine.getPrice({ countryCode, clientId });
-             costPerUnit = priceInfo.sellingPrice;
-             pricingCache.set(countryCode, costPerUnit);
+            const priceInfo = await PricingEngine.getPrice({ countryCode, clientId });
+            costPerUnit = priceInfo.sellingPrice;
+            pricingCache.set(countryCode, costPerUnit);
           }
-          
+
           const units = segments;
           const recCost = costPerUnit.mul(units);
           totalCostNum += recCost.toNumber();
-          
+
           recDetails.push({ phone, units, cost: recCost.toNumber() });
         }
         batchRecipientDetails.set(i, recDetails);
@@ -105,23 +140,6 @@ export async function POST(req: NextRequest) {
 
       for (let i = 0; i < messages.length; i++) {
         const item = messages[i];
-        
-        // Validate senderId if present
-        if (item.senderId) {
-          const validSender = await prisma.senderId.findFirst({
-            where: {
-              id: item.senderId,
-              status: 'APPROVED',
-              OR: [
-                ...(userId ? [{ userId }] : []),
-                ...(clientId ? [{ clientId }] : []),
-              ],
-            },
-          });
-          if (!validSender) {
-            continue; // Skip or fall back to default
-          }
-        }
 
         const recDetails = batchRecipientDetails.get(i) || [];
         const msgUnits = recDetails.reduce((acc, r) => acc + r.units, 0);
@@ -167,7 +185,9 @@ export async function POST(req: NextRequest) {
               messageId: msgRecord.id,
               recipientId: rec.id,
             },
-            idempotencyKey: item.idempotencyKey ? `bulk-job-${item.idempotencyKey}-${rec.id}` : undefined,
+            idempotencyKey: item.idempotencyKey
+              ? `bulk-job-${item.idempotencyKey}-${rec.id}`
+              : undefined,
           });
         }
       }

@@ -57,3 +57,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unable to verify payment status yet' }, { status: 503 });
   }
 }
+
+// MTN's callback setup guidance requires partner listeners to allow both PUT
+// and POST. Process either method through the same verification and settlement
+// path so callbacks remain untrusted signals until MTN status is re-checked.
+export async function PUT(request: NextRequest) {
+  return POST(request);
+}

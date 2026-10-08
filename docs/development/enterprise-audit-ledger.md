@@ -617,8 +617,52 @@ Captured before source changes (initial state was clean):
 - Added a durable `MomoPayment` record and status enum. The existing direct admin deposit endpoint remains the manual accounting path.
 - MTN RequestToPay uses a generated UUID reference, server-side API user/key and Collection subscription key, Uganda MSISDN normalization, no-store fetches, bounded request timeouts, and per-user shared rate limits. API credentials remain server-only.
 - `202 Accepted` creates a pending request only. The account wallet is credited only after the authenticated MTN status endpoint reports `SUCCESSFUL` and the returned `externalId`, amount, and currency match the stored request. The payment row and wallet ledger update occur transactionally under row locks and are idempotent.
-- Added an optional MTN callback endpoint. It treats callback payloads only as a signal; it re-queries MTN with server credentials before settling. Configure and register the callback hostname with MTN because MTN documents callback delivery as one-shot; clients also poll status.
+- Added an optional MTN callback endpoint accepting both POST and PUT as MTN's setup guidance requires. It treats callback payloads only as a signal; it re-queries MTN with server credentials before settling. MTN documents callback delivery as one-shot with no retry, so clients also poll status. The callback URL host must exactly match the registered ProviderCallbackHost (MTN says subdomains are not allowed); this deployment requirement remains unverified until the public callback host is registered and configured.
 - Current change verification: Prisma schema validation and client generation passed; web TypeScript check and focused ESLint passed; MTN number normalization tests passed (2 tests); mobile TypeScript and focused ESLint passed. Live MTN transaction, callback delivery, browser verification, database schema push, and deployment are not verified because account credentials, callback hostname, and a test MTN account were not available.
 - Deployment configuration required: `MTN_MOMO_ENVIRONMENT`, `MTN_MOMO_COLLECTION_SUBSCRIPTION_KEY`, `MTN_MOMO_API_USER`, `MTN_MOMO_API_KEY`, plus production Uganda `MTN_MOMO_TARGET_ENVIRONMENT=mtnuganda`, `MTN_MOMO_CURRENCY=UGX`, and registered HTTPS `MTN_MOMO_CALLBACK_URL`. Sandbox uses the sandbox endpoint/target environment and MTN's documented EUR currency; a sandbox wallet must use EUR to avoid cross-currency credits. Apply the additive Prisma schema update using the deployment's reviewed database change process before enabling top-ups.
 - Airtel Money remains unavailable in this flow; no Airtel collection credentials/provider contract were supplied.
 - Extended verification after the initial notes above: full web TypeScript, full ESLint (`--max-warnings 0`), all 686 tests across 106 files, and Next.js production build all passed. Build generated 173 static pages and routes, including both wallet MoMo endpoints and the webhook. Mobile TypeScript and focused ESLint passed, and Android Expo export completed (4.2 MB Hermes bundle). No live MTN account, deployed callback, database schema push, signed-in browser session, or Chrome DevTools MCP was available, so provider and UI end-to-end behavior remain not verified.
+
+## Cross-project API business-logic pass — 2026-10-08
+
+### System boundary map
+
+- **Web application**: Next.js App Router is the canonical business API. It authenticates mobile sessions/API keys and device credentials, validates requests, owns authorization, message pricing and wallet debits, campaign/recipient records, queue assignment, provider dispatch, status rollups, and retry decisions.
+- **Mobile application**: Expo app sends account, campaign, wallet, contact, and gateway operations to the configured web API. SecureStore holds session/MFA credentials and display preferences; campaign segment count is explicitly an estimate only. Server response supplies accepted recipient and unit totals.
+- **Android gateway**: Expo app pairs with and calls the web device API; SQLite stores the device's durable transport queue and incoming SMS awaiting sync. Android native code selects a SIM and sends SMS; the API owns each attempt, retry eligibility, and status aggregation.
+- **ESP32 firmware**: Calls the same `/api/v1/device/gateways/*` API. SIM selection, AT command exchange, modem delivery reference matching, local config, and read-only device status remain firmware responsibilities because they require hardware access. The local dashboard was reduced to read-only; management uses authenticated API commands and factory reset uses the physical BOOT button.
+
+### Changes in this pass
+
+- Added recipient-specific gateway attempts (`messageRecipientId`, `attemptNumber`) so every queued attempt has a unique ID and a gateway result updates one recipient.
+- Added `PARTIAL` campaign status for mixed final recipient outcomes. Shared status reconciliation now drives API gateway results, provider-worker results, and SMS delivery webhooks.
+- Made gateway queue claiming use PostgreSQL `FOR UPDATE SKIP LOCKED` so concurrent device polls cannot claim the same attempt.
+- Allowed a later carrier DLR to upgrade an attempt from `SENT` to `DELIVERED`; final outcomes remain terminal and duplicate state changes are rejected.
+- Moved bounded transient modem retry decisions into the API (up to three attempts for listed modem error codes); `SEND_UNCERTAIN`, expiry, and carrier DLR failure do not retry automatically. Firmware no longer retries a failed attempt ID locally.
+- Reject invalid sender IDs in the entire bulk batch before wallet debit, rather than charging and silently skipping those items.
+- Added Prisma migration `20261008000100_recipient_gateway_attempts_partial_status` and regenerated the checked-in Prisma client.
+- Fixed firmware build blockers found during verification: missing `ArduinoJson`, `<vector>`, LED, and WiFi includes; incorrect namespace forward declaration; and a C++14-incompatible digit separator.
+- Updated gateway/firmware documentation to state the API/device responsibility boundary.
+
+### Verification
+
+- Web Prisma schema validation: passed.
+- Web TypeScript: passed after Prisma client regeneration.
+- Web ESLint: passed with `--max-warnings 0`.
+- Focused web SMS integration and status-rollup unit tests: passed (2 files, 7 tests).
+- Android gateway TypeScript and ESLint: TypeScript passed; ESLint passed via `npm run lint`. Mobile app TypeScript passed; its `npm run lint` caught and then verified a duplicate API import fix. Added a human-readable `Partially delivered` dashboard label. `npx expo lint` itself failed because the Expo CLI searched for a missing `components` path, although the directory is present in this workspace; use the package lint script for this repository.
+- Firmware PlatformIO ESP32 build: passed after fixing the discovered include/forward-declaration/language errors; generated firmware image is build output.
+- No production database migration was applied, no live SMS provider/device was exercised, and no browser DevTools MCP is exposed in this session. Browser, physical gateway, carrier DLR, concurrent live polling, and deploy migrations remain unverified.
+
+### Remaining architecture concerns
+
+- Selected `CLOUD`/`SMPP` Gateway dispatch is not implemented. Send APIs now reject these choices before charging; provider-specific dispatch, credentials, retries, DLR handling, and live integration tests remain future work. `DEGRADED` gateways are also rejected because queue polling serves only `ONLINE` gateways.
+- Mobile UI requests the configured web API, but live URL configuration, signed-in roles, network behavior, and authentication journeys were not browser/device tested.
+- Device result reports are submitted over the network but are not backed by a durable client-side result outbox on both gateway implementations. Network loss after modem send can delay backend status reconciliation; `SEND_UNCERTAIN` must not be retried automatically.
+- This is a targeted end-to-end flow audit, not completion of every route, server action, role permission, database constraint, UI screen, asset, integration, or deployment configuration listed above. Other ledger sections remain pending.
+
+- Generated a baseline migration from the pre-change schema because the repository had no migration history. Fresh databases can use the baseline followed by the additive recipient/partial migration. For an already-populated database, operators must verify schema equivalence and mark `20261008000000_baseline` as applied once before deployment; do not run its baseline SQL against live data. No database migration was applied during this review.
+- The mobile push-notification preference remains an unimplemented UI-only toggle: the web preference model has no `PUSH` channel or push delivery service. Define product/provider behavior before adding a truthful API-backed control.
+
+- Removed fabricated mobile telemetry totals and hard-coded carrier percentages. Added user-scoped `/api/v1/reports/summary` period aggregation from recipient delivery records and changed the mobile report screen/share text to use actual API results. Report API integration, status-rollup unit, SMS API integration, and unsupported gateway dispatch tests passed (3 files, 10 tests). Final web TypeScript, full ESLint (`--max-warnings 0`), and production Next build all passed; the build includes `/api/v1/reports/summary`.
+

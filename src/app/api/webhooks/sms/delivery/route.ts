@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { MessageStatus } from '@/generated/prisma';
+import { reconcileMessageStatus } from '@/lib/sms/reconcile-message-status';
 
 const deliveryReceiptSchema = z.object({
   messageId: z.string().optional(),
@@ -41,7 +42,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized: Invalid webhook secret' }, { status: 401 });
     }
 
-
     const rawBody = await req.json().catch(() => ({}));
     const parsed = deliveryReceiptSchema.safeParse(rawBody);
     if (!parsed.success) {
@@ -51,7 +51,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const { recipientId, providerMsgId, messageId, phone, status, failureReason, deliveredAt } = parsed.data;
+    const { recipientId, providerMsgId, messageId, phone, status, failureReason, deliveredAt } =
+      parsed.data;
 
     let mappedStatus: MessageStatus = 'PENDING';
     if (status === 'DELIVERED') mappedStatus = 'DELIVERED';
@@ -72,39 +73,36 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, message: 'Recipient not found, acknowledged' });
     }
 
-    await prisma.messageRecipient.update({
-      where: { id: recipient.id },
-      data: {
-        status: mappedStatus,
-        deliveredAt: mappedStatus === 'DELIVERED' ? (deliveredAt ? new Date(deliveredAt) : new Date()) : null,
-        failedAt: mappedStatus === 'FAILED' ? new Date() : null,
-        failureReason: failureReason || null,
-        providerMsgId: providerMsgId || recipient.providerMsgId,
-      },
-    });
-
-    // Check parent message completion status
-    const remainingPending = await prisma.messageRecipient.count({
-      where: {
-        messageId: recipient.messageId,
-        status: 'PENDING',
-      },
-    });
-
-    if (remainingPending === 0) {
-      const successfulCount = await prisma.messageRecipient.count({
-        where: { messageId: recipient.messageId, status: 'DELIVERED' },
-      });
-
-      await prisma.message.update({
-        where: { id: recipient.messageId },
-        data: {
-          status: successfulCount > 0 ? 'DELIVERED' : 'FAILED',
-          deliveredAt: successfulCount > 0 ? new Date() : null,
-          failedAt: successfulCount === 0 ? new Date() : null,
-        },
+    // PENDING is a non-terminal provider notification and must not regress an
+    // already submitted/sent recipient state.
+    if (mappedStatus === 'PENDING') {
+      return NextResponse.json({
+        success: true,
+        recipientId: recipient.id,
+        status: recipient.status,
       });
     }
+
+    const receiptDate = deliveredAt ? new Date(deliveredAt) : new Date();
+    if (Number.isNaN(receiptDate.getTime())) {
+      return NextResponse.json({ error: 'Invalid delivery timestamp' }, { status: 400 });
+    }
+    await prisma.$transaction(async (tx) => {
+      await tx.messageRecipient.update({
+        where: { id: recipient.id },
+        data: {
+          status: mappedStatus,
+          deliveredAt: mappedStatus === 'DELIVERED' ? receiptDate : null,
+          failedAt: mappedStatus === 'FAILED' ? receiptDate : null,
+          failureReason: failureReason || null,
+          providerMsgId: providerMsgId || recipient.providerMsgId,
+        },
+      });
+      await reconcileMessageStatus(tx, recipient.messageId, {
+        failureReason: failureReason || undefined,
+        providerMessageId: providerMsgId || undefined,
+      });
+    });
 
     return NextResponse.json({ success: true, recipientId: recipient.id, status: mappedStatus });
   } catch (error) {
