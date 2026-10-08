@@ -28,12 +28,18 @@ export function PortalInfoSidebar({
 }: PortalInfoSidebarProps) {
   const [copiedUrl, setCopiedUrl] = React.useState(false);
   const [statusState, setStatusState] = React.useState<{
-    operational: boolean;
+    operational: boolean | null;
     text: string;
   }>({
-    operational: true,
-    text: 'All Systems Operational',
+    operational: null,
+    text: 'Checking status…',
   });
+  const statusColor =
+    statusState.operational === true
+      ? PORTAL_COLORS.successGreen
+      : statusState.operational === false
+        ? PORTAL_COLORS.dangerRed
+        : PORTAL_COLORS.primaryText;
 
   const baseUrl =
     environment === 'sandbox'
@@ -54,7 +60,7 @@ export function PortalInfoSidebar({
         }
       } catch {
         if (active) {
-          setStatusState({ operational: true, text: 'All Systems Operational' });
+          setStatusState({ operational: false, text: 'Status unavailable' });
         }
       }
     }
@@ -210,14 +216,14 @@ export function PortalInfoSidebar({
           className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0 relative"
           style={{
             backgroundColor: PORTAL_COLORS.elevatedBg,
-            color: statusState.operational ? PORTAL_COLORS.successGreen : PORTAL_COLORS.dangerRed,
+            color: statusColor,
           }}
         >
           <Activity className="h-4 w-4" />
           <span
             className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full animate-ping"
             style={{
-              backgroundColor: statusState.operational ? PORTAL_COLORS.successGreen : PORTAL_COLORS.dangerRed,
+              backgroundColor: statusColor,
             }}
           />
         </div>
@@ -229,7 +235,7 @@ export function PortalInfoSidebar({
             <span
               className="h-2 w-2 rounded-full shrink-0"
               style={{
-                backgroundColor: statusState.operational ? PORTAL_COLORS.successGreen : PORTAL_COLORS.dangerRed,
+                backgroundColor: statusColor,
               }}
             />
             <span className="text-xs font-medium" style={{ color: PORTAL_COLORS.primaryText }}>

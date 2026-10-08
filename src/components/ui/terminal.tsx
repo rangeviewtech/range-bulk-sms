@@ -285,7 +285,13 @@ export const Terminal = ({
         </div>
       </div>
       <pre className="p-4">
-        <code className="grid gap-y-1 overflow-auto">{wrappedChildren}</code>
+        <code
+          aria-label="Terminal output"
+          className="grid gap-y-1 overflow-auto"
+          tabIndex={0}
+        >
+          {wrappedChildren}
+        </code>
       </pre>
     </div>
   )

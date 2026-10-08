@@ -18,7 +18,6 @@ export const viewport: Viewport = {
   ],
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1, // Prevents auto-zoom on form focus on iOS
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

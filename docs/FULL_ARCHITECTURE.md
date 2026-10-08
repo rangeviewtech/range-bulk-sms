@@ -16,7 +16,7 @@ The platform leverages the **Next.js 16 App Router** with **React 19 Server Comp
 
 ```text
 src/
-├── app/                           # Next.js App Router (145+ pages and API routes)
+├── app/                           # Next.js App Router (84 page files and 119 Route Handler files at last inventory)
 │   ├── (auth)/                    # Authentication route group (Login, Register, 2FA, Passkeys)
 │   ├── (dashboard)/               # Authenticated dashboard (SMS, Contacts, Wallet, Developer, etc.)
 │   ├── api/                       # Internal API endpoints (Campaigns, Cron, Contacts, Wallet)
@@ -35,7 +35,7 @@ src/
 ├── design-system/                 # Design token system
 │   └── tokens/                    # Color palettes, typography scales, spacing grids
 ├── lib/                           # Core business logic, services, and engines
-│   ├── auth/                      # NextAuth and Bearer API key authentication
+│   ├── auth/                      # Database-backed sessions, MFA, passkeys, and API-key authentication
 │   ├── billing/                   # Double-entry ledger and serializable credit deductions
 │   ├── contacts/                  # Dynamic segment AST compiler and CSV importer
 │   ├── queue/                     # Database-backed background worker with atomic locking
@@ -98,9 +98,8 @@ flowchart LR
 > **Platform**: Range Bulk SMS  
 > **Entity**: Range View Technology Services Uganda Limited  
 > **Version**: 2.0.0 (Enterprise Carrier-Grade Production Release)  
-> **Framework**: Next.js 16.3.5 (Turbopack) • React 19.2.8 • TypeScript 5.9.3 • Prisma ORM 7.9.1 • Tailwind CSS 4.0  
-> **Last Updated**: October 1, 2026  
-> **System Status**: Production-Certified (0 TypeScript Errors, 0 ESLint Warnings, 48 Test Files Passed, 185 Compiled Routes, 65 Database Models, 127 UI Components)
+> **Verified local stack**: Next.js 16.3.8 • React 19.2.8 • TypeScript 5.9.3 • Prisma ORM 7.10.0 • Tailwind CSS 4.3.3
+> **Last reconciled**: October 8, 2026. This is an architecture reference, not a production certification. The current verification record and known gaps are in [the enterprise audit ledger](./development/enterprise-audit-ledger.md).
 
 ---
 
@@ -681,12 +680,12 @@ range-bulk-sms/
 │   ├── performance-scalability.test.ts # System performance & scalability benchmarks
 │   ├── security-hardening.test.ts     # Security hardening verification tests
 │   ├── seed-telecom-data.test.ts      # Telecom seeding & operator data verification
-│   └── ... (48 test files total)      # See Section 10 for complete inventory
+│   └── ... (current test inventory is maintained in the enterprise audit ledger)
 ├── playwright.config.ts               # Multi-browser Playwright test configuration
-├── vitest.config.ts                   # Vitest unit runner configuration with alias paths
+├── vitest.config.mts                  # Vitest unit runner configuration with alias paths
 ├── next.config.ts                     # Next.js 16 compiler and image optimization settings
 ├── tsconfig.json                      # Strict TypeScript compiler rules
-└── package.json                       # Project manifests (70 deps, 25 devDeps, 95 total)
+└── package.json                       # Runtime and development dependency manifests
 ```
 
 ---
@@ -695,12 +694,12 @@ range-bulk-sms/
 
 | Domain | Technology / Library | Exact Version | Strategic Architectural Purpose |
 |---|---|---|---|
-| **Core Framework** | `next` | `16.3.5` | React 19 App Router, Turbopack, Server Actions, Edge Middleware. |
+| **Core Framework** | `next` | `16.3.8` | React 19 App Router, Turbopack, Server Actions, Proxy. |
 | **UI Runtime** | `react` / `react-dom` | `19.2.8` | React Server Components, concurrent rendering, transitions. |
-| **Language** | `typescript` | `^5` (runtime `5.9.3`) | Strict type safety, end-to-end schema validation. |
-| **ORM & Database** | `prisma` / `@prisma/client` | `^7.9.1` | Type-safe PostgreSQL client with connection pooling and migrations. |
-| **Driver Adapter** | `@prisma/adapter-pg` / `pg` | `^7.9.1` / `^8.23.0` | Native PostgreSQL socket driver adapter. |
-| **CSS & Styling** | `@tailwindcss/postcss` / `tailwindcss` | `^4` | Next-generation utility-first styling with `@theme` token injection. |
+| **Language** | `typescript` | `^5` (installed `5.9.3`) | Static typing; runtime input validation is provided separately by schemas. |
+| **ORM & Database** | `prisma` / `@prisma/client` | `7.10.0` installed | Type-safe PostgreSQL client with connection pooling and migrations. |
+| **Driver Adapter** | `@prisma/adapter-pg` / `pg` | Verify from lockfile before release | PostgreSQL driver adapter. |
+| **CSS & Styling** | `@tailwindcss/postcss` / `tailwindcss` | Tailwind `4.3.3` installed | Utility-first styling with `@theme` token injection. |
 | **Class Merging** | `clsx` / `tailwind-merge` | `^2.1.1` / `^3.6.0` | Collision-free dynamic class name concatenation. |
 | **Style Variants** | `class-variance-authority` | `^0.7.1` | Composable component variant definitions (`cva`). |
 | **UI Primitives** | `@radix-ui/react-*` | Latest | Accessible, unstyled UI primitives (Dialog, Dropdown, Tabs, Slider, Accordion, 18+ packages). |
@@ -729,7 +728,7 @@ range-bulk-sms/
 | **Utility Library** | `lodash` | `^4.18.1` | General-purpose utility functions (deep clone, debounce, etc.). |
 | **Server Isolation** | `server-only` | `^0.0.1` | Build-time guard preventing server code from leaking to client bundles. |
 | **API Documentation** | `next-swagger-doc` | `^0.5.0` | Programmatic OpenAPI 3.0 document generation. |
-| **Unit Testing** | `vitest` / `vitest-mock-extended` | `^4.1.11` / `^5.1.1` | ESM unit test runner with mocked Prisma context (48 test files). |
+| **Unit Testing** | `vitest` / `vitest-mock-extended` | `4.1.11` / `5.1.1` | ESM unit test runner with mocked Prisma context; current test counts are recorded in the audit ledger. |
 | **Component Testing** | `@testing-library/react` / `jest-dom` / `user-event` | `^16.3.2` / `^7.0.1` / `^14.6.6` | React component testing with user interaction simulation. |
 | **E2E Automation** | `@playwright/test` / `@axe-core/playwright` | `^1.62.1` / `^4.13.0` | Headless browser automation with accessibility audit integration. |
 | **Code Formatting** | `prettier` / `prettier-plugin-tailwindcss` | `^3.9.6` / `^0.8.1` | Consistent code formatting with Tailwind class sorting. |
@@ -954,21 +953,13 @@ sequenceDiagram
 
 ## 10. Quality Assurance, Testing & Build Verification
 
-The platform maintains an enterprise testing standard with automated quality gates enforced across CI/CD (`.github/workflows/ci.yml`):
+The project defines automated checks in CI (`.github/workflows/ci.yml`). Current results are recorded in the audit ledger rather than asserted here.
 
-### Comprehensive Quality Verification Results
+### Verification status
 
-| Quality Verification Gate | Enforced Standard | Actual Measured Result | Status |
-| :--- | :--- | :--- | :--- |
-| **TypeScript Static Verification** | `npx tsc --noEmit` | **0 errors, 100% clean** across all source files | ✅ **PASSED** |
-| **ESLint Code Quality** | `npm run lint` (`--max-warnings 0`) | **0 errors, 0 warnings** | ? **PASSED** |
-| **Vitest Unit & Integration Suites** | `npm run test:run` | **100% tests passing** (48/48 test files, 429/429 tests) | ? **PASSED** |
-| **Next.js Production Compilation** | `npm run build` (`next build`) | **185 routes compiled & generated successfully** | ✅ **PASSED** |
-| **Browser Runtime & Console** | Chrome DevTools MCP Live Audit | **0 console errors, 0 runtime warnings, 0 hydration issues** | ✅ **PASSED** |
+Verification is time- and environment-specific. Do not use historical pass counts or browser claims from this design reference as current evidence. The [enterprise audit ledger](./development/enterprise-audit-ledger.md) records the latest commands, results, external test limitations, and remaining work.
 
-> **Note**: The 24 ESLint warnings and 4 test suite failures are artifacts of uncommitted in-progress work (wallet balance masking dialog, timezone provider integration, and animated number components). All issues are identified, non-blocking, and will be resolved before the next commit. The last committed state (`bd06bbd`) passes all quality gates with 0 errors, 0 warnings, and 48/48 test files passing.
-
-### Verified Test Domains (48 Test Files)
+### Test Domains (historical examples; see the audit ledger for current inventory)
 1. `ab-testing-engine.test.ts` — Statistical split-testing traffic allocation and winner determination.
 2. `airtel-telecom.test.ts` — Airtel REST gateway signaling, response parsing, and error codes.
 3. `api-key-auth.test.ts` — Cryptographic Bearer token verification and header authentication.

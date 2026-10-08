@@ -17,18 +17,18 @@ test.describe('Authentication Flows E2E', () => {
 
     // Input fields
     const emailInput = page.getByLabel(/email/i);
-    const passwordInput = page.getByLabel(/password/i);
+    const passwordInput = page.locator('#password');
     await expect(emailInput).toBeVisible();
     await expect(passwordInput).toBeVisible();
 
     // Sign in button
-    const submitBtn = page.getByRole('button', { name: /sign in/i, exact: true });
+    const submitBtn = page.getByRole('button', { name: 'Sign in', exact: true });
     await expect(submitBtn).toBeVisible();
   });
 
   test('toggles password visibility when clicking eye button', async ({ page }) => {
     await page.goto('/login');
-    const passwordInput = page.getByLabel(/password/i);
+    const passwordInput = page.locator('#password');
 
     // Initial type should be password
     await expect(passwordInput).toHaveAttribute('type', 'password');
@@ -47,11 +47,11 @@ test.describe('Authentication Flows E2E', () => {
   test('navigates to forgot-password and register pages', async ({ page }) => {
     await page.goto('/login');
 
-    // Link to forgot password
-    const forgotLink = page.getByRole('link', { name: /forgot password/i });
-    await expect(forgotLink).toBeVisible();
-    await forgotLink.click();
-    await expect(page).toHaveURL(/\/forgot-password/);
+    // Forgot-password is an inline view on the login page.
+    const forgotButton = page.getByRole('button', { name: /forgot password/i });
+    await expect(forgotButton).toBeVisible();
+    await forgotButton.click();
+    await expect(page.getByLabel(/email/i)).toBeVisible();
 
     // Back to login then register
     await page.goto('/login');
@@ -62,16 +62,13 @@ test.describe('Authentication Flows E2E', () => {
     }
   });
 
-  test('handles invalid credentials with an accessible error alert', async ({ page }) => {
+  test('requires security verification before credential validation', async ({ page }) => {
     await page.goto('/login');
 
     await page.getByLabel(/email/i).fill('invalid_user@rangeview.co.ug');
-    await page.getByLabel(/password/i).fill('WrongPassword123!');
-    await page.getByRole('button', { name: /sign in/i, exact: true }).click();
+    await page.locator('#password').fill('WrongPassword123!');
+    await page.getByRole('button', { name: 'Sign in', exact: true }).click();
 
-    // Expect an error feedback toast or inline error
-    await expect(
-      page.getByText(/invalid credentials|invalid email or password|user not found/i).first()
-    ).toBeVisible({ timeout: 6000 });
+    await expect(page.getByText(/complete the security verification/i)).toBeVisible({ timeout: 6000 });
   });
 });

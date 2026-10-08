@@ -26,13 +26,13 @@ test.describe('Campaign Creation & Wizard Flows E2E', () => {
     await page.goto('/');
 
     // Check features section exists and is populated
-    await expect(page.getByRole('heading', { name: /enterprise bulk sms platform/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /send millions of sms with carrier-grade precision/i })).toBeVisible();
     await expect(page.getByText('Targeted Campaigns')).toBeVisible();
     await expect(page.getByText('Instant Bulk Messaging')).toBeVisible();
 
     // Check pricing plans
-    await expect(page.getByText('Starter')).toBeVisible();
-    await expect(page.getByText('Business')).toBeVisible();
-    await expect(page.getByText('Enterprise')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Starter', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Growth', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Enterprise', exact: true })).toBeVisible();
   });
 });

@@ -382,7 +382,7 @@ export default function WalletPage() {
               {loading ? (
                 <Skeleton className="h-8 w-32" />
               ) : isMasked ? (
-                'â€¢â€¢â€¢â€¢â€¢â€¢'
+                '••••••'
               ) : (
                 `${currency} ${balance.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
               )}

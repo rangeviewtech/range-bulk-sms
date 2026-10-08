@@ -14,13 +14,13 @@ from maintained source.
 | Repository | Single Git repository; branch `feat/unified-ui-responsive-design-system`; initial worktree clean. |
 | Package manager | npm; `package-lock.json`; no workspace/monorepo declaration in `package.json`. |
 | Runtime | Node.js v24.18.1 in the audit environment. |
-| Framework baseline | Next.js 16.3.5 App Router; React and React DOM 19.2.8; TypeScript 5 range. `package.json`/lockfile now request Next.js 16.3.8, but `node_modules` could not be updated and remains 16.3.5. |
-| Database | PostgreSQL through Prisma ORM 7.9.1 and `@prisma/adapter-pg`; schema at `prisma/schema.prisma`; generated client under `src/generated/prisma`. |
+| Framework baseline (rechecked 2026-10-08) | Next.js 16.3.8 App Router; React/React DOM 19.2.8; TypeScript 5.9.3; Prisma CLI/client 7.10.0; Tailwind 4.3.3 installed. The earlier note below about the incomplete Next 16.3.5 install is historical and superseded. |
+| Database | PostgreSQL through Prisma ORM 7.10.0 and `@prisma/adapter-pg`; schema at `prisma/schema.prisma`; generated client under `src/generated/prisma`. |
 | UI | React, Tailwind CSS 4, Radix primitives, local design-system and shared UI modules. |
 | Validation | Zod 3, React Hook Form and `@hookform/resolvers`. |
 | Tests | Vitest 4, Testing Library, Playwright 1.62, axe-core. Both `src/__tests__` and `tests/` are present. |
 | Integrations visible in manifests/source inventory | Upstash Redis/ratelimit, Nodemailer, Google GenAI, Turnstile, Telegram, WhatsApp, SMS providers, payment and device gateway webhooks. Full credential-free inventory pending. |
-| Browser verification | Chrome DevTools MCP is not exposed. Playwright is installed, but its configured server could not start because the `next` shim is missing. The existing localhost server was inspected in the Codex browser and displayed a Next build overlay (`Can't resolve '../route-cache-key'`) with console errors. |
+| Browser verification | Chrome DevTools MCP tools are not exposed. Playwright E2E was retried against a manually started Next dev server after its default webServer startup timed out; result is recorded in the 2026-10-08 revalidation section. The login screen was inspected in the Codex in-app browser. |
 | Generated/vendor output | `node_modules`, `.next`, `src/generated/prisma`, `tsconfig.tsbuildinfo`, and `playwright-report` are generated/vendor or report output; excluded from manual source review. |
 
 ## File and module inventory
@@ -47,11 +47,11 @@ maintained `src/` module map is:
 | `.github`, root config files | CI and GitHub templates, Next, TypeScript, ESLint, Playwright, Vitest, Prisma, Tailwind/PostCSS and formatting configuration. |
 | `node_modules`, `.next`, `playwright-report` | Vendor, build output and generated test report; classified, not line-reviewed. |
 
-Tracked/file inventory: **958 paths** reported by `rg --files` with common
-ignored generated/vendor directories excluded; this includes generated Prisma
-client output and test reports and is therefore not a count of maintained
-source files. A Git-index based per-path classification is pending before
-claiming exhaustive file review.
+Current Git index inventory: **1,296 tracked paths** in the web repository,
+64 in mobile, 70 in the Android gateway, and 30 in firmware. These counts
+include documentation, configuration, scripts, tests, and generated client
+files; vendor/build output remains separately classified and was not reviewed
+line by line. Per-path classification and full source review remain pending.
 
 ## Routes, APIs, and actions
 
@@ -66,11 +66,12 @@ campaign IDs, API keys, webhooks, and nested device/gateway resources.
 API Route Handler families observed include `/api/auth`, `/api/v1`, `/api/sms`,
 `/api/contacts`, `/api/campaigns`, `/api/admin`, `/api/agent`, `/api/developer`,
 `/api/reports`, `/api/support`, `/api/cron`, `/api/webhooks`, `/api/health`,
-`/api/geo`, `/api/variables`, and `/api/ai`. A generated manifest is stored in
-`docs/development/audit-inventory/`: 84 page files and 110 API Route Handler
-files. It records concrete paths and HTTP method exports; guard and validation
-columns are lexical screening only and must be checked against helper
-implementations and each endpoint's intent.
+`/api/geo`, `/api/variables`, and `/api/ai`. The previous generated manifest in
+`docs/development/audit-inventory/` recorded 84 page files and 110 API Route
+Handler files. A fresh source count found 84 page files and 119 API Route
+Handler files; regenerate the manifest and review every handler's guard,
+validation, ownership, rate-limit, and business-rule behavior. Existing guard
+and validation columns are lexical screening only.
 
 Server-action files found by source search:
 
@@ -845,4 +846,62 @@ remain external/product requirements.
   The Upstash REST token and GitHub personal access token previously pasted in
   conversation must be rotated before production use; this ledger never stores
   either value.
+
+## Verification continuation — 2026-10-08
+
+### Additional web fixes
+
+- Removed the root viewport `maximumScale=1` setting so users can zoom on
+  mobile. Raised homepage emerald status/check text to an accessible contrast
+  level and restored readable Unicode punctuation, bullets, and copyright text.
+- Made the scrollable terminal output keyboard-focusable and gave it an
+  accessible name.
+- Corrected the developer portal's documented URLs to match the implemented
+  `/api/v1` endpoints. Replaced the stale webhook example with the actual
+  authenticated message-status route and response shape. The production and
+  sandbox hostnames still need an owner-provided contract before documenting
+  different domains.
+- The API status card now says it is checking while pending and reports
+  unavailable on fetch failure instead of asserting that all services are
+  operational.
+- Updated browser tests that described a different current UI: password
+  recovery is an inline view; the primary sign-in button is distinguished from
+  provider buttons; the plan is named `Growth`; public-page headings and
+  protected routes match the current route inventory. Auth submission tests
+  now assert that bot verification blocks submission before credential
+  validation.
+- Accessibility and developer-doc E2E navigation waits for DOM readiness,
+  avoiding hangs on external resources that do not affect the rendered page.
+
+### Verification after the fixes
+
+- Web TypeScript check and ESLint passed. The final production build passed on
+  Next 16.3.8 after the documentation correction and generated all 174 static
+  pages.
+- Isolated OpenAPI contract and job-scheduler tests passed 9/9. A fresh full
+  Vitest rerun was interrupted after concurrent checks caused timeout reports;
+  it is not a clean final full-suite result. The previous complete 696/696 run
+  remains evidence for the prior code state only.
+- Production-browser E2E: a broad Chromium run passed 22/24; the two failures
+  were stale assertions for current marketing plan/heading names. Accessibility
+  and campaign suites passed 6/6 after those corrections. A mobile-Chrome run
+  passed 24/24. Firefox could not be run because its Playwright browser binary
+  is not installed. The browser console/devtools MCP is not available here.
+- Root, login, and design-system axe checks passed 3/3 in an isolated
+  production-browser run. The homepage axe check intermittently exceeded the
+  30-second suite timeout under repeated runs, so repeat it in a stable CI
+  environment before treating timing as settled.
+- The documented API samples were aligned by source inspection against the
+  route handler; provider integration and live authenticated journeys still
+  require staging credentials and real callbacks.
+
+### Completion boundary
+
+This continuation does not close the repository-wide audit. The inventory is
+tracked, and the web test/build checks above are evidence, but every route's
+authorization and validation, every database query/migration, all UI states,
+and all third-party failure modes have not yet been reviewed line by line.
+Continue those sections before describing the projects as fully audited or
+production-certified. All previously listed secret rotation, staging,
+hardware, provider, Android SDK, Firefox, and Deep Scan limitations remain.
 

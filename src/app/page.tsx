@@ -273,7 +273,7 @@ export default async function HomePage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs sm:text-sm font-medium text-foreground mb-8">
             <Zap className="w-3.5 h-3.5 text-brand-blue dark:text-brand-yellow animate-pulse" />
-            <span>Carrier-Grade Bulk SMS &amp; Mobile Infrastructure Ã¢â‚¬â€ East Africa</span>
+            <span>Carrier-Grade Bulk SMS &amp; Mobile Infrastructure — East Africa</span>
           </div>
 
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-foreground mb-6 leading-[1.1]">
@@ -361,7 +361,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div className="space-y-6">
-              <Badge variant="outline" className="px-3 py-1 text-emerald-600 border-emerald-600/30">
+              <Badge variant="outline" className="px-3 py-1 text-emerald-700 border-emerald-600/30">
                 Hybrid Infrastructure
               </Badge>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
@@ -374,19 +374,19 @@ export default async function HomePage() {
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center gap-3 text-sm">
-                  <div className="p-1 rounded bg-emerald-500/10 text-emerald-600">
+                  <div className="p-1 rounded bg-emerald-500/10 text-emerald-700">
                     <Check className="w-4 h-4" />
                   </div>
                   <span>Instant 6-digit pairing code generation</span>
                 </li>
                 <li className="flex items-center gap-3 text-sm">
-                  <div className="p-1 rounded bg-emerald-500/10 text-emerald-600">
+                  <div className="p-1 rounded bg-emerald-500/10 text-emerald-700">
                     <Check className="w-4 h-4" />
                   </div>
                   <span>Real-time battery level and cellular signal (dBm) telemetry</span>
                 </li>
                 <li className="flex items-center gap-3 text-sm">
-                  <div className="p-1 rounded bg-emerald-500/10 text-emerald-600">
+                  <div className="p-1 rounded bg-emerald-500/10 text-emerald-700">
                     <Check className="w-4 h-4" />
                   </div>
                   <span>Automatic carrier failover to cloud SMPP routes</span>
@@ -405,7 +405,7 @@ export default async function HomePage() {
                   <Smartphone className="w-4 h-4 text-blue-500" />
                   <span>MTN Gateway #1 (Android 14)</span>
                 </div>
-                <span className="text-emerald-500 font-semibold">Ã¢â€”Â ONLINE</span>
+                <span className="text-emerald-700 font-semibold">● ONLINE</span>
               </div>
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between">
@@ -481,7 +481,7 @@ export default async function HomePage() {
                 </div>
                 {plan.features.map((f) => (
                   <div key={f} className="flex items-center gap-2.5 text-sm">
-                    <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <Check className="w-4 h-4 text-emerald-700 shrink-0" />
                     <span>{f}</span>
                   </div>
                 ))}
@@ -541,7 +541,7 @@ export default async function HomePage() {
                 <AnimatedSpan delay={900} className="text-gray-400">
                   <span>{`  -d '{"recipients": ["+256700123456"], "senderId": "RANGE", "message": "Your verification code is 849201."}'`}</span>
                 </AnimatedSpan>
-                <AnimatedSpan delay={1500} className="text-emerald-500 mt-2">
+                <AnimatedSpan delay={1500} className="text-emerald-700 mt-2">
                   <span>{`{"status": "success", "message_id": "msg_93f82a1"}`}</span>
                 </AnimatedSpan>
               </Terminal>
@@ -565,7 +565,7 @@ export default async function HomePage() {
                 Powering mission-critical SMS alerts, marketing, and hardware telemetry across Uganda.
               </p>
               <div className="text-xs text-muted-foreground space-y-1">
-                <p>Kampala, Uganda Ã¢â‚¬Â¢ East Africa</p>
+                <p>Kampala, Uganda · East Africa</p>
                 <p>Support: support@rangesms.com</p>
               </div>
             </div>
@@ -609,7 +609,7 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-            <p>Ã‚Â© {new Date().getFullYear()} Range View Technology Services Uganda Limited. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Range View Technology Services Uganda Limited. All rights reserved.</p>
             <div className="flex items-center gap-1.5 sm:gap-2">
               <a href="https://facebook.com/rangeviewtech" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" aria-label="Facebook">
                 <FacebookSolid className="h-4 w-4" />
