@@ -32,8 +32,8 @@ export async function GET(req: NextRequest) {
 
       // 3. Fetch Gateways Status
       const [onlineGateways, totalGateways] = await Promise.all([
-        prisma.gateway.count({ where: { status: 'ONLINE' } }),
-        prisma.gateway.count(),
+        prisma.gateway.count({ where: { userId, status: 'ONLINE' } }),
+        prisma.gateway.count({ where: { userId } }),
       ]);
 
       // 4. Fetch Recent Messages

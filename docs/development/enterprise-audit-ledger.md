@@ -586,12 +586,10 @@ Captured before source changes (initial state was clean):
   production Upstash variables only on the server; and verify pairing, MFA,
   campaign dispatch, device heartbeat/queue/result, and OTA against deployment.
   No production URL, CA, hardware, or deployment credentials were available.
-- Two mobile product/API ambiguities remain open: wallet top-up currently
-  targets an admin-only direct-credit endpoint but promises a payment-provider
-  flow; the production payment initiation contract/provider details are
-  needed before implementing the financial workflow. The mobile “Pair Phone”
-  action is still a placeholder and needs confirmation whether it should list
-  and pair existing user-owned gateway records.
+- Earlier mobile integration gaps were resolved in later passes: wallet top-up
+  now uses the MTN Collection flow, and gateway pairing creates a user-owned
+  gateway then requests its short-lived pairing code. Live provider/device
+  behavior is still unverified as recorded above.
 
 ### Export and dependency follow-up
 
@@ -662,7 +660,86 @@ Captured before source changes (initial state was clean):
 - This is a targeted end-to-end flow audit, not completion of every route, server action, role permission, database constraint, UI screen, asset, integration, or deployment configuration listed above. Other ledger sections remain pending.
 
 - Generated a baseline migration from the pre-change schema because the repository had no migration history. Fresh databases can use the baseline followed by the additive recipient/partial migration. For an already-populated database, operators must verify schema equivalence and mark `20261008000000_baseline` as applied once before deployment; do not run its baseline SQL against live data. No database migration was applied during this review.
-- The mobile push-notification preference remains an unimplemented UI-only toggle: the web preference model has no `PUSH` channel or push delivery service. Define product/provider behavior before adding a truthful API-backed control.
+- The mobile settings screen now labels push alerts unavailable and explains that no backend push channel/provider exists; it no longer shows a functional-looking UI-only toggle.
 
 - Removed fabricated mobile telemetry totals and hard-coded carrier percentages. Added user-scoped `/api/v1/reports/summary` period aggregation from recipient delivery records and changed the mobile report screen/share text to use actual API results. Report API integration, status-rollup unit, SMS API integration, and unsupported gateway dispatch tests passed (3 files, 10 tests). Final web TypeScript, full ESLint (`--max-warnings 0`), and production Next build all passed; the build includes `/api/v1/reports/summary`.
+
+## Web and mobile front-end/API connectivity and parity — 2026-10-08
+
+### API connectivity inventory
+
+The mobile API client builds every request from `EXPO_PUBLIC_API_URL` and
+appends `/api/v1`; it rejects non-path requests and requires HTTPS for
+production. The credential is a database-backed session token in Expo
+SecureStore, not a developer API key. These mobile calls map to web Route
+Handlers and use session-aware authentication:
+
+| Mobile workflow | Web endpoint | Result |
+| --- | --- | --- |
+| Login, MFA verify/resend, current user, logout | `/api/v1/auth/*` | Implemented; mobile MFA does not support passkeys. |
+| Dashboard metrics/recent activity | `/api/v1/dashboard/stats` | Implemented; gateway counts were corrected to filter by the signed-in user. |
+| SMS send | `/api/v1/sms/send` | Implemented; server validates sender/recipients, prices, debits, and dispatches. |
+| Message history | `GET /api/v1/messages` | Added in this pass; authenticated user scope, bounded page size, and minimal selected fields. |
+| Delivery summary | `/api/v1/reports/summary` | Implemented from recipient delivery records. |
+| Wallet balance/transactions/MTN top-up/status | `/api/v1/wallet/*` | Implemented; top-up credits only after provider-confirmed settlement. |
+| Approved sender IDs | `/api/v1/sender-ids` | Implemented. |
+| Contact groups and members | `/api/v1/account/contact-groups/*` | Implemented; server permission checks apply. |
+| Gateway list/create/pair | `/api/v1/gateways*` | Implemented; mobile pairing calls create and short-lived pair-code endpoints. |
+
+The web sign-in page rendered in the local browser. Chrome DevTools MCP is not
+available; this browser check did not authenticate, exercise live network
+requests, or verify native Android/iOS behavior. No production API URL was
+configured in the mobile project during this pass.
+
+### Feature parity boundary
+
+The apps share the standard client account, send, wallet, contact-group,
+gateway, and report workflows listed above, but they are **not feature clones**.
+The mobile app is currently a focused client companion. Web-only client
+workflows include saved/advanced campaigns, scheduled SMS and drafts,
+templates/variables, full contact CRUD/import/tags/segments/consent, sender-ID
+applications, pricing/billing views, detailed report families, notification
+center/preferences, profile/security/session management, support tickets, and
+developer API key/usage/webhook tooling. Web-only role-specific areas include
+admin and agent operations; those should not be exposed in the client app
+without explicit permission and product scope. Mobile push notifications are
+not implemented and are now shown as unavailable rather than as a working
+toggle.
+
+### Changes and verification in this pass
+
+- Added a user-scoped paginated message-history API and connected it to the
+  mobile reports screen, including loading, error, empty, and content states.
+- Scoped dashboard gateway totals to the authenticated account to prevent
+  cross-account counts from appearing in mobile statistics.
+- Replaced mobile's gateway-pairing placeholder with API-backed Android
+  gateway creation, pairing-code generation, retry, and expiry display.
+- Replaced the nonfunctional push toggle with an explicit unavailable state;
+  security and support rows now open their corresponding web portal routes.
+- Removed the mobile dashboard's silent offline/demo fallback: failed requests
+  now show an error and retry action, and unverified zero metrics are not shown
+  as real account data.
+- Renamed the mobile bottom navigation label from `Campaigns` to `Send`, which
+  matches the screen's compose-and-send behavior.
+- Web tests for message history, dashboard scoping, and report summaries passed
+  (3 files, 5 tests). Web TypeScript and full ESLint passed. Mobile TypeScript
+  and full ESLint passed after correcting one effect-state update and an array
+  style warning. Final mobile TypeScript, full ESLint, and Android Expo export
+  passed after the dashboard error-state and gateway pairing changes; the
+  export generated a 4.2 MB Hermes bundle.
+
+### Remaining parity and deployment work
+
+- The standard-client parity target is substantially broader than the current
+  mobile feature set. Add those workflows in feature slices with
+  session-authenticated API contracts, permission checks, and equivalent
+  loading/error/empty states. Do not mirror admin/agent functions by default.
+- Configure the mobile build's `EXPO_PUBLIC_API_URL` to the production web
+  origin and verify signed-in Android/iOS journeys against a staging backend.
+- Implement a push provider and persisted notification preference before
+  exposing a toggle; implement mobile passkey/WebAuthn support or communicate
+  the existing passkey-only account limitation in the login flow.
+- Test message history, report periods, gateway create/pair, and wallet status
+  against a deployed database and real provider/device. Those integrations
+  were not exercised here.
 
