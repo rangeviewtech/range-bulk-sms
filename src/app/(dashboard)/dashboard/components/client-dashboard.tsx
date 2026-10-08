@@ -4,35 +4,43 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/layout/page-header";
 import { MetricCard } from "@/components/ui/metric-card";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 
 export function ClientDashboard() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <PageHeader
-        title="Client Dashboard"
+        title={<AnimatedShinyText className="inline-flex m-0 p-0 text-left items-start justify-start transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">Client Dashboard</AnimatedShinyText>}
         description="Manage your SMS campaigns and contacts."
         action={
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto shrink-0">
-            <Button
-              asChild
-              variant="secondary"
-              className="w-full sm:w-44 h-10 font-semibold rounded-full px-5 shadow-none transition-all duration-150 hover:brightness-110"
-            >
-              <Link href="/wallet" className="flex items-center justify-center">
-                <Wallet className="w-4 h-4 mr-2 shrink-0" />
-                Top Up Wallet
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="default"
-              className="w-full sm:w-44 h-10 font-semibold rounded-full px-5 shadow-none transition-all duration-150 hover:brightness-105"
-            >
-              <Link href="/sms/send" className="flex items-center justify-center">
-                <Send className="w-4 h-4 mr-2 shrink-0" />
-                Send SMS
-              </Link>
-            </Button>
+            <Link href="/wallet" className="w-full sm:w-44">
+              <ShimmerButton
+                shimmerColor="#ffffff"
+                shimmerSize="0.1em"
+                background="hsl(var(--secondary))"
+                className="w-full h-10 px-5 shadow-none group"
+              >
+                <span className="flex items-center justify-center text-secondary-foreground font-semibold text-sm whitespace-pre-wrap tracking-tight">
+                  <Wallet className="w-4 h-4 mr-2 shrink-0 transition-transform group-hover:scale-110" />
+                  Top Up Wallet
+                </span>
+              </ShimmerButton>
+            </Link>
+            <Link href="/sms/send" className="w-full sm:w-44">
+              <ShimmerButton
+                shimmerColor="#ffffff"
+                shimmerSize="0.1em"
+                background="hsl(var(--primary))"
+                className="w-full h-10 px-5 shadow-none group"
+              >
+                <span className="flex items-center justify-center text-primary-foreground font-semibold text-sm whitespace-pre-wrap tracking-tight">
+                  <Send className="w-4 h-4 mr-2 shrink-0 transition-transform group-hover:translate-x-1" />
+                  Send SMS
+                </span>
+              </ShimmerButton>
+            </Link>
           </div>
         }
       />

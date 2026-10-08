@@ -1,8 +1,9 @@
 import * as React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
 import { AnimatedNumber } from "@/components/ui/animated-number";
+import { MagicCard } from "@/components/ui/magic-card";
 
 export interface MetricCardProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -28,7 +29,14 @@ export function MetricCard({
   ...props
 }: MetricCardProps) {
   return (
-    <Card className={cn("overflow-hidden transition-all duration-150 hover:bg-muted/40", className)} {...props}>
+    <MagicCard
+      className={cn(
+        "overflow-hidden transition-all duration-150 hover:bg-muted/40 cursor-default bg-card shadow-sm border border-border/60 rounded-xl",
+        className
+      )}
+      gradientColor={"rgba(120,119,198,0.15)"}
+      {...props}
+    >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{title}</CardTitle>
         {Icon && (
@@ -58,6 +66,6 @@ export function MetricCard({
           </div>
         )}
       </CardContent>
-    </Card>
+    </MagicCard>
   );
 }
