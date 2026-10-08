@@ -1,11 +1,12 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { validateApiKey } from '@/lib/auth/api-key-auth';
+import { NextRequest, NextResponse } from 'next/server';
+import { randomUUID } from 'node:crypto';
+import { prisma, Prisma } from '@/lib/prisma';
+import { withApiKey } from '@/lib/api-keys/service';
 import { z } from 'zod';
-import { JobWorker } from '@/lib/queue/worker';
+import { enqueueJob } from '@/lib/jobs/db';
 import { BillingService } from '@/lib/billing/billing-service';
+import { countSms } from '@/lib/sms/counter';
 import { FraudPrevention } from '@/lib/security/fraud-prevention';
-import { RateLimiter } from '@/lib/security/rate-limiter';
 import { RegulatoryEngine } from '@/lib/compliance/regulatory-engine';
 import { verifyAuthenticatedSession } from '@/lib/auth/session';
 
@@ -80,30 +81,15 @@ const sendDirectMessageSchema = z.object({
   externalId: z.string().optional(),
 });
 
-export async function POST(req: Request) {
-  try {
-    const authHeader = req.headers.get('authorization');
-    const authContext = await validateApiKey(authHeader);
-
-    if (!authContext) {
-      return NextResponse.json({ success: false, error: 'Unauthorized. Invalid or expired API Key.' }, { status: 401 });
+export async function POST(req: NextRequest) {
+  return withApiKey(req, 'sms.send', async (request, context) => {
+    try {
+    const userId = context.userId;
+    if (!userId) {
+      return NextResponse.json({ success: false, error: 'An account is required to send messages.' }, { status: 401 });
     }
 
-    const { user, apiKey } = authContext;
-
-    // 1. Rate Limiting
-    const rateLimit = apiKey.rateLimit || 100;
-    const rateWindow = apiKey.rateLimitWindow || 60;
-    const rlResult = await RateLimiter.check(`api:${apiKey.id}`, rateLimit, rateWindow);
-
-    if (!rlResult.allowed) {
-      return NextResponse.json(
-        { success: false, error: 'Rate limit exceeded' }, 
-        { status: 429, headers: { 'X-RateLimit-Reset': String(rlResult.resetTime) } }
-      );
-    }
-
-    const body = await req.json().catch(() => ({}));
+    const body = await request.json().catch(() => ({}));
     const parsed = sendDirectMessageSchema.safeParse(body);
 
     if (!parsed.success) {
@@ -114,7 +100,7 @@ export async function POST(req: Request) {
 
     // 2. Validate Sender ID
     const validSender = await prisma.senderId.findFirst({
-      where: { OR: [{ id: senderId }, { senderId }], userId: user.id, status: 'APPROVED' }
+      where: { OR: [{ id: senderId }, { senderId }], userId, status: 'APPROVED' }
     });
 
     if (!validSender) {
@@ -134,9 +120,9 @@ export async function POST(req: Request) {
       }
 
       // OTP Pumping / Velocity Check
-      const velocityCheck = await FraudPrevention.checkVelocity(user.id, phone);
+      const velocityCheck = await FraudPrevention.checkVelocity(userId, phone);
       if (velocityCheck.isFraudulent) {
-        console.warn(`[FRAUD_PREVENTION] OTP Pumping detected for user ${user.id} to ${phone}`);
+        console.warn(`[FRAUD_PREVENTION] OTP Pumping detected for user ${userId} to ${phone}`);
         return NextResponse.json({ success: false, error: 'Fraud protection triggered: Too many messages to the same destination.' }, { status: 429 });
       }
 
@@ -145,7 +131,7 @@ export async function POST(req: Request) {
         phone,
         message,
         purpose,
-        tenantId: user.id,
+        tenantId: userId,
       });
 
       if (!compliance.allowed) {
@@ -165,65 +151,77 @@ export async function POST(req: Request) {
     }
 
     // 3. Billing & Wallet Reservation
-    const segments = Math.ceil(message.length / 160);
+    const { segments } = countSms(message);
     const totalCost = eligibleRecipients.length * segments;
 
-    const hasFunds = await BillingService.hasSufficientFunds(user.id, totalCost);
-    if (!hasFunds) {
-      return NextResponse.json({ success: false, error: 'Insufficient funds' }, { status: 402 });
-    }
+    const batchRef = `api_batch_${randomUUID()}`;
+    const dispatch = await prisma.$transaction(async (tx) => {
+      // Reserve funds and persist the campaign, messages, and dispatch jobs
+      // together. A failed write cannot leave funds held or only part of the
+      // requested batch queued.
+      const reservation = await BillingService.reserveCredits(
+        userId,
+        batchRef,
+        totalCost,
+        batchRef,
+        tx
+      );
+      if (!reservation.success) return { reservation, campaignId: null };
 
-    const batchRef = `api_batch_${Date.now()}`;
-    const reservation = await BillingService.reserveCredits(user.id, batchRef, totalCost);
-    if (!reservation.success) {
-      return NextResponse.json({ success: false, error: reservation.error || 'Failed to hold credits' }, { status: 402 });
-    }
-
-    // 4. Create Campaign record for tracking
-    const systemCampaign = await prisma.campaign.create({
-      data: {
-        userId: user.id,
-        name: `API Batch: ${new Date().toISOString()}`,
-        senderIdId: validSender.id,
-        gatewayId: parsed.data.gatewayId,
-        message,
-        status: 'RUNNING',
-        totalRecipients: eligibleRecipients.length,
-        totalSmsUnits: totalCost,
-        pendingCount: eligibleRecipients.length,
-        type: 'BROADCAST',
-        metadata: {
-          reservationId: reservation.reservationId,
-          purpose,
-          externalId: parsed.data.externalId,
-        }
-      }
-    });
-
-    // 5. Enqueue Outbox Message Records
-    for (const phone of eligibleRecipients) {
-      const msgRecord = await prisma.message.create({
+      const campaign = await tx.campaign.create({
         data: {
-          campaignId: systemCampaign.id,
-          userId: user.id,
+          userId,
+          name: `API Batch: ${new Date().toISOString()}`,
           senderIdId: validSender.id,
           gatewayId: parsed.data.gatewayId,
           message,
-          status: 'PENDING',
-          segmentCount: segments,
-          recipientCount: 1,
-          totalUnits: segments,
-          metadata: { purpose },
-          recipients: {
-            create: {
-              phone,
-              status: 'PENDING'
-            }
-          }
-        }
+          status: 'RUNNING',
+          totalRecipients: eligibleRecipients.length,
+          totalSmsUnits: totalCost,
+          pendingCount: eligibleRecipients.length,
+          type: 'BROADCAST',
+          metadata: {
+            reservationId: reservation.reservationId,
+            purpose,
+            externalId: parsed.data.externalId,
+          },
+        },
       });
 
-      await JobWorker.enqueue('sms.dispatch', { messageId: msgRecord.id }, { priority: 'HIGH' });
+      for (const phone of eligibleRecipients) {
+        const messageRecord = await tx.message.create({
+          data: {
+            campaignId: campaign.id,
+            userId,
+            senderIdId: validSender.id,
+            gatewayId: parsed.data.gatewayId,
+            message,
+            status: 'PENDING',
+            segmentCount: segments,
+            recipientCount: 1,
+            totalUnits: segments,
+            metadata: { purpose },
+            recipients: { create: { phone, status: 'PENDING' } },
+          },
+        });
+
+        await enqueueJob({
+          tx,
+          type: 'sms.dispatch',
+          payload: { messageId: messageRecord.id },
+          priority: 'HIGH',
+          idempotencyKey: `sms-dispatch:${messageRecord.id}`,
+        });
+      }
+
+      return { reservation, campaignId: campaign.id };
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+
+    if (!dispatch.reservation.success || !dispatch.campaignId) {
+      return NextResponse.json(
+        { success: false, error: dispatch.reservation.error || 'Unable to reserve message credits.' },
+        { status: 402 }
+      );
     }
 
     return NextResponse.json({ 
@@ -232,7 +230,7 @@ export async function POST(req: Request) {
       acceptedCount: eligibleRecipients.length,
       rejectedCount: rejectedRecipients.length,
       rejected: rejectedRecipients.length > 0 ? rejectedRecipients : undefined,
-      campaignId: systemCampaign.id,
+      campaignId: dispatch.campaignId,
       reservedUnits: totalCost
     }, { status: 202 });
 
@@ -240,4 +238,5 @@ export async function POST(req: Request) {
     console.error("[API_V1_MESSAGES_ERROR]", error);
     return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
   }
+  });
 }

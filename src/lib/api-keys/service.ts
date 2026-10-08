@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { NextRequest } from 'next/server';
+import { RateLimiter } from '@/lib/security/rate-limiter';
 
 export interface ApiKeyVerificationResult {
   isValid: boolean;
@@ -16,6 +17,8 @@ export interface ApiKeyVerificationResult {
   quotaPeriod?: string | null;
   quotaResetAt?: Date | null;
   alertThreshold?: number | null;
+  rateLimit?: number;
+  rateLimitWindow?: number;
 }
 
 export interface ApiKeyContext {
@@ -29,6 +32,8 @@ export interface ApiKeyContext {
   quotaUsed?: number;
   quotaPeriod?: string | null;
   quotaResetAt?: Date | null;
+  rateLimit?: number;
+  rateLimitWindow?: number;
 }
 
 export function generateApiKey(): { key: string; keyPrefix: string; secret: string; keyHash: string } {
@@ -95,6 +100,7 @@ export async function verifyApiKey(
       keyPrefix: prefix, 
       status: 'ACTIVE',
       revokedAt: null,
+      user: { is: { status: 'ACTIVE' } },
     }
   });
   
@@ -124,64 +130,123 @@ export async function verifyApiKey(
     return { isValid: false };
   }
 
-  let currentQuotaUsed = apiKeyRecord.quotaUsed ?? 0;
-  let currentQuotaResetAt = apiKeyRecord.quotaResetAt;
+  const now = new Date();
+  let quotaUsed = apiKeyRecord.quotaUsed ?? 0;
+  let quotaResetAt = apiKeyRecord.quotaResetAt;
+  let quotaLimit = apiKeyRecord.quotaLimit;
 
-  // Check Quota Rollover & Exhaustion
-  if (apiKeyRecord.quotaLimit !== null && apiKeyRecord.quotaLimit !== undefined) {
-    // If the reset period has passed, reset counter to 0 and advance window
-    if (currentQuotaResetAt && new Date() >= currentQuotaResetAt) {
-      currentQuotaResetAt = calculateNextQuotaReset(apiKeyRecord.quotaPeriod, new Date());
-      currentQuotaUsed = 0;
-      try {
-        await prisma.apiKey.update({
-          where: { id: apiKeyRecord.id },
-          data: {
-            quotaUsed: 0,
-            quotaResetAt: currentQuotaResetAt,
-          },
-        });
-      } catch {
-        // Continue if background update fails
-      }
-    }
-
-    // Check if quota limit is exhausted
-    if (currentQuotaUsed >= apiKeyRecord.quotaLimit) {
-      return {
-        isValid: false,
-        quotaExceeded: true,
-        apiKeyId: apiKeyRecord.id,
-        appName: apiKeyRecord.appName,
-        environment: apiKeyRecord.environment,
-        clientId: apiKeyRecord.clientId || undefined,
-        userId: apiKeyRecord.userId || undefined,
-        scopes: (apiKeyRecord.scopes as string[]) || [],
-        quotaLimit: apiKeyRecord.quotaLimit,
-        quotaUsed: currentQuotaUsed,
-        quotaPeriod: apiKeyRecord.quotaPeriod,
-        quotaResetAt: currentQuotaResetAt,
-        alertThreshold: apiKeyRecord.alertThreshold,
-      };
-    }
-  }
-
-  // Atomically increment quotaUsed and update lastUsedAt in the background
-  try {
-    const updatePromise = prisma.apiKey.update({
-      where: { id: apiKeyRecord.id },
-      data: {
-        lastUsedAt: new Date(),
-        quotaUsed: { increment: 1 },
-      }
+  if (quotaLimit !== null && quotaLimit !== undefined && quotaResetAt && now >= quotaResetAt) {
+    const nextResetAt = calculateNextQuotaReset(apiKeyRecord.quotaPeriod, now);
+    const reset = await prisma.apiKey.updateMany({
+      where: {
+        id: apiKeyRecord.id,
+        status: 'ACTIVE',
+        revokedAt: null,
+        quotaResetAt,
+        user: { is: { status: 'ACTIVE' } },
+      },
+      data: { quotaUsed: 0, quotaResetAt: nextResetAt },
     });
-    if (updatePromise && typeof updatePromise.catch === 'function') {
-      updatePromise.catch(() => {});
+
+    if (reset.count === 1) {
+      quotaUsed = 0;
+      quotaResetAt = nextResetAt;
+    } else {
+      // Another request may have rolled the window over first. Read its new
+      // state so this request cannot reset a counter that has already accrued.
+      const latest = await prisma.apiKey.findFirst({
+        where: {
+          id: apiKeyRecord.id,
+          status: 'ACTIVE',
+          revokedAt: null,
+          user: { is: { status: 'ACTIVE' } },
+        },
+      });
+      if (!latest || (latest.expiresAt && latest.expiresAt <= now)) return { isValid: false };
+      quotaUsed = latest.quotaUsed ?? 0;
+      quotaResetAt = latest.quotaResetAt;
     }
-  } catch {
-    // Ignore background update failures
   }
-  
+
+  const quotaExceeded = (used: number, record: typeof apiKeyRecord): ApiKeyVerificationResult => ({
+    isValid: false,
+    quotaExceeded: true,
+    apiKeyId: record.id,
+    appName: record.appName,
+    environment: record.environment,
+    clientId: record.clientId || undefined,
+    userId: record.userId || undefined,
+    scopes: (record.scopes as string[]) || [],
+    quotaLimit: record.quotaLimit,
+    quotaUsed: used,
+    quotaPeriod: record.quotaPeriod,
+    quotaResetAt: record.quotaResetAt,
+    alertThreshold: record.alertThreshold,
+    rateLimit: record.rateLimit,
+    rateLimitWindow: record.rateLimitWindow,
+  });
+
+  if (quotaLimit !== null && quotaLimit !== undefined && quotaUsed >= quotaLimit) {
+    return quotaExceeded(quotaUsed, { ...apiKeyRecord, quotaResetAt });
+  }
+
+  // Reserve a request atomically. The conditional update prevents concurrent
+  // requests from each passing a stale read and exceeding the configured cap.
+  let reserved = false;
+  for (let attempt = 0; attempt < 3 && !reserved; attempt += 1) {
+    const updateWhere = {
+      id: apiKeyRecord.id,
+      status: 'ACTIVE' as const,
+      revokedAt: null,
+      user: { is: { status: 'ACTIVE' as const } },
+      OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+      ...(quotaLimit !== null && quotaLimit !== undefined
+        ? { quotaLimit, quotaUsed: { lt: quotaLimit }, quotaResetAt }
+        : {}),
+    };
+    const reservation = await prisma.apiKey.updateMany({
+      where: updateWhere,
+      data: { lastUsedAt: new Date(), quotaUsed: { increment: 1 } },
+    });
+
+    if (reservation.count === 1) {
+      reserved = true;
+      quotaUsed += 1;
+      break;
+    }
+
+    const latest = await prisma.apiKey.findFirst({
+      where: {
+        id: apiKeyRecord.id,
+        status: 'ACTIVE',
+        revokedAt: null,
+        user: { is: { status: 'ACTIVE' } },
+      },
+    });
+    if (!latest || (latest.expiresAt && latest.expiresAt <= new Date())) return { isValid: false };
+
+    const latestUsed = latest.quotaUsed ?? 0;
+    if (latest.quotaLimit !== null && latest.quotaLimit !== undefined && latestUsed >= latest.quotaLimit) {
+      return quotaExceeded(latestUsed, latest);
+    }
+
+    // Refresh the expected window and count before retrying a conditional
+    // reservation that lost a race with another request or rollover.
+    quotaUsed = latestUsed;
+    quotaResetAt = latest.quotaResetAt;
+    quotaLimit = latest.quotaLimit;
+  }
+
+  if (!reserved) {
+    // Fail closed on unexpected concurrent state changes; no request is
+    // authorized without a successful quota reservation.
+    return { isValid: false };
+  }
+
+  if (quotaLimit !== null && quotaLimit !== undefined && quotaUsed > quotaLimit) {
+    return quotaExceeded(quotaUsed, apiKeyRecord);
+  }
+
   return {
     isValid: true,
     apiKeyId: apiKeyRecord.id,
@@ -191,10 +256,12 @@ export async function verifyApiKey(
     userId: apiKeyRecord.userId || undefined,
     scopes: (apiKeyRecord.scopes as string[]) || [],
     quotaLimit: apiKeyRecord.quotaLimit,
-    quotaUsed: currentQuotaUsed + 1,
+    quotaUsed,
     quotaPeriod: apiKeyRecord.quotaPeriod,
-    quotaResetAt: currentQuotaResetAt,
+    quotaResetAt,
     alertThreshold: apiKeyRecord.alertThreshold,
+    rateLimit: apiKeyRecord.rateLimit,
+    rateLimitWindow: apiKeyRecord.rateLimitWindow,
   };
 }
 
@@ -259,6 +326,37 @@ const SESSION_SCOPE_PERMISSIONS: Record<string, string | null> = {
   'webhooks.manage': 'webhooks.manage',
 };
 
+async function runRateLimitedHandler(
+  req: NextRequest,
+  context: ApiKeyContext,
+  handler: (req: NextRequest, context: ApiKeyContext) => Promise<Response>
+): Promise<Response> {
+  const limit = context.rateLimit ?? 100;
+  const windowSec = context.rateLimitWindow ?? 60;
+  const rateLimitResult = await RateLimiter.check(
+    `api:${context.apiKeyId ?? `user:${context.userId ?? 'authenticated'}`}`,
+    limit,
+    windowSec
+  );
+
+  if (!rateLimitResult.allowed) {
+    return Response.json(
+      { error: 'Rate limit exceeded', code: 'RATE_LIMIT_EXCEEDED' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(Math.max(1, Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000))),
+          'X-RateLimit-Limit': String(limit),
+          'X-RateLimit-Remaining': String(rateLimitResult.remaining),
+          'X-RateLimit-Reset': String(Math.ceil(rateLimitResult.resetTime / 1000)),
+        },
+      }
+    );
+  }
+
+  return handler(req, context);
+}
+
 export async function withApiKey(
   req: NextRequest, 
   requiredScope: string, 
@@ -307,12 +405,12 @@ export async function withApiKey(
       return Response.json({ error: 'Forbidden: Insufficient permissions', code: 'FORBIDDEN' }, { status: 403 });
     }
 
-    return handler(req, {
+    return runRateLimitedHandler(req, {
       userId: sessionResult.userId,
       appName: 'Mobile App / Web Session',
       environment: 'production',
       scopes: requiredScope ? [requiredScope] : [],
-    });
+    }, handler);
   }
 
   // 2. Verify as Developer API Key
@@ -359,7 +457,7 @@ export async function withApiKey(
     return Response.json({ error: `Forbidden: Missing required scope '${requiredScope}'` }, { status: 403 });
   }
 
-  return handler(req, {
+  return runRateLimitedHandler(req, {
     clientId: verification.clientId,
     userId: verification.userId,
     apiKeyId: verification.apiKeyId,
@@ -370,5 +468,7 @@ export async function withApiKey(
     quotaUsed: verification.quotaUsed,
     quotaPeriod: verification.quotaPeriod,
     quotaResetAt: verification.quotaResetAt,
-  });
+    rateLimit: verification.rateLimit,
+    rateLimitWindow: verification.rateLimitWindow,
+  }, handler);
 }

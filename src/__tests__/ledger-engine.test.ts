@@ -197,6 +197,38 @@ describe("LedgerEngine (Double-Entry Balanced Accounting)", () => {
       expect(result.reservationId).toBe("RES_HOLD_camp-1_existing");
       expect(mockPrisma.wallet.update).not.toHaveBeenCalled();
     });
+
+    it("uses a caller transaction without starting a nested transaction", async () => {
+      const mockWallet = {
+        id: "wallet-123",
+        userId: "user-1",
+        smsCredits: 500,
+        balance: { val: 50000 },
+        currency: "UGX",
+      };
+      const tx = {
+        transaction: mockPrisma.transaction,
+        wallet: mockPrisma.wallet,
+      };
+
+      mockPrisma.transaction.findUnique.mockResolvedValueOnce(null);
+      mockPrisma.wallet.findUnique
+        .mockResolvedValueOnce(mockWallet)
+        .mockResolvedValueOnce({ ...mockWallet, smsCredits: 400 });
+      mockPrisma.wallet.updateMany.mockResolvedValueOnce({ count: 1 });
+
+      const result = await LedgerEngine.reserveCredits(
+        "user-1",
+        "batch-1",
+        100,
+        "batch-1",
+        tx as never
+      );
+
+      expect(result.success).toBe(true);
+      expect(mockPrisma.$transaction).not.toHaveBeenCalled();
+      expect(mockPrisma.transaction.create).toHaveBeenCalled();
+    });
   });
 
   describe("settleReservation", () => {

@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { WalletService } from '@/lib/wallet/service';
 import { verifyAuthenticatedSession } from '@/lib/auth/session';
+import { logger } from '@/lib/logger';
 
 export async function GET(_req: NextRequest) {
   try {
@@ -12,7 +13,7 @@ export async function GET(_req: NextRequest) {
 
     return Response.json({ data: balance });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
-    return Response.json({ error: message }, { status: 500 });
+    logger.error('Wallet balance request failed', { error });
+    return Response.json({ error: 'Unable to load wallet balance right now' }, { status: 500 });
   }
 }

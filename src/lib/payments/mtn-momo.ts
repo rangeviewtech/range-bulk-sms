@@ -107,6 +107,30 @@ function mapStatus(status: unknown): MomoStatus {
   return 'PENDING';
 }
 
+function isMatchingIdempotentPayment(
+  existing: { userId: string; walletId: string; amount: Prisma.Decimal; phone: string },
+  params: { userId: string; walletId: string; amount: number; phone: string },
+) {
+  return existing.userId === params.userId && existing.walletId === params.walletId &&
+    existing.amount.equals(new Prisma.Decimal(params.amount)) && existing.phone === params.phone;
+}
+
+async function findIdempotentPayment(params: {
+  userId: string;
+  walletId: string;
+  amount: number;
+  phone: string;
+  idempotencyKey?: string;
+}) {
+  if (!params.idempotencyKey) return null;
+  const existing = await prisma.momoPayment.findUnique({ where: { idempotencyKey: params.idempotencyKey } });
+  if (!existing) return null;
+  if (!isMatchingIdempotentPayment(existing, params)) {
+    throw new Error('This payment request key was already used for different payment details');
+  }
+  return existing;
+}
+
 export const MtnMomoService = {
   async initiate(params: {
     userId: string;
@@ -120,16 +144,8 @@ export const MtnMomoService = {
     const phone = normalizeUgandaMsisdn(params.phone);
     if (!phone) throw new Error('Enter a valid Uganda MTN number, such as 0772 123 456');
 
-    if (params.idempotencyKey) {
-      const existing = await prisma.momoPayment.findUnique({ where: { idempotencyKey: params.idempotencyKey } });
-      if (existing) {
-        if (existing.userId !== params.userId || existing.walletId !== params.walletId ||
-          !existing.amount.equals(new Prisma.Decimal(params.amount)) || existing.phone !== phone) {
-          throw new Error('This payment request key was already used for different payment details');
-        }
-        return existing;
-      }
-    }
+    const existing = await findIdempotentPayment({ ...params, phone });
+    if (existing) return existing;
 
     const wallet = await prisma.wallet.findFirst({
       where: { id: params.walletId, userId: params.userId, isActive: true },
@@ -142,18 +158,29 @@ export const MtnMomoService = {
 
     const paymentId = randomUUID();
     const amount = new Prisma.Decimal(params.amount);
-    const payment = await prisma.momoPayment.create({
-      data: {
-        id: paymentId,
-        walletId: params.walletId,
-        userId: params.userId,
-        amount,
-        currency: config.currency,
-        phone,
-        providerReference: randomUUID(),
-        idempotencyKey: params.idempotencyKey,
-      },
-    });
+    let payment;
+    try {
+      payment = await prisma.momoPayment.create({
+        data: {
+          id: paymentId,
+          walletId: params.walletId,
+          userId: params.userId,
+          amount,
+          currency: config.currency,
+          phone,
+          providerReference: randomUUID(),
+          idempotencyKey: params.idempotencyKey,
+        },
+      });
+    } catch (error) {
+      // The unique idempotency constraint is the concurrency guard when two
+      // identical requests arrive before either can observe the other's row.
+      if (params.idempotencyKey && error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const concurrentPayment = await findIdempotentPayment({ ...params, phone });
+        if (concurrentPayment) return concurrentPayment;
+      }
+      throw error;
+    }
 
     try {
       const accessToken = await getAccessToken(config);

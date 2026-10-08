@@ -1,4 +1,4 @@
-import { prisma, Prisma } from "@/lib/prisma";
+import { prisma, Prisma, PrismaTransactionClient } from "@/lib/prisma";
 
 export type AccountType = "ASSET" | "LIABILITY" | "EQUITY" | "REVENUE" | "EXPENSE";
 
@@ -67,7 +67,8 @@ export class LedgerEngine {
     userId: string,
     campaignId: string,
     unitsToReserve: number,
-    idempotencyKey?: string
+    idempotencyKey?: string,
+    transaction?: PrismaTransactionClient
   ): Promise<ReservationResult> {
     if (unitsToReserve <= 0) {
       return { success: true, reservationId: `zero_res_${campaignId}`, heldUnits: 0 };
@@ -75,8 +76,7 @@ export class LedgerEngine {
 
     const key = idempotencyKey || `res_${campaignId}_${unitsToReserve}`;
 
-    return await prisma.$transaction(
-      async (tx) => {
+    const reserve = async (tx: PrismaTransactionClient): Promise<ReservationResult> => {
         // 1. Check idempotency to prevent duplicate reservation
         const existingTx = await tx.transaction.findUnique({
           where: { idempotencyKey: key },
@@ -183,11 +183,13 @@ export class LedgerEngine {
           reservationId: reference,
           heldUnits: unitsToReserve,
         };
-      },
-      {
+    };
+
+    if (transaction) return reserve(transaction);
+
+    return prisma.$transaction(reserve, {
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-      }
-    );
+      });
   }
 
   /**

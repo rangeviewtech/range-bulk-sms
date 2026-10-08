@@ -90,7 +90,7 @@ api/v1/device/gateways/queue/	GET	guard-marker	NO-VALIDATION-MARKER	src\app\api\
 api/v1/device/gateways/register/	POST	NO-GUARD-MARKER	NO-VALIDATION-MARKER	src\app\api\v1\device\gateways\register\route.ts
 api/v1/gateways/pair/	POST	NO-GUARD-MARKER	NO-VALIDATION-MARKER	src\app\api\v1\gateways\pair\route.ts
 api/v1/gateways/	GET,POST	NO-GUARD-MARKER	validation-marker	src\app\api\v1\gateways\route.ts
-api/v1/messages/	POST	NO-GUARD-MARKER	validation-marker	src\app\api\v1\messages\route.ts
+api/v1/messages/	POST	guard-marker	validation-marker	src\app\api\v1\messages\route.ts
 api/v1/phone/analyze/	POST	NO-GUARD-MARKER	NO-VALIDATION-MARKER	src\app\api\v1\phone\analyze\route.ts
 api/v1/phone/data-status/	GET	NO-GUARD-MARKER	NO-VALIDATION-MARKER	src\app\api\v1\phone\data-status\route.ts
 api/v1/phone/regions/	GET	NO-GUARD-MARKER	NO-VALIDATION-MARKER	src\app\api\v1\phone\regions\route.ts

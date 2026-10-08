@@ -18,15 +18,21 @@ vi.mock('@/lib/prisma', () => ({
       findFirst: vi.fn(),
       findUnique: vi.fn(),
       update: vi.fn().mockResolvedValue({}),
+      updateMany: vi.fn().mockResolvedValue({ count: 1 }),
       create: vi.fn(),
     },
   },
+}));
+
+vi.mock('@/lib/security/rate-limiter', () => ({
+  RateLimiter: { check: vi.fn().mockResolvedValue({ allowed: true, remaining: 99, resetTime: Date.now() + 60_000 }) },
 }));
 
 interface MockApiKeyDelegate {
   findFirst: ReturnType<typeof vi.fn>;
   findUnique: ReturnType<typeof vi.fn>;
   update: ReturnType<typeof vi.fn>;
+  updateMany: ReturnType<typeof vi.fn>;
   create: ReturnType<typeof vi.fn>;
 }
 
@@ -181,9 +187,9 @@ describe('API Keys - Multi-App & Quota Management', () => {
       expect(result.appName).toBe('Internal ERP');
       expect(result.quotaLimit).toBe(2000);
       expect(result.quotaUsed).toBe(1); // 0 reset + 1 new request
-      expect(mockApiKey.update).toHaveBeenCalledWith(
+      expect(mockApiKey.updateMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { id: 'key-erp-1' },
+          where: expect.objectContaining({ id: 'key-erp-1', quotaResetAt: pastResetDate }),
           data: expect.objectContaining({
             quotaUsed: 0,
           }),

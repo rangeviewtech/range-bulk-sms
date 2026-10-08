@@ -2,6 +2,7 @@ import { Prisma } from '@/generated/prisma/client'
 const { Decimal } = Prisma;
 import { prisma } from '@/lib/prisma';
 import { generateTransactionReference } from '@/lib/sms/idempotency';
+import { ConflictError } from '@/lib/errors';
 
 export interface WalletOperationResult {
   success: boolean;
@@ -62,6 +63,10 @@ export const WalletService = {
           where: { idempotencyKey: params.idempotencyKey }
         });
         if (existingTx) {
+          if (existingTx.walletId !== walletId || existingTx.type !== 'DEPOSIT' ||
+            !existingTx.amount.equals(amount) || (params.userId && existingTx.userId !== params.userId)) {
+            throw new ConflictError('This payment request key was already used for different deposit details');
+          }
           return {
             success: true,
             walletId,

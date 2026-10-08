@@ -3,7 +3,7 @@
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
-import { GET as getHistory } from '@/app/api/v1/messages/route';
+import { GET as getHistory, POST as sendMessage } from '@/app/api/v1/messages/route';
 import { prismaMock } from '../../unit/prismaMock';
 
 vi.mock('@/lib/auth/session', () => ({
@@ -54,5 +54,20 @@ describe('GET /api/v1/messages', () => {
 
     expect(response.status).toBe(400);
     expect(prismaMock.message.findMany).not.toHaveBeenCalled();
+  });
+});
+
+describe('POST /api/v1/messages', () => {
+  it('rejects unauthenticated dispatch before touching message, wallet, or queue data', async () => {
+    const req = new NextRequest('http://localhost:3000/api/v1/messages', {
+      method: 'POST',
+      body: JSON.stringify({ recipients: ['+256700000000'], message: 'Hello', senderId: 'RANGE' }),
+    });
+
+    const response = await sendMessage(req);
+
+    expect(response.status).toBe(401);
+    expect(prismaMock.message.create).not.toHaveBeenCalled();
+    expect(prismaMock.campaign.create).not.toHaveBeenCalled();
   });
 });

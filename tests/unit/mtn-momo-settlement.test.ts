@@ -61,6 +61,31 @@ describe('MTN MoMo wallet settlement', () => {
     expect(db.transaction.create).not.toHaveBeenCalled();
   });
 
+  it('returns the existing payment when concurrent requests race on one idempotency key', async () => {
+    db.momoPayment.findUnique
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(pendingPayment);
+    db.wallet.findFirst.mockResolvedValue({ id: 'wallet-1', currency: 'UGX' });
+    db.momoPayment.create.mockRejectedValue(new Prisma.PrismaClientKnownRequestError(
+      'Unique constraint failed',
+      { code: 'P2002', clientVersion: 'test' },
+    ));
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    const { MtnMomoService } = await import('@/lib/payments/mtn-momo');
+    const result = await MtnMomoService.initiate({
+      userId: 'user-1',
+      walletId: 'wallet-1',
+      amount: 5000,
+      phone: '0772 123 456',
+      idempotencyKey: 'test-idempotency-key',
+    });
+
+    expect(result.id).toBe(pendingPayment.id);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it('credits once only after a matching successful provider status', async () => {
     const tx = {
       $queryRaw: vi.fn().mockResolvedValue([{ balance: new Prisma.Decimal(1000) }]),

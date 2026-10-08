@@ -5,6 +5,7 @@ const sessionMocks = vi.hoisted(() => ({
   decrypt: vi.fn(),
   verifyRequestSessionToken: vi.fn(),
   hasPermission: vi.fn(),
+  rateLimitCheck: vi.fn(),
 }));
 
 vi.mock('@/lib/auth/session', () => ({
@@ -12,6 +13,9 @@ vi.mock('@/lib/auth/session', () => ({
   verifyRequestSessionToken: sessionMocks.verifyRequestSessionToken,
 }));
 vi.mock('@/lib/auth/authorization', () => ({ hasPermission: sessionMocks.hasPermission }));
+vi.mock('@/lib/security/rate-limiter', () => ({
+  RateLimiter: { check: sessionMocks.rateLimitCheck },
+}));
 
 import { withApiKey } from '@/lib/api-keys/service';
 
@@ -26,6 +30,7 @@ describe('withApiKey user-session authorization', () => {
     sessionMocks.decrypt.mockResolvedValue({ sessionId: 'session-1', userId: 'user-1' });
     sessionMocks.verifyRequestSessionToken.mockResolvedValue({ userId: 'user-1' });
     sessionMocks.hasPermission.mockResolvedValue(true);
+    sessionMocks.rateLimitCheck.mockResolvedValue({ allowed: true, remaining: 99, resetTime: Date.now() + 60_000 });
   });
 
   it('rejects a session that has not completed MFA', async () => {
@@ -71,6 +76,23 @@ describe('withApiKey user-session authorization', () => {
       userId: 'user-1',
       scopes: ['sms.send'],
     }));
+    expect(sessionMocks.rateLimitCheck).toHaveBeenCalledWith('api:user:user-1', 100, 60);
+  });
+
+  it('returns 429 and skips the handler when the shared API limit is exhausted', async () => {
+    sessionMocks.rateLimitCheck.mockResolvedValue({
+      allowed: false,
+      remaining: 0,
+      resetTime: Date.now() + 30_000,
+    });
+    const handler = vi.fn();
+
+    const response = await withApiKey(request(), 'sms.send', handler);
+
+    expect(response.status).toBe(429);
+    expect(response.headers.get('X-RateLimit-Limit')).toBe('100');
+    expect(response.headers.get('Retry-After')).toBeTruthy();
+    expect(handler).not.toHaveBeenCalled();
   });
 
   it('requires API key scopes for self-service profile and dashboard endpoints', async () => {

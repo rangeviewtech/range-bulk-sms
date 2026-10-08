@@ -947,3 +947,109 @@ hardware, provider, Android SDK, Firefox, and Deep Scan limitations remain.
   route's complete validation, resource ownership, transaction, or provider
   failure behavior. The broader route-by-route audit remains open.
 
+## API-key quota and message-dispatch continuation — 2026-10-08
+
+### Findings and fixes
+
+- Found a second API-key validator used only by `POST /api/v1/messages`. It
+  hashed the entire token even though generated keys store a hash of the secret
+  segment, and it bypassed the shared IP, scope, and quota policy. Moved the
+  route to `withApiKey` with the required `sms.send` scope and removed the now
+  unused legacy validator and its obsolete tests. API-key lookup also requires
+  the owning account to remain active.
+- API-key quota enforcement previously checked a counter read and then launched
+  an unconditional background increment. Concurrent calls could all pass the
+  same stale value, and update failures were ignored. Quota admission now uses
+  a conditional atomic increment, conditionally advances expired windows, and
+  fails closed if a reservation cannot be made. Added race-focused tests.
+- The configured per-key request rate (`rateLimit` and `rateLimitWindow`) was
+  only applied by the one direct-message route. The shared API wrapper now
+  applies the configured limit to every API-key-protected v1 call and applies
+  a default 100 requests per 60 seconds per signed-in user. It returns
+  consistent 429 responses and rate-limit headers. The direct-message route's
+  former duplicate limiter was removed. Production remains fail-closed when
+  the shared Upstash-backed limiter is unavailable, per the existing limiter
+  policy.
+- The direct-message route estimated SMS segments with `ceil(length / 160)`,
+  which undercounted Unicode and multipart messages. It now uses the shared
+  SMS counter for reserved units and persisted message segments.
+- The route previously reserved wallet credits, then created the campaign,
+  messages, and dispatch jobs in separate writes. Those writes now run with the
+  reservation in one serializable database transaction. It uses the existing
+  transaction-aware job enqueue helper with per-message idempotency keys, so a
+  failed write rolls back the reservation and partial batch.
+
+### Verification and remaining work
+
+- Focused API-key, quota, billing-ledger, session, and message-dispatch suites
+  passed in isolated runs (39/39 and 36/36 across the previous two focused
+  runs). Added tests cover a concurrent last-quota-slot race, caller-supplied
+  billing transactions, rejected unauthenticated dispatch, insufficient funds,
+  atomic enqueue, and Unicode segmentation.
+- A new full Vitest run completed 710/711. Its one failure was the tenant/API
+  key test's old Prisma mock, which did not return the successful atomic quota
+  reservation result. After correcting that fixture, the affected API-key,
+  session, quota, MoMo, and wallet suites passed 21/21. The full suite has not
+  been rerun after the fixture correction.
+- Latest repository-wide TypeScript check passed. The production build passed
+  and generated all 174 static pages. Full `npm run lint` did not complete
+  within a practical time and grew to about 1.2 GB; the process was stopped.
+  Scoped ESLint passed for every changed application and test source file.
+- These changes review the shared API-key path and `/api/v1/messages`, not all
+  remaining route authorization, validation, database behavior, integrations,
+  or cross-project client journeys.
+
+## Wallet and payment continuation — 2026-10-08
+
+### Findings and fixes
+
+- Reviewed the authenticated wallet balance/history routes, admin direct
+  deposit, MTN MoMo initiation/status/callback, and generic payment callback.
+- MoMo initiation already creates a durable pending request before calling
+  MTN, scopes status reads to the signed-in user, and only settles after an
+  authenticated MTN status response matches the local amount, currency, and
+  external request ID. Callback payloads are treated as signals to re-check
+  that authenticated provider status, rather than as payment proof.
+- Fixed concurrent MoMo initiation with a reused idempotency key. The database
+  unique constraint now resolves the race by returning the existing payment
+  when its user, wallet, amount, and normalized phone match; reuse with
+  different details is rejected. The losing request does not submit a second
+  charge request to MTN.
+- Wallet deposit idempotency previously accepted an existing key even when
+  the requested wallet or amount differed. It now raises a conflict unless
+  wallet, deposit type, amount, and supplied user match.
+- Wallet transaction-history paging and type filters now have runtime Zod
+  validation, retain the existing 1–500 page size range, and reject invalid
+  values instead of passing `NaN` or silently dropping an invalid filter.
+  Wallet balance/history and admin deposit routes now log server errors while
+  returning a generic 500 message instead of exposing raw error text.
+
+### Open financial contract issue
+
+- `POST /api/webhooks/payment` verifies an HMAC signature, then allows the
+  signed payload to select a wallet/user and amount and credits it directly.
+  No in-repository provider adapter, payment-intent/charge record, reference
+  ownership check, or callback contract was found to link that success event to
+  a payment initiated by the application. A valid signature proves the sender,
+  but the current handler does not prove a corresponding provider charge.
+- Do not enable this webhook for real payments until the provider contract and
+  source of truth are identified. Safe resolution options are to match callback
+  references against persisted payment intents and verify the provider charge,
+  or disable success credits for this generic route and use a provider-specific
+  verified settlement path. The intended provider and contract must be
+  established before selecting the behavior because this affects real wallet
+  balances. This remains a release blocker if this route is configured.
+
+### Verification and remaining work
+
+- `tests/unit/mtn-momo-settlement.test.ts` and
+  `tests/unit/wallet-deposit-idempotency.test.ts` passed 4/4; the combined
+  post-fix focused API-key/session/quota/payment run passed 21/21.
+- Latest repository-wide TypeScript check passed. Scoped lint passed for all
+  changed source and test files, and the production build generated all 174
+  static pages. Repository-wide lint remains unverified because it was stopped
+  after prolonged execution and high memory use.
+- The generic payment callback contract remains unresolved as described above.
+  This focused pass does not close the endpoint-by-endpoint API, persistence,
+  provider, or cross-project audit.
+

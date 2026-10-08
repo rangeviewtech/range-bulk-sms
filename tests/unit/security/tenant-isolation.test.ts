@@ -31,6 +31,7 @@ describe('Security: API Keys and Tenant Verification', () => {
       clientId: null,
       scopes: ['sms.send'],
     } as never);
+    prismaMock.apiKey.updateMany.mockResolvedValue({ count: 1 } as never);
 
     const result = await verifyApiKey(keyData.key);
     expect(result.isValid).toBe(true);

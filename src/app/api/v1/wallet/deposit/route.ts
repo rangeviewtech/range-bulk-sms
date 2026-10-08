@@ -5,6 +5,7 @@ import { depositSchema } from '@/lib/validations/wallet';
 import { logAudit } from '@/lib/security/audit';
 import { AppError } from '@/lib/errors';
 import { Prisma } from '@/lib/prisma';
+import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -52,10 +53,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, data: result });
   } catch (error: unknown) {
     if (error instanceof AppError) {
-      return NextResponse.json({ error: error.message }, { status: error.statusCode });
+      if (error.statusCode < 500) {
+        return NextResponse.json({ error: error.message }, { status: error.statusCode });
+      }
+      logger.error('Administrative wallet deposit failed', { error });
+      return NextResponse.json({ error: 'Unable to process the deposit right now' }, { status: 500 });
     }
-    const message = error instanceof Error ? error.message : 'Internal Server Error';
-    return NextResponse.json({ error: message }, { status: 500 });
+    logger.error('Administrative wallet deposit failed', { error });
+    return NextResponse.json({ error: 'Unable to process the deposit right now' }, { status: 500 });
   }
 }
 
