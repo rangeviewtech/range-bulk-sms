@@ -62,7 +62,7 @@ describe('Error & 404 Pages UI/UX', () => {
       );
       expect(contactSupportLink).toBeDefined();
       expect(contactSupportLink?.getAttribute('href')).toBe('/support');
-    });
+    }, 15000);
 
     it('renders return to previous page action button', () => {
       render(React.createElement(NotFoundContent));

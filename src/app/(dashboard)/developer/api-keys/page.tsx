@@ -98,6 +98,9 @@ interface ApiResponseMeta {
 }
 
 const AVAILABLE_SCOPES = [
+  { id: 'profile.read', label: 'profile.read', desc: 'Read your account profile' },
+  { id: 'dashboard.read', label: 'dashboard.read', desc: 'Read your dashboard summary' },
+  { id: 'reports.read', label: 'reports.read', desc: 'Read account reports and analytics' },
   { id: 'sms.send', label: 'sms.send', desc: 'Send SMS messages and bulk campaigns' },
   { id: 'sms.status', label: 'sms.status', desc: 'Read delivery statuses and message receipts' },
   { id: 'sms.schedule', label: 'sms.schedule', desc: 'Schedule future SMS dispatches' },
@@ -105,7 +108,9 @@ const AVAILABLE_SCOPES = [
   { id: 'contacts.read', label: 'contacts.read', desc: 'Read contacts and audience groups' },
   { id: 'contacts.write', label: 'contacts.write', desc: 'Create and update contacts' },
   { id: 'campaigns.read', label: 'campaigns.read', desc: 'Read broadcast campaign analytics' },
+  { id: 'campaigns.write', label: 'campaigns.write', desc: 'Create and manage campaigns' },
   { id: 'sender_ids.read', label: 'sender_ids.read', desc: 'Check approved alphanumeric Sender IDs' },
+  { id: 'delivery_reports.read', label: 'delivery_reports.read', desc: 'Read delivery report details' },
   { id: 'webhooks.manage', label: 'webhooks.manage', desc: 'Configure webhook endpoints and events' },
 ];
 

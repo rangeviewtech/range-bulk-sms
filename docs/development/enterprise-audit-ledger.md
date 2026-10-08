@@ -905,3 +905,45 @@ Continue those sections before describing the projects as fully audited or
 production-certified. All previously listed secret rotation, staging,
 hardware, provider, Android SDK, Firefox, and Deep Scan limitations remain.
 
+## API session authorization continuation — 2026-10-08
+
+### Finding and fix
+
+- Reviewed every current `withApiKey` use under `src/app/api/v1`. The session
+  branch previously accepted a valid-looking session by checking only a subset
+  of database state, then granted `scopes: ['*']`. This bypassed the normal
+  database-authoritative MFA, screen-lock, idle-expiry, identity-match, and
+  role-permission checks for SMS, wallet, contacts, sender-ID, reporting, and
+  dashboard calls.
+- Added direct request-token validation against the database session. It checks
+  token/session user identity, active account, revocation, absolute and idle
+  expiry, database MFA completion, and screen-lock state from both the signed
+  token and lock cookie. Session requests now map route scopes to the existing
+  role permissions; unknown scoped actions fail closed.
+- The self-profile, dashboard-summary, and reports-summary routes had no
+  required scope. Added `profile.read`, `dashboard.read`, and `reports.read`
+  scopes in API-key validation and the developer key form. `reports.read` also
+  requires `reports.view` for session callers; self-profile and dashboard
+  access remain limited to the authenticated account's own data.
+- Existing API keys need the matching new scope selected before they can call
+  those three endpoints. This is an intentional authorization tightening and
+  requires key owners to update/reissue affected keys.
+- Added tests for request-session validity and wrapper authorization behavior,
+  including identity mismatch, expired/revoked/idle-expired/inactive sessions,
+  incomplete MFA, screen lock, and denied role permissions.
+
+### Verification and remaining work
+
+- Focused API-key/session suites passed 14/14 after the final test-environment
+  correction. A full web lint and TypeScript check passed. The full test run
+  completed with 704/705 passing; the only failure was a 5-second timeout in
+  a 404 support-link assertion. Aligned that test with the 15-second timeout
+  used by neighboring render tests; the affected error-page and authorization
+  suites then passed 23/23. The full suite has not been rerun after this test
+  timeout adjustment. The production build passed and generated all 174 static
+  pages. `git diff --check` passed.
+- The endpoint inventory scan found no remaining `withApiKey(req, '')` route.
+- This reviewed the shared wrapper and all of its v1 call sites, not every
+  route's complete validation, resource ownership, transaction, or provider
+  failure behavior. The broader route-by-route audit remains open.
+

@@ -3,7 +3,7 @@ import { withApiKey } from '@/lib/api-keys/service';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
-  return withApiKey(req, '', async (_request, context) => {
+  return withApiKey(req, 'profile.read', async (_request, context) => {
     try {
       if (!context.userId) {
         return NextResponse.json({ success: false, error: 'User context not found' }, { status: 401 });

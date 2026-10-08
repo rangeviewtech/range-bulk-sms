@@ -23,6 +23,7 @@ export const createApiKeySchema = z.object({
   appName: z.string().min(2, 'App name must be at least 2 characters').max(100).default('Default App'),
   environment: z.enum(API_ENVIRONMENTS).default('production'),
   scopes: z.array(z.enum([
+    'profile.read', 'dashboard.read', 'reports.read',
     'sms.send', 'sms.status', 'sms.schedule',
     'balance.read', 'contacts.read', 'contacts.write',
     'campaigns.read', 'campaigns.write',

@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma';
 const periodSchema = z.enum(['24H', '7D', '30D', 'ALL']).default('7D');
 
 export async function GET(req: NextRequest) {
-  return withApiKey(req, '', async (_request, context) => {
+  return withApiKey(req, 'reports.read', async (_request, context) => {
     if (!context.userId) {
       return NextResponse.json({ success: false, error: 'Unauthorized context' }, { status: 401 });
     }

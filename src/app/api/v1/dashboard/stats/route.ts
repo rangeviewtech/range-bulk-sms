@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { WalletService } from '@/lib/wallet/service';
 
 export async function GET(req: NextRequest) {
-  return withApiKey(req, '', async (_request, context) => {
+  return withApiKey(req, 'dashboard.read', async (_request, context) => {
     try {
       if (!context.userId) {
         return NextResponse.json({ success: false, error: 'Unauthorized context' }, { status: 401 });

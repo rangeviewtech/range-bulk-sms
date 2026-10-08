@@ -239,7 +239,25 @@ export async function resetApiKeyQuota(apiKeyId: string): Promise<{ success: boo
   return { success: true, nextResetAt: nextReset };
 }
 
-import { decrypt } from '@/lib/auth/session';
+import { decrypt, verifyRequestSessionToken } from '@/lib/auth/session';
+import { hasPermission } from '@/lib/auth/authorization';
+
+const SESSION_SCOPE_PERMISSIONS: Record<string, string | null> = {
+  'profile.read': null,
+  'dashboard.read': null,
+  'reports.read': 'reports.view',
+  'sms.send': 'sms.send',
+  'sms.status': 'sms.view',
+  'sms.schedule': 'sms.schedule',
+  'balance.read': 'wallet.view',
+  'contacts.read': 'contacts.view',
+  'contacts.write': 'contacts.manage',
+  'campaigns.read': 'campaigns.manage',
+  'campaigns.write': 'campaigns.create',
+  'sender_ids.read': 'sender_ids.view',
+  'delivery_reports.read': 'sms.view',
+  'webhooks.manage': 'webhooks.manage',
+};
 
 export async function withApiKey(
   req: NextRequest, 
@@ -262,26 +280,39 @@ export async function withApiKey(
     return Response.json({ error: 'Unauthorized: Missing or invalid token format' }, { status: 401 });
   }
 
-  // 1. Check if token is a valid User Session JWT (Mobile Bearer token or web cookie)
-  try {
-    const sessionData = await decrypt(token);
-    if (sessionData && typeof sessionData.sessionId === 'string' && typeof sessionData.userId === 'string') {
-      const session = await prisma.session.findUnique({
-        where: { id: sessionData.sessionId },
-        include: { user: true },
-      });
-
-      if (session && !session.revokedAt && session.expiresAt > new Date() && session.user.status === 'ACTIVE') {
-        return handler(req, {
-          userId: session.userId,
-          appName: 'Mobile App / Web Session',
-          environment: 'production',
-          scopes: ['*'],
-        });
-      }
+  // 1. Check if token is a user session (mobile bearer token or web cookie).
+  // User sessions must use the same DB-authoritative MFA, expiry, idle-timeout,
+  // lock, and role authorization rules as the web application.
+  const sessionData = await decrypt(token);
+  if (sessionData && typeof sessionData.sessionId === 'string' && typeof sessionData.userId === 'string') {
+    const sessionResult = await verifyRequestSessionToken(
+      token,
+      req.cookies.get('screen_locked')?.value
+    );
+    if (!sessionResult?.userId) {
+      const status = sessionResult?.error === 'mfa_required' || sessionResult?.error === 'screen_locked' ? 403 : 401;
+      const code = sessionResult?.error === 'mfa_required'
+        ? 'MFA_REQUIRED'
+        : sessionResult?.error === 'screen_locked'
+          ? 'SCREEN_LOCKED'
+          : 'UNAUTHORIZED';
+      return Response.json({ error: 'Unauthorized', code }, { status });
     }
-  } catch {
-    // Not a JWT or expired, continue to API key verification
+
+    const permission = SESSION_SCOPE_PERMISSIONS[requiredScope];
+    if (requiredScope && permission === undefined) {
+      return Response.json({ error: 'Forbidden: Scope is not available to user sessions' }, { status: 403 });
+    }
+    if (permission && !(await hasPermission(sessionResult.userId, permission))) {
+      return Response.json({ error: 'Forbidden: Insufficient permissions', code: 'FORBIDDEN' }, { status: 403 });
+    }
+
+    return handler(req, {
+      userId: sessionResult.userId,
+      appName: 'Mobile App / Web Session',
+      environment: 'production',
+      scopes: requiredScope ? [requiredScope] : [],
+    });
   }
 
   // 2. Verify as Developer API Key
