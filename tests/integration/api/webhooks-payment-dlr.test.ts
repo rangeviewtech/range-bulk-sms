@@ -159,7 +159,9 @@ describe('Inbound Webhooks (Payment & Delivery Receipts)', () => {
         status: 'DELIVERED',
       } as never);
 
-      prismaMock.messageRecipient.count.mockResolvedValue(0); // 0 remaining pending
+      // The transactional status reconciler reads recipient states after the
+      // delivery receipt update to derive the parent message status.
+      prismaMock.messageRecipient.findMany.mockResolvedValue([{ status: 'DELIVERED' }] as never);
       prismaMock.message.update.mockResolvedValue({
         id: 'msg-parent-1',
         status: 'DELIVERED',

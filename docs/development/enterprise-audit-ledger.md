@@ -743,3 +743,106 @@ toggle.
   against a deployed database and real provider/device. Those integrations
   were not exercised here.
 
+## Four-project integration and reliability review — 2026-10-08
+
+### Repository map and baseline
+
+| Project | Tracked paths | Architecture and responsibility | Initial state |
+| --- | ---: | --- | --- |
+| Web | 1,296 | Next.js 16.3.8 App Router, React 19.2.8, TypeScript, Prisma 7/PostgreSQL. Canonical user/business API, authentication, billing, SMS orchestration, webhooks, reports, and queue processing. | `feat/unified-ui-responsive-design-system`, clean at `1eeacf5`. |
+| Mobile | 64 | Expo SDK 57 / Expo Router, React Native 0.86.3. Client companion calling the web `/api/v1` routes; session token stored in SecureStore. | `master`, clean at `1d36e24`. |
+| Android gateway | 70 | Expo SDK 57 gateway companion plus custom Android SMS module, local SQLite queue, SecureStore device token, and background/foreground sync. | `master`, clean at `4a4de66`. |
+| ESP32 firmware | 30 | PlatformIO/Arduino ESP32 firmware. Owns modem/SIM hardware, local telemetry, TLS API client, and physical SMS transport. | `main`, clean at `fc92ded`. |
+
+`git ls-files` counts above include each repository's tracked documentation and
+configuration. Vendor/install output and generated builds remain classified as
+generated and are not included in those tracked counts. The repositories are
+separate Git projects, not a single workspace; shared contracts currently live
+in the web API and matching clients/docs.
+
+### Cross-project flow and contract
+
+The web API owns account permissions, campaign validation, pricing, wallet
+debits, per-recipient attempt creation/retry, aggregate statuses, and payment
+settlement. The mobile client calls user-session routes for MFA, dashboard,
+messages/reports, SMS send, wallet, contacts, sender IDs, and gateways. The
+Android gateway and ESP32 use device-token routes for pairing, heartbeat, queue
+claim, attempt results, incoming messages, and firmware checks. Hardware
+gateways send through local modem/SMS hardware and report one attempt result;
+they do not calculate price or independently retry business attempts.
+
+Mobile is a focused client companion, not a clone of all web workflows. The
+current parity boundary and missing web client features remain documented in
+the earlier API connectivity and parity section. Admin/agent functions remain
+web-only. Production API origin, passkey support on mobile, and push delivery
+remain external/product requirements.
+
+### Verified issues and changes in this pass
+
+- Android delivery callbacks were read from a destructive native getter before
+  the server acknowledged them. A network failure could permanently lose a
+  carrier result. The native getter now preserves the local outbox; the worker
+  removes only result events acknowledged by the API (or stale terminal events
+  rejected with 409).
+- Foreground/background sync could overlap because the app triggers polling
+  every 10 seconds while network calls can run up to 15 seconds. A process-local
+  sync guard now prevents duplicate queue processing within one app runtime.
+- Incoming SMS were also cleared from Android native storage before they were
+  persisted locally, and SIM slot `0` was lost through a truthy-value check.
+  Native inbox acknowledgement now happens after a duplicate-safe SQLite
+  insert, slot `0` is preserved, and local logs no longer include sender data.
+- The unauthenticated ESP32 local dashboard exposed subscriber IMEI/phone and
+  USSD balance, plus WiFi SSID, MAC, and the configured backend URL. These
+  values are removed from the local HTML/JSON view; remaining modem-sourced
+  text is HTML-escaped.
+- Serial diagnostics included incoming SMS sender and message body. They now
+  log only that an SMS arrived and which SIM received it.
+- ArduinoOTA was started without an authentication password, permitting a
+  reachable local network client to attempt firmware flashing. Local ArduinoOTA
+  now remains disabled unless a valid 32-character password hash is provided
+  by trusted build configuration. Backend FOTA remains separately gated by a
+  configured HTTPS firmware artifact.
+- Firmware diagnostic logging no longer prints the configured backend URL,
+  which could otherwise expose accidental URL credentials or query values.
+- Updated the delivery webhook integration fixture to model the transactional
+  recipient read used by the status reconciler. Raised timeouts only for the
+  specific error-page tests that timed out under the full suite's worker load;
+  all nine pass in isolated execution.
+
+### Verification and unresolved risks
+
+- Web typecheck, full ESLint, and Next production build passed. The first full
+  Vitest run passed 692/696; three failures were timeout-only under full load
+  and the remaining test fixture lacked the transaction reconciler's recipient
+  read. After correcting those test conditions, the full suite passed 696/696
+  across 110 files.
+- Web production dependency audit (`npm audit --omit=dev --audit-level=high`)
+  found zero vulnerabilities.
+- Mobile and gateway TypeScript, lint, Android JavaScript export, and Expo
+  dependency compatibility checks passed in this review. Their production
+  dependency audits each still report 36 advisories (21 high, 15 moderate) in
+  transitive Expo/Metro/NativeWind dependency paths. Automated suggested fixes
+  cross Expo/Tailwind major versions; do not force-apply without an SDK upgrade
+  plan. A native signed build and hardware delivery test remain unverified.
+- ESP32 PlatformIO compilation passed after the security and warning fixes via
+  `python -m platformio run`. Physical modem, SIM, WiFi, OTA, and deployed
+  TLS/API behavior remain unverified. The second PlatformIO compile reported
+  only pre-existing ArduinoJson deprecation and C++ standard warnings; these
+  were corrected, and the final compile completed successfully with no compiler
+  warnings in its output.
+- The Android gateway changes include a Kotlin native module; this host has no
+  Android SDK/Gradle installation, so a signed/native Android build and Kotlin
+  compilation were not verified. Expo Android export verifies the JavaScript
+  bundle only.
+- Chrome DevTools MCP is unavailable. No authenticated browser journey or live
+  staging API/device flow was exercised during this pass.
+- The required Codex Security Deep Scan did not start. Exact tool result:
+  `Deep Scan cannot safely start a read-only worker: the parent must provide a
+  managed filesystem permission profile.` The account access check was
+  `not_granted`; no scan report exists and no substitute scan was started.
+- No production database migration, live MTN transaction, mobile production
+  API URL, firmware signing artifact, or physical gateway test was performed.
+  The Upstash REST token and GitHub personal access token previously pasted in
+  conversation must be rotated before production use; this ledger never stores
+  either value.
+
