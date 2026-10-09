@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { JobWorker } from "@/lib/queue/worker";
 import { prisma } from "@/lib/prisma";
 import { ProviderCircuitBreaker } from "@/lib/sms/circuit-breaker";

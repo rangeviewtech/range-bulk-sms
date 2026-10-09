@@ -104,5 +104,5 @@ describe('OpenAPI 3.0.3 Authoritative Contract Specification', () => {
     expect(specString).not.toContain('SESSION_SECRET');
     expect(specString).not.toContain('ENCRYPTION_KEY');
     expect(specString).not.toContain('JWT_SECRET');
-  });
+  }, 15_000);
 });

@@ -1357,3 +1357,90 @@ hardware, provider, Android SDK, Firefox, and Deep Scan limitations remain.
   response said they could not sign in yet; browser MCP also remains
   unavailable.
 
+## Local scheduled worker verification — 2026-10-10
+
+- The user requested local implementation and testing only. No deployment,
+  staging database, or production database was changed.
+- Found that the standalone `npm run worker` entry point did not load `.env`,
+  unlike the Next.js development server. Added `import "dotenv/config"` at
+  the worker entry point so local database, Redis, and worker settings are
+  available when launched from the package script. A local environment probe
+  confirmed database and Upstash variables are loaded without printing them.
+- The standalone `npm run worker` loop is the recurring local queue trigger;
+  it polls due jobs continuously and includes `scheduled-sms.dispatch`. The
+  Next.js `/api/cron/process-jobs` route is an alternate authenticated batch
+  trigger, not a separate required scheduler for a local daemon setup.
+- Verification after the worker startup fix: TypeScript passed; scoped ESLint
+  passed; scheduled dispatcher, queue-worker isolation, cron auth, and cron
+  scheduler test suites passed (4 files, 11 tests); Next.js 16.3.8 Turbopack
+  reported no compilation issues; local login rendered with HTTP 200; the
+  cron route returned 401 without authorization; browser console had no
+  errors; accessibility scan reported 0 WCAG 2 A/AA violations; production
+  build generated 174 static pages successfully. `git diff --check` passed
+  (Git printed only the configured LF-to-CRLF conversion notice).
+- The existing local `master_template` database remains untouched because its
+  migration history is absent and its schema differs from the checked-in
+  migration chain. A fresh disposable database was created for a follow-up
+  migration recheck, but this attempt ended with a Prisma schema-engine error
+  without diagnostic detail; the disposable database was removed. The earlier
+  isolated migration run recorded above had succeeded, but this second attempt
+  was not reproducible in this run. No worker was pointed at the drifted
+  database and no provider send was attempted.
+- Live SMS still needs Pandora credentials and a configured approved sender.
+  Authenticated scheduled-page behavior still needs a signed-in local test
+  account. The full audit, staging provider flow, and deployment readiness
+  remain open.
+
+## Cross-project local validation — 2026-10-10
+
+- Refreshed all four checkout states. Web is on
+  `feat/unified-ui-responsive-design-system` at `f2d7c17` with local worker and
+  ledger changes. Mobile is on `master` at `dac45a4`, gateway on `master` at
+  `230e20e`, and firmware on `main` at `3a4c3f6`; those three checkouts were
+  clean and matched their configured upstream refs at inspection.
+- Mobile and gateway share the same `EXPO_PUBLIC_API_URL` normalization to
+  `/api/v1`, bearer authentication, timeout handling, and production HTTPS
+  requirement. Static path comparison confirmed the mobile's auth, dashboard,
+  SMS send, wallet, sender-ID, contacts, and gateway operations have matching
+  web API route handlers. The gateway's pair, heartbeat, queue, incoming SMS,
+  result, and firmware-check paths also match web route handlers. Firmware
+  normalizes its saved backend URL to `/api/v1` and uses the same device API
+  paths. This is source-contract verification, not proof of a live connection.
+- Expo doctor passed 21/21 checks in both React Native projects. TypeScript and
+  lint passed in mobile and gateway. Android JavaScript exports succeeded for
+  both apps (1,669 mobile modules and 1,336 gateway modules). PlatformIO
+  successfully compiled the ESP32 target: 54,480/327,680 bytes RAM and
+  1,255,673/1,966,080 bytes flash.
+- Mobile and gateway have no local `.env`; both `.env.example` files leave
+  `EXPO_PUBLIC_API_URL` blank. Neither app config has an EAS project ID, and
+  this machine has no Android SDK, `adb`, Gradle, or EAS CLI. Native gateway
+  builds, signed mobile artifacts, device permissions, modem sending, and
+  background execution were not verified.
+- The mobile screen inventory currently covers login/MFA, dashboard, immediate
+  campaigns, contacts/groups, wallet, reports, gateways, and settings. It does
+  not implement the web app's scheduled-send management, drafts/templates,
+  detailed delivery-report, support, or developer-key screens. This is a
+  documented feature-parity gap, not a route-connectivity failure; user intent
+  to make the mobile app an exact clone still needs a deliberate scope and
+  implementation pass.
+- The full web suite passed after correcting a load-sensitive test timeout:
+  115 test files and 725 tests passed. The OpenAPI secret-marker check's
+  timeout was raised from 5 to 15 seconds; its isolated contract file passed
+  6/6, followed by the clean full-suite rerun.
+- Refreshed package audit results: web has five high-severity findings in the
+  development ESLint/Next lint-tool dependency chain and zero production
+  dependency advisories. Mobile and gateway each report 36 advisories (21
+  high, 15 moderate), including their production dependency trees. Suggested
+  automated web remediation downgrades `eslint-config-next` across the
+  installed Next.js major, so it was not applied. No compatible, low-risk fix
+  for the mobile/gateway set was verified; these remain dependency release
+  blockers to triage before deployment.
+- Local source/build validation is strong, but deployment is not certified and
+  the four projects are not yet proven error-free or fully feature-equivalent.
+  Required items still include correctly
+  migrating the intended database, setting API URLs and secrets in the actual
+  deploy environments, valid SMS/payment provider configuration, authenticated
+  user journeys, native Android/device testing, and a production cron/worker
+  topology. Existing provider, payment callback, security-scan, and hardware
+  blockers remain tracked above.
+
