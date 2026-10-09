@@ -1,7 +1,11 @@
 import { z } from 'zod';
 
+// Send forms select the stored UUID; API clients may also use the sender label.
+// The 11-character network limit applies to labels, not database references.
+export const senderReferenceSchema = z.union([z.string().uuid(), z.string().max(11)]);
+
 export const sendSmsSchema = z.object({
-  senderId: z.string().max(11, 'Sender ID max 11 chars').optional(),
+  senderId: senderReferenceSchema.optional(),
   gatewayId: z.string().optional(),
   recipients: z.array(z.string().min(1)).min(1, 'At least one recipient is required').max(10000, 'Maximum 10,000 recipients per request'),
   message: z.string().min(1, 'Message is required').max(3200, 'Message too long (max 20 segments)'),
@@ -26,7 +30,7 @@ export const scheduleSmsSchema = sendSmsSchema.extend({
 // Campaign creation schema
 export const createCampaignSchema = z.object({
   name: z.string().min(2, 'Campaign name required').max(100),
-  senderId: z.string().max(11).optional().nullable(),
+  senderId: senderReferenceSchema.optional().nullable(),
   message: z.string().min(1, 'Message required').max(3200),
   variables: z.array(z.string()).default([]),
   groupIds: z.array(z.string().uuid()).default([]),

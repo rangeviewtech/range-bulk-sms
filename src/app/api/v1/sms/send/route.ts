@@ -178,9 +178,11 @@ export async function POST(req: NextRequest) {
       if (senderId && !isHardwareGateway) {
         const validSender = await prisma.senderId.findFirst({
           where: {
-            id: senderId,
             status: 'APPROVED',
-            OR: [...(userId ? [{ userId }] : []), ...(clientId ? [{ clientId }] : [])],
+            AND: [
+              { OR: [{ id: senderId }, { senderId }] },
+              { OR: [...(userId ? [{ userId }] : []), ...(clientId ? [{ clientId }] : [])] },
+            ],
           },
         });
         if (!validSender) {

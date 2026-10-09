@@ -9,6 +9,7 @@ import { countSms } from '@/lib/sms/counter';
 import { FraudPrevention } from '@/lib/security/fraud-prevention';
 import { RegulatoryEngine } from '@/lib/compliance/regulatory-engine';
 import { verifyAuthenticatedSession } from '@/lib/auth/session';
+import { senderReferenceSchema } from '@/lib/validations/sms';
 
 const historyQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
@@ -75,7 +76,7 @@ export async function GET(req: Request) {
 const sendDirectMessageSchema = z.object({
   recipients: z.array(z.string().min(1)).min(1).max(100),
   message: z.string().min(1).max(1600),
-  senderId: z.string().min(1).max(11),
+  senderId: senderReferenceSchema.refine((value) => value.length > 0, 'Sender ID is required'),
   gatewayId: z.string().optional(),
   purpose: z.enum(["MARKETING", "TRANSACTIONAL", "SYSTEM"]).default("TRANSACTIONAL"),
   externalId: z.string().optional(),

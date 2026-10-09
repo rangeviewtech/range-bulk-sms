@@ -3,6 +3,10 @@ import { Job, JobPriority, Prisma } from '@/generated/prisma';
 
 import crypto from 'crypto';
 
+export const COMMUNICATION_JOB_TYPES = [
+  'send-email', 'send-sms', 'send-telegram', 'send-whatsapp', 'send-in-app',
+] as const;
+
 function encryptPayload(payload: unknown): unknown {
   const secretKey = process.env.PAYLOAD_ENCRYPTION_KEY || process.env.AUTH_SECRET;
   if (!secretKey || secretKey.length < 32) return payload; // Fallback if not configured properly, though ideally we should throw
@@ -116,6 +120,7 @@ export async function claimJobs(
         AND "availableAt" <= NOW()
         AND ("lockedAt" IS NULL)
         AND queue IN (${queueList})
+        AND type IN (${Prisma.join(COMMUNICATION_JOB_TYPES)})
       ORDER BY
         CASE priority
           WHEN 'CRITICAL'::"JobPriority" THEN 1
@@ -190,6 +195,7 @@ export async function recoverStuckJobs(staleMinutes: number = 10) {
         "failedAt" = NOW(), "updatedAt" = NOW(),
         "lockedAt" = NULL, "lockedBy" = NULL,
         "lastError" = 'Worker crashed or timed out (recovered)'
-    WHERE "status" = 'PROCESSING'::"JobStatus" AND "lockedAt" <= ${staleDate};
+    WHERE "status" = 'PROCESSING'::"JobStatus" AND "lockedAt" <= ${staleDate}
+      AND type IN (${Prisma.join(COMMUNICATION_JOB_TYPES)});
   `;
 }

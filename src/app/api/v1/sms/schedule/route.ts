@@ -4,6 +4,7 @@ import { scheduleSmsSchema } from '@/lib/validations/sms';
 import { prisma, Prisma } from '@/lib/prisma';
 import { WalletService } from '@/lib/wallet/service';
 import { isSandboxRequest } from '@/lib/sms/sandbox';
+import { AppError } from '@/lib/errors';
 
 export async function POST(req: NextRequest) {
   return withApiKey(req, 'sms.schedule', async (request, context) => {
@@ -61,31 +62,52 @@ export async function POST(req: NextRequest) {
         return Response.json({ error: 'Unable to associate message with an active user account' }, { status: 400 });
       }
 
+      let validSenderId: string | null = null;
+      if (senderId) {
+        const sender = await prisma.senderId.findFirst({
+          where: {
+            status: 'APPROVED',
+            AND: [
+              { OR: [{ id: senderId }, { senderId }] },
+              { OR: [...(userId ? [{ userId }] : []), ...(clientId ? [{ clientId }] : [])] },
+            ],
+          },
+          select: { id: true },
+        });
+        if (!sender) {
+          return Response.json({ success: false, error: 'Specified Sender ID is invalid, unapproved, or does not belong to you' }, { status: 400 });
+        }
+        validSenderId = sender.id;
+      }
+
       const units = recipients.length;
       const estimatedCost = units * 10;
       const decimalCost = new Prisma.Decimal(estimatedCost);
 
       const wallet = await WalletService.getOrCreateWallet({ userId, clientId });
-      await WalletService.deduct(wallet.id, decimalCost, {
-        userId: messageUserId,
-        description: `v1 API Scheduled SMS (${units} recipients)`,
-      });
-
-      const schedMsg = await prisma.scheduledMessage.create({
-        data: {
+      const schedMsg = await prisma.$transaction(async (tx) => {
+        await WalletService.deduct(wallet.id, decimalCost, {
           userId: messageUserId,
-          senderIdId: senderId || null,
-          message,
-          recipients,
-          recipientCount: recipients.length,
-          totalUnits: units,
-          estimatedCost,
-          scheduledAt: new Date(scheduledAt),
-          timezone,
-          isRecurring,
-          cronExpression,
-          status: 'SCHEDULED',
-        },
+          description: `v1 API Scheduled SMS (${units} recipients)`,
+          tx,
+        });
+
+        return tx.scheduledMessage.create({
+          data: {
+            userId: messageUserId,
+            senderIdId: validSenderId,
+            message,
+            recipients,
+            recipientCount: recipients.length,
+            totalUnits: units,
+            estimatedCost,
+            scheduledAt: new Date(scheduledAt),
+            timezone,
+            isRecurring,
+            cronExpression,
+            status: 'SCHEDULED',
+          },
+        });
       });
 
       return Response.json({
@@ -95,8 +117,14 @@ export async function POST(req: NextRequest) {
         scheduledAt: schedMsg.scheduledAt,
       });
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      return Response.json({ error: message }, { status: 400 });
+      if (error instanceof AppError && error.statusCode < 500) {
+        return Response.json({ success: false, error: error.message }, { status: error.statusCode });
+      }
+      if (error instanceof Error && error.message === 'Insufficient funds') {
+        return Response.json({ success: false, error: 'Your wallet does not have enough funds for this scheduled message.' }, { status: 400 });
+      }
+      console.error('[API_V1_SMS_SCHEDULE_ERROR]', error);
+      return Response.json({ success: false, error: 'Unable to schedule messages right now. Please try again.' }, { status: 500 });
     }
   });
 }

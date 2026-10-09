@@ -1159,3 +1159,89 @@ hardware, provider, Android SDK, Firefox, and Deep Scan limitations remain.
 - This update does not close the cross-project, route-by-route, staging,
   hardware, or payment-provider review items above.
 
+## Deployment-readiness continuation — 2026-10-09
+
+### Confirmed defects addressed
+
+- Sender selectors submit `SenderId.id` UUIDs, but shared send/schedule/campaign
+  validation limited the value to 11 characters. The shared reference schema
+  now accepts a UUID or the existing short sender label; actual registration
+  still enforces the sender-label limit. The v1 send API now resolves either
+  representation within the approved user/client ownership scope.
+- The v1 schedule route did not validate sender ownership and deducted funds
+  before independently inserting the schedule. It now resolves an approved
+  owned sender, stores the canonical reference, and performs deduction plus
+  schedule creation in one transaction. Unexpected errors are no longer
+  returned verbatim. This does not implement schedule dispatch or change the
+  current schedule pricing policy.
+- `JobWorker` and `processJobsBatch` share the Job table but support different
+  job types. Both previously selected jobs outside their handler sets, causing
+  unsupported-job failures when both ran. Claims and lease recovery now filter
+  by supported types. Recovery of campaign-worker leases also clears lockedBy.
+
+### Corrections and additional release blockers
+
+- Correction to the previous compliance note: `send-sms` jobs created by
+  `/api/v1/sms/send` are handled by `src/lib/jobs/processor.ts`, which calls
+  Pandora directly. The compliance check in `sms-dispatcher.ts` handles the
+  distinct `sms.dispatch` job type. Its marketing default cannot be assumed
+  to protect the mobile-send path. Purpose/consent alignment remains open.
+- Scheduling is not connected end to end: the SMS schedule handlers insert
+  ScheduledMessage records, but CronScheduler.tick reads ScheduledJob records.
+  No worker reading due ScheduledMessage records was found in the source
+  search. Stored schedules and successful API responses do not establish
+  actual scheduled delivery. One-off and recurring execution, cancellation
+  races, consent, and pricing/rebilling require completion before release.
+- The existing schedule estimate remains 10 currency units per recipient,
+  unlike the destination/segment pricing used by immediate sending. This
+  billing discrepancy is not resolved by the transaction fix.
+- Correction to prior mobile lint notes: the repository's configured command
+  is `npm run lint` (eslint over the project), which passed in this continuation.
+  The missing-components error was from separately invoking `expo lint`, not
+  from the configured project command.
+- Database SELECT 1 and an authenticated Upstash REST PING both succeeded in
+  read-only checks. The first local readiness endpoint request returned 503
+  with unhealthy database/degraded Redis; repeat and production-load readiness
+  remain important. No production SMS or payment was initiated.
+
+### Verification results — 2026-10-10
+
+- Full web Vitest suite passed: 114 test files, 720 tests, one worker. The
+  targeted SMS send/schedule, worker isolation, form, and session-idle suites
+  also passed independently: 5 files, 22 tests.
+- Web TypeScript check passed. ESLint passed for all changed source and test
+  files. The Next.js 16.3.8 production build passed and generated 174 pages.
+  Repository-wide web lint was not rerun; its earlier run was stopped after
+  high memory use.
+- Mobile TypeScript (`npx tsc --noEmit`) and configured `npm run lint` passed.
+- Gateway TypeScript and configured lint passed.
+- ESP32 firmware compiled successfully with PlatformIO using one build worker.
+  The image uses 54,480 of 327,680 bytes RAM and 1,255,673 of 1,966,080 bytes
+  flash. The upstream Arduino framework emitted repeated
+  `CONFIG_ARDUHAL_LOG_DEFAULT_LEVEL` redefinition warnings.
+- `git diff --check` passed. The local database `SELECT 1` and Upstash REST
+  `PING` succeeded in the read-only checks recorded above; a repeated local
+  readiness request returned healthy after an initial 503. These checks do
+  not establish production availability or load capacity.
+- The login page rendered in the named agent-browser session, and Next.js
+  reported no compilation, configuration, or session errors. The user said
+  they cannot sign in yet, so authenticated browser journeys, role access,
+  and protected-page behavior remain unverified. No live SMS or payment was
+  sent; no real modem or ESP32 hardware was exercised.
+
+### Audit status and remaining release blockers
+
+- This remains an incomplete production-readiness audit. Scheduled SMS
+  execution is not wired to the stored ScheduledMessage records, schedule
+  pricing differs from immediate sending, and cancellation/refund races need
+  resolution. These need implementation before claiming the SMS lifecycle is
+  production ready.
+- Payment callback reference creation and authoritative provider verification,
+  campaign purpose/consent policy, credential rotation, the unavailable
+  managed security scan, real carrier/payment staging checks, hardware
+  delivery, and uncertain-send recovery remain open.
+- Full endpoint-by-endpoint review and authenticated browser verification
+  across web, mobile, gateway, and firmware are not complete. Passing local
+  builds and tests do not establish that all four applications are free of
+  defects or ready for deployment.
+

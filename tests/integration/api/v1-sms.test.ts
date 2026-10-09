@@ -4,6 +4,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { POST as sendV1 } from '@/app/api/v1/sms/send/route';
 import { POST as bulkV1 } from '@/app/api/v1/sms/bulk/route';
+import { POST as scheduleV1 } from '@/app/api/v1/sms/schedule/route';
 import { NextRequest } from 'next/server';
 import { prismaMock } from '../../unit/prismaMock';
 import { WalletService } from '@/lib/wallet/service';
@@ -56,10 +57,11 @@ describe('v1 Public SMS API Endpoints', () => {
       expect(res.status).toBe(401);
     });
 
-    it('processes authenticated message and returns real message ID', async () => {
+    it('accepts the sender UUID selected by the mobile app and queues the message', async () => {
+      const senderUuid = '550e8400-e29b-41d4-a716-446655440000';
       prismaMock.message.findUnique.mockResolvedValue(null);
       prismaMock.senderId.findFirst.mockResolvedValue({
-        id: 'RANGE_SMS',
+        id: senderUuid,
         status: 'APPROVED',
         userId: 'v1-user-123',
       } as never);
@@ -80,7 +82,7 @@ describe('v1 Public SMS API Endpoints', () => {
           'content-type': 'application/json',
         },
         body: JSON.stringify({
-          senderId: 'RANGE_SMS',
+          senderId: senderUuid,
           recipients: ['+256700000001'],
           message: 'Production API Dispatch',
         }),
@@ -101,6 +103,9 @@ describe('v1 Public SMS API Endpoints', () => {
         expect.objectContaining({ tx: prismaMock }),
       );
       expect(enqueueJob).toHaveBeenCalledWith(expect.objectContaining({ tx: prismaMock }));
+      expect(prismaMock.message.create).toHaveBeenCalledWith(expect.objectContaining({
+        data: expect.objectContaining({ senderIdId: senderUuid }),
+      }));
     });
 
     it('rejects reuse of a message key for different content without charging again', async () => {
@@ -216,6 +221,53 @@ describe('v1 Public SMS API Endpoints', () => {
       expect(res.status).toBe(500);
       expect(json.error).toBe('Unable to send messages right now. Please try again.');
       expect(JSON.stringify(json)).not.toContain('database credential details');
+    });
+  });
+
+  describe('POST /api/v1/sms/schedule', () => {
+    const senderUuid = '550e8400-e29b-41d4-a716-446655440000';
+    const makeRequest = () => new NextRequest('http://localhost:3000/api/v1/sms/schedule', {
+      method: 'POST',
+      headers: { authorization: 'Bearer valid-token', 'content-type': 'application/json' },
+      body: JSON.stringify({
+        senderId: senderUuid,
+        recipients: ['+256700000001'],
+        message: 'Scheduled reminder',
+        scheduledAt: '2030-01-01T09:00:00.000Z',
+      }),
+    });
+
+    it('rejects a sender outside the approved owner scope before billing', async () => {
+      prismaMock.senderId.findFirst.mockResolvedValue(null);
+      const res = await scheduleV1(makeRequest());
+      expect(res.status).toBe(400);
+      expect(prismaMock.senderId.findFirst).toHaveBeenCalledWith({
+        where: {
+          status: 'APPROVED',
+          AND: [
+            { OR: [{ id: senderUuid }, { senderId: senderUuid }] },
+            { OR: [{ userId: 'v1-user-123' }] },
+          ],
+        },
+        select: { id: true },
+      });
+      expect(WalletService.deduct).not.toHaveBeenCalled();
+      expect(prismaMock.scheduledMessage.create).not.toHaveBeenCalled();
+    });
+
+    it('resolves the sender and persists the schedule in the billing transaction', async () => {
+      prismaMock.senderId.findFirst.mockResolvedValue({ id: senderUuid } as never);
+      prismaMock.scheduledMessage.create.mockResolvedValue({
+        id: 'schedule-1', scheduledAt: new Date('2030-01-01T09:00:00.000Z'),
+      } as never);
+      const res = await scheduleV1(makeRequest());
+      expect(res.status).toBe(200);
+      expect(prismaMock.$transaction).toHaveBeenCalledOnce();
+      expect(WalletService.deduct).toHaveBeenCalledWith('wallet-v1', expect.anything(),
+        expect.objectContaining({ tx: prismaMock }));
+      expect(prismaMock.scheduledMessage.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({ senderIdId: senderUuid, userId: 'v1-user-123' }),
+      });
     });
   });
 

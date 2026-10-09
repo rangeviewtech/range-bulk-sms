@@ -85,11 +85,13 @@ export class JobWorker {
     const staleJobs = await prisma.job.updateMany({
       where: {
         status: "PROCESSING",
+        type: { in: Object.keys(handlers) },
         lockedAt: { lte: cutoff },
       },
       data: {
         status: "RETRYING",
         lockedAt: null,
+        lockedBy: null,
         lastError: "Worker lease expired. Automatically recovered by lease sweeper.",
         availableAt: new Date(),
       },
@@ -172,6 +174,7 @@ export class JobWorker {
       // 3. Find jobs that are PENDING or RETRYING and available to run
       const whereCondition: import('@/lib/prisma').Prisma.JobWhereInput = {
         status: { in: ["PENDING", "RETRYING"] },
+        type: { in: Object.keys(handlers) },
         availableAt: { lte: new Date() },
       };
       if (targetQueue) {

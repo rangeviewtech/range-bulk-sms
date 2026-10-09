@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { recoverStuckJobs } from '@/lib/jobs/db';
-import { prisma } from '@/lib/prisma';
+import { COMMUNICATION_JOB_TYPES, recoverStuckJobs } from '@/lib/jobs/db';
+import { prisma, Prisma } from '@/lib/prisma';
 import { JobStatus } from '@/generated/prisma';
 import { SmtpProvider } from '@/lib/providers/smtp';
 import { PandoraSmsProvider } from '@/lib/providers/pandora';
@@ -23,6 +23,7 @@ export async function processJobsBatch(batchSize: number = 10) {
       SELECT id
       FROM "Job"
       WHERE status IN ('PENDING', 'RETRYING')
+        AND type IN (${Prisma.join(COMMUNICATION_JOB_TYPES)})
         AND "lockedAt" IS NULL
         AND ("availableAt" IS NULL OR "availableAt" <= NOW())
       ORDER BY
