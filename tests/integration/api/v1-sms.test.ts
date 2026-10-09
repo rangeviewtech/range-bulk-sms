@@ -8,7 +8,7 @@ import { POST as scheduleV1 } from '@/app/api/v1/sms/schedule/route';
 import { NextRequest } from 'next/server';
 import { prismaMock } from '../../unit/prismaMock';
 import { WalletService } from '@/lib/wallet/service';
-import { enqueueJob } from '@/lib/jobs/db';
+import { enqueueJob, enqueueScheduledSmsOccurrence } from '@/lib/jobs/db';
 
 vi.mock('@/lib/api-keys/service', () => ({
   withApiKey: vi.fn().mockImplementation(async (req: NextRequest, _scope: string, handler) => {
@@ -35,6 +35,7 @@ vi.mock('@/lib/wallet/service', () => ({
 
 vi.mock('@/lib/jobs/db', () => ({
   enqueueJob: vi.fn().mockResolvedValue({ id: 'v1-job-1' }),
+  enqueueScheduledSmsOccurrence: vi.fn().mockResolvedValue({ id: 'scheduled-v1-job-1' }),
 }));
 
 describe('v1 Public SMS API Endpoints', () => {
@@ -268,6 +269,10 @@ describe('v1 Public SMS API Endpoints', () => {
       expect(prismaMock.scheduledMessage.create).toHaveBeenCalledWith({
         data: expect.objectContaining({ senderIdId: senderUuid, userId: 'v1-user-123' }),
       });
+      expect(enqueueScheduledSmsOccurrence).toHaveBeenCalledWith(expect.objectContaining({
+        scheduledMessageId: 'schedule-1',
+        scheduledAt: new Date('2030-01-01T09:00:00.000Z'),
+      }));
     });
   });
 

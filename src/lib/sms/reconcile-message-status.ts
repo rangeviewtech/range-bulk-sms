@@ -39,5 +39,17 @@ export async function reconcileMessageStatus(
       providerMessageId: details.providerMessageId,
     },
   });
+
+  const dispatchedStatuses = new Set<MessageStatus>(['SENT', 'DELIVERED', 'FAILED', 'EXPIRED', 'REJECTED']);
+  if (recipients.length > 0 && recipients.every(({ status }) => dispatchedStatuses.has(status))) {
+    const succeeded = recipients.filter(({ status }) => status === 'SENT' || status === 'DELIVERED').length;
+    const scheduleStatus = succeeded === recipients.length
+      ? (recipients.every(({ status }) => status === 'DELIVERED') ? 'DELIVERED' : 'SENT')
+      : succeeded === 0 ? 'FAILED' : 'PARTIAL';
+    await tx.scheduledMessage.updateMany({
+      where: { resultMessageId: messageId, status: 'PROCESSING', isRecurring: false },
+      data: { status: scheduleStatus },
+    });
+  }
   return status;
 }

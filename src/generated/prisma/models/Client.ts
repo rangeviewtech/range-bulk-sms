@@ -239,6 +239,7 @@ export type ClientWhereInput = {
   agent?: Prisma.XOR<Prisma.AgentNullableScalarRelationFilter, Prisma.AgentWhereInput> | null
   wallet?: Prisma.XOR<Prisma.WalletNullableScalarRelationFilter, Prisma.WalletWhereInput> | null
   campaigns?: Prisma.CampaignListRelationFilter
+  scheduledMessages?: Prisma.ScheduledMessageListRelationFilter
   senderIds?: Prisma.SenderIdListRelationFilter
   apiKeys?: Prisma.ApiKeyListRelationFilter
   webhooks?: Prisma.WebhookListRelationFilter
@@ -263,6 +264,7 @@ export type ClientOrderByWithRelationInput = {
   agent?: Prisma.AgentOrderByWithRelationInput
   wallet?: Prisma.WalletOrderByWithRelationInput
   campaigns?: Prisma.CampaignOrderByRelationAggregateInput
+  scheduledMessages?: Prisma.ScheduledMessageOrderByRelationAggregateInput
   senderIds?: Prisma.SenderIdOrderByRelationAggregateInput
   apiKeys?: Prisma.ApiKeyOrderByRelationAggregateInput
   webhooks?: Prisma.WebhookOrderByRelationAggregateInput
@@ -290,6 +292,7 @@ export type ClientWhereUniqueInput = Prisma.AtLeast<{
   agent?: Prisma.XOR<Prisma.AgentNullableScalarRelationFilter, Prisma.AgentWhereInput> | null
   wallet?: Prisma.XOR<Prisma.WalletNullableScalarRelationFilter, Prisma.WalletWhereInput> | null
   campaigns?: Prisma.CampaignListRelationFilter
+  scheduledMessages?: Prisma.ScheduledMessageListRelationFilter
   senderIds?: Prisma.SenderIdListRelationFilter
   apiKeys?: Prisma.ApiKeyListRelationFilter
   webhooks?: Prisma.WebhookListRelationFilter
@@ -347,6 +350,7 @@ export type ClientCreateInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutClientsInput
   wallet?: Prisma.WalletCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookCreateNestedManyWithoutClientInput
@@ -368,6 +372,7 @@ export type ClientUncheckedCreateInput = {
   updatedAt?: Date | string
   wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutClientInput
@@ -389,6 +394,7 @@ export type ClientUpdateInput = {
   agent?: Prisma.AgentUpdateOneWithoutClientsNestedInput
   wallet?: Prisma.WalletUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUpdateManyWithoutClientNestedInput
@@ -410,6 +416,7 @@ export type ClientUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   wallet?: Prisma.WalletUncheckedUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUncheckedUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutClientNestedInput
@@ -735,6 +742,22 @@ export type ClientUpdateOneWithoutWebhooksNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ClientUpdateToOneWithWhereWithoutWebhooksInput, Prisma.ClientUpdateWithoutWebhooksInput>, Prisma.ClientUncheckedUpdateWithoutWebhooksInput>
 }
 
+export type ClientCreateNestedOneWithoutScheduledMessagesInput = {
+  create?: Prisma.XOR<Prisma.ClientCreateWithoutScheduledMessagesInput, Prisma.ClientUncheckedCreateWithoutScheduledMessagesInput>
+  connectOrCreate?: Prisma.ClientCreateOrConnectWithoutScheduledMessagesInput
+  connect?: Prisma.ClientWhereUniqueInput
+}
+
+export type ClientUpdateOneWithoutScheduledMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.ClientCreateWithoutScheduledMessagesInput, Prisma.ClientUncheckedCreateWithoutScheduledMessagesInput>
+  connectOrCreate?: Prisma.ClientCreateOrConnectWithoutScheduledMessagesInput
+  upsert?: Prisma.ClientUpsertWithoutScheduledMessagesInput
+  disconnect?: Prisma.ClientWhereInput | boolean
+  delete?: Prisma.ClientWhereInput | boolean
+  connect?: Prisma.ClientWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ClientUpdateToOneWithWhereWithoutScheduledMessagesInput, Prisma.ClientUpdateWithoutScheduledMessagesInput>, Prisma.ClientUncheckedUpdateWithoutScheduledMessagesInput>
+}
+
 export type ClientCreateWithoutUserInput = {
   id?: string
   status?: $Enums.ClientStatus
@@ -749,6 +772,7 @@ export type ClientCreateWithoutUserInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutClientsInput
   wallet?: Prisma.WalletCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookCreateNestedManyWithoutClientInput
@@ -769,6 +793,7 @@ export type ClientUncheckedCreateWithoutUserInput = {
   updatedAt?: Date | string
   wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutClientInput
@@ -805,6 +830,7 @@ export type ClientUpdateWithoutUserInput = {
   agent?: Prisma.AgentUpdateOneWithoutClientsNestedInput
   wallet?: Prisma.WalletUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUpdateManyWithoutClientNestedInput
@@ -825,6 +851,7 @@ export type ClientUncheckedUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   wallet?: Prisma.WalletUncheckedUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUncheckedUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutClientNestedInput
@@ -845,6 +872,7 @@ export type ClientCreateWithoutOrganizationInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutClientsInput
   wallet?: Prisma.WalletCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookCreateNestedManyWithoutClientInput
@@ -865,6 +893,7 @@ export type ClientUncheckedCreateWithoutOrganizationInput = {
   updatedAt?: Date | string
   wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutClientInput
@@ -929,6 +958,7 @@ export type ClientCreateWithoutAgentInput = {
   organization?: Prisma.OrganizationCreateNestedOneWithoutClientsInput
   wallet?: Prisma.WalletCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookCreateNestedManyWithoutClientInput
@@ -949,6 +979,7 @@ export type ClientUncheckedCreateWithoutAgentInput = {
   updatedAt?: Date | string
   wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutClientInput
@@ -996,6 +1027,7 @@ export type ClientCreateWithoutSenderIdsInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutClientsInput
   wallet?: Prisma.WalletCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookCreateNestedManyWithoutClientInput
   commissions?: Prisma.CommissionCreateNestedManyWithoutClientInput
@@ -1016,6 +1048,7 @@ export type ClientUncheckedCreateWithoutSenderIdsInput = {
   updatedAt?: Date | string
   wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutClientInput
   commissions?: Prisma.CommissionUncheckedCreateNestedManyWithoutClientInput
@@ -1052,6 +1085,7 @@ export type ClientUpdateWithoutSenderIdsInput = {
   agent?: Prisma.AgentUpdateOneWithoutClientsNestedInput
   wallet?: Prisma.WalletUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUpdateManyWithoutClientNestedInput
   commissions?: Prisma.CommissionUpdateManyWithoutClientNestedInput
@@ -1072,6 +1106,7 @@ export type ClientUncheckedUpdateWithoutSenderIdsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   wallet?: Prisma.WalletUncheckedUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUncheckedUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutClientNestedInput
   commissions?: Prisma.CommissionUncheckedUpdateManyWithoutClientNestedInput
@@ -1091,6 +1126,7 @@ export type ClientCreateWithoutCampaignsInput = {
   organization?: Prisma.OrganizationCreateNestedOneWithoutClientsInput
   agent?: Prisma.AgentCreateNestedOneWithoutClientsInput
   wallet?: Prisma.WalletCreateNestedOneWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookCreateNestedManyWithoutClientInput
@@ -1111,6 +1147,7 @@ export type ClientUncheckedCreateWithoutCampaignsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutClientInput
@@ -1147,6 +1184,7 @@ export type ClientUpdateWithoutCampaignsInput = {
   organization?: Prisma.OrganizationUpdateOneWithoutClientsNestedInput
   agent?: Prisma.AgentUpdateOneWithoutClientsNestedInput
   wallet?: Prisma.WalletUpdateOneWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUpdateManyWithoutClientNestedInput
@@ -1167,6 +1205,7 @@ export type ClientUncheckedUpdateWithoutCampaignsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   wallet?: Prisma.WalletUncheckedUpdateOneWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutClientNestedInput
@@ -1187,6 +1226,7 @@ export type ClientCreateWithoutWalletInput = {
   organization?: Prisma.OrganizationCreateNestedOneWithoutClientsInput
   agent?: Prisma.AgentCreateNestedOneWithoutClientsInput
   campaigns?: Prisma.CampaignCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookCreateNestedManyWithoutClientInput
@@ -1207,6 +1247,7 @@ export type ClientUncheckedCreateWithoutWalletInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   campaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutClientInput
@@ -1243,6 +1284,7 @@ export type ClientUpdateWithoutWalletInput = {
   organization?: Prisma.OrganizationUpdateOneWithoutClientsNestedInput
   agent?: Prisma.AgentUpdateOneWithoutClientsNestedInput
   campaigns?: Prisma.CampaignUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUpdateManyWithoutClientNestedInput
@@ -1263,6 +1305,7 @@ export type ClientUncheckedUpdateWithoutWalletInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   campaigns?: Prisma.CampaignUncheckedUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutClientNestedInput
@@ -1284,6 +1327,7 @@ export type ClientCreateWithoutCommissionsInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutClientsInput
   wallet?: Prisma.WalletCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookCreateNestedManyWithoutClientInput
@@ -1304,6 +1348,7 @@ export type ClientUncheckedCreateWithoutCommissionsInput = {
   updatedAt?: Date | string
   wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutClientInput
@@ -1340,6 +1385,7 @@ export type ClientUpdateWithoutCommissionsInput = {
   agent?: Prisma.AgentUpdateOneWithoutClientsNestedInput
   wallet?: Prisma.WalletUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUpdateManyWithoutClientNestedInput
@@ -1360,6 +1406,7 @@ export type ClientUncheckedUpdateWithoutCommissionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   wallet?: Prisma.WalletUncheckedUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUncheckedUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutClientNestedInput
@@ -1380,6 +1427,7 @@ export type ClientCreateWithoutApiKeysInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutClientsInput
   wallet?: Prisma.WalletCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookCreateNestedManyWithoutClientInput
   commissions?: Prisma.CommissionCreateNestedManyWithoutClientInput
@@ -1400,6 +1448,7 @@ export type ClientUncheckedCreateWithoutApiKeysInput = {
   updatedAt?: Date | string
   wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutClientInput
   webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutClientInput
   commissions?: Prisma.CommissionUncheckedCreateNestedManyWithoutClientInput
@@ -1436,6 +1485,7 @@ export type ClientUpdateWithoutApiKeysInput = {
   agent?: Prisma.AgentUpdateOneWithoutClientsNestedInput
   wallet?: Prisma.WalletUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUpdateManyWithoutClientNestedInput
   commissions?: Prisma.CommissionUpdateManyWithoutClientNestedInput
@@ -1456,6 +1506,7 @@ export type ClientUncheckedUpdateWithoutApiKeysInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   wallet?: Prisma.WalletUncheckedUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUncheckedUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutClientNestedInput
   commissions?: Prisma.CommissionUncheckedUpdateManyWithoutClientNestedInput
@@ -1476,6 +1527,7 @@ export type ClientCreateWithoutWebhooksInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutClientsInput
   wallet?: Prisma.WalletCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutClientInput
   commissions?: Prisma.CommissionCreateNestedManyWithoutClientInput
@@ -1496,6 +1548,7 @@ export type ClientUncheckedCreateWithoutWebhooksInput = {
   updatedAt?: Date | string
   wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutClientInput
   campaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutClientInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedCreateNestedManyWithoutClientInput
   senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutClientInput
   apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutClientInput
   commissions?: Prisma.CommissionUncheckedCreateNestedManyWithoutClientInput
@@ -1532,6 +1585,7 @@ export type ClientUpdateWithoutWebhooksInput = {
   agent?: Prisma.AgentUpdateOneWithoutClientsNestedInput
   wallet?: Prisma.WalletUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutClientNestedInput
   commissions?: Prisma.CommissionUpdateManyWithoutClientNestedInput
@@ -1552,8 +1606,109 @@ export type ClientUncheckedUpdateWithoutWebhooksInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   wallet?: Prisma.WalletUncheckedUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUncheckedUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutClientNestedInput
+  commissions?: Prisma.CommissionUncheckedUpdateManyWithoutClientNestedInput
+}
+
+export type ClientCreateWithoutScheduledMessagesInput = {
+  id?: string
+  status?: $Enums.ClientStatus
+  companyName?: string | null
+  industry?: string | null
+  referralSource?: string | null
+  notes?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutClientInput
+  organization?: Prisma.OrganizationCreateNestedOneWithoutClientsInput
+  agent?: Prisma.AgentCreateNestedOneWithoutClientsInput
+  wallet?: Prisma.WalletCreateNestedOneWithoutClientInput
+  campaigns?: Prisma.CampaignCreateNestedManyWithoutClientInput
+  senderIds?: Prisma.SenderIdCreateNestedManyWithoutClientInput
+  apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutClientInput
+  webhooks?: Prisma.WebhookCreateNestedManyWithoutClientInput
+  commissions?: Prisma.CommissionCreateNestedManyWithoutClientInput
+}
+
+export type ClientUncheckedCreateWithoutScheduledMessagesInput = {
+  id?: string
+  userId: string
+  organizationId?: string | null
+  agentId?: string | null
+  status?: $Enums.ClientStatus
+  companyName?: string | null
+  industry?: string | null
+  referralSource?: string | null
+  notes?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutClientInput
+  campaigns?: Prisma.CampaignUncheckedCreateNestedManyWithoutClientInput
+  senderIds?: Prisma.SenderIdUncheckedCreateNestedManyWithoutClientInput
+  apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutClientInput
+  webhooks?: Prisma.WebhookUncheckedCreateNestedManyWithoutClientInput
+  commissions?: Prisma.CommissionUncheckedCreateNestedManyWithoutClientInput
+}
+
+export type ClientCreateOrConnectWithoutScheduledMessagesInput = {
+  where: Prisma.ClientWhereUniqueInput
+  create: Prisma.XOR<Prisma.ClientCreateWithoutScheduledMessagesInput, Prisma.ClientUncheckedCreateWithoutScheduledMessagesInput>
+}
+
+export type ClientUpsertWithoutScheduledMessagesInput = {
+  update: Prisma.XOR<Prisma.ClientUpdateWithoutScheduledMessagesInput, Prisma.ClientUncheckedUpdateWithoutScheduledMessagesInput>
+  create: Prisma.XOR<Prisma.ClientCreateWithoutScheduledMessagesInput, Prisma.ClientUncheckedCreateWithoutScheduledMessagesInput>
+  where?: Prisma.ClientWhereInput
+}
+
+export type ClientUpdateToOneWithWhereWithoutScheduledMessagesInput = {
+  where?: Prisma.ClientWhereInput
+  data: Prisma.XOR<Prisma.ClientUpdateWithoutScheduledMessagesInput, Prisma.ClientUncheckedUpdateWithoutScheduledMessagesInput>
+}
+
+export type ClientUpdateWithoutScheduledMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumClientStatusFieldUpdateOperationsInput | $Enums.ClientStatus
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  industry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referralSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutClientNestedInput
+  organization?: Prisma.OrganizationUpdateOneWithoutClientsNestedInput
+  agent?: Prisma.AgentUpdateOneWithoutClientsNestedInput
+  wallet?: Prisma.WalletUpdateOneWithoutClientNestedInput
+  campaigns?: Prisma.CampaignUpdateManyWithoutClientNestedInput
+  senderIds?: Prisma.SenderIdUpdateManyWithoutClientNestedInput
+  apiKeys?: Prisma.ApiKeyUpdateManyWithoutClientNestedInput
+  webhooks?: Prisma.WebhookUpdateManyWithoutClientNestedInput
+  commissions?: Prisma.CommissionUpdateManyWithoutClientNestedInput
+}
+
+export type ClientUncheckedUpdateWithoutScheduledMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  agentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumClientStatusFieldUpdateOperationsInput | $Enums.ClientStatus
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  industry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referralSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  wallet?: Prisma.WalletUncheckedUpdateOneWithoutClientNestedInput
+  campaigns?: Prisma.CampaignUncheckedUpdateManyWithoutClientNestedInput
+  senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutClientNestedInput
+  apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutClientNestedInput
+  webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutClientNestedInput
   commissions?: Prisma.CommissionUncheckedUpdateManyWithoutClientNestedInput
 }
 
@@ -1585,6 +1740,7 @@ export type ClientUpdateWithoutOrganizationInput = {
   agent?: Prisma.AgentUpdateOneWithoutClientsNestedInput
   wallet?: Prisma.WalletUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUpdateManyWithoutClientNestedInput
@@ -1605,6 +1761,7 @@ export type ClientUncheckedUpdateWithoutOrganizationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   wallet?: Prisma.WalletUncheckedUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUncheckedUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutClientNestedInput
@@ -1653,6 +1810,7 @@ export type ClientUpdateWithoutAgentInput = {
   organization?: Prisma.OrganizationUpdateOneWithoutClientsNestedInput
   wallet?: Prisma.WalletUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUpdateManyWithoutClientNestedInput
@@ -1673,6 +1831,7 @@ export type ClientUncheckedUpdateWithoutAgentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   wallet?: Prisma.WalletUncheckedUpdateOneWithoutClientNestedInput
   campaigns?: Prisma.CampaignUncheckedUpdateManyWithoutClientNestedInput
+  scheduledMessages?: Prisma.ScheduledMessageUncheckedUpdateManyWithoutClientNestedInput
   senderIds?: Prisma.SenderIdUncheckedUpdateManyWithoutClientNestedInput
   apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutClientNestedInput
   webhooks?: Prisma.WebhookUncheckedUpdateManyWithoutClientNestedInput
@@ -1700,6 +1859,7 @@ export type ClientUncheckedUpdateManyWithoutAgentInput = {
 
 export type ClientCountOutputType = {
   campaigns: number
+  scheduledMessages: number
   senderIds: number
   apiKeys: number
   webhooks: number
@@ -1708,6 +1868,7 @@ export type ClientCountOutputType = {
 
 export type ClientCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   campaigns?: boolean | ClientCountOutputTypeCountCampaignsArgs
+  scheduledMessages?: boolean | ClientCountOutputTypeCountScheduledMessagesArgs
   senderIds?: boolean | ClientCountOutputTypeCountSenderIdsArgs
   apiKeys?: boolean | ClientCountOutputTypeCountApiKeysArgs
   webhooks?: boolean | ClientCountOutputTypeCountWebhooksArgs
@@ -1729,6 +1890,13 @@ export type ClientCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exten
  */
 export type ClientCountOutputTypeCountCampaignsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.CampaignWhereInput
+}
+
+/**
+ * ClientCountOutputType without action
+ */
+export type ClientCountOutputTypeCountScheduledMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ScheduledMessageWhereInput
 }
 
 /**
@@ -1778,6 +1946,7 @@ export type ClientSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   agent?: boolean | Prisma.Client$agentArgs<ExtArgs>
   wallet?: boolean | Prisma.Client$walletArgs<ExtArgs>
   campaigns?: boolean | Prisma.Client$campaignsArgs<ExtArgs>
+  scheduledMessages?: boolean | Prisma.Client$scheduledMessagesArgs<ExtArgs>
   senderIds?: boolean | Prisma.Client$senderIdsArgs<ExtArgs>
   apiKeys?: boolean | Prisma.Client$apiKeysArgs<ExtArgs>
   webhooks?: boolean | Prisma.Client$webhooksArgs<ExtArgs>
@@ -1843,6 +2012,7 @@ export type ClientInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   agent?: boolean | Prisma.Client$agentArgs<ExtArgs>
   wallet?: boolean | Prisma.Client$walletArgs<ExtArgs>
   campaigns?: boolean | Prisma.Client$campaignsArgs<ExtArgs>
+  scheduledMessages?: boolean | Prisma.Client$scheduledMessagesArgs<ExtArgs>
   senderIds?: boolean | Prisma.Client$senderIdsArgs<ExtArgs>
   apiKeys?: boolean | Prisma.Client$apiKeysArgs<ExtArgs>
   webhooks?: boolean | Prisma.Client$webhooksArgs<ExtArgs>
@@ -1868,6 +2038,7 @@ export type $ClientPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     agent: Prisma.$AgentPayload<ExtArgs> | null
     wallet: Prisma.$WalletPayload<ExtArgs> | null
     campaigns: Prisma.$CampaignPayload<ExtArgs>[]
+    scheduledMessages: Prisma.$ScheduledMessagePayload<ExtArgs>[]
     senderIds: Prisma.$SenderIdPayload<ExtArgs>[]
     apiKeys: Prisma.$ApiKeyPayload<ExtArgs>[]
     webhooks: Prisma.$WebhookPayload<ExtArgs>[]
@@ -2285,6 +2456,7 @@ export interface Prisma__ClientClient<T, Null = never, ExtArgs extends runtime.T
   agent<T extends Prisma.Client$agentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Client$agentArgs<ExtArgs>>): Prisma.Prisma__AgentClient<runtime.Types.Result.GetResult<Prisma.$AgentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   wallet<T extends Prisma.Client$walletArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Client$walletArgs<ExtArgs>>): Prisma.Prisma__WalletClient<runtime.Types.Result.GetResult<Prisma.$WalletPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   campaigns<T extends Prisma.Client$campaignsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Client$campaignsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  scheduledMessages<T extends Prisma.Client$scheduledMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Client$scheduledMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScheduledMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   senderIds<T extends Prisma.Client$senderIdsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Client$senderIdsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SenderIdPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   apiKeys<T extends Prisma.Client$apiKeysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Client$apiKeysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   webhooks<T extends Prisma.Client$webhooksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Client$webhooksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebhookPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2809,6 +2981,30 @@ export type Client$campaignsArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.CampaignScalarFieldEnum | Prisma.CampaignScalarFieldEnum[]
+}
+
+/**
+ * Client.scheduledMessages
+ */
+export type Client$scheduledMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ScheduledMessage
+   */
+  select?: Prisma.ScheduledMessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ScheduledMessage
+   */
+  omit?: Prisma.ScheduledMessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ScheduledMessageInclude<ExtArgs> | null
+  where?: Prisma.ScheduledMessageWhereInput
+  orderBy?: Prisma.ScheduledMessageOrderByWithRelationInput | Prisma.ScheduledMessageOrderByWithRelationInput[]
+  cursor?: Prisma.ScheduledMessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ScheduledMessageScalarFieldEnum | Prisma.ScheduledMessageScalarFieldEnum[]
 }
 
 /**

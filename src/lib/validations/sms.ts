@@ -15,7 +15,7 @@ export const sendSmsSchema = z.object({
     phone: z.string(),
     message: z.string()
   })).optional(),
-  idempotencyKey: z.string().optional(),
+  idempotencyKey: z.string().trim().min(1).max(128).optional(),
   draftId: z.string().optional(),
 });
 
@@ -25,6 +25,13 @@ export const scheduleSmsSchema = sendSmsSchema.extend({
   timezone: z.string().default('Africa/Kampala'),
   isRecurring: z.boolean().default(false),
   cronExpression: z.string().optional(),
+}).superRefine((value, context) => {
+  if (new Date(value.scheduledAt).getTime() <= Date.now() + 10_000) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ['scheduledAt'], message: 'Choose a time at least 10 seconds in the future.' });
+  }
+  if (value.isRecurring && !value.cronExpression?.trim()) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ['cronExpression'], message: 'A recurrence rule is required for recurring messages.' });
+  }
 });
 
 // Campaign creation schema

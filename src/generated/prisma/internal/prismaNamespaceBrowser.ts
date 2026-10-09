@@ -1029,6 +1029,8 @@ export type TicketMessageScalarFieldEnum = (typeof TicketMessageScalarFieldEnum)
 export const ScheduledMessageScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  clientId: 'clientId',
+  idempotencyKey: 'idempotencyKey',
   senderIdId: 'senderIdId',
   message: 'message',
   recipients: 'recipients',

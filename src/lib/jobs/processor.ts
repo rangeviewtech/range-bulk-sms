@@ -8,6 +8,7 @@ import { TelegramProvider } from '@/lib/providers/telegram';
 import { WhatsAppProvider } from '@/lib/providers/whatsapp';
 import { InAppProvider } from '@/lib/providers/in-app';
 import { reconcileMessageStatus } from '@/lib/sms/reconcile-message-status';
+import { dispatchScheduledSmsOccurrence, failScheduledSmsOccurrence } from '@/lib/sms/scheduled-dispatcher';
 
 export async function processJobsBatch(batchSize: number = 10) {
   await recoverStuckJobs();
@@ -61,32 +62,42 @@ export async function processJobsBatch(batchSize: number = 10) {
     try {
       const { decryptPayload } = await import('@/lib/jobs/db');
       const decrypted = decryptPayload(job.payload);
-      const payload = z
-        .object({
-          recipient: z.string().min(1),
-          template: z.string().min(1),
-          templateData: z.record(z.unknown()).optional(),
-          category: z.string().optional(),
-          messageId: z.string().optional(),
-          recipientId: z.string().optional(),
-        })
-        .parse(decrypted);
-      const { recipient, template, templateData } = payload;
+      if (job.type === 'scheduled-sms.dispatch') {
+        const payload = z.object({
+          scheduledMessageId: z.string().uuid(),
+          scheduledAt: z.string().datetime(),
+        }).parse(decrypted);
+        await dispatchScheduledSmsOccurrence({
+          scheduledMessageId: payload.scheduledMessageId,
+          scheduledAt: new Date(payload.scheduledAt),
+        });
+      } else {
+        const payload = z
+          .object({
+            recipient: z.string().min(1),
+            template: z.string().min(1),
+            templateData: z.record(z.unknown()).optional(),
+            category: z.string().optional(),
+            messageId: z.string().optional(),
+            recipientId: z.string().optional(),
+          })
+          .parse(decrypted);
+        const { recipient, template, templateData } = payload;
 
-      let channelStr: 'EMAIL' | 'SMS' | 'TELEGRAM' | 'WHATSAPP' | 'IN_APP' = 'EMAIL';
-      if (job.type === 'send-sms') channelStr = 'SMS';
-      if (job.type === 'send-telegram') channelStr = 'TELEGRAM';
-      if (job.type === 'send-whatsapp') channelStr = 'WHATSAPP';
-      if (job.type === 'send-in-app') channelStr = 'IN_APP';
+        let channelStr: 'EMAIL' | 'SMS' | 'TELEGRAM' | 'WHATSAPP' | 'IN_APP' = 'EMAIL';
+        if (job.type === 'send-sms') channelStr = 'SMS';
+        if (job.type === 'send-telegram') channelStr = 'TELEGRAM';
+        if (job.type === 'send-whatsapp') channelStr = 'WHATSAPP';
+        if (job.type === 'send-in-app') channelStr = 'IN_APP';
 
-      const { NotificationTemplateService } = await import('@/lib/notifications/templates');
-      const resolved = await NotificationTemplateService.resolveTemplate(
-        template,
-        channelStr,
-        templateData || {}
-      );
+        const { NotificationTemplateService } = await import('@/lib/notifications/templates');
+        const resolved = await NotificationTemplateService.resolveTemplate(
+          template,
+          channelStr,
+          templateData || {}
+        );
 
-      switch (job.type) {
+        switch (job.type) {
         case 'send-email': {
           // Pre-dispatch token check for password recovery
           if (template === 'auth.password_reset') {
@@ -161,10 +172,27 @@ export async function processJobsBatch(batchSize: number = 10) {
           break;
         default:
           throw new Error(`Unsupported job type: ${job.type}`);
+        }
       }
     } catch (e: unknown) {
       lastError = e instanceof Error ? e.message : String(e);
       status = job.attempts >= job.maxAttempts - 1 ? 'DEAD_LETTER' : 'RETRYING';
+
+      if (job.type === 'scheduled-sms.dispatch' && status === 'DEAD_LETTER') {
+        try {
+          const { decryptPayload } = await import('@/lib/jobs/db');
+          const payload = z.object({
+            scheduledMessageId: z.string().uuid(),
+            scheduledAt: z.string().datetime(),
+          }).parse(decryptPayload(job.payload));
+          await failScheduledSmsOccurrence({
+            scheduledMessageId: payload.scheduledMessageId,
+            scheduledAt: new Date(payload.scheduledAt),
+          });
+        } catch {
+          // Preserve the job's dead-letter result if schedule cleanup also fails.
+        }
+      }
 
       // Mark recipient as failed if job reached dead letter
       try {

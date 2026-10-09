@@ -6,6 +6,7 @@ import { WalletService } from '@/lib/wallet/service';
 import { enqueueJob } from '@/lib/jobs/db';
 import { isSandboxRequest, handleDeterministicSms } from '@/lib/sms/sandbox';
 import { AppError } from '@/lib/errors';
+import { InvalidSmsRecipientsError, quoteSms } from '@/lib/sms/quote';
 
 async function getIdempotentMessageResponse(params: {
   idempotencyKey?: string;
@@ -197,55 +198,23 @@ export async function POST(req: NextRequest) {
         validSenderId = validSender.id;
       }
 
-      // Calculate segments and dynamically price each recipient
-      const { countSms } = await import('@/lib/sms/counter');
-      const { analyzePhone } = await import('@/lib/sms/phone-analyzer');
-      const { PricingEngine } = await import('@/lib/wallet/pricing');
-
-      const { segments } = countSms(message);
-      const analyzedRecipients = recipients.map((phone) => analyzePhone(phone));
-      const invalidRecipients = analyzedRecipients
-        .map((analysis, index) => ({ analysis, index }))
-        .filter(({ analysis }) => analysis.validity !== 'valid_pattern' || !analysis.e164)
-        .map(({ analysis, index }) => ({ index, reason: analysis.error || 'Invalid telephone number' }));
-      if (invalidRecipients.length > 0) {
-        return Response.json({
-          success: false,
-          error: 'One or more recipients have an invalid telephone number.',
-          invalidRecipients: invalidRecipients.slice(0, 50),
-          truncated: invalidRecipients.length > 50,
-        }, { status: 400 });
-      }
-
-      let totalCost = new Prisma.Decimal(0);
-      let totalUnitsNum = 0;
-      const pricingCache = new Map<string, import('@/generated/prisma/client').Prisma.Decimal>();
-      const recipientDetails = [];
-
-      for (const [index, phone] of recipients.entries()) {
-        const analysis = analyzedRecipients[index];
-        const countryCode = analysis.country?.calling_code
-          ? `+${analysis.country.calling_code}`
-          : '+256';
-
-        let costPerUnit = pricingCache.get(countryCode);
-        if (!costPerUnit) {
-          const priceInfo = await PricingEngine.getPrice({ countryCode, clientId });
-          costPerUnit = priceInfo.sellingPrice;
-          pricingCache.set(countryCode, costPerUnit);
+      // Share the segment, number-validation, and destination-pricing rules
+      // with scheduled dispatch so both paths charge the same amount.
+      let quote;
+      try {
+        quote = await quoteSms({ recipients, message, clientId });
+      } catch (error) {
+        if (error instanceof InvalidSmsRecipientsError) {
+          return Response.json({
+            success: false,
+            error: error.message,
+            invalidRecipients: error.invalidRecipients.slice(0, 50),
+            truncated: error.invalidRecipients.length > 50,
+          }, { status: 400 });
         }
-
-        const units = segments;
-        const recCost = costPerUnit.mul(units);
-        totalUnitsNum += units;
-        totalCost = totalCost.plus(recCost);
-
-        recipientDetails.push({
-          phone,
-          units,
-          cost: recCost,
-        });
+        throw error;
       }
+      const { segments, encoding, totalCost, totalUnits: totalUnitsNum, recipientDetails } = quote;
 
       const wallet = await WalletService.getOrCreateWallet({ userId, clientId });
       let msg;
@@ -264,7 +233,7 @@ export async function POST(req: NextRequest) {
               senderIdId: validSenderId ?? null,
               gatewayId: validGatewayId,
               message,
-              encoding: countSms(message).encoding,
+              encoding,
               segmentCount: segments,
               recipientCount: recipients.length,
               totalUnits: totalUnitsNum,

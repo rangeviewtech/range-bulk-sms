@@ -1245,3 +1245,73 @@ hardware, provider, Android SDK, Firefox, and Deep Scan limitations remain.
   builds and tests do not establish that all four applications are free of
   defects or ready for deployment.
 
+## Scheduled SMS execution continuation — 2026-10-10
+
+### Scope and user-approved billing behavior
+
+- The user confirmed: charge the first scheduled occurrence upfront, refund
+  only when cancellation happens before dispatch, and charge each later
+  recurring occurrence when it becomes due. This behavior is implemented for
+  both the signed-in web route and the API-key v1 route. No live SMS was sent.
+- Traced the route → validation/pricing → wallet transaction → durable Job →
+  `processJobsBatch` → Pandora SMS jobs → recipient/message status rollup flow.
+  The separate `CronScheduler` continues to process ScheduledJob records; the
+  new due-time communication job is scheduled directly in the shared Job table.
+
+### Changes
+
+- Added a shared quote service so immediate and scheduled SMS use matching
+  phone validation, message segmentation, destination prices, and recipient
+  costs. Existing scheduled rows are reconciled against the current quote at
+  first dispatch; additional charges or refunds occur atomically before any
+  recipient jobs are queued.
+- Added atomic schedule creation, upfront wallet deduction, and durable
+  due-time dispatch job creation for both web and v1 API scheduling. Added
+  idempotency storage and client ownership to scheduled records.
+- Added worker support to claim and process scheduled SMS jobs, create normal
+  message/recipient records, and queue individual recipient sends in one
+  transaction. Each occurrence uses stable idempotency keys. A stale job cannot
+  dispatch an edited, canceled, or superseded occurrence.
+- Added recurring occurrence calculation with the stored timezone, weekday,
+  daily/monthly interval, end-date, and occurrence-count rules. The first
+  occurrence is covered by upfront payment; later occurrences are charged at
+  due time. Insufficient balance pauses the recurring schedule without sending
+  or charging that occurrence.
+- Added pre-dispatch failure refunds for the upfront charge, transactional
+  cancellation/refund, and message status rollup to schedule completion.
+  Cancellation/edit/pause now use a compare-and-set transition against the
+  schedule version to coordinate with dispatch.
+- Fixed the scheduled-messages screen so a rejected cancellation remains
+  visible and reports the server error instead of claiming success. Masked
+  unexpected errors on schedule read/update/cancel paths.
+- Added tests for due dispatch, stale jobs, current-price adjustment, recurring
+  per-occurrence billing/next-job scheduling, and v1 schedule enqueueing.
+
+### Verification and deployment state
+
+- Full web Vitest suite passed: 115 files, 725 tests, one worker. Focused
+  scheduled-dispatch, job-worker, and v1 SMS suites passed again after the last
+  edits: 19 tests.
+- Web TypeScript (`npm run typecheck`), repository-wide ESLint
+  (`npm run lint`), and the Next.js 16.3.8 production build all passed. Build
+  generated 174 static pages. `git diff --check` passed; Git only reported its
+  configured LF-to-CRLF conversion notices.
+- The migration `20261010000000_scheduled_sms_dispatch` is additive, but it has
+  not been deployed to any database. Run the reviewed migration through the
+  normal staging/production database release process before using scheduled
+  API persistence; local schema generation is not migration deployment.
+- The scheduler uses the existing `/api/cron/process-jobs` endpoint, which
+  requires `Authorization: Bearer $CRON_SECRET`. Deployment must invoke this
+  endpoint frequently enough to meet the product's send-time expectations;
+  this repository has no checked-in Vercel/Netlify cron manifest. Confirm the
+  deployment scheduler and secret are configured before enabling schedules.
+- The scheduled UI cancellation behavior was source-reviewed and linted, but
+  authenticated browser interaction could not be verified because the user
+  previously reported being unable to sign in. Chrome DevTools MCP remains
+  unavailable in this environment.
+- Live database migration, external cron invocation, provider delivery,
+  authenticated browser journeys, consent/purpose policy, payment callback
+  verification, and real gateway/hardware flows remain unverified. This does
+  not close the larger cross-project audit or change the overall incomplete
+  production-readiness status above.
+

@@ -41,7 +41,7 @@ async function getRoleActions(roleId: string): Promise<Set<string>> {
     },
   });
 
-  const actions = new Set(rolePerms.map((rp) => rp.permission.action));
+  const actions = new Set<string>(rolePerms.map((rp) => rp.permission.action));
   ROLE_PERMISSIONS_CACHE.set(roleId, { actions, cachedAt: now });
   return actions;
 }

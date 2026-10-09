@@ -4,7 +4,7 @@ import { Job, JobPriority, Prisma } from '@/generated/prisma';
 import crypto from 'crypto';
 
 export const COMMUNICATION_JOB_TYPES = [
-  'send-email', 'send-sms', 'send-telegram', 'send-whatsapp', 'send-in-app',
+  'send-email', 'send-sms', 'send-telegram', 'send-whatsapp', 'send-in-app', 'scheduled-sms.dispatch',
 ] as const;
 
 function encryptPayload(payload: unknown): unknown {
@@ -88,6 +88,86 @@ export async function enqueueJob(data: EnqueueJobParams) {
     return client.job.upsert({ where: { idempotencyKey: data.idempotencyKey }, create, update: {} });
   }
   return client.job.create({ data: create });
+}
+
+export async function enqueueJobs(items: EnqueueJobParams[]) {
+  if (items.length === 0) return 0;
+  const client = items[0].tx ?? db;
+  if (items.some((item) => (item.tx ?? db) !== client)) {
+    throw new Error('Bulk jobs must use the same database transaction');
+  }
+
+  let createdCount = 0;
+  for (let offset = 0; offset < items.length; offset += 500) {
+    const batch = items.slice(offset, offset + 500).map((item) => ({
+      type: item.type,
+      queue: item.queue ?? 'default',
+      priority: item.priority ?? 'NORMAL',
+      payload: (encryptPayload(item.payload) ?? {}) as Prisma.InputJsonValue,
+      availableAt: item.availableAt ?? new Date(),
+      idempotencyKey: item.idempotencyKey,
+      maxAttempts: item.maxAttempts ?? 3,
+    }));
+    const result = await client.job.createMany({ data: batch, skipDuplicates: true });
+    createdCount += result.count;
+  }
+  return createdCount;
+}
+
+export async function enqueueScheduledSmsOccurrence(params: {
+  tx: PrismaTransactionClient | Prisma.TransactionClient;
+  scheduledMessageId: string;
+  scheduledAt: Date;
+}) {
+  const idempotencyKey = `scheduled-sms-${params.scheduledMessageId}-${params.scheduledAt.getTime()}`;
+  const data = {
+    type: 'scheduled-sms.dispatch',
+    queue: 'sms-default',
+    priority: 'NORMAL' as const,
+    payload: {
+      scheduledMessageId: params.scheduledMessageId,
+      scheduledAt: params.scheduledAt.toISOString(),
+    } as Prisma.InputJsonValue,
+    availableAt: params.scheduledAt,
+    idempotencyKey,
+    maxAttempts: 5,
+  };
+  const existing = await params.tx.job.findUnique({ where: { idempotencyKey } });
+  if (existing) {
+    return params.tx.job.update({
+      where: { id: existing.id },
+      data: {
+        ...data,
+        status: 'PENDING',
+        attempts: 0,
+        lockedAt: null,
+        lockedBy: null,
+        lastError: null,
+        failedAt: null,
+        completedAt: null,
+      },
+    });
+  }
+  return params.tx.job.create({ data });
+}
+
+export async function cancelScheduledSmsOccurrences(params: {
+  tx: PrismaTransactionClient | Prisma.TransactionClient;
+  scheduledMessageId: string;
+}) {
+  return params.tx.job.updateMany({
+    where: {
+      type: 'scheduled-sms.dispatch',
+      idempotencyKey: { startsWith: `scheduled-sms-${params.scheduledMessageId}-` },
+      status: { in: ['PENDING', 'RETRYING'] },
+    },
+    data: {
+      status: 'CANCELLED',
+      lockedAt: null,
+      lockedBy: null,
+      completedAt: new Date(),
+    },
+  });
 }
 
 /**
