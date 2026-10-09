@@ -1315,3 +1315,45 @@ hardware, provider, Android SDK, Firefox, and Deep Scan limitations remain.
   not close the larger cross-project audit or change the overall incomplete
   production-readiness status above.
 
+## Deployment prerequisites continuation — 2026-10-10
+
+### Database migration checks
+
+- Inspected the environment target without displaying credentials. The
+  checkout's `.env` points to a local development PostgreSQL database
+  (`localhost:5432`, `master_template`), not staging or production. It contains
+  65 public tables but no `_prisma_migrations` table. `prisma migrate status`
+  therefore reports the baseline, recipient partial-status, and scheduled SMS
+  migrations all as pending.
+- A read-only `prisma migrate diff --from-config-datasource --to-schema` shows
+  that the existing local database is missing more than the new scheduled SMS
+  columns: it also lacks the `MomoPayment` table, `MessageStatus.PARTIAL`, and
+  recipient-attempt columns/indexes. Applying the full chain to this existing
+  database could collide with pre-existing tables and has been intentionally
+  withheld. No existing database was modified.
+- Applied all three migrations successfully to a newly created disposable
+  local database, confirmed `prisma migrate status` reported “up to date”,
+  then removed that temporary database. This verifies the committed migration
+  chain from empty; it does not count as a staging or production migration.
+
+### Deployment and live integration availability
+
+- No deployment manifest, `.vercel` project link, Vercel CLI login, or
+  deployment-provider selection is present in this checkout. The connected
+  Vercel account API returned no accessible projects. The user has been asked
+  which platform is the intended target before a cron configuration is added.
+- The local environment has a `CRON_SECRET`, but no Pandora SMS username,
+  password, or sender ID. There is no staging database or staging API URL
+  configured. Therefore no live staging SMS delivery or actual scheduler
+  invocation was attempted. Unit/integration tests and the isolated migration
+  run are the available evidence for this continuation.
+- Credentials pasted earlier in the conversation must be rotated in their
+  provider consoles. No Upstash management MCP or GitHub token-revocation
+  action is available in this environment, and the project has no deployment
+  access to replace the corresponding staging/production values. Do not reuse
+  the disclosed values; update local and deployed secret stores after rotation.
+- The local application/test-account browser login remains unavailable, so
+  authenticated browser verification is still blocked. The earlier user
+  response said they could not sign in yet; browser MCP also remains
+  unavailable.
+
