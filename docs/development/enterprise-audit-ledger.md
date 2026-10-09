@@ -1444,3 +1444,33 @@ hardware, provider, Android SDK, Firefox, and Deep Scan limitations remain.
   topology. Existing provider, payment callback, security-scan, and hardware
   blockers remain tracked above.
 
+## Web and mobile styling / source-language audit — 2026-10-10
+
+- Web uses Next.js 16.3.8, React 19, Tailwind CSS 4 through
+  `@tailwindcss/postcss`, and the global Tailwind stylesheet. Application code
+  under `src/` was already TypeScript (`.ts`/`.tsx`). Converted the four
+  remaining project-authored JavaScript helper scripts in `scriptit/` to
+  TypeScript; TypeScript now checks them as part of the root project. Toolchain
+  configuration files remain in their expected JS/MJS formats.
+- Mobile uses Expo 57, React Native 0.86, NativeWind 4.2.7, and Tailwind 3.4.
+  Its routed screens and shared app modules are TypeScript (`.ts`/`.tsx`), the
+  NativeWind Babel/Metro/CSS/type setup was present, and route styles already
+  use NativeWind classes alongside dynamic theme/native style values. Expanded
+  Tailwind's content paths to cover the actual TypeScript entry points and
+  `lib/`, and replaced the unused starter `StyleSheet` in `App.tsx` with
+  NativeWind classes.
+- A baseline Expo web export failed because `react-native-web` was missing.
+  Installed the SDK-compatible `react-native-web` dependency and explicitly
+  selected Metro for the Expo web bundler, as required by the NativeWind web
+  setup. Web export then succeeded; Android export also succeeded.
+- Verification after these changes: mobile TypeScript, ESLint, Expo Doctor
+  (21/21), web export, and Android export passed. Web TypeScript and scoped
+  ESLint over converted scripts passed; the Next.js production build generated
+  all 174 static pages.
+- This is a stack/configuration and source-language alignment, not a claim that
+  every existing web style is utility-only. The web app retains global/design
+  token CSS and dedicated legacy/Swagger stylesheets; some established web and
+  mobile screens retain inline values for dynamic measurements, runtime theme
+  values, and native navigation controls. A full visual migration of those
+  existing styles was not performed in this pass.
+

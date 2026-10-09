@@ -1,3 +1,5 @@
+export {};
+
 void (async () => {
 const fs = await import('node:fs');
 const path = await import('node:path');
