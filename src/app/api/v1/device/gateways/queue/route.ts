@@ -69,7 +69,7 @@ export const GET = async (req: NextRequest) => {
       });
 
       if (pendingAttempts.length === 0) {
-        return sendGatewayResponse({ success: true, messages: [] }, gatewaySecret, isE2EE);
+        return sendGatewayResponse({ success: true, messages: [], maxThroughput }, gatewaySecret, isE2EE);
       }
 
       // Format for the device

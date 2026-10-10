@@ -58,31 +58,6 @@ export class GatewayRouter {
     return true;
   }
 
-  /**
-   * Runs the failover check to re-route stale attempts
-   */
-  static async processFailovers(): Promise<void> {
-    // Find attempts that have been SENT_TO_GATEWAY for > 5 minutes without finalizing
-    const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000);
-    
-    const staleAttempts = await prisma.messageAttempt.findMany({
-      where: {
-        status: 'SENT_TO_GATEWAY',
-        sentToGatewayAt: { lt: fiveMinsAgo }
-      }
-    });
-
-    for (const attempt of staleAttempts) {
-      // Mark as FAILED due to timeout
-      await prisma.messageAttempt.update({
-        where: { id: attempt.id },
-        data: { status: 'FAILED', errorMessage: 'Gateway timeout' }
-      });
-
-      // Try routing again (could add retry counter logic here)
-      await this.routeMessage(attempt.messageId);
-    }
-  }
 }
 
 

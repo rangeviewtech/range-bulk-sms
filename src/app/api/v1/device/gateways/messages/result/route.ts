@@ -25,6 +25,8 @@ const retryableGatewayErrors = new Set([
 ]);
 const maxGatewayAttempts = 3;
 
+class AttemptAlreadyFinalizedError extends Error {}
+
 function toRecipientStatus(status: string, hasCarrierDlr: boolean): MessageStatus {
   if (status === 'DELIVERED') return hasCarrierDlr ? 'DELIVERED' : 'SENT';
   if (status === 'FAILED' || status === 'SEND_UNCERTAIN') return 'FAILED';
@@ -98,7 +100,11 @@ export const POST = async (req: NextRequest) => {
       };
 
       const effectiveMessageStatus = await prisma.$transaction(async (tx) => {
-        await tx.messageAttempt.update({ where: { id: attemptId }, data: updateData });
+        const attemptUpdate = await tx.messageAttempt.updateMany({
+          where: { id: attemptId, status: attempt.status, finalizedAt: null },
+          data: updateData,
+        });
+        if (attemptUpdate.count !== 1) throw new AttemptAlreadyFinalizedError();
 
         await tx.gatewayLog.create({
           data: {
@@ -186,6 +192,12 @@ export const POST = async (req: NextRequest) => {
         isE2EE
       );
     } catch (error: unknown) {
+      if (error instanceof AttemptAlreadyFinalizedError) {
+        return NextResponse.json(
+          { error: 'Attempt has already reached a terminal state and cannot be modified' },
+          { status: 409 }
+        );
+      }
       console.error('Gateway Result Error:', error);
       return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }

@@ -3,6 +3,7 @@ import { processJobsBatch } from '@/lib/jobs/processor';
 import { CronScheduler } from '@/lib/cron/scheduler';
 import crypto from 'crypto';
 import { logger } from '@/lib/logger';
+import { finalizeStaleGatewayAttempts } from '@/lib/gateways/finalize-stale-attempts';
 
 /**
  * @swagger
@@ -55,6 +56,10 @@ export async function GET(req: Request) {
 
     // 2. Process pending jobs
     const processedCount = await processJobsBatch(50);
+
+    // A gateway timeout is ambiguous: record the attempt as uncertain instead
+    // of routing it again and risking a duplicate SMS.
+    const staleGatewayAttemptsFinalized = await finalizeStaleGatewayAttempts();
     
     await logger.audit({
       eventName: 'CRON_SCHEDULER_STOP',
@@ -64,7 +69,7 @@ export async function GET(req: Request) {
       action: 'UPDATE',
       durationMs: Date.now() - startTime,
       description: `Completed job execution`,
-      metadata: { scheduledQueued, processedCount }
+      metadata: { scheduledQueued, processedCount, staleGatewayAttemptsFinalized }
     });
 
     return NextResponse.json({
@@ -72,6 +77,7 @@ export async function GET(req: Request) {
       message: 'Job batch processed',
       scheduledQueued,
       processedCount,
+      staleGatewayAttemptsFinalized,
     });
   } catch (error: unknown) {
     const errorMsg = error instanceof Error ? error.message : 'Unknown error';

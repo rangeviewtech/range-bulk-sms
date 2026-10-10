@@ -10,6 +10,10 @@ vi.mock('@/lib/jobs/processor', () => ({
   processJobsBatch: vi.fn().mockResolvedValue(2),
 }));
 
+vi.mock('@/lib/gateways/finalize-stale-attempts', () => ({
+  finalizeStaleGatewayAttempts: vi.fn().mockResolvedValue(3),
+}));
+
 describe('Cron Process Jobs Route', () => {
   it('rejects unauthorized requests', async () => {
     // We don't have the CRON_SECRET header
@@ -36,6 +40,7 @@ describe('Cron Process Jobs Route', () => {
 
     const json = await res.json();
     expect(json.processedCount).toBe(2);
+    expect(json.staleGatewayAttemptsFinalized).toBe(3);
 
     process.env.CRON_SECRET = originalSecret;
   });

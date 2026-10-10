@@ -1474,3 +1474,56 @@ hardware, provider, Android SDK, Firefox, and Deep Scan limitations remain.
   values, and native navigation controls. A full visual migration of those
   existing styles was not performed in this pass.
 
+## Cross-project functionality continuation — 2026-10-10
+
+- Re-reviewed the API contract used by the Android gateway and firmware,
+  including device pairing, heartbeat, queue claim, incoming SMS, attempt
+  results, and firmware update checks. The firmware's configured API origin is
+  normalized to `/api/v1` by its Wi-Fi manager; the earlier suspected path
+  mismatch was not a defect.
+- Fixed a backend gateway-state bug: heartbeat updates can refresh telemetry
+  while preserving an administratively suspended gateway. Admin commands are
+  now returned only when the conditional status update confirms the gateway
+  was not concurrently suspended.
+- Added runtime validation for incoming device SMS payloads, normalized valid
+  timestamps, bounded phone/message fields, and removed phone/message content
+  from operational logs.
+- Fixed the Android gateway's rolling throughput handling. The API value is
+  SMS submissions per minute; the worker now enforces a rolling 60-second
+  limit using a persistent SQLite reservation ledger, including migration of
+  recent work from pre-existing local jobs. The queue API now includes the
+  configured limit even when its queue is empty, so the worker cannot fall back
+  to a higher default while processing locally retained jobs. This change is
+  source-checked but still needs an Android native build and hardware
+  verification.
+- Replaced an unused unsafe router failover routine that re-routed every
+  recipient after a five-minute timeout. The cron worker now conditionally
+  finalizes stale gateway attempts as `SEND_UNCERTAIN`, preserves a newer
+  recipient state, and never blindly retries an ambiguous send. Device result
+  updates use a conditional write so a concurrent cron finalization cannot be
+  overwritten by a late transaction. The timeout path is bounded to 100
+  attempts per cron run.
+- Fixed Android multipart SMS status handling: each segment now has a distinct
+  broadcast identity, and carrier delivery receipts are aggregated across all
+  parts before the backend is told the SMS was delivered. A native Android
+  build and real modem/carrier tests remain unavailable in this environment.
+- Verification: web TypeScript and repository lint passed; all 116 web unit and
+  integration test files passed (728/728 tests), with two additional route
+  tests passing separately after test collection. The Next.js production build
+  passed and generated 174 static pages. Mobile and gateway TypeScript, lint,
+  and Android JavaScript exports passed (1,678 and 1,682 modules respectively).
+  PlatformIO compiled the ESP32 firmware (54,480/327,680 bytes RAM and
+  1,255,673/1,966,080 bytes flash). Android native compilation remains
+  unavailable because this machine has no Android SDK/Gradle setup.
+- Chromium route-protection smoke passed 7/7 against the built production app
+  on an isolated local port. An initial run reused an unrelated server on the
+  default port and returned 404s; the isolated rerun verified the app's actual
+  redirect behavior. Authenticated workflows and role-specific pages remain
+  unverified without a signed-in test account.
+- Scope limitation: repository inventories and integration paths were
+  rechecked across four checkouts, but this is not a per-file, route-by-route
+  review of every UI state or database query. Authenticated journeys remain
+  unverified because no test user session was available. Live provider,
+  financial callback, consent/compliance, device, credential-rotation, and
+  managed deep-security-scan blockers remain open as recorded above.
+

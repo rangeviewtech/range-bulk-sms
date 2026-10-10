@@ -17,6 +17,14 @@ export const POST = async (req: NextRequest) => {
   return withDeviceAuth(req, async (req, { gatewayId, gatewaySecret, body, isE2EE }) => {
     try {
 
+      const gateway = await prisma.gateway.findUnique({
+        where: { id: gatewayId },
+        select: { config: true, status: true },
+      });
+      if (!gateway) {
+        return NextResponse.json({ error: 'Gateway not found' }, { status: 404 });
+      }
+
       // Extract legacy fields for GatewayDevice model
       const {
         batteryLevel,
@@ -66,11 +74,6 @@ export const POST = async (req: NextRequest) => {
       }
 
       // Store extended telemetry in Gateway.config JSON
-      const gateway = await prisma.gateway.findUnique({
-        where: { id: gatewayId },
-        select: { config: true, status: true },
-      });
-
       const existingConfig = (gateway?.config && typeof gateway.config === 'object' && !Array.isArray(gateway.config))
         ? { ...(gateway.config as Record<string, unknown>) }
         : {};
@@ -121,17 +124,26 @@ export const POST = async (req: NextRequest) => {
         }
       }
 
-      await prisma.gateway.update({
-        where: { id: gatewayId },
+      // Heartbeats may refresh OFFLINE/DEGRADED devices, but must never undo an
+      // administrator's suspension. The conditional update also closes the
+      // race where an admin suspends the gateway after the status was read.
+      const statusUpdate = await prisma.gateway.updateMany({
+        where: { id: gatewayId, status: { not: 'SUSPENDED' } },
         data: {
           status: gatewayStatus,
           config: telemetry as Prisma.InputJsonValue,
         },
       });
+      if (statusUpdate.count === 0) {
+        await prisma.gateway.update({
+          where: { id: gatewayId },
+          data: { config: telemetry as Prisma.InputJsonValue },
+        });
+      }
 
       // Return admin commands (unflag SIMs, config changes) — firmware polls this
       const adminCommands: Record<string, unknown> = {};
-      if (existingConfig.adminActions) {
+      if (statusUpdate.count > 0 && gateway.status !== 'SUSPENDED' && existingConfig.adminActions) {
         adminCommands.adminActions = existingConfig.adminActions;
       }
 
