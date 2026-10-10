@@ -1526,4 +1526,17 @@ hardware, provider, Android SDK, Firefox, and Deep Scan limitations remain.
   unverified because no test user session was available. Live provider,
   financial callback, consent/compliance, device, credential-rotation, and
   managed deep-security-scan blockers remain open as recorded above.
+- Follow-up gateway review: made rolling-window count, durable rate reservation,
+  and local job claim one exclusive SQLite transaction. This closes the race
+  between foreground and headless runtimes that could otherwise both pass the
+  throughput check. Local failures before invoking the native modem now restore
+  the local claim and release its reservation; failures after invocation remain
+  `SEND_UNCERTAIN` to avoid duplicate SMS. The gateway now reports modem
+  submission only after the native call returns successfully, and local send
+  logs omit recipient data.
+  The behavior follows the SQLite transaction model documented for
+  [Expo SDK 57](https://docs.expo.dev/versions/v57.0.0/sdk/sqlite/). Gateway
+  TypeScript and lint checks passed, and the Android JavaScript bundle exported
+  successfully (1,682 modules). Android native compilation and modem/carrier
+  behavior remain unverified.
 
