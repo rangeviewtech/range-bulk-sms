@@ -43,6 +43,8 @@ export type ScheduledMessageSumAggregateOutputType = {
 export type ScheduledMessageMinAggregateOutputType = {
   id: string | null
   userId: string | null
+  clientId: string | null
+  idempotencyKey: string | null
   senderIdId: string | null
   message: string | null
   recipientCount: number | null
@@ -65,6 +67,8 @@ export type ScheduledMessageMinAggregateOutputType = {
 export type ScheduledMessageMaxAggregateOutputType = {
   id: string | null
   userId: string | null
+  clientId: string | null
+  idempotencyKey: string | null
   senderIdId: string | null
   message: string | null
   recipientCount: number | null
@@ -87,6 +91,8 @@ export type ScheduledMessageMaxAggregateOutputType = {
 export type ScheduledMessageCountAggregateOutputType = {
   id: number
   userId: number
+  clientId: number
+  idempotencyKey: number
   senderIdId: number
   message: number
   recipients: number
@@ -126,6 +132,8 @@ export type ScheduledMessageSumAggregateInputType = {
 export type ScheduledMessageMinAggregateInputType = {
   id?: true
   userId?: true
+  clientId?: true
+  idempotencyKey?: true
   senderIdId?: true
   message?: true
   recipientCount?: true
@@ -148,6 +156,8 @@ export type ScheduledMessageMinAggregateInputType = {
 export type ScheduledMessageMaxAggregateInputType = {
   id?: true
   userId?: true
+  clientId?: true
+  idempotencyKey?: true
   senderIdId?: true
   message?: true
   recipientCount?: true
@@ -170,6 +180,8 @@ export type ScheduledMessageMaxAggregateInputType = {
 export type ScheduledMessageCountAggregateInputType = {
   id?: true
   userId?: true
+  clientId?: true
+  idempotencyKey?: true
   senderIdId?: true
   message?: true
   recipients?: true
@@ -280,6 +292,8 @@ export type ScheduledMessageGroupByArgs<ExtArgs extends runtime.Types.Extensions
 export type ScheduledMessageGroupByOutputType = {
   id: string
   userId: string
+  clientId: string | null
+  idempotencyKey: string | null
   senderIdId: string | null
   message: string
   recipients: string[]
@@ -326,6 +340,8 @@ export type ScheduledMessageWhereInput = {
   NOT?: Prisma.ScheduledMessageWhereInput | Prisma.ScheduledMessageWhereInput[]
   id?: Prisma.StringFilter<"ScheduledMessage"> | string
   userId?: Prisma.StringFilter<"ScheduledMessage"> | string
+  clientId?: Prisma.StringNullableFilter<"ScheduledMessage"> | string | null
+  idempotencyKey?: Prisma.StringNullableFilter<"ScheduledMessage"> | string | null
   senderIdId?: Prisma.StringNullableFilter<"ScheduledMessage"> | string | null
   message?: Prisma.StringFilter<"ScheduledMessage"> | string
   recipients?: Prisma.StringNullableListFilter<"ScheduledMessage">
@@ -345,12 +361,15 @@ export type ScheduledMessageWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"ScheduledMessage"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ScheduledMessage"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  client?: Prisma.XOR<Prisma.ClientNullableScalarRelationFilter, Prisma.ClientWhereInput> | null
   senderId?: Prisma.XOR<Prisma.SenderIdNullableScalarRelationFilter, Prisma.SenderIdWhereInput> | null
 }
 
 export type ScheduledMessageOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  clientId?: Prisma.SortOrderInput | Prisma.SortOrder
+  idempotencyKey?: Prisma.SortOrderInput | Prisma.SortOrder
   senderIdId?: Prisma.SortOrderInput | Prisma.SortOrder
   message?: Prisma.SortOrder
   recipients?: Prisma.SortOrder
@@ -370,15 +389,18 @@ export type ScheduledMessageOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  client?: Prisma.ClientOrderByWithRelationInput
   senderId?: Prisma.SenderIdOrderByWithRelationInput
 }
 
 export type ScheduledMessageWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  idempotencyKey?: string
   AND?: Prisma.ScheduledMessageWhereInput | Prisma.ScheduledMessageWhereInput[]
   OR?: Prisma.ScheduledMessageWhereInput[]
   NOT?: Prisma.ScheduledMessageWhereInput | Prisma.ScheduledMessageWhereInput[]
   userId?: Prisma.StringFilter<"ScheduledMessage"> | string
+  clientId?: Prisma.StringNullableFilter<"ScheduledMessage"> | string | null
   senderIdId?: Prisma.StringNullableFilter<"ScheduledMessage"> | string | null
   message?: Prisma.StringFilter<"ScheduledMessage"> | string
   recipients?: Prisma.StringNullableListFilter<"ScheduledMessage">
@@ -398,12 +420,15 @@ export type ScheduledMessageWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"ScheduledMessage"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ScheduledMessage"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  client?: Prisma.XOR<Prisma.ClientNullableScalarRelationFilter, Prisma.ClientWhereInput> | null
   senderId?: Prisma.XOR<Prisma.SenderIdNullableScalarRelationFilter, Prisma.SenderIdWhereInput> | null
-}, "id">
+}, "id" | "idempotencyKey">
 
 export type ScheduledMessageOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  clientId?: Prisma.SortOrderInput | Prisma.SortOrder
+  idempotencyKey?: Prisma.SortOrderInput | Prisma.SortOrder
   senderIdId?: Prisma.SortOrderInput | Prisma.SortOrder
   message?: Prisma.SortOrder
   recipients?: Prisma.SortOrder
@@ -435,6 +460,8 @@ export type ScheduledMessageScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ScheduledMessageScalarWhereWithAggregatesInput | Prisma.ScheduledMessageScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"ScheduledMessage"> | string
   userId?: Prisma.StringWithAggregatesFilter<"ScheduledMessage"> | string
+  clientId?: Prisma.StringNullableWithAggregatesFilter<"ScheduledMessage"> | string | null
+  idempotencyKey?: Prisma.StringNullableWithAggregatesFilter<"ScheduledMessage"> | string | null
   senderIdId?: Prisma.StringNullableWithAggregatesFilter<"ScheduledMessage"> | string | null
   message?: Prisma.StringWithAggregatesFilter<"ScheduledMessage"> | string
   recipients?: Prisma.StringNullableListFilter<"ScheduledMessage">
@@ -457,6 +484,7 @@ export type ScheduledMessageScalarWhereWithAggregatesInput = {
 
 export type ScheduledMessageCreateInput = {
   id?: string
+  idempotencyKey?: string | null
   message: string
   recipients?: Prisma.ScheduledMessageCreaterecipientsInput | string[]
   recipientCount?: number
@@ -475,12 +503,15 @@ export type ScheduledMessageCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutScheduledMessagesInput
+  client?: Prisma.ClientCreateNestedOneWithoutScheduledMessagesInput
   senderId?: Prisma.SenderIdCreateNestedOneWithoutScheduledMessagesInput
 }
 
 export type ScheduledMessageUncheckedCreateInput = {
   id?: string
   userId: string
+  clientId?: string | null
+  idempotencyKey?: string | null
   senderIdId?: string | null
   message: string
   recipients?: Prisma.ScheduledMessageCreaterecipientsInput | string[]
@@ -503,6 +534,7 @@ export type ScheduledMessageUncheckedCreateInput = {
 
 export type ScheduledMessageUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   message?: Prisma.StringFieldUpdateOperationsInput | string
   recipients?: Prisma.ScheduledMessageUpdaterecipientsInput | string[]
   recipientCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -521,12 +553,15 @@ export type ScheduledMessageUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutScheduledMessagesNestedInput
+  client?: Prisma.ClientUpdateOneWithoutScheduledMessagesNestedInput
   senderId?: Prisma.SenderIdUpdateOneWithoutScheduledMessagesNestedInput
 }
 
 export type ScheduledMessageUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   message?: Prisma.StringFieldUpdateOperationsInput | string
   recipients?: Prisma.ScheduledMessageUpdaterecipientsInput | string[]
@@ -550,6 +585,8 @@ export type ScheduledMessageUncheckedUpdateInput = {
 export type ScheduledMessageCreateManyInput = {
   id?: string
   userId: string
+  clientId?: string | null
+  idempotencyKey?: string | null
   senderIdId?: string | null
   message: string
   recipients?: Prisma.ScheduledMessageCreaterecipientsInput | string[]
@@ -572,6 +609,7 @@ export type ScheduledMessageCreateManyInput = {
 
 export type ScheduledMessageUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   message?: Prisma.StringFieldUpdateOperationsInput | string
   recipients?: Prisma.ScheduledMessageUpdaterecipientsInput | string[]
   recipientCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -594,6 +632,8 @@ export type ScheduledMessageUpdateManyMutationInput = {
 export type ScheduledMessageUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   message?: Prisma.StringFieldUpdateOperationsInput | string
   recipients?: Prisma.ScheduledMessageUpdaterecipientsInput | string[]
@@ -627,6 +667,8 @@ export type ScheduledMessageOrderByRelationAggregateInput = {
 export type ScheduledMessageCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  clientId?: Prisma.SortOrder
+  idempotencyKey?: Prisma.SortOrder
   senderIdId?: Prisma.SortOrder
   message?: Prisma.SortOrder
   recipients?: Prisma.SortOrder
@@ -657,6 +699,8 @@ export type ScheduledMessageAvgOrderByAggregateInput = {
 export type ScheduledMessageMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  clientId?: Prisma.SortOrder
+  idempotencyKey?: Prisma.SortOrder
   senderIdId?: Prisma.SortOrder
   message?: Prisma.SortOrder
   recipientCount?: Prisma.SortOrder
@@ -679,6 +723,8 @@ export type ScheduledMessageMaxOrderByAggregateInput = {
 export type ScheduledMessageMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  clientId?: Prisma.SortOrder
+  idempotencyKey?: Prisma.SortOrder
   senderIdId?: Prisma.SortOrder
   message?: Prisma.SortOrder
   recipientCount?: Prisma.SortOrder
@@ -747,6 +793,48 @@ export type ScheduledMessageUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.ScheduledMessageScalarWhereInput | Prisma.ScheduledMessageScalarWhereInput[]
 }
 
+export type ScheduledMessageCreateNestedManyWithoutClientInput = {
+  create?: Prisma.XOR<Prisma.ScheduledMessageCreateWithoutClientInput, Prisma.ScheduledMessageUncheckedCreateWithoutClientInput> | Prisma.ScheduledMessageCreateWithoutClientInput[] | Prisma.ScheduledMessageUncheckedCreateWithoutClientInput[]
+  connectOrCreate?: Prisma.ScheduledMessageCreateOrConnectWithoutClientInput | Prisma.ScheduledMessageCreateOrConnectWithoutClientInput[]
+  createMany?: Prisma.ScheduledMessageCreateManyClientInputEnvelope
+  connect?: Prisma.ScheduledMessageWhereUniqueInput | Prisma.ScheduledMessageWhereUniqueInput[]
+}
+
+export type ScheduledMessageUncheckedCreateNestedManyWithoutClientInput = {
+  create?: Prisma.XOR<Prisma.ScheduledMessageCreateWithoutClientInput, Prisma.ScheduledMessageUncheckedCreateWithoutClientInput> | Prisma.ScheduledMessageCreateWithoutClientInput[] | Prisma.ScheduledMessageUncheckedCreateWithoutClientInput[]
+  connectOrCreate?: Prisma.ScheduledMessageCreateOrConnectWithoutClientInput | Prisma.ScheduledMessageCreateOrConnectWithoutClientInput[]
+  createMany?: Prisma.ScheduledMessageCreateManyClientInputEnvelope
+  connect?: Prisma.ScheduledMessageWhereUniqueInput | Prisma.ScheduledMessageWhereUniqueInput[]
+}
+
+export type ScheduledMessageUpdateManyWithoutClientNestedInput = {
+  create?: Prisma.XOR<Prisma.ScheduledMessageCreateWithoutClientInput, Prisma.ScheduledMessageUncheckedCreateWithoutClientInput> | Prisma.ScheduledMessageCreateWithoutClientInput[] | Prisma.ScheduledMessageUncheckedCreateWithoutClientInput[]
+  connectOrCreate?: Prisma.ScheduledMessageCreateOrConnectWithoutClientInput | Prisma.ScheduledMessageCreateOrConnectWithoutClientInput[]
+  upsert?: Prisma.ScheduledMessageUpsertWithWhereUniqueWithoutClientInput | Prisma.ScheduledMessageUpsertWithWhereUniqueWithoutClientInput[]
+  createMany?: Prisma.ScheduledMessageCreateManyClientInputEnvelope
+  set?: Prisma.ScheduledMessageWhereUniqueInput | Prisma.ScheduledMessageWhereUniqueInput[]
+  disconnect?: Prisma.ScheduledMessageWhereUniqueInput | Prisma.ScheduledMessageWhereUniqueInput[]
+  delete?: Prisma.ScheduledMessageWhereUniqueInput | Prisma.ScheduledMessageWhereUniqueInput[]
+  connect?: Prisma.ScheduledMessageWhereUniqueInput | Prisma.ScheduledMessageWhereUniqueInput[]
+  update?: Prisma.ScheduledMessageUpdateWithWhereUniqueWithoutClientInput | Prisma.ScheduledMessageUpdateWithWhereUniqueWithoutClientInput[]
+  updateMany?: Prisma.ScheduledMessageUpdateManyWithWhereWithoutClientInput | Prisma.ScheduledMessageUpdateManyWithWhereWithoutClientInput[]
+  deleteMany?: Prisma.ScheduledMessageScalarWhereInput | Prisma.ScheduledMessageScalarWhereInput[]
+}
+
+export type ScheduledMessageUncheckedUpdateManyWithoutClientNestedInput = {
+  create?: Prisma.XOR<Prisma.ScheduledMessageCreateWithoutClientInput, Prisma.ScheduledMessageUncheckedCreateWithoutClientInput> | Prisma.ScheduledMessageCreateWithoutClientInput[] | Prisma.ScheduledMessageUncheckedCreateWithoutClientInput[]
+  connectOrCreate?: Prisma.ScheduledMessageCreateOrConnectWithoutClientInput | Prisma.ScheduledMessageCreateOrConnectWithoutClientInput[]
+  upsert?: Prisma.ScheduledMessageUpsertWithWhereUniqueWithoutClientInput | Prisma.ScheduledMessageUpsertWithWhereUniqueWithoutClientInput[]
+  createMany?: Prisma.ScheduledMessageCreateManyClientInputEnvelope
+  set?: Prisma.ScheduledMessageWhereUniqueInput | Prisma.ScheduledMessageWhereUniqueInput[]
+  disconnect?: Prisma.ScheduledMessageWhereUniqueInput | Prisma.ScheduledMessageWhereUniqueInput[]
+  delete?: Prisma.ScheduledMessageWhereUniqueInput | Prisma.ScheduledMessageWhereUniqueInput[]
+  connect?: Prisma.ScheduledMessageWhereUniqueInput | Prisma.ScheduledMessageWhereUniqueInput[]
+  update?: Prisma.ScheduledMessageUpdateWithWhereUniqueWithoutClientInput | Prisma.ScheduledMessageUpdateWithWhereUniqueWithoutClientInput[]
+  updateMany?: Prisma.ScheduledMessageUpdateManyWithWhereWithoutClientInput | Prisma.ScheduledMessageUpdateManyWithWhereWithoutClientInput[]
+  deleteMany?: Prisma.ScheduledMessageScalarWhereInput | Prisma.ScheduledMessageScalarWhereInput[]
+}
+
 export type ScheduledMessageCreateNestedManyWithoutSenderIdInput = {
   create?: Prisma.XOR<Prisma.ScheduledMessageCreateWithoutSenderIdInput, Prisma.ScheduledMessageUncheckedCreateWithoutSenderIdInput> | Prisma.ScheduledMessageCreateWithoutSenderIdInput[] | Prisma.ScheduledMessageUncheckedCreateWithoutSenderIdInput[]
   connectOrCreate?: Prisma.ScheduledMessageCreateOrConnectWithoutSenderIdInput | Prisma.ScheduledMessageCreateOrConnectWithoutSenderIdInput[]
@@ -800,6 +888,7 @@ export type ScheduledMessageUpdaterecipientsInput = {
 
 export type ScheduledMessageCreateWithoutUserInput = {
   id?: string
+  idempotencyKey?: string | null
   message: string
   recipients?: Prisma.ScheduledMessageCreaterecipientsInput | string[]
   recipientCount?: number
@@ -817,11 +906,14 @@ export type ScheduledMessageCreateWithoutUserInput = {
   resultMessageId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  client?: Prisma.ClientCreateNestedOneWithoutScheduledMessagesInput
   senderId?: Prisma.SenderIdCreateNestedOneWithoutScheduledMessagesInput
 }
 
 export type ScheduledMessageUncheckedCreateWithoutUserInput = {
   id?: string
+  clientId?: string | null
+  idempotencyKey?: string | null
   senderIdId?: string | null
   message: string
   recipients?: Prisma.ScheduledMessageCreaterecipientsInput | string[]
@@ -874,6 +966,8 @@ export type ScheduledMessageScalarWhereInput = {
   NOT?: Prisma.ScheduledMessageScalarWhereInput | Prisma.ScheduledMessageScalarWhereInput[]
   id?: Prisma.StringFilter<"ScheduledMessage"> | string
   userId?: Prisma.StringFilter<"ScheduledMessage"> | string
+  clientId?: Prisma.StringNullableFilter<"ScheduledMessage"> | string | null
+  idempotencyKey?: Prisma.StringNullableFilter<"ScheduledMessage"> | string | null
   senderIdId?: Prisma.StringNullableFilter<"ScheduledMessage"> | string | null
   message?: Prisma.StringFilter<"ScheduledMessage"> | string
   recipients?: Prisma.StringNullableListFilter<"ScheduledMessage">
@@ -894,8 +988,9 @@ export type ScheduledMessageScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"ScheduledMessage"> | Date | string
 }
 
-export type ScheduledMessageCreateWithoutSenderIdInput = {
+export type ScheduledMessageCreateWithoutClientInput = {
   id?: string
+  idempotencyKey?: string | null
   message: string
   recipients?: Prisma.ScheduledMessageCreaterecipientsInput | string[]
   recipientCount?: number
@@ -914,11 +1009,88 @@ export type ScheduledMessageCreateWithoutSenderIdInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutScheduledMessagesInput
+  senderId?: Prisma.SenderIdCreateNestedOneWithoutScheduledMessagesInput
+}
+
+export type ScheduledMessageUncheckedCreateWithoutClientInput = {
+  id?: string
+  userId: string
+  idempotencyKey?: string | null
+  senderIdId?: string | null
+  message: string
+  recipients?: Prisma.ScheduledMessageCreaterecipientsInput | string[]
+  recipientCount?: number
+  encoding?: string
+  segmentCount?: number
+  totalUnits?: number
+  estimatedCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  scheduledAt: Date | string
+  timezone?: string
+  isRecurring?: boolean
+  cronExpression?: string | null
+  status?: string
+  executedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  resultMessageId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ScheduledMessageCreateOrConnectWithoutClientInput = {
+  where: Prisma.ScheduledMessageWhereUniqueInput
+  create: Prisma.XOR<Prisma.ScheduledMessageCreateWithoutClientInput, Prisma.ScheduledMessageUncheckedCreateWithoutClientInput>
+}
+
+export type ScheduledMessageCreateManyClientInputEnvelope = {
+  data: Prisma.ScheduledMessageCreateManyClientInput | Prisma.ScheduledMessageCreateManyClientInput[]
+  skipDuplicates?: boolean
+}
+
+export type ScheduledMessageUpsertWithWhereUniqueWithoutClientInput = {
+  where: Prisma.ScheduledMessageWhereUniqueInput
+  update: Prisma.XOR<Prisma.ScheduledMessageUpdateWithoutClientInput, Prisma.ScheduledMessageUncheckedUpdateWithoutClientInput>
+  create: Prisma.XOR<Prisma.ScheduledMessageCreateWithoutClientInput, Prisma.ScheduledMessageUncheckedCreateWithoutClientInput>
+}
+
+export type ScheduledMessageUpdateWithWhereUniqueWithoutClientInput = {
+  where: Prisma.ScheduledMessageWhereUniqueInput
+  data: Prisma.XOR<Prisma.ScheduledMessageUpdateWithoutClientInput, Prisma.ScheduledMessageUncheckedUpdateWithoutClientInput>
+}
+
+export type ScheduledMessageUpdateManyWithWhereWithoutClientInput = {
+  where: Prisma.ScheduledMessageScalarWhereInput
+  data: Prisma.XOR<Prisma.ScheduledMessageUpdateManyMutationInput, Prisma.ScheduledMessageUncheckedUpdateManyWithoutClientInput>
+}
+
+export type ScheduledMessageCreateWithoutSenderIdInput = {
+  id?: string
+  idempotencyKey?: string | null
+  message: string
+  recipients?: Prisma.ScheduledMessageCreaterecipientsInput | string[]
+  recipientCount?: number
+  encoding?: string
+  segmentCount?: number
+  totalUnits?: number
+  estimatedCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  scheduledAt: Date | string
+  timezone?: string
+  isRecurring?: boolean
+  cronExpression?: string | null
+  status?: string
+  executedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  resultMessageId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutScheduledMessagesInput
+  client?: Prisma.ClientCreateNestedOneWithoutScheduledMessagesInput
 }
 
 export type ScheduledMessageUncheckedCreateWithoutSenderIdInput = {
   id?: string
   userId: string
+  clientId?: string | null
+  idempotencyKey?: string | null
   message: string
   recipients?: Prisma.ScheduledMessageCreaterecipientsInput | string[]
   recipientCount?: number
@@ -966,6 +1138,8 @@ export type ScheduledMessageUpdateManyWithWhereWithoutSenderIdInput = {
 
 export type ScheduledMessageCreateManyUserInput = {
   id?: string
+  clientId?: string | null
+  idempotencyKey?: string | null
   senderIdId?: string | null
   message: string
   recipients?: Prisma.ScheduledMessageCreaterecipientsInput | string[]
@@ -988,6 +1162,7 @@ export type ScheduledMessageCreateManyUserInput = {
 
 export type ScheduledMessageUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   message?: Prisma.StringFieldUpdateOperationsInput | string
   recipients?: Prisma.ScheduledMessageUpdaterecipientsInput | string[]
   recipientCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1005,11 +1180,14 @@ export type ScheduledMessageUpdateWithoutUserInput = {
   resultMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  client?: Prisma.ClientUpdateOneWithoutScheduledMessagesNestedInput
   senderId?: Prisma.SenderIdUpdateOneWithoutScheduledMessagesNestedInput
 }
 
 export type ScheduledMessageUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   message?: Prisma.StringFieldUpdateOperationsInput | string
   recipients?: Prisma.ScheduledMessageUpdaterecipientsInput | string[]
@@ -1032,6 +1210,104 @@ export type ScheduledMessageUncheckedUpdateWithoutUserInput = {
 
 export type ScheduledMessageUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  recipients?: Prisma.ScheduledMessageUpdaterecipientsInput | string[]
+  recipientCount?: Prisma.IntFieldUpdateOperationsInput | number
+  encoding?: Prisma.StringFieldUpdateOperationsInput | string
+  segmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  totalUnits?: Prisma.IntFieldUpdateOperationsInput | number
+  estimatedCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  executedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resultMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ScheduledMessageCreateManyClientInput = {
+  id?: string
+  userId: string
+  idempotencyKey?: string | null
+  senderIdId?: string | null
+  message: string
+  recipients?: Prisma.ScheduledMessageCreaterecipientsInput | string[]
+  recipientCount?: number
+  encoding?: string
+  segmentCount?: number
+  totalUnits?: number
+  estimatedCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  scheduledAt: Date | string
+  timezone?: string
+  isRecurring?: boolean
+  cronExpression?: string | null
+  status?: string
+  executedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  resultMessageId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ScheduledMessageUpdateWithoutClientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  recipients?: Prisma.ScheduledMessageUpdaterecipientsInput | string[]
+  recipientCount?: Prisma.IntFieldUpdateOperationsInput | number
+  encoding?: Prisma.StringFieldUpdateOperationsInput | string
+  segmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  totalUnits?: Prisma.IntFieldUpdateOperationsInput | number
+  estimatedCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  executedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resultMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutScheduledMessagesNestedInput
+  senderId?: Prisma.SenderIdUpdateOneWithoutScheduledMessagesNestedInput
+}
+
+export type ScheduledMessageUncheckedUpdateWithoutClientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  recipients?: Prisma.ScheduledMessageUpdaterecipientsInput | string[]
+  recipientCount?: Prisma.IntFieldUpdateOperationsInput | number
+  encoding?: Prisma.StringFieldUpdateOperationsInput | string
+  segmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  totalUnits?: Prisma.IntFieldUpdateOperationsInput | number
+  estimatedCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cronExpression?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  executedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resultMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ScheduledMessageUncheckedUpdateManyWithoutClientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   senderIdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   message?: Prisma.StringFieldUpdateOperationsInput | string
   recipients?: Prisma.ScheduledMessageUpdaterecipientsInput | string[]
@@ -1055,6 +1331,8 @@ export type ScheduledMessageUncheckedUpdateManyWithoutUserInput = {
 export type ScheduledMessageCreateManySenderIdInput = {
   id?: string
   userId: string
+  clientId?: string | null
+  idempotencyKey?: string | null
   message: string
   recipients?: Prisma.ScheduledMessageCreaterecipientsInput | string[]
   recipientCount?: number
@@ -1076,6 +1354,7 @@ export type ScheduledMessageCreateManySenderIdInput = {
 
 export type ScheduledMessageUpdateWithoutSenderIdInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   message?: Prisma.StringFieldUpdateOperationsInput | string
   recipients?: Prisma.ScheduledMessageUpdaterecipientsInput | string[]
   recipientCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1094,11 +1373,14 @@ export type ScheduledMessageUpdateWithoutSenderIdInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutScheduledMessagesNestedInput
+  client?: Prisma.ClientUpdateOneWithoutScheduledMessagesNestedInput
 }
 
 export type ScheduledMessageUncheckedUpdateWithoutSenderIdInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   message?: Prisma.StringFieldUpdateOperationsInput | string
   recipients?: Prisma.ScheduledMessageUpdaterecipientsInput | string[]
   recipientCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1121,6 +1403,8 @@ export type ScheduledMessageUncheckedUpdateWithoutSenderIdInput = {
 export type ScheduledMessageUncheckedUpdateManyWithoutSenderIdInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   message?: Prisma.StringFieldUpdateOperationsInput | string
   recipients?: Prisma.ScheduledMessageUpdaterecipientsInput | string[]
   recipientCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1145,6 +1429,8 @@ export type ScheduledMessageUncheckedUpdateManyWithoutSenderIdInput = {
 export type ScheduledMessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
+  clientId?: boolean
+  idempotencyKey?: boolean
   senderIdId?: boolean
   message?: boolean
   recipients?: boolean
@@ -1164,12 +1450,15 @@ export type ScheduledMessageSelect<ExtArgs extends runtime.Types.Extensions.Inte
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  client?: boolean | Prisma.ScheduledMessage$clientArgs<ExtArgs>
   senderId?: boolean | Prisma.ScheduledMessage$senderIdArgs<ExtArgs>
 }, ExtArgs["result"]["scheduledMessage"]>
 
 export type ScheduledMessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
+  clientId?: boolean
+  idempotencyKey?: boolean
   senderIdId?: boolean
   message?: boolean
   recipients?: boolean
@@ -1189,12 +1478,15 @@ export type ScheduledMessageSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  client?: boolean | Prisma.ScheduledMessage$clientArgs<ExtArgs>
   senderId?: boolean | Prisma.ScheduledMessage$senderIdArgs<ExtArgs>
 }, ExtArgs["result"]["scheduledMessage"]>
 
 export type ScheduledMessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
+  clientId?: boolean
+  idempotencyKey?: boolean
   senderIdId?: boolean
   message?: boolean
   recipients?: boolean
@@ -1214,12 +1506,15 @@ export type ScheduledMessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  client?: boolean | Prisma.ScheduledMessage$clientArgs<ExtArgs>
   senderId?: boolean | Prisma.ScheduledMessage$senderIdArgs<ExtArgs>
 }, ExtArgs["result"]["scheduledMessage"]>
 
 export type ScheduledMessageSelectScalar = {
   id?: boolean
   userId?: boolean
+  clientId?: boolean
+  idempotencyKey?: boolean
   senderIdId?: boolean
   message?: boolean
   recipients?: boolean
@@ -1240,17 +1535,20 @@ export type ScheduledMessageSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ScheduledMessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "senderIdId" | "message" | "recipients" | "recipientCount" | "encoding" | "segmentCount" | "totalUnits" | "estimatedCost" | "scheduledAt" | "timezone" | "isRecurring" | "cronExpression" | "status" | "executedAt" | "cancelledAt" | "resultMessageId" | "createdAt" | "updatedAt", ExtArgs["result"]["scheduledMessage"]>
+export type ScheduledMessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "clientId" | "idempotencyKey" | "senderIdId" | "message" | "recipients" | "recipientCount" | "encoding" | "segmentCount" | "totalUnits" | "estimatedCost" | "scheduledAt" | "timezone" | "isRecurring" | "cronExpression" | "status" | "executedAt" | "cancelledAt" | "resultMessageId" | "createdAt" | "updatedAt", ExtArgs["result"]["scheduledMessage"]>
 export type ScheduledMessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  client?: boolean | Prisma.ScheduledMessage$clientArgs<ExtArgs>
   senderId?: boolean | Prisma.ScheduledMessage$senderIdArgs<ExtArgs>
 }
 export type ScheduledMessageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  client?: boolean | Prisma.ScheduledMessage$clientArgs<ExtArgs>
   senderId?: boolean | Prisma.ScheduledMessage$senderIdArgs<ExtArgs>
 }
 export type ScheduledMessageIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  client?: boolean | Prisma.ScheduledMessage$clientArgs<ExtArgs>
   senderId?: boolean | Prisma.ScheduledMessage$senderIdArgs<ExtArgs>
 }
 
@@ -1258,11 +1556,14 @@ export type $ScheduledMessagePayload<ExtArgs extends runtime.Types.Extensions.In
   name: "ScheduledMessage"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    client: Prisma.$ClientPayload<ExtArgs> | null
     senderId: Prisma.$SenderIdPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
+    clientId: string | null
+    idempotencyKey: string | null
     senderIdId: string | null
     message: string
     recipients: string[]
@@ -1676,6 +1977,7 @@ readonly fields: ScheduledMessageFieldRefs;
 export interface Prisma__ScheduledMessageClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  client<T extends Prisma.ScheduledMessage$clientArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ScheduledMessage$clientArgs<ExtArgs>>): Prisma.Prisma__ClientClient<runtime.Types.Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   senderId<T extends Prisma.ScheduledMessage$senderIdArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ScheduledMessage$senderIdArgs<ExtArgs>>): Prisma.Prisma__SenderIdClient<runtime.Types.Result.GetResult<Prisma.$SenderIdPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1708,6 +2010,8 @@ export interface Prisma__ScheduledMessageClient<T, Null = never, ExtArgs extends
 export interface ScheduledMessageFieldRefs {
   readonly id: Prisma.FieldRef<"ScheduledMessage", 'String'>
   readonly userId: Prisma.FieldRef<"ScheduledMessage", 'String'>
+  readonly clientId: Prisma.FieldRef<"ScheduledMessage", 'String'>
+  readonly idempotencyKey: Prisma.FieldRef<"ScheduledMessage", 'String'>
   readonly senderIdId: Prisma.FieldRef<"ScheduledMessage", 'String'>
   readonly message: Prisma.FieldRef<"ScheduledMessage", 'String'>
   readonly recipients: Prisma.FieldRef<"ScheduledMessage", 'String[]'>
@@ -2124,6 +2428,25 @@ export type ScheduledMessageDeleteManyArgs<ExtArgs extends runtime.Types.Extensi
    * Limit how many ScheduledMessages to delete.
    */
   limit?: number
+}
+
+/**
+ * ScheduledMessage.client
+ */
+export type ScheduledMessage$clientArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Client
+   */
+  select?: Prisma.ClientSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Client
+   */
+  omit?: Prisma.ClientOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClientInclude<ExtArgs> | null
+  where?: Prisma.ClientWhereInput
 }
 
 /**

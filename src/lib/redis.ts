@@ -1,10 +1,24 @@
 import { Redis } from '@upstash/redis';
 
+const isProduction = process.env.NODE_ENV === 'production';
+const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
+const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+if (Boolean(redisUrl) !== Boolean(redisToken)) {
+  throw new Error('Configure both UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN, or leave both unset.');
+}
+
+function reportRedisFailure(operation: string, error: unknown) {
+  const errorName = error instanceof Error ? error.name : 'UnknownError';
+  console.warn(`[Redis] ${operation} failed (${errorName}).`);
+}
+
 export const redis =
-  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+  redisUrl && redisToken
     ? new Redis({
-        url: process.env.UPSTASH_REDIS_REST_URL,
-        token: process.env.UPSTASH_REDIS_REST_TOKEN,
+        url: redisUrl,
+        token: redisToken,
+        retry: { retries: 1, backoff: () => 100 },
       })
     : null;
 
@@ -44,7 +58,7 @@ export const redisCache = {
         const data = await redis.get<T>(key);
         return data ?? null;
       } catch (err) {
-        console.warn('Redis Cache GET failed, falling back to memory:', err);
+        reportRedisFailure('cache read', err);
       }
     }
     pruneMemory();
@@ -74,7 +88,7 @@ export const redisCache = {
         }
         return;
       } catch (err) {
-        console.warn('Redis Cache SET failed, falling back to memory:', err);
+        reportRedisFailure('cache write', err);
       }
     }
     pruneMemory();
@@ -93,41 +107,47 @@ export const redisCache = {
       try {
         await redis.del(key);
       } catch (err) {
-        console.warn('Redis Cache DEL failed:', err);
+        reportRedisFailure('cache delete', err);
       }
     }
     memoryCache.delete(key);
   },
 
   /**
-   * Invalidates multiple cache keys by wildcard/prefix pattern.
+   * Invalidates matching cache keys using incremental SCAN (never KEYS).
    * Example: delByPattern('reports:sms:*')
    */
   async delByPattern(pattern: string): Promise<number> {
-    let deletedCount = 0;
-
-    // Convert glob pattern to regex for in-memory deletion
-    const regexPattern = new RegExp(`^${pattern.replace(/\*/g, '.*')}$`);
+    // Convert the supported Redis glob '*' to a safely escaped memory regex.
+    const escapedParts = pattern
+      .split('*')
+      .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const regexPattern = new RegExp(`^${escapedParts.join('.*')}$`);
+    const deletedKeys = new Set<string>();
     for (const k of Array.from(memoryCache.keys())) {
       if (regexPattern.test(k)) {
         memoryCache.delete(k);
-        deletedCount++;
+        deletedKeys.add(k);
       }
     }
 
     if (redis) {
       try {
-        const keys = await redis.keys(pattern);
-        if (keys && keys.length > 0) {
-          await redis.del(...keys);
-          deletedCount = Math.max(deletedCount, keys.length);
-        }
+        let cursor = '0';
+        do {
+          const [nextCursor, keys] = await redis.scan(cursor, { match: pattern, count: 100 });
+          cursor = String(nextCursor);
+          if (keys.length > 0) {
+            await redis.del(...keys);
+            for (const key of keys) deletedKeys.add(key);
+          }
+        } while (cursor !== '0');
       } catch (err) {
-        console.warn('Redis Cache delByPattern failed:', err);
+        reportRedisFailure('pattern cache invalidation', err);
       }
     }
 
-    return deletedCount;
+    return deletedKeys.size;
   },
 
   /**
@@ -180,7 +200,10 @@ export const redisLock = {
     lockKey: string,
     ttlSeconds: number = 30
   ): Promise<{ acquired: boolean; token: string }> {
-    const token = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2) + Date.now().toString(36);
+    const token = globalThis.crypto?.randomUUID?.();
+    if (!token) {
+      throw new Error('Secure random token generation is unavailable.');
+    }
     const fullKey = `lock:${lockKey}`;
 
     if (redis) {
@@ -192,8 +215,11 @@ export const redisLock = {
           token,
         };
       } catch (err) {
-        console.warn('Redis Lock acquire failed, falling back to memory:', err);
+        reportRedisFailure('lock acquisition', err);
+        if (isProduction) return { acquired: false, token: '' };
       }
+    } else if (isProduction) {
+      return { acquired: false, token: '' };
     }
 
     pruneMemory();
@@ -229,8 +255,11 @@ export const redisLock = {
         const result = await redis.eval(script, [fullKey], [token]);
         return result === 1;
       } catch (err) {
-        console.warn('Redis Lock release failed, falling back to memory:', err);
+        reportRedisFailure('lock release', err);
+        return false;
       }
+    } else if (isProduction) {
+      return false;
     }
 
     const current = memoryLocks.get(fullKey);

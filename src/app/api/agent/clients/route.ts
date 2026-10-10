@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { verifySession } from '@/lib/auth/session';
+import { verifyAuthenticatedSession } from '@/lib/auth/session';
 import { AgentService } from '@/lib/agent/service';
 
 export async function GET() {
   try {
-    const session = await verifySession();
+    const session = await verifyAuthenticatedSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

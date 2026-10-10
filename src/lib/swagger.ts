@@ -1,4 +1,5 @@
 import { createSwaggerSpec } from 'next-swagger-doc';
+import { getPublicApiBaseUrl } from '@/lib/api-docs';
 
 export const getApiDocs = async () => {
   const spec = createSwaggerSpec({
@@ -24,17 +25,27 @@ export const getApiDocs = async () => {
       servers: [
         {
           url: '/api/v1',
-          description: '🧪 Sandbox Environment (Default: Deterministic non-routable numbers +999000000001 - +999000000006, non-billable)',
+          description:
+            '🧪 Sandbox Environment (Default: Deterministic non-routable numbers +999000000001 - +999000000006, non-billable)',
         },
         {
-          url: 'https://api.rangesms.com/v1',
+          url: getPublicApiBaseUrl(),
           description: '⚠️ Production Environment (Real carrier network dispatch, billable)',
         },
       ],
       tags: [
-        { name: 'SMS', description: 'Single, bulk, and scheduled SMS message dispatch and lifecycle' },
-        { name: 'Delivery Reports', description: 'Real-time message delivery status queries and history' },
-        { name: 'Webhooks & DLR', description: 'Signed webhook delivery events and event simulator' },
+        {
+          name: 'SMS',
+          description: 'Single, bulk, and scheduled SMS message dispatch and lifecycle',
+        },
+        {
+          name: 'Delivery Reports',
+          description: 'Real-time message delivery status queries and history',
+        },
+        {
+          name: 'Webhooks & DLR',
+          description: 'Signed webhook delivery events and event simulator',
+        },
         { name: 'Wallet', description: 'Account balance, currency, and usage quotas' },
         { name: 'Contacts', description: 'Contact management and address book entries' },
         { name: 'Sender IDs', description: 'Alphanumeric sender ID registry and approval status' },
@@ -46,7 +57,8 @@ export const getApiDocs = async () => {
             type: 'http',
             scheme: 'bearer',
             bearerFormat: 'API Key',
-            description: 'Provide your API key in the Authorization header: `Bearer rsms_test_...` or `Bearer rsms_live_...`',
+            description:
+              'Provide your API key in the Authorization header: `Bearer rsms_test_...` or `Bearer rsms_live_...`',
           },
           ApiKeyAuth: {
             type: 'apiKey',
@@ -58,17 +70,28 @@ export const getApiDocs = async () => {
         schemas: {
           ProblemDetails: {
             type: 'object',
-            description: 'RFC 9457 Standardized HTTP Problem Details for Machine-Readable API Errors',
+            description:
+              'RFC 9457 Standardized HTTP Problem Details for Machine-Readable API Errors',
             required: ['type', 'title', 'status', 'detail', 'code'],
             properties: {
-              type: { type: 'string', example: 'https://docs.rangesms.com/errors/invalid-recipient' },
+              type: {
+                type: 'string',
+                example: 'https://docs.rangesms.com/errors/invalid-recipient',
+              },
               title: { type: 'string', example: 'Invalid recipient phone number' },
               status: { type: 'integer', example: 400 },
-              detail: { type: 'string', example: 'The recipient phone number must be in E.164 international format.' },
+              detail: {
+                type: 'string',
+                example: 'The recipient phone number must be in E.164 international format.',
+              },
               code: { type: 'string', example: 'invalid_recipient' },
               instance: { type: 'string', example: '/api/v1/sms/send' },
               requestId: { type: 'string', example: 'req_01jabc123456' },
-              errors: { type: 'object', additionalProperties: true, description: 'Field-level validation error details' },
+              errors: {
+                type: 'object',
+                additionalProperties: true,
+                description: 'Field-level validation error details',
+              },
             },
           },
           SmsRequest: {
@@ -78,7 +101,8 @@ export const getApiDocs = async () => {
               to: {
                 type: 'string',
                 example: '+256700123456',
-                description: 'Destination telephone number in E.164 format. In Sandbox, use +999000000001 for guaranteed success.',
+                description:
+                  'Destination telephone number in E.164 format. In Sandbox, use +999000000001 for guaranteed success.',
               },
               recipients: {
                 type: 'array',
@@ -91,18 +115,21 @@ export const getApiDocs = async () => {
                 minLength: 1,
                 maxLength: 3200,
                 example: 'Your Range verification code is 849201. Valid for 5 minutes.',
-                description: 'SMS message text content. Standard GSM-7 messages are billed in 160-character segments.',
+                description:
+                  'SMS message text content. Standard GSM-7 messages are billed in 160-character segments.',
               },
               senderId: {
                 type: 'string',
                 maxLength: 11,
                 example: 'RANGE',
-                description: 'Approved alphanumeric Sender ID. If omitted, default platform sender ID is used.',
+                description:
+                  'Approved alphanumeric Sender ID. If omitted, default platform sender ID is used.',
               },
               idempotencyKey: {
                 type: 'string',
                 example: '550e8400-e29b-41d4-a716-446655440000',
-                description: 'Unique client-supplied UUID to guarantee exactly-once processing and prevent duplicate charges.',
+                description:
+                  'Unique client-supplied UUID to guarantee exactly-once processing and prevent duplicate charges.',
               },
             },
           },
@@ -122,7 +149,8 @@ export const getApiDocs = async () => {
                       type: 'array',
                       items: { type: 'string' },
                       example: ['+256700111111', '+256700222222'],
-                      description: 'List of recipient phone numbers (up to 1,000 per message object)',
+                      description:
+                        'List of recipient phone numbers (up to 1,000 per message object)',
                     },
                     message: { type: 'string', example: 'Monthly statement ready for download.' },
                     idempotencyKey: { type: 'string', example: 'batch-msg-001' },
@@ -142,7 +170,10 @@ export const getApiDocs = async () => {
             properties: {
               to: { type: 'string', example: '+256700123456' },
               recipients: { type: 'array', items: { type: 'string' }, example: ['+256700123456'] },
-              message: { type: 'string', example: 'Reminder: Scheduled appointment tomorrow at 10:00 AM.' },
+              message: {
+                type: 'string',
+                example: 'Reminder: Scheduled appointment tomorrow at 10:00 AM.',
+              },
               senderId: { type: 'string', example: 'RANGE' },
               scheduledAt: {
                 type: 'string',
@@ -152,7 +183,11 @@ export const getApiDocs = async () => {
               },
               timezone: { type: 'string', example: 'Africa/Kampala', default: 'Africa/Kampala' },
               isRecurring: { type: 'boolean', default: false },
-              cronExpression: { type: 'string', example: '0 9 * * 1', description: 'Standard 5-part cron expression for recurring dispatches' },
+              cronExpression: {
+                type: 'string',
+                example: '0 9 * * 1',
+                description: 'Standard 5-part cron expression for recurring dispatches',
+              },
             },
           },
           SmsResponse: {
@@ -179,7 +214,15 @@ export const getApiDocs = async () => {
               messageId: { type: 'string', format: 'uuid', example: 'msg_01j7abc98124' },
               status: {
                 type: 'string',
-                enum: ['QUEUED', 'SUBMITTED', 'SENT', 'DELIVERED', 'UNDELIVERED', 'FAILED', 'REJECTED'],
+                enum: [
+                  'QUEUED',
+                  'SUBMITTED',
+                  'SENT',
+                  'DELIVERED',
+                  'UNDELIVERED',
+                  'FAILED',
+                  'REJECTED',
+                ],
                 example: 'DELIVERED',
               },
               recipientCount: { type: 'integer', example: 1 },
@@ -218,7 +261,11 @@ export const getApiDocs = async () => {
           Contact: {
             type: 'object',
             properties: {
-              id: { type: 'string', format: 'uuid', example: '7d34bc12-98aa-43e1-b45e-8490a0c4f821' },
+              id: {
+                type: 'string',
+                format: 'uuid',
+                example: '7d34bc12-98aa-43e1-b45e-8490a0c4f821',
+              },
               phone: { type: 'string', example: '+256700123456' },
               name: { type: 'string', example: 'Sarah Namubiru' },
               email: { type: 'string', example: 'sarah@example.ug', nullable: true },
@@ -230,7 +277,11 @@ export const getApiDocs = async () => {
             properties: {
               id: { type: 'string', format: 'uuid' },
               senderId: { type: 'string', example: 'RANGE' },
-              status: { type: 'string', enum: ['PENDING', 'APPROVED', 'REJECTED'], example: 'APPROVED' },
+              status: {
+                type: 'string',
+                enum: ['PENDING', 'APPROVED', 'REJECTED'],
+                example: 'APPROVED',
+              },
               purpose: { type: 'string', example: 'Transactional verification notifications' },
               createdAt: { type: 'string', format: 'date-time' },
             },
@@ -238,20 +289,34 @@ export const getApiDocs = async () => {
           WebhookSimulateRequest: {
             type: 'object',
             properties: {
-              webhookUrl: { type: 'string', format: 'uri', example: 'https://webhook.site/test-endpoint' },
+              webhookUrl: {
+                type: 'string',
+                format: 'uri',
+                example: 'https://webhook.site/test-endpoint',
+              },
               webhookSecret: { type: 'string', example: 'whsec_test_secret_key_123' },
-              status: { type: 'string', enum: ['DELIVERED', 'FAILED', 'UNDELIVERED', 'REJECTED'], default: 'DELIVERED' },
+              status: {
+                type: 'string',
+                enum: ['DELIVERED', 'FAILED', 'UNDELIVERED', 'REJECTED'],
+                default: 'DELIVERED',
+              },
               recipientPhone: { type: 'string', example: '+256700123456' },
             },
           },
           WebhookDeliveryEvent: {
             type: 'object',
-            description: 'Canonical Webhook Delivery Receipt Event emitted to configured endpoints upon message carrier status updates',
+            description:
+              'Canonical Webhook Delivery Receipt Event emitted to configured endpoints upon message carrier status updates',
             properties: {
               id: { type: 'string', example: 'evt_test_98f12a4b89c0' },
               type: {
                 type: 'string',
-                enum: ['message.delivered', 'message.failed', 'message.undelivered', 'message.sent'],
+                enum: [
+                  'message.delivered',
+                  'message.failed',
+                  'message.undelivered',
+                  'message.sent',
+                ],
                 example: 'message.delivered',
               },
               createdAt: { type: 'string', format: 'date-time', example: '2026-09-18T18:30:00Z' },
@@ -291,23 +356,33 @@ export const getApiDocs = async () => {
             responses: {
               '201': {
                 description: 'SMS accepted for delivery',
-                content: { 'application/json': { schema: { $ref: '#/components/schemas/SmsResponse' } } },
+                content: {
+                  'application/json': { schema: { $ref: '#/components/schemas/SmsResponse' } },
+                },
               },
               '400': {
                 description: 'Validation error or invalid sender ID',
-                content: { 'application/json': { schema: { $ref: '#/components/schemas/ProblemDetails' } } },
+                content: {
+                  'application/json': { schema: { $ref: '#/components/schemas/ProblemDetails' } },
+                },
               },
               '401': {
                 description: 'Unauthorized - Invalid or missing API key',
-                content: { 'application/json': { schema: { $ref: '#/components/schemas/ProblemDetails' } } },
+                content: {
+                  'application/json': { schema: { $ref: '#/components/schemas/ProblemDetails' } },
+                },
               },
               '402': {
                 description: 'Payment required - Insufficient account balance',
-                content: { 'application/json': { schema: { $ref: '#/components/schemas/ProblemDetails' } } },
+                content: {
+                  'application/json': { schema: { $ref: '#/components/schemas/ProblemDetails' } },
+                },
               },
               '429': {
                 description: 'Too Many Requests - Rate limit exceeded',
-                content: { 'application/json': { schema: { $ref: '#/components/schemas/ProblemDetails' } } },
+                content: {
+                  'application/json': { schema: { $ref: '#/components/schemas/ProblemDetails' } },
+                },
               },
             },
           },
@@ -317,7 +392,8 @@ export const getApiDocs = async () => {
             tags: ['SMS'],
             operationId: 'sendBulkSms',
             summary: 'Send bulk SMS messages',
-            description: 'Submit multiple recipient collections or grouped messages for asynchronous batch dispatch.',
+            description:
+              'Submit multiple recipient collections or grouped messages for asynchronous batch dispatch.',
             security: [{ BearerAuth: [] }, { ApiKeyAuth: [] }],
             requestBody: {
               required: true,
@@ -346,7 +422,9 @@ export const getApiDocs = async () => {
               },
               '400': {
                 description: 'Invalid bulk payload',
-                content: { 'application/json': { schema: { $ref: '#/components/schemas/ProblemDetails' } } },
+                content: {
+                  'application/json': { schema: { $ref: '#/components/schemas/ProblemDetails' } },
+                },
               },
               '401': { description: 'Unauthorized' },
               '402': { description: 'Insufficient balance' },
@@ -358,7 +436,8 @@ export const getApiDocs = async () => {
             tags: ['SMS'],
             operationId: 'scheduleSms',
             summary: 'Schedule SMS message for future dispatch',
-            description: 'Schedule a single or recurring SMS dispatch at a specified UTC timestamp.',
+            description:
+              'Schedule a single or recurring SMS dispatch at a specified UTC timestamp.',
             security: [{ BearerAuth: [] }, { ApiKeyAuth: [] }],
             requestBody: {
               required: true,
@@ -395,7 +474,8 @@ export const getApiDocs = async () => {
             tags: ['SMS', 'Delivery Reports'],
             operationId: 'getMessageStatus',
             summary: 'Get message status and delivery report',
-            description: 'Retrieve real-time carrier status, recipient records, and delivery timestamps for a specific message.',
+            description:
+              'Retrieve real-time carrier status, recipient records, and delivery timestamps for a specific message.',
             security: [{ BearerAuth: [] }, { ApiKeyAuth: [] }],
             parameters: [
               {
@@ -409,11 +489,15 @@ export const getApiDocs = async () => {
             responses: {
               '200': {
                 description: 'Delivery report retrieved successfully',
-                content: { 'application/json': { schema: { $ref: '#/components/schemas/DeliveryReport' } } },
+                content: {
+                  'application/json': { schema: { $ref: '#/components/schemas/DeliveryReport' } },
+                },
               },
               '404': {
                 description: 'Message not found',
-                content: { 'application/json': { schema: { $ref: '#/components/schemas/ProblemDetails' } } },
+                content: {
+                  'application/json': { schema: { $ref: '#/components/schemas/ProblemDetails' } },
+                },
               },
             },
           },
@@ -423,12 +507,15 @@ export const getApiDocs = async () => {
             tags: ['Wallet'],
             operationId: 'getWalletBalance',
             summary: 'Get account wallet balance',
-            description: 'Fetch the real-time available credits and currency in your Range Bulk SMS wallet.',
+            description:
+              'Fetch the real-time available credits and currency in your Range Bulk SMS wallet.',
             security: [{ BearerAuth: [] }, { ApiKeyAuth: [] }],
             responses: {
               '200': {
                 description: 'Wallet balance retrieved',
-                content: { 'application/json': { schema: { $ref: '#/components/schemas/WalletBalance' } } },
+                content: {
+                  'application/json': { schema: { $ref: '#/components/schemas/WalletBalance' } },
+                },
               },
             },
           },
@@ -485,7 +572,9 @@ export const getApiDocs = async () => {
             responses: {
               '201': {
                 description: 'Contact created successfully',
-                content: { 'application/json': { schema: { $ref: '#/components/schemas/Contact' } } },
+                content: {
+                  'application/json': { schema: { $ref: '#/components/schemas/Contact' } },
+                },
               },
             },
           },
@@ -495,7 +584,8 @@ export const getApiDocs = async () => {
             tags: ['Sender IDs'],
             operationId: 'listSenderIds',
             summary: 'List approved sender IDs',
-            description: 'Retrieve all approved alphanumeric Sender IDs registered to your account.',
+            description:
+              'Retrieve all approved alphanumeric Sender IDs registered to your account.',
             security: [{ BearerAuth: [] }, { ApiKeyAuth: [] }],
             responses: {
               '200': {
@@ -511,6 +601,54 @@ export const getApiDocs = async () => {
                   },
                 },
               },
+            },
+          },
+        },
+        '/api/v1/reports/summary': {
+          get: {
+            tags: ['Reports'],
+            operationId: 'getSmsReportSummary',
+            summary: 'Get recipient delivery summary',
+            description:
+              'Return account-scoped broadcast and recipient outcome counts for the selected rolling period.',
+            security: [{ BearerAuth: [] }, { ApiKeyAuth: [] }],
+            parameters: [
+              {
+                name: 'period',
+                in: 'query',
+                required: false,
+                schema: { type: 'string', enum: ['24H', '7D', '30D', 'ALL'], default: '7D' },
+              },
+            ],
+            responses: {
+              '200': {
+                description: 'Recipient outcomes for the authenticated account',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        success: { type: 'boolean' },
+                        period: { type: 'string', enum: ['24H', '7D', '30D', 'ALL'] },
+                        generatedAt: { type: 'string', format: 'date-time' },
+                        summary: {
+                          type: 'object',
+                          properties: {
+                            broadcasts: { type: 'integer' },
+                            recipients: { type: 'integer' },
+                            delivered: { type: 'integer' },
+                            failed: { type: 'integer' },
+                            inProgress: { type: 'integer' },
+                            deliveryRate: { type: 'number', nullable: true },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              '401': { description: 'Authentication required' },
+              '400': { description: 'Unsupported reporting period' },
             },
           },
         },

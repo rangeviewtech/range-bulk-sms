@@ -27,7 +27,7 @@ export function useWallet(): WalletState {
   const fetchWallet = useCallback(async () => {
     try {
       setIsLoading(true);
-      const res = await fetch('/api/wallet');
+      const res = await fetch('/api/v1/wallet');
       if (res.ok) {
         const json = await res.json();
         if (json.data) {

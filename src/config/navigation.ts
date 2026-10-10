@@ -1,4 +1,4 @@
-import { NavGroup } from '@/types/navigation';
+﻿import { NavGroup } from '@/types/navigation';
 
 export const navConfig: NavGroup[] = [
   {
@@ -262,7 +262,7 @@ export const navConfig: NavGroup[] = [
     ],
   },
   {
-    title: 'System',
+    title: 'Design', items: [{ title: 'UI Components', href: '/components', icon: 'Palette' }] }, { title: 'System',
     items: [
       {
         title: 'Notifications',
@@ -302,3 +302,4 @@ export const navConfig: NavGroup[] = [
     ],
   }
 ];
+

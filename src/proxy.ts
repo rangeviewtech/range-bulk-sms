@@ -46,7 +46,9 @@ export async function proxy(request: NextRequest) {
   // 2. Rate Limit Application Routes (API specifically)
   if (
     pathname.startsWith('/api/') &&
-    !['/api/health', '/api/cron/process-jobs', '/api/webhooks/telegram'].includes(pathname)
+    pathname !== '/api/health' &&
+    !pathname.startsWith('/api/health/') &&
+    !['/api/cron/process-jobs', '/api/webhooks/telegram'].includes(pathname)
   ) {
     const isAuth = pathname.startsWith('/api/auth') && pathname !== '/api/auth/session';
     const limitResult = await checkRateLimit(isAuth ? 'auth' : 'api', ip);
@@ -68,7 +70,6 @@ export async function proxy(request: NextRequest) {
   // Exempt machine-to-machine, signature, or token authenticated endpoints (webhooks, public APIs, cron)
   const isCsrfExempt =
     pathname.startsWith('/api/webhooks/') ||
-    pathname.startsWith('/api/v1/') ||
     pathname.startsWith('/api/cron/');
 
   if (!isCsrfExempt && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {

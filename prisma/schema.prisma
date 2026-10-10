@@ -66,6 +66,7 @@ model User {
   messages          Message[]
   wallets           Wallet?
   transactions      Transaction[]
+  momoPayments      MomoPayment[]
   apiKeys           ApiKey[]
   webhooks          Webhook[]
   supportTickets    SupportTicket[]
@@ -90,6 +91,8 @@ model Session {
 
   deviceInfo String?
   ipAddress  String?
+  location   String?
+  deviceName String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -564,6 +567,7 @@ enum MessageStatus {
   SENT
   DELIVERED
   FAILED
+  PARTIAL
   EXPIRED
   REJECTED
 }
@@ -664,15 +668,16 @@ model Client {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
-  agent        Agent?        @relation(fields: [agentId], references: [id], onDelete: SetNull)
-  wallet       Wallet?
-  campaigns    Campaign[]
-  senderIds    SenderId[]
-  apiKeys      ApiKey[]
-  webhooks     Webhook[]
-  commissions  Commission[]
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization      Organization?      @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  agent             Agent?             @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  wallet            Wallet?
+  campaigns         Campaign[]
+  scheduledMessages ScheduledMessage[]
+  senderIds         SenderId[]
+  apiKeys           ApiKey[]
+  webhooks          Webhook[]
+  commissions       Commission[]
 
   @@index([userId])
   @@index([agentId])
@@ -899,6 +904,7 @@ model Campaign {
   userId            String
   clientId          String?
   senderIdId        String?
+  gatewayId         String?
   name              String
   message           String         @db.Text
   variables         String[]       @default([])
@@ -1015,8 +1021,9 @@ model MessageRecipient {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
-  message Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  contact Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  message  Message          @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  contact  Contact?         @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  attempts MessageAttempt[]
 
   @@index([messageId])
   @@index([contactId])
@@ -1097,10 +1104,41 @@ model Wallet {
   agent        Agent?        @relation(fields: [agentId], references: [id], onDelete: Cascade)
   organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
   transactions Transaction[]
+  momoPayments MomoPayment[]
 
   @@index([userId])
   @@index([clientId])
   @@index([organizationId])
+}
+
+enum MomoPaymentStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+}
+
+model MomoPayment {
+  id                String            @id @default(uuid())
+  walletId          String
+  userId            String
+  amount            Decimal           @db.Decimal(15, 4)
+  currency          String
+  phone             String
+  status            MomoPaymentStatus @default(PENDING)
+  providerReference String            @unique
+  idempotencyKey    String?           @unique
+  providerStatus    String?
+  failureReason     String?
+  transactionId     String?           @unique
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  completedAt       DateTime?
+
+  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([walletId, createdAt])
+  @@index([userId, status, createdAt])
 }
 
 // ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ TRANSACTION (IMMUTABLE) ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
@@ -1364,6 +1402,8 @@ model TicketMessage {
 model ScheduledMessage {
   id              String    @id @default(uuid())
   userId          String
+  clientId        String?
+  idempotencyKey  String?   @unique
   senderIdId      String?
   message         String    @db.Text
   recipients      String[]
@@ -1384,9 +1424,11 @@ model ScheduledMessage {
   updatedAt       DateTime  @updatedAt
 
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client   Client?   @relation(fields: [clientId], references: [id], onDelete: SetNull)
   senderId SenderId? @relation(fields: [senderIdId], references: [id], onDelete: SetNull)
 
   @@index([userId])
+  @@index([clientId, status, scheduledAt])
   @@index([status])
   @@index([scheduledAt])
 }
@@ -1474,6 +1516,7 @@ model GatewayDevice {
 
   lastHeartbeatAt DateTime?
   ipAddress       String?
+  location        String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1523,12 +1566,14 @@ model GatewayLog {
 
 // ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ MESSAGE ATTEMPT (ROUTING / FAILOVER) ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
 model MessageAttempt {
-  id        String               @id @default(uuid())
-  messageId String
-  gatewayId String
-  simSlot   Int?
-  status    MessageAttemptStatus @default(PENDING)
-  expiresAt DateTime?
+  id                 String               @id @default(uuid())
+  messageId          String
+  messageRecipientId String?
+  gatewayId          String
+  attemptNumber      Int                  @default(1)
+  simSlot            Int?
+  status             MessageAttemptStatus @default(PENDING)
+  expiresAt          DateTime?
 
   providerMsgId String?
   errorCode     String?
@@ -1542,9 +1587,11 @@ model MessageAttempt {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  gateway Gateway @relation(fields: [gatewayId], references: [id], onDelete: Cascade)
+  message          Message           @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  gateway          Gateway           @relation(fields: [gatewayId], references: [id], onDelete: Cascade)
+  messageRecipient MessageRecipient? @relation(fields: [messageRecipientId], references: [id], onDelete: Cascade)
 
+  @@unique([messageRecipientId, attemptNumber])
   @@index([messageId])
   @@index([gatewayId])
   @@index([gatewayId, status, createdAt])

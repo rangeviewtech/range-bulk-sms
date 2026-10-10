@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Copy, Check, Terminal, Code2, Globe } from 'lucide-react';
+import { getPublicApiBaseUrl } from '@/lib/api-docs';
 
 export type SupportedLanguage =
   | 'curl'
@@ -53,7 +54,7 @@ export function CodeSnippetViewer({
   const [copied, setCopied] = React.useState(false);
 
   const baseUrl =
-    environment === 'sandbox' ? 'http://localhost:3000/api/v1' : 'https://api.rangesms.com/v1';
+    environment === 'sandbox' ? 'http://localhost:3000/api/v1' : getPublicApiBaseUrl();
 
   const generateSnippet = (lang: SupportedLanguage): string => {
     switch (lang) {

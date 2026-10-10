@@ -1,7 +1,12 @@
 import { z } from 'zod';
 
+// Send forms select the stored UUID; API clients may also use the sender label.
+// The 11-character network limit applies to labels, not database references.
+export const senderReferenceSchema = z.union([z.string().uuid(), z.string().max(11)]);
+
 export const sendSmsSchema = z.object({
-  senderId: z.string().min(1, 'Sender ID is required').max(11, 'Sender ID max 11 chars'),
+  senderId: senderReferenceSchema.optional(),
+  gatewayId: z.string().optional(),
   recipients: z.array(z.string().min(1)).min(1, 'At least one recipient is required').max(10000, 'Maximum 10,000 recipients per request'),
   message: z.string().min(1, 'Message is required').max(3200, 'Message too long (max 20 segments)'),
   templateId: z.string().uuid().optional(),
@@ -10,7 +15,7 @@ export const sendSmsSchema = z.object({
     phone: z.string(),
     message: z.string()
   })).optional(),
-  idempotencyKey: z.string().optional(),
+  idempotencyKey: z.string().trim().min(1).max(128).optional(),
   draftId: z.string().optional(),
 });
 
@@ -20,12 +25,19 @@ export const scheduleSmsSchema = sendSmsSchema.extend({
   timezone: z.string().default('Africa/Kampala'),
   isRecurring: z.boolean().default(false),
   cronExpression: z.string().optional(),
+}).superRefine((value, context) => {
+  if (new Date(value.scheduledAt).getTime() <= Date.now() + 10_000) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ['scheduledAt'], message: 'Choose a time at least 10 seconds in the future.' });
+  }
+  if (value.isRecurring && !value.cronExpression?.trim()) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ['cronExpression'], message: 'A recurrence rule is required for recurring messages.' });
+  }
 });
 
 // Campaign creation schema
 export const createCampaignSchema = z.object({
   name: z.string().min(2, 'Campaign name required').max(100),
-  senderId: z.string().min(1, 'Sender ID required').max(11),
+  senderId: senderReferenceSchema.optional().nullable(),
   message: z.string().min(1, 'Message required').max(3200),
   variables: z.array(z.string()).default([]),
   groupIds: z.array(z.string().uuid()).default([]),

@@ -1,12 +1,14 @@
 import { z } from 'zod';
-import { recoverStuckJobs } from '@/lib/jobs/db';
-import { prisma } from '@/lib/prisma';
+import { COMMUNICATION_JOB_TYPES, recoverStuckJobs } from '@/lib/jobs/db';
+import { prisma, Prisma } from '@/lib/prisma';
 import { JobStatus } from '@/generated/prisma';
 import { SmtpProvider } from '@/lib/providers/smtp';
 import { PandoraSmsProvider } from '@/lib/providers/pandora';
 import { TelegramProvider } from '@/lib/providers/telegram';
 import { WhatsAppProvider } from '@/lib/providers/whatsapp';
 import { InAppProvider } from '@/lib/providers/in-app';
+import { reconcileMessageStatus } from '@/lib/sms/reconcile-message-status';
+import { dispatchScheduledSmsOccurrence, failScheduledSmsOccurrence } from '@/lib/sms/scheduled-dispatcher';
 
 export async function processJobsBatch(batchSize: number = 10) {
   await recoverStuckJobs();
@@ -22,6 +24,7 @@ export async function processJobsBatch(batchSize: number = 10) {
       SELECT id
       FROM "Job"
       WHERE status IN ('PENDING', 'RETRYING')
+        AND type IN (${Prisma.join(COMMUNICATION_JOB_TYPES)})
         AND "lockedAt" IS NULL
         AND ("availableAt" IS NULL OR "availableAt" <= NOW())
       ORDER BY
@@ -59,32 +62,42 @@ export async function processJobsBatch(batchSize: number = 10) {
     try {
       const { decryptPayload } = await import('@/lib/jobs/db');
       const decrypted = decryptPayload(job.payload);
-      const payload = z
-        .object({
-          recipient: z.string().min(1),
-          template: z.string().min(1),
-          templateData: z.record(z.unknown()).optional(),
-          category: z.string().optional(),
-          messageId: z.string().optional(),
-          recipientId: z.string().optional(),
-        })
-        .parse(decrypted);
-      const { recipient, template, templateData } = payload;
+      if (job.type === 'scheduled-sms.dispatch') {
+        const payload = z.object({
+          scheduledMessageId: z.string().uuid(),
+          scheduledAt: z.string().datetime(),
+        }).parse(decrypted);
+        await dispatchScheduledSmsOccurrence({
+          scheduledMessageId: payload.scheduledMessageId,
+          scheduledAt: new Date(payload.scheduledAt),
+        });
+      } else {
+        const payload = z
+          .object({
+            recipient: z.string().min(1),
+            template: z.string().min(1),
+            templateData: z.record(z.unknown()).optional(),
+            category: z.string().optional(),
+            messageId: z.string().optional(),
+            recipientId: z.string().optional(),
+          })
+          .parse(decrypted);
+        const { recipient, template, templateData } = payload;
 
-      let channelStr: 'EMAIL' | 'SMS' | 'TELEGRAM' | 'WHATSAPP' | 'IN_APP' = 'EMAIL';
-      if (job.type === 'send-sms') channelStr = 'SMS';
-      if (job.type === 'send-telegram') channelStr = 'TELEGRAM';
-      if (job.type === 'send-whatsapp') channelStr = 'WHATSAPP';
-      if (job.type === 'send-in-app') channelStr = 'IN_APP';
+        let channelStr: 'EMAIL' | 'SMS' | 'TELEGRAM' | 'WHATSAPP' | 'IN_APP' = 'EMAIL';
+        if (job.type === 'send-sms') channelStr = 'SMS';
+        if (job.type === 'send-telegram') channelStr = 'TELEGRAM';
+        if (job.type === 'send-whatsapp') channelStr = 'WHATSAPP';
+        if (job.type === 'send-in-app') channelStr = 'IN_APP';
 
-      const { NotificationTemplateService } = await import('@/lib/notifications/templates');
-      const resolved = await NotificationTemplateService.resolveTemplate(
-        template,
-        channelStr,
-        templateData || {}
-      );
+        const { NotificationTemplateService } = await import('@/lib/notifications/templates');
+        const resolved = await NotificationTemplateService.resolveTemplate(
+          template,
+          channelStr,
+          templateData || {}
+        );
 
-      switch (job.type) {
+        switch (job.type) {
         case 'send-email': {
           // Pre-dispatch token check for password recovery
           if (template === 'auth.password_reset') {
@@ -124,14 +137,21 @@ export async function processJobsBatch(batchSize: number = 10) {
         }
         case 'send-sms': {
           const smsResult = await PandoraSmsProvider.send(recipient, resolved.body);
-          if (payload.recipientId) {
-            await prisma.messageRecipient.updateMany({
-              where: { id: payload.recipientId },
-              data: {
-                status: 'SENT',
-                providerMsgId: smsResult?.messageId ? String(smsResult.messageId) : undefined,
-                sentAt: new Date(),
-              },
+          const recipientId = payload.recipientId;
+          const messageId = payload.messageId;
+          if (recipientId && messageId) {
+            await prisma.$transaction(async (tx) => {
+              await tx.messageRecipient.updateMany({
+                where: { id: recipientId, messageId },
+                data: {
+                  status: 'SENT',
+                  providerMsgId: smsResult?.messageId ? String(smsResult.messageId) : undefined,
+                  sentAt: new Date(),
+                },
+              });
+              await reconcileMessageStatus(tx, messageId, {
+                providerMessageId: smsResult?.messageId ? String(smsResult.messageId) : undefined,
+              });
             });
           }
           break;
@@ -152,23 +172,51 @@ export async function processJobsBatch(batchSize: number = 10) {
           break;
         default:
           throw new Error(`Unsupported job type: ${job.type}`);
+        }
       }
     } catch (e: unknown) {
       lastError = e instanceof Error ? e.message : String(e);
       status = job.attempts >= job.maxAttempts - 1 ? 'DEAD_LETTER' : 'RETRYING';
 
+      if (job.type === 'scheduled-sms.dispatch' && status === 'DEAD_LETTER') {
+        try {
+          const { decryptPayload } = await import('@/lib/jobs/db');
+          const payload = z.object({
+            scheduledMessageId: z.string().uuid(),
+            scheduledAt: z.string().datetime(),
+          }).parse(decryptPayload(job.payload));
+          await failScheduledSmsOccurrence({
+            scheduledMessageId: payload.scheduledMessageId,
+            scheduledAt: new Date(payload.scheduledAt),
+          });
+        } catch {
+          // Preserve the job's dead-letter result if schedule cleanup also fails.
+        }
+      }
+
       // Mark recipient as failed if job reached dead letter
       try {
         const { decryptPayload } = await import('@/lib/jobs/db');
         const p = decryptPayload(job.payload) as Record<string, unknown>;
-        if (status === 'DEAD_LETTER' && typeof p?.recipientId === 'string') {
-          await prisma.messageRecipient.updateMany({
-            where: { id: p.recipientId },
-            data: {
-              status: 'FAILED',
-              failedAt: new Date(),
-              failureReason: lastError,
-            },
+        const recipientId = p?.recipientId;
+        const messageId = p?.messageId;
+        if (
+          status === 'DEAD_LETTER' &&
+          typeof recipientId === 'string' &&
+          typeof messageId === 'string'
+        ) {
+          await prisma.$transaction(async (tx) => {
+            await tx.messageRecipient.updateMany({
+              where: { id: recipientId, messageId },
+              data: {
+                status: 'FAILED',
+                failedAt: new Date(),
+                failureReason: lastError,
+              },
+            });
+            await reconcileMessageStatus(tx, messageId, {
+              failureReason: lastError || undefined,
+            });
           });
         }
       } catch {

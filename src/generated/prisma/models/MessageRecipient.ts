@@ -294,6 +294,7 @@ export type MessageRecipientWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"MessageRecipient"> | Date | string
   message?: Prisma.XOR<Prisma.MessageScalarRelationFilter, Prisma.MessageWhereInput>
   contact?: Prisma.XOR<Prisma.ContactNullableScalarRelationFilter, Prisma.ContactWhereInput> | null
+  attempts?: Prisma.MessageAttemptListRelationFilter
 }
 
 export type MessageRecipientOrderByWithRelationInput = {
@@ -313,6 +314,7 @@ export type MessageRecipientOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   message?: Prisma.MessageOrderByWithRelationInput
   contact?: Prisma.ContactOrderByWithRelationInput
+  attempts?: Prisma.MessageAttemptOrderByRelationAggregateInput
 }
 
 export type MessageRecipientWhereUniqueInput = Prisma.AtLeast<{
@@ -335,6 +337,7 @@ export type MessageRecipientWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"MessageRecipient"> | Date | string
   message?: Prisma.XOR<Prisma.MessageScalarRelationFilter, Prisma.MessageWhereInput>
   contact?: Prisma.XOR<Prisma.ContactNullableScalarRelationFilter, Prisma.ContactWhereInput> | null
+  attempts?: Prisma.MessageAttemptListRelationFilter
 }, "id">
 
 export type MessageRecipientOrderByWithAggregationInput = {
@@ -394,6 +397,7 @@ export type MessageRecipientCreateInput = {
   updatedAt?: Date | string
   message: Prisma.MessageCreateNestedOneWithoutRecipientsInput
   contact?: Prisma.ContactCreateNestedOneWithoutMessageRecipientsInput
+  attempts?: Prisma.MessageAttemptCreateNestedManyWithoutMessageRecipientInput
 }
 
 export type MessageRecipientUncheckedCreateInput = {
@@ -411,6 +415,7 @@ export type MessageRecipientUncheckedCreateInput = {
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  attempts?: Prisma.MessageAttemptUncheckedCreateNestedManyWithoutMessageRecipientInput
 }
 
 export type MessageRecipientUpdateInput = {
@@ -428,6 +433,7 @@ export type MessageRecipientUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   message?: Prisma.MessageUpdateOneRequiredWithoutRecipientsNestedInput
   contact?: Prisma.ContactUpdateOneWithoutMessageRecipientsNestedInput
+  attempts?: Prisma.MessageAttemptUpdateManyWithoutMessageRecipientNestedInput
 }
 
 export type MessageRecipientUncheckedUpdateInput = {
@@ -445,6 +451,7 @@ export type MessageRecipientUncheckedUpdateInput = {
   cost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attempts?: Prisma.MessageAttemptUncheckedUpdateManyWithoutMessageRecipientNestedInput
 }
 
 export type MessageRecipientCreateManyInput = {
@@ -567,6 +574,11 @@ export type MessageRecipientSumOrderByAggregateInput = {
   cost?: Prisma.SortOrder
 }
 
+export type MessageRecipientNullableScalarRelationFilter = {
+  is?: Prisma.MessageRecipientWhereInput | null
+  isNot?: Prisma.MessageRecipientWhereInput | null
+}
+
 export type MessageRecipientCreateNestedManyWithoutContactInput = {
   create?: Prisma.XOR<Prisma.MessageRecipientCreateWithoutContactInput, Prisma.MessageRecipientUncheckedCreateWithoutContactInput> | Prisma.MessageRecipientCreateWithoutContactInput[] | Prisma.MessageRecipientUncheckedCreateWithoutContactInput[]
   connectOrCreate?: Prisma.MessageRecipientCreateOrConnectWithoutContactInput | Prisma.MessageRecipientCreateOrConnectWithoutContactInput[]
@@ -651,6 +663,22 @@ export type MessageRecipientUncheckedUpdateManyWithoutMessageNestedInput = {
   deleteMany?: Prisma.MessageRecipientScalarWhereInput | Prisma.MessageRecipientScalarWhereInput[]
 }
 
+export type MessageRecipientCreateNestedOneWithoutAttemptsInput = {
+  create?: Prisma.XOR<Prisma.MessageRecipientCreateWithoutAttemptsInput, Prisma.MessageRecipientUncheckedCreateWithoutAttemptsInput>
+  connectOrCreate?: Prisma.MessageRecipientCreateOrConnectWithoutAttemptsInput
+  connect?: Prisma.MessageRecipientWhereUniqueInput
+}
+
+export type MessageRecipientUpdateOneWithoutAttemptsNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageRecipientCreateWithoutAttemptsInput, Prisma.MessageRecipientUncheckedCreateWithoutAttemptsInput>
+  connectOrCreate?: Prisma.MessageRecipientCreateOrConnectWithoutAttemptsInput
+  upsert?: Prisma.MessageRecipientUpsertWithoutAttemptsInput
+  disconnect?: Prisma.MessageRecipientWhereInput | boolean
+  delete?: Prisma.MessageRecipientWhereInput | boolean
+  connect?: Prisma.MessageRecipientWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MessageRecipientUpdateToOneWithWhereWithoutAttemptsInput, Prisma.MessageRecipientUpdateWithoutAttemptsInput>, Prisma.MessageRecipientUncheckedUpdateWithoutAttemptsInput>
+}
+
 export type MessageRecipientCreateWithoutContactInput = {
   id?: string
   phone: string
@@ -665,6 +693,7 @@ export type MessageRecipientCreateWithoutContactInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   message: Prisma.MessageCreateNestedOneWithoutRecipientsInput
+  attempts?: Prisma.MessageAttemptCreateNestedManyWithoutMessageRecipientInput
 }
 
 export type MessageRecipientUncheckedCreateWithoutContactInput = {
@@ -681,6 +710,7 @@ export type MessageRecipientUncheckedCreateWithoutContactInput = {
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  attempts?: Prisma.MessageAttemptUncheckedCreateNestedManyWithoutMessageRecipientInput
 }
 
 export type MessageRecipientCreateOrConnectWithoutContactInput = {
@@ -743,6 +773,7 @@ export type MessageRecipientCreateWithoutMessageInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   contact?: Prisma.ContactCreateNestedOneWithoutMessageRecipientsInput
+  attempts?: Prisma.MessageAttemptCreateNestedManyWithoutMessageRecipientInput
 }
 
 export type MessageRecipientUncheckedCreateWithoutMessageInput = {
@@ -759,6 +790,7 @@ export type MessageRecipientUncheckedCreateWithoutMessageInput = {
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  attempts?: Prisma.MessageAttemptUncheckedCreateNestedManyWithoutMessageRecipientInput
 }
 
 export type MessageRecipientCreateOrConnectWithoutMessageInput = {
@@ -785,6 +817,90 @@ export type MessageRecipientUpdateWithWhereUniqueWithoutMessageInput = {
 export type MessageRecipientUpdateManyWithWhereWithoutMessageInput = {
   where: Prisma.MessageRecipientScalarWhereInput
   data: Prisma.XOR<Prisma.MessageRecipientUpdateManyMutationInput, Prisma.MessageRecipientUncheckedUpdateManyWithoutMessageInput>
+}
+
+export type MessageRecipientCreateWithoutAttemptsInput = {
+  id?: string
+  phone: string
+  status?: $Enums.MessageStatus
+  providerMsgId?: string | null
+  sentAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  failedAt?: Date | string | null
+  failureReason?: string | null
+  retryCount?: number
+  cost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  message: Prisma.MessageCreateNestedOneWithoutRecipientsInput
+  contact?: Prisma.ContactCreateNestedOneWithoutMessageRecipientsInput
+}
+
+export type MessageRecipientUncheckedCreateWithoutAttemptsInput = {
+  id?: string
+  messageId: string
+  contactId?: string | null
+  phone: string
+  status?: $Enums.MessageStatus
+  providerMsgId?: string | null
+  sentAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  failedAt?: Date | string | null
+  failureReason?: string | null
+  retryCount?: number
+  cost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type MessageRecipientCreateOrConnectWithoutAttemptsInput = {
+  where: Prisma.MessageRecipientWhereUniqueInput
+  create: Prisma.XOR<Prisma.MessageRecipientCreateWithoutAttemptsInput, Prisma.MessageRecipientUncheckedCreateWithoutAttemptsInput>
+}
+
+export type MessageRecipientUpsertWithoutAttemptsInput = {
+  update: Prisma.XOR<Prisma.MessageRecipientUpdateWithoutAttemptsInput, Prisma.MessageRecipientUncheckedUpdateWithoutAttemptsInput>
+  create: Prisma.XOR<Prisma.MessageRecipientCreateWithoutAttemptsInput, Prisma.MessageRecipientUncheckedCreateWithoutAttemptsInput>
+  where?: Prisma.MessageRecipientWhereInput
+}
+
+export type MessageRecipientUpdateToOneWithWhereWithoutAttemptsInput = {
+  where?: Prisma.MessageRecipientWhereInput
+  data: Prisma.XOR<Prisma.MessageRecipientUpdateWithoutAttemptsInput, Prisma.MessageRecipientUncheckedUpdateWithoutAttemptsInput>
+}
+
+export type MessageRecipientUpdateWithoutAttemptsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  providerMsgId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  cost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  message?: Prisma.MessageUpdateOneRequiredWithoutRecipientsNestedInput
+  contact?: Prisma.ContactUpdateOneWithoutMessageRecipientsNestedInput
+}
+
+export type MessageRecipientUncheckedUpdateWithoutAttemptsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  messageId?: Prisma.StringFieldUpdateOperationsInput | string
+  contactId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMessageStatusFieldUpdateOperationsInput | $Enums.MessageStatus
+  providerMsgId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  cost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MessageRecipientCreateManyContactInput = {
@@ -817,6 +933,7 @@ export type MessageRecipientUpdateWithoutContactInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   message?: Prisma.MessageUpdateOneRequiredWithoutRecipientsNestedInput
+  attempts?: Prisma.MessageAttemptUpdateManyWithoutMessageRecipientNestedInput
 }
 
 export type MessageRecipientUncheckedUpdateWithoutContactInput = {
@@ -833,6 +950,7 @@ export type MessageRecipientUncheckedUpdateWithoutContactInput = {
   cost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attempts?: Prisma.MessageAttemptUncheckedUpdateManyWithoutMessageRecipientNestedInput
 }
 
 export type MessageRecipientUncheckedUpdateManyWithoutContactInput = {
@@ -881,6 +999,7 @@ export type MessageRecipientUpdateWithoutMessageInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   contact?: Prisma.ContactUpdateOneWithoutMessageRecipientsNestedInput
+  attempts?: Prisma.MessageAttemptUpdateManyWithoutMessageRecipientNestedInput
 }
 
 export type MessageRecipientUncheckedUpdateWithoutMessageInput = {
@@ -897,6 +1016,7 @@ export type MessageRecipientUncheckedUpdateWithoutMessageInput = {
   cost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attempts?: Prisma.MessageAttemptUncheckedUpdateManyWithoutMessageRecipientNestedInput
 }
 
 export type MessageRecipientUncheckedUpdateManyWithoutMessageInput = {
@@ -916,6 +1036,35 @@ export type MessageRecipientUncheckedUpdateManyWithoutMessageInput = {
 }
 
 
+/**
+ * Count Type MessageRecipientCountOutputType
+ */
+
+export type MessageRecipientCountOutputType = {
+  attempts: number
+}
+
+export type MessageRecipientCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  attempts?: boolean | MessageRecipientCountOutputTypeCountAttemptsArgs
+}
+
+/**
+ * MessageRecipientCountOutputType without action
+ */
+export type MessageRecipientCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MessageRecipientCountOutputType
+   */
+  select?: Prisma.MessageRecipientCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * MessageRecipientCountOutputType without action
+ */
+export type MessageRecipientCountOutputTypeCountAttemptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MessageAttemptWhereInput
+}
+
 
 export type MessageRecipientSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -934,6 +1083,8 @@ export type MessageRecipientSelect<ExtArgs extends runtime.Types.Extensions.Inte
   updatedAt?: boolean
   message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
   contact?: boolean | Prisma.MessageRecipient$contactArgs<ExtArgs>
+  attempts?: boolean | Prisma.MessageRecipient$attemptsArgs<ExtArgs>
+  _count?: boolean | Prisma.MessageRecipientCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["messageRecipient"]>
 
 export type MessageRecipientSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -995,6 +1146,8 @@ export type MessageRecipientOmit<ExtArgs extends runtime.Types.Extensions.Intern
 export type MessageRecipientInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
   contact?: boolean | Prisma.MessageRecipient$contactArgs<ExtArgs>
+  attempts?: boolean | Prisma.MessageRecipient$attemptsArgs<ExtArgs>
+  _count?: boolean | Prisma.MessageRecipientCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MessageRecipientIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
@@ -1010,6 +1163,7 @@ export type $MessageRecipientPayload<ExtArgs extends runtime.Types.Extensions.In
   objects: {
     message: Prisma.$MessagePayload<ExtArgs>
     contact: Prisma.$ContactPayload<ExtArgs> | null
+    attempts: Prisma.$MessageAttemptPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1422,6 +1576,7 @@ export interface Prisma__MessageRecipientClient<T, Null = never, ExtArgs extends
   readonly [Symbol.toStringTag]: "PrismaPromise"
   message<T extends Prisma.MessageDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MessageDefaultArgs<ExtArgs>>): Prisma.Prisma__MessageClient<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   contact<T extends Prisma.MessageRecipient$contactArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MessageRecipient$contactArgs<ExtArgs>>): Prisma.Prisma__ContactClient<runtime.Types.Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  attempts<T extends Prisma.MessageRecipient$attemptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MessageRecipient$attemptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageAttemptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1882,6 +2037,30 @@ export type MessageRecipient$contactArgs<ExtArgs extends runtime.Types.Extension
    */
   include?: Prisma.ContactInclude<ExtArgs> | null
   where?: Prisma.ContactWhereInput
+}
+
+/**
+ * MessageRecipient.attempts
+ */
+export type MessageRecipient$attemptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MessageAttempt
+   */
+  select?: Prisma.MessageAttemptSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MessageAttempt
+   */
+  omit?: Prisma.MessageAttemptOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageAttemptInclude<ExtArgs> | null
+  where?: Prisma.MessageAttemptWhereInput
+  orderBy?: Prisma.MessageAttemptOrderByWithRelationInput | Prisma.MessageAttemptOrderByWithRelationInput[]
+  cursor?: Prisma.MessageAttemptWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MessageAttemptScalarFieldEnum | Prisma.MessageAttemptScalarFieldEnum[]
 }
 
 /**

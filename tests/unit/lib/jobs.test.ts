@@ -39,6 +39,15 @@ describe('Job processor', () => {
     prismaMock.job.updateMany.mockResolvedValue({ count: 1 });
     vi.mocked(SmtpProvider.send).mockReset().mockResolvedValue({ success: true, messageId: 'm1' });
   });
+  it('claims only communication jobs so campaign jobs remain with their worker', async () => {
+    prismaMock.$queryRaw.mockResolvedValue([]);
+    await processJobsBatch();
+    const query = prismaMock.$queryRaw.mock.calls[0];
+    expect(query[0]).toEqual(expect.arrayContaining([expect.stringContaining('AND type IN (')]));
+    expect(query).toEqual(expect.arrayContaining([expect.objectContaining({
+        values: ['send-email', 'send-sms', 'send-telegram', 'send-whatsapp', 'send-in-app', 'scheduled-sms.dispatch'],
+    })]));
+  });
   it('does not send a job after losing its lease', async () => {
     prismaMock.$queryRaw.mockResolvedValue([job]);
     prismaMock.job.updateMany.mockResolvedValue({ count: 0 });

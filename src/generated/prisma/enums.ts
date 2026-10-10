@@ -141,6 +141,7 @@ export const MessageStatus = {
   SENT: 'SENT',
   DELIVERED: 'DELIVERED',
   FAILED: 'FAILED',
+  PARTIAL: 'PARTIAL',
   EXPIRED: 'EXPIRED',
   REJECTED: 'REJECTED'
 } as const
@@ -219,6 +220,15 @@ export const TicketPriority = {
 } as const
 
 export type TicketPriority = (typeof TicketPriority)[keyof typeof TicketPriority]
+
+
+export const MomoPaymentStatus = {
+  PENDING: 'PENDING',
+  SUCCESSFUL: 'SUCCESSFUL',
+  FAILED: 'FAILED'
+} as const
+
+export type MomoPaymentStatus = (typeof MomoPaymentStatus)[keyof typeof MomoPaymentStatus]
 
 
 export const GatewayType = {

@@ -14,7 +14,7 @@ describe('Button Component', () => {
     expect(button).toHaveClass('bg-destructive')
     
     rerender(<Button variant="outline">Outline</Button>)
-    expect(button).toHaveClass('border-input')
+    expect(button).toHaveClass('border-input/60')
   })
 
   it('shows loading state with spinner', () => {

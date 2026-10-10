@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { appConfig } from '@/config/app';
 import { appAssets } from '@/config/assets';
 import { MarketingHeaderAuth } from '@/components/navigation/marketing-header-auth';
+import { TopBar } from '@/components/navigation/top-bar';
 import { useLanguage } from '@/hooks/use-language';
 import { ShieldCheck, FileText, Cookie, ArrowLeft, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 
@@ -46,6 +47,7 @@ export function LegalLayout({
     >
       {/* Top Navigation Header */}
       <header className="sticky top-0 z-40 w-full border-b border-border bg-card/85 backdrop-blur-md">
+        <TopBar />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-6">
             <Link href="/login" className="flex items-center gap-2 group">
@@ -70,9 +72,9 @@ export function LegalLayout({
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                       isActive
-                        ? 'shadow-none'
+                        ? 'shadow-xs border border-white/20'
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                     }`}
                     style={{

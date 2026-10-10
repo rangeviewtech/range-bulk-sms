@@ -2,6 +2,8 @@ import { Prisma } from '@/generated/prisma/client'
 const { Decimal } = Prisma;
 import { prisma } from '@/lib/prisma';
 import { generateTransactionReference } from '@/lib/sms/idempotency';
+import { ConflictError } from '@/lib/errors';
+import type { PrismaTransactionClient } from '@/lib/prisma';
 
 export interface WalletOperationResult {
   success: boolean;
@@ -62,6 +64,10 @@ export const WalletService = {
           where: { idempotencyKey: params.idempotencyKey }
         });
         if (existingTx) {
+          if (existingTx.walletId !== walletId || existingTx.type !== 'DEPOSIT' ||
+            !existingTx.amount.equals(amount) || (params.userId && existingTx.userId !== params.userId)) {
+            throw new ConflictError('This payment request key was already used for different deposit details');
+          }
           return {
             success: true,
             walletId,
@@ -111,13 +117,17 @@ export const WalletService = {
     });
   },
 
-  async deduct(walletId: string, amount: Prisma.Decimal, params: { userId?: string; description?: string; campaignId?: string; messageId?: string; idempotencyKey?: string }): Promise<WalletOperationResult> {
-    return await prisma.$transaction(async (tx) => {
+  async deduct(walletId: string, amount: Prisma.Decimal, params: { userId?: string; description?: string; campaignId?: string; messageId?: string; idempotencyKey?: string; tx?: PrismaTransactionClient }): Promise<WalletOperationResult> {
+    const performDeduction = async (tx: PrismaTransactionClient) => {
       if (params.idempotencyKey) {
         const existingTx = await tx.transaction.findFirst({
           where: { idempotencyKey: params.idempotencyKey }
         });
         if (existingTx) {
+          if (existingTx.walletId !== walletId || existingTx.type !== 'DEDUCTION' ||
+            !existingTx.amount.equals(amount) || (params.userId && existingTx.userId !== params.userId)) {
+            throw new ConflictError('This payment request key was already used for different deduction details');
+          }
           return {
             success: true,
             walletId,
@@ -170,16 +180,22 @@ export const WalletService = {
         balanceAfter,
         transactionRef
       };
-    });
+    };
+
+    return params.tx ? performDeduction(params.tx) : prisma.$transaction(performDeduction);
   },
 
-  async refund(walletId: string, amount: Prisma.Decimal, params: { userId?: string; description?: string; originalTransactionRef?: string; idempotencyKey?: string }): Promise<WalletOperationResult> {
-    return await prisma.$transaction(async (tx) => {
+  async refund(walletId: string, amount: Prisma.Decimal, params: { userId?: string; description?: string; originalTransactionRef?: string; idempotencyKey?: string; tx?: PrismaTransactionClient }): Promise<WalletOperationResult> {
+    const performRefund = async (tx: PrismaTransactionClient) => {
       if (params.idempotencyKey) {
         const existingTx = await tx.transaction.findFirst({
           where: { idempotencyKey: params.idempotencyKey }
         });
         if (existingTx) {
+          if (existingTx.walletId !== walletId || existingTx.type !== 'REFUND' ||
+            !existingTx.amount.equals(amount) || (params.userId && existingTx.userId !== params.userId)) {
+            throw new ConflictError('This refund request key was already used for different refund details');
+          }
           return {
             success: true,
             walletId,
@@ -226,7 +242,9 @@ export const WalletService = {
         balanceAfter,
         transactionRef
       };
-    });
+    };
+
+    return params.tx ? performRefund(params.tx) : prisma.$transaction(performRefund);
   },
 
   async getTransactions(walletId: string, params: { page?: number; limit?: number; type?: import("@/generated/prisma/client").TransactionType; startDate?: Date; endDate?: Date }) {

@@ -17,7 +17,7 @@ test.describe('Developer Ecosystem E2E', () => {
   });
 
   test('public developer API documentation loads and is reachable', async ({ page }) => {
-    await page.goto('/api/docs');
+    await page.goto('/api/docs', { waitUntil: 'domcontentloaded' });
     await expect(page).toHaveURL(/\/api\/docs/);
     await expect(page).toHaveTitle(/Range Bulk SMS/i);
   });

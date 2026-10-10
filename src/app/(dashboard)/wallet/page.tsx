@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
@@ -53,10 +53,13 @@ const depositFormSchema = z.object({
     .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 1000, {
       message: 'Minimum deposit amount is 1,000 UGX',
     })
+    .refine((val) => Number.isInteger(Number(val)), {
+      message: 'Enter a whole amount in UGX',
+    })
     .refine((val) => parseFloat(val) <= 100000000, {
       message: 'Deposit amount cannot exceed 100,000,000 UGX',
     }),
-  description: z.string().max(500, 'Note cannot exceed 500 characters').optional(),
+  phone: z.string().trim().min(9, 'Enter your MTN Uganda number').max(20),
 });
 
 interface Transaction {
@@ -95,15 +98,15 @@ export default function WalletPage() {
     setServerErrors: setDepositServerErrors,
     reset: resetDepositForm,
   } = useFormValidation({
-    initialValues: { amount: '50000', description: 'Wallet Top-up' },
+    initialValues: { amount: '50000', phone: '' },
     schema: depositFormSchema,
   });
 
   const fetchWalletData = useCallback(async () => {
     try {
       const [walletRes, txnRes] = await Promise.all([
-        fetch('/api/wallet'),
-        fetch('/api/wallet/transactions?limit=5'),
+        fetch('/api/v1/wallet'),
+        fetch('/api/v1/wallet/transactions?limit=5'),
       ]);
 
       if (walletRes.ok) {
@@ -150,13 +153,13 @@ export default function WalletPage() {
 
     try {
       setSubmittingDeposit(true);
-      const res = await fetch('/api/wallet/deposit', {
+      const idempotencyKey = `web-wallet-${crypto.randomUUID()}`;
+      const res = await fetch('/api/v1/wallet/momo', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Idempotency-Key': idempotencyKey },
         body: JSON.stringify({
           amount: amountNum,
-          description: data.description || 'Manual deposit',
-          idempotencyKey: `dep-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+          phone: data.phone,
         }),
       });
 
@@ -168,11 +171,34 @@ export default function WalletPage() {
         throw new Error(resData.error || 'Deposit failed');
       }
 
-      toast.success(`Successfully deposited ${currency} ${amountNum.toLocaleString()}`);
+      const paymentId = resData.data?.paymentId as string | undefined;
+      if (!paymentId) throw new Error('MTN did not return a payment reference. Please check your wallet before retrying.');
+      toast.success('Payment request sent. Approve it on your MTN phone to complete the top-up.');
       setIsDepositOpen(false);
       resetDepositForm();
-      fetchWalletData();
-      notifyWalletUpdated();
+      void (async () => {
+        for (let attempt = 0; attempt < 12; attempt += 1) {
+          await new Promise((resolve) => window.setTimeout(resolve, 5_000));
+          try {
+            const statusResponse = await fetch(`/api/v1/wallet/momo/${encodeURIComponent(paymentId)}`, { cache: 'no-store' });
+            if (!statusResponse.ok) continue;
+            const statusData = await statusResponse.json();
+            if (statusData.data?.status === 'SUCCESSFUL') {
+              toast.success('Payment confirmed. Your wallet has been credited.');
+              fetchWalletData();
+              notifyWalletUpdated();
+              return;
+            }
+            if (statusData.data?.status === 'FAILED') {
+              toast.error('MTN did not complete the payment. No funds were added.');
+              return;
+            }
+          } catch {
+            // Retry status checks while the provider is processing the payment.
+          }
+        }
+        toast.info('Payment is still processing. Refresh your wallet shortly to check for confirmation.');
+      })();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to process deposit';
       toast.error(msg);
@@ -271,29 +297,30 @@ export default function WalletPage() {
                     </div>
 
                     <div className="space-y-1">
-                      <Label htmlFor="description">Payment Reference / Note</Label>
+                      <Label htmlFor="phone" required>MTN Mobile Money Number</Label>
                       <Input
-                        id="description"
-                        value={depositValues.description}
-                        onChange={(e) => setDepositFieldValue('description', e.target.value)}
-                        onBlur={() => handleDepositBlur('description')}
-                        error={depositTouched.description && !!depositErrors.description}
-                        aria-describedby={
-                          depositErrors.description ? 'description-error' : undefined
-                        }
-                        placeholder="e.g. MTN Mobile Money deposit"
+                        id="phone"
+                        type="tel"
+                        autoComplete="tel"
+                        value={depositValues.phone}
+                        onChange={(e) => setDepositFieldValue('phone', e.target.value)}
+                        onBlur={() => handleDepositBlur('phone')}
+                        error={depositTouched.phone && !!depositErrors.phone}
+                        aria-describedby={depositErrors.phone ? 'phone-error' : undefined}
+                        placeholder="e.g. 0772 123 456"
+                        required
                       />
-                      {depositTouched.description && depositErrors.description && (
-                        <InputError id="description-error" message={depositErrors.description} />
+                      {depositTouched.phone && depositErrors.phone && (
+                        <InputError id="phone-error" message={depositErrors.phone} />
                       )}
                     </div>
 
                     <div className="bg-secondary/10 text-secondary-foreground space-y-1 rounded-md p-3 text-xs">
                       <div className="flex items-center gap-1.5 font-semibold">
-                        <CheckCircle2 className="text-secondary h-3.5 w-3.5" /> Instant Credit
+                        <CheckCircle2 className="text-secondary h-3.5 w-3.5" /> Secure MTN payment
                       </div>
                       <p className="text-muted-foreground">
-                        Funds are immediately credited to your wallet balance for SMS campaigns.
+                        Approve the prompt on your phone. Your wallet is credited after MTN confirms payment.
                       </p>
                     </div>
                   </DialogBody>
@@ -355,7 +382,7 @@ export default function WalletPage() {
               {loading ? (
                 <Skeleton className="h-8 w-32" />
               ) : isMasked ? (
-                'â€¢â€¢â€¢â€¢â€¢â€¢'
+                '••••••'
               ) : (
                 `${currency} ${balance.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
               )}

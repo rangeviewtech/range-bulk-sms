@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { getPublicApiBaseUrl } from '@/lib/api-docs';
 import { Copy, Check, Terminal, Zap, Shield, ArrowRight } from 'lucide-react';
 import { DETERMINISTIC_TEST_NUMBERS } from '@/lib/sms/sandbox';
 
@@ -20,7 +21,7 @@ export function DocsQuickStart({
   };
 
   const sampleCurl = `curl --request POST \\
-  --url ${environment === 'sandbox' ? 'http://localhost:3000/api/v1/sms/send' : 'https://api.rangesms.com/v1/sms/send'} \\
+  --url ${environment === 'sandbox' ? 'http://localhost:3000/api/v1/sms/send' : `${getPublicApiBaseUrl()}/sms/send`} \\
   --header 'Authorization: Bearer rsms_test_xxxxxxxxxxxxxxxxxxxxxxxx' \\
   --header 'Content-Type: application/json' \\
   --header 'Idempotency-Key: ${crypto.randomUUID()}' \\

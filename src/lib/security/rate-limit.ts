@@ -8,6 +8,7 @@ export const apiRateLimit = redis
   ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(100, '1 m'), prefix: 'ratelimit:api' })
   : null;
 const localWindows = new Map<string, { count: number; reset: number }>();
+const isProduction = process.env.NODE_ENV === 'production';
 
 export async function checkRateLimit(type: 'auth' | 'api', identifier: string) {
   const isProd = process.env.NODE_ENV === 'production';
@@ -19,8 +20,16 @@ export async function checkRateLimit(type: 'auth' | 'api', identifier: string) {
     try {
       return await limiter.limit(identifier);
     } catch (err) {
-      console.warn('[RateLimit] Upstash Redis rate limiter error, falling back to local memory window:', err);
+      const errorName = err instanceof Error ? err.name : 'UnknownError';
+      console.error(`[RateLimit] Redis check failed (${errorName}).`);
+      if (isProduction) {
+        return { success: false, limit: type === 'auth' ? 5 : 100, remaining: 0, reset: Date.now() + duration };
+      }
     }
+  } else if (isProduction) {
+    // A per-process limit is bypassable across instances and is not a safe
+    // substitute for the shared production abuse controls.
+    return { success: false, limit: type === 'auth' ? 5 : 100, remaining: 0, reset: now + duration };
   }
 
   // Graceful fallback to local in-memory sliding window
@@ -49,17 +58,20 @@ export async function resetRateLimits(identifier?: string) {
 
   if (redis) {
     try {
-      if (identifier) {
-        await redis.del(`ratelimit:auth:${identifier}`);
-        await redis.del(`ratelimit:api:${identifier}`);
-      } else {
-        const keys = await redis.keys('ratelimit:*');
-        if (keys.length > 0) {
-          await redis.del(...keys);
+      const patterns = identifier
+        ? [`ratelimit:auth:${identifier}*`, `ratelimit:api:${identifier}*`]
+        : ['ratelimit:auth*', 'ratelimit:api*'];
+      for (const pattern of patterns) {
+        let cursor = '0';
+        do {
+          const [nextCursor, keys] = await redis.scan(cursor, { match: pattern, count: 100 });
+          cursor = String(nextCursor);
+          if (keys.length > 0) await redis.del(...keys);
         }
+        while (cursor !== '0');
       }
     } catch {
-      // Ignore redis error in reset
+      // Reset is best-effort and does not weaken the live rate limiter.
     }
   }
 }

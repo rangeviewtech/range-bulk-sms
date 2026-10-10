@@ -174,10 +174,10 @@ export function Sidebar({ groups, collapsed = false, onToggleCollapse, className
                     target={item.external ? "_blank" : undefined}
                     rel={item.external ? "noreferrer" : undefined}
                     className={cn(
-                      "flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                      "flex items-center rounded-xl px-3 py-2 text-sm font-medium transition-all",
                       isActive
-                        ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold"
-                        : "transparent",
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold border border-sidebar-border/60 shadow-xs"
+                        : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground",
                       item.disabled && "cursor-not-allowed opacity-60",
                       collapsed && "justify-center"
                     )}

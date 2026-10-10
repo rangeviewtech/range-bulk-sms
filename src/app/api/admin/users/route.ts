@@ -2,14 +2,14 @@ import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
-import { verifySession } from '@/lib/auth/session';
+import { verifyAuthenticatedSession } from '@/lib/auth/session';
 import { hasPermission } from '@/lib/auth/authorization';
 import { hashPassword } from '@/lib/auth/password';
 import { logAudit } from '@/lib/security/audit';
 
 
 export async function GET(req: Request) {
-  const session = await verifySession();
+  const session = await verifyAuthenticatedSession();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -65,7 +65,7 @@ const createUserSchema = z.object({
 });
 
 export async function POST(req: Request) {
-  const session = await verifySession();
+  const session = await verifyAuthenticatedSession();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -92,6 +92,10 @@ export async function POST(req: Request) {
     }
 
     const role = await prisma.role.findFirst({ where: { name: roleName.toUpperCase() } });
+    if (!role) {
+      return NextResponse.json({ error: 'The selected role is unavailable.' }, { status: 400 });
+    }
+
     const passwordHash = await hashPassword(initialPassword);
 
     const user = await prisma.user.create({
@@ -102,9 +106,9 @@ export async function POST(req: Request) {
         passwordHash,
         status: 'ACTIVE',
         emailVerifiedAt: new Date(),
-        roles: role ? {
-          create: { roleId: role.id }
-        } : undefined
+        roles: {
+          create: { roleId: role.id },
+        },
       },
       select: {
         id: true,
@@ -133,8 +137,8 @@ export async function POST(req: Request) {
       temporaryPassword: parsed.data.password ? undefined : initialPassword,
     });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Failed to create user';
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error('Admin user creation failed:', error instanceof Error ? error.name : 'Unknown error');
+    return NextResponse.json({ error: 'Unable to create user. Please try again.' }, { status: 500 });
   }
 }
 
@@ -144,7 +148,7 @@ const updateUserStatusSchema = z.object({
 });
 
 export async function PATCH(req: Request) {
-  const session = await verifySession();
+  const session = await verifyAuthenticatedSession();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -197,8 +201,8 @@ export async function PATCH(req: Request) {
 
     return NextResponse.json({ success: true, user });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Failed to update user status';
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error('Admin user status update failed:', error instanceof Error ? error.name : 'Unknown error');
+    return NextResponse.json({ error: 'Unable to update user status. Please try again.' }, { status: 500 });
   }
 }
 

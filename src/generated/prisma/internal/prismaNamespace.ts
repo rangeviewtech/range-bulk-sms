@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.9.1
- * Query Engine version: e922089b7d7502aff4249d5da3420f6fa55fc6ad
+ * Prisma Client JS version: 7.10.0
+ * Query Engine version: 0edf323efd1d98336f3f0a68684b56f689b900d3
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.9.1",
-  engine: "e922089b7d7502aff4249d5da3420f6fa55fc6ad"
+  client: "7.10.0",
+  engine: "0edf323efd1d98336f3f0a68684b56f689b900d3"
 }
 
 /**
@@ -436,6 +436,7 @@ export const ModelName = {
   SmsProvider: 'SmsProvider',
   ProviderRoute: 'ProviderRoute',
   Wallet: 'Wallet',
+  MomoPayment: 'MomoPayment',
   Transaction: 'Transaction',
   SmsPricing: 'SmsPricing',
   Commission: 'Commission',
@@ -477,7 +478,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "userDevice" | "authenticator" | "verificationToken" | "role" | "permission" | "userRole" | "rolePermission" | "auditLog" | "job" | "communicationLog" | "providerHealth" | "otpRecord" | "telegramLinkingToken" | "notificationPreference" | "notificationTemplate" | "notification" | "scheduledJob" | "cronExecution" | "organization" | "client" | "agent" | "contact" | "contactGroup" | "contactGroupMember" | "contactTag" | "contactTagAssignment" | "contactSegment" | "contactImport" | "senderId" | "smsTemplate" | "campaign" | "campaignGroup" | "message" | "messageRecipient" | "smsProvider" | "providerRoute" | "wallet" | "transaction" | "smsPricing" | "commission" | "commissionRule" | "apiKey" | "apiRequest" | "webhook" | "webhookDelivery" | "supportTicket" | "ticketMessage" | "scheduledMessage" | "gateway" | "gatewayDevice" | "gatewayToken" | "gatewayLog" | "messageAttempt" | "consentLog" | "smsDraft" | "region" | "callingCodeAssignment" | "numberingMetadataVersion" | "operator" | "allocation" | "providerObservation" | "coverageAudit" | "customVariable"
+    modelProps: "user" | "session" | "userDevice" | "authenticator" | "verificationToken" | "role" | "permission" | "userRole" | "rolePermission" | "auditLog" | "job" | "communicationLog" | "providerHealth" | "otpRecord" | "telegramLinkingToken" | "notificationPreference" | "notificationTemplate" | "notification" | "scheduledJob" | "cronExecution" | "organization" | "client" | "agent" | "contact" | "contactGroup" | "contactGroupMember" | "contactTag" | "contactTagAssignment" | "contactSegment" | "contactImport" | "senderId" | "smsTemplate" | "campaign" | "campaignGroup" | "message" | "messageRecipient" | "smsProvider" | "providerRoute" | "wallet" | "momoPayment" | "transaction" | "smsPricing" | "commission" | "commissionRule" | "apiKey" | "apiRequest" | "webhook" | "webhookDelivery" | "supportTicket" | "ticketMessage" | "scheduledMessage" | "gateway" | "gatewayDevice" | "gatewayToken" | "gatewayLog" | "messageAttempt" | "consentLog" | "smsDraft" | "region" | "callingCodeAssignment" | "numberingMetadataVersion" | "operator" | "allocation" | "providerObservation" | "coverageAudit" | "customVariable"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3367,6 +3368,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MomoPayment: {
+      payload: Prisma.$MomoPaymentPayload<ExtArgs>
+      fields: Prisma.MomoPaymentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MomoPaymentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MomoPaymentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MomoPaymentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MomoPaymentPayload>
+        }
+        findFirst: {
+          args: Prisma.MomoPaymentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MomoPaymentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MomoPaymentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MomoPaymentPayload>
+        }
+        findMany: {
+          args: Prisma.MomoPaymentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MomoPaymentPayload>[]
+        }
+        create: {
+          args: Prisma.MomoPaymentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MomoPaymentPayload>
+        }
+        createMany: {
+          args: Prisma.MomoPaymentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MomoPaymentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MomoPaymentPayload>[]
+        }
+        delete: {
+          args: Prisma.MomoPaymentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MomoPaymentPayload>
+        }
+        update: {
+          args: Prisma.MomoPaymentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MomoPaymentPayload>
+        }
+        deleteMany: {
+          args: Prisma.MomoPaymentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MomoPaymentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MomoPaymentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MomoPaymentPayload>[]
+        }
+        upsert: {
+          args: Prisma.MomoPaymentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MomoPaymentPayload>
+        }
+        aggregate: {
+          args: Prisma.MomoPaymentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMomoPayment>
+        }
+        groupBy: {
+          args: Prisma.MomoPaymentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MomoPaymentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MomoPaymentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MomoPaymentCountAggregateOutputType> | number
+        }
+      }
+    }
     Transaction: {
       payload: Prisma.$TransactionPayload<ExtArgs>
       fields: Prisma.TransactionFieldRefs
@@ -5365,6 +5440,8 @@ export const SessionScalarFieldEnum = {
   mfaVerified: 'mfaVerified',
   deviceInfo: 'deviceInfo',
   ipAddress: 'ipAddress',
+  location: 'location',
+  deviceName: 'deviceName',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -5851,6 +5928,7 @@ export const CampaignScalarFieldEnum = {
   userId: 'userId',
   clientId: 'clientId',
   senderIdId: 'senderIdId',
+  gatewayId: 'gatewayId',
   name: 'name',
   message: 'message',
   variables: 'variables',
@@ -5995,6 +6073,27 @@ export const WalletScalarFieldEnum = {
 } as const
 
 export type WalletScalarFieldEnum = (typeof WalletScalarFieldEnum)[keyof typeof WalletScalarFieldEnum]
+
+
+export const MomoPaymentScalarFieldEnum = {
+  id: 'id',
+  walletId: 'walletId',
+  userId: 'userId',
+  amount: 'amount',
+  currency: 'currency',
+  phone: 'phone',
+  status: 'status',
+  providerReference: 'providerReference',
+  idempotencyKey: 'idempotencyKey',
+  providerStatus: 'providerStatus',
+  failureReason: 'failureReason',
+  transactionId: 'transactionId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  completedAt: 'completedAt'
+} as const
+
+export type MomoPaymentScalarFieldEnum = (typeof MomoPaymentScalarFieldEnum)[keyof typeof MomoPaymentScalarFieldEnum]
 
 
 export const TransactionScalarFieldEnum = {
@@ -6200,6 +6299,8 @@ export type TicketMessageScalarFieldEnum = (typeof TicketMessageScalarFieldEnum)
 export const ScheduledMessageScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  clientId: 'clientId',
+  idempotencyKey: 'idempotencyKey',
   senderIdId: 'senderIdId',
   message: 'message',
   recipients: 'recipients',
@@ -6257,6 +6358,7 @@ export const GatewayDeviceScalarFieldEnum = {
   hardwareModel: 'hardwareModel',
   lastHeartbeatAt: 'lastHeartbeatAt',
   ipAddress: 'ipAddress',
+  location: 'location',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -6295,7 +6397,9 @@ export type GatewayLogScalarFieldEnum = (typeof GatewayLogScalarFieldEnum)[keyof
 export const MessageAttemptScalarFieldEnum = {
   id: 'id',
   messageId: 'messageId',
+  messageRecipientId: 'messageRecipientId',
   gatewayId: 'gatewayId',
+  attemptNumber: 'attemptNumber',
   simSlot: 'simSlot',
   status: 'status',
   expiresAt: 'expiresAt',
@@ -6846,6 +6950,20 @@ export type ListEnumMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'MomoPaymentStatus'
+ */
+export type EnumMomoPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MomoPaymentStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'MomoPaymentStatus[]'
+ */
+export type ListEnumMomoPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MomoPaymentStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'TransactionType'
  */
 export type EnumTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TransactionType'>
@@ -7202,6 +7320,7 @@ export type GlobalOmitConfig = {
   smsProvider?: Prisma.SmsProviderOmit
   providerRoute?: Prisma.ProviderRouteOmit
   wallet?: Prisma.WalletOmit
+  momoPayment?: Prisma.MomoPaymentOmit
   transaction?: Prisma.TransactionOmit
   smsPricing?: Prisma.SmsPricingOmit
   commission?: Prisma.CommissionOmit

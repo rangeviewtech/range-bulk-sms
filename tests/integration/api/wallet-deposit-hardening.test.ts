@@ -2,7 +2,7 @@
  * @vitest-environment node
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { POST as depositRoute } from '@/app/api/wallet/deposit/route';
+import { POST as depositRoute } from '@/app/api/v1/wallet/deposit/route';
 import { NextRequest } from 'next/server';
 import { AppError } from '@/lib/errors';
 
@@ -29,7 +29,7 @@ vi.mock('@/lib/security/audit', () => ({
 
 import { requirePermission } from '@/lib/auth/authorization';
 
-describe('Wallet Deposit Security Hardening (/api/wallet/deposit)', () => {
+describe('Wallet Deposit Security Hardening (/api/v1/wallet/deposit)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -39,7 +39,7 @@ describe('Wallet Deposit Security Hardening (/api/wallet/deposit)', () => {
       new AppError('Forbidden: Insufficient permissions', 403, 'FORBIDDEN')
     );
 
-    const req = new NextRequest('http://localhost:3000/api/wallet/deposit', {
+    const req = new NextRequest('http://localhost:3000/api/v1/wallet/deposit', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ amount: 50000, paymentMethod: 'mobile_money' }),
@@ -57,7 +57,7 @@ describe('Wallet Deposit Security Hardening (/api/wallet/deposit)', () => {
       sessionId: 'sess-1',
     } as never);
 
-    const req = new NextRequest('http://localhost:3000/api/wallet/deposit', {
+    const req = new NextRequest('http://localhost:3000/api/v1/wallet/deposit', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ amount: -500, paymentMethod: 'invalid_method' }),
@@ -75,7 +75,7 @@ describe('Wallet Deposit Security Hardening (/api/wallet/deposit)', () => {
       sessionId: 'sess-1',
     } as never);
 
-    const req = new NextRequest('http://localhost:3000/api/wallet/deposit', {
+    const req = new NextRequest('http://localhost:3000/api/v1/wallet/deposit', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({

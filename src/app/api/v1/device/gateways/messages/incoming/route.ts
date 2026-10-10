@@ -1,16 +1,25 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { withDeviceAuth } from '@/lib/gateways/device-auth';
+import { withDeviceAuth, sendGatewayResponse } from '@/lib/gateways/device-auth';
 import { JobWorker } from '@/lib/queue/worker';
+import { z } from 'zod';
+
+const incomingSmsSchema = z.object({
+  from: z.string().trim().min(1).max(64),
+  to: z.string().trim().max(64).optional(),
+  message: z.string().trim().min(1).max(10_000),
+  timestamp: z.string().max(64).optional(),
+  simSlot: z.number().int().min(0).max(9).optional(),
+});
 
 export const POST = async (req: NextRequest) => {
-  return withDeviceAuth(req, async (req, { gatewayId }) => {
+  return withDeviceAuth(req, async (req, { gatewayId, gatewaySecret, body, isE2EE }) => {
     try {
-      const { from, to, message, timestamp, simSlot } = await req.json();
-
-      if (!from || !message) {
-        return NextResponse.json({ error: 'Missing required fields (from, message)' }, { status: 400 });
+      const parsed = incomingSmsSchema.safeParse(body);
+      if (!parsed.success) {
+        return NextResponse.json({ error: 'Invalid incoming SMS data' }, { status: 400 });
       }
+      const { from, to, message, timestamp, simSlot } = parsed.data;
       
       const gateway = await prisma.gateway.findUnique({ where: { id: gatewayId } });
       if (!gateway) {
@@ -23,7 +32,8 @@ export const POST = async (req: NextRequest) => {
           gatewayId,
           level: 'INFO',
           event: 'INCOMING_SMS',
-          message: "Incoming SMS from  (SIM: )",
+          // Keep phone numbers and message contents out of operational logs.
+          message: 'Incoming SMS received',
         }
       });
 
@@ -43,7 +53,9 @@ export const POST = async (req: NextRequest) => {
         from,
         to: to || undefined,
         message,
-        timestamp: timestamp || new Date().toISOString(),
+        timestamp: timestamp && Number.isFinite(Date.parse(timestamp))
+          ? new Date(timestamp).toISOString()
+          : new Date().toISOString(),
         simSlot,
       };
 
@@ -56,7 +68,8 @@ export const POST = async (req: NextRequest) => {
         });
       }
 
-      return NextResponse.json({ success: true, dispatchedWebhooks: webhooks.length });
+      
+      return sendGatewayResponse({ success: true, dispatchedWebhooks: webhooks.length }, gatewaySecret, isE2EE);
     } catch (error: unknown) {
       console.error('Gateway Incoming SMS Error:', error);
       return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

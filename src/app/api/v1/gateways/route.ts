@@ -1,23 +1,51 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { verifySession } from '@/lib/auth/session';
+import { verifyAuthenticatedSession } from '@/lib/auth/session';
 
 export const GET = async (_req: NextRequest) => {
   try {
-    const session = await verifySession();
+    const session = await verifyAuthenticatedSession();
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const gateways = await prisma.gateway.findMany({
       where: { userId: session.user.id },
-      include: {
-        devices: true,
+      select: {
+        id: true,
+        name: true,
+        type: true,
+        status: true,
+        maxThroughput: true,
+        createdAt: true,
+        updatedAt: true,
+        devices: {
+          select: {
+            batteryLevel: true,
+            lastHeartbeatAt: true,
+          },
+        },
       },
       orderBy: { createdAt: 'desc' }
     });
 
-    return NextResponse.json({ success: true, gateways });
+    // Compute online status based on last heartbeat (2 minutes threshold)
+    const TWO_MINUTES = 2 * 60 * 1000;
+    const gatewaysWithOnlineStatus = gateways.map((gw) => {
+      let isOnline = false;
+      if (gw.devices && gw.devices.length > 0) {
+        const lastHeartbeat = gw.devices[0].lastHeartbeatAt;
+        if (lastHeartbeat) {
+          isOnline = (new Date().getTime() - new Date(lastHeartbeat).getTime()) < TWO_MINUTES;
+        }
+      }
+      return {
+        ...gw,
+        isOnline
+      };
+    });
+
+    return NextResponse.json({ success: true, gateways: gatewaysWithOnlineStatus });
   } catch (error: unknown) {
     console.error('List Gateways Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -28,7 +56,7 @@ import { createGatewaySchema } from '@/lib/validations/gateway';
 
 export const POST = async (req: NextRequest) => {
   try {
-    const session = await verifySession();
+    const session = await verifyAuthenticatedSession();
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

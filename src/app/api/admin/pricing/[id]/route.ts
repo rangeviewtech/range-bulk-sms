@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { verifySession } from '@/lib/auth/session';
+import { verifyAuthenticatedSession } from '@/lib/auth/session';
 import { hasPermission } from '@/lib/auth/authorization';
+import { redisCache } from '@/lib/redis';
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await verifySession();
+  const session = await verifyAuthenticatedSession();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -23,6 +24,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         isDefault: body.isDefault,
       }
     });
+    await redisCache.delByPattern('pricing:public:*');
     return NextResponse.json({ success: true, pricing: updated });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Failed to update pricing rule';
@@ -31,7 +33,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 }
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await verifySession();
+  const session = await verifyAuthenticatedSession();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -41,6 +43,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   const { id } = await params;
   try {
     await prisma.smsPricing.delete({ where: { id } });
+    await redisCache.delByPattern('pricing:public:*');
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Failed to delete pricing rule';

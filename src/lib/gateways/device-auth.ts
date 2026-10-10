@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { NextRequest } from 'next/server';
+import { decryptGatewayPayload, encryptGatewayPayload } from './encryption';
 
 /**
  * Generates a raw token and its SHA-256 hash for Gateway authentication.
@@ -15,7 +16,7 @@ export function generateGatewayToken(): { token: string; hash: string } {
 /**
  * Validates a raw gateway token and returns the associated gatewayId.
  */
-export async function verifyGatewayToken(token: string): Promise<{ isValid: boolean; gatewayId?: string }> {
+export async function verifyGatewayToken(token: string): Promise<{ isValid: boolean; gatewayId?: string; gatewaySecret?: string }> {
   if (!token || !token.startsWith('gt_')) return { isValid: false };
   
   const secret = token.replace('gt_', '');
@@ -41,7 +42,8 @@ export async function verifyGatewayToken(token: string): Promise<{ isValid: bool
   
   return {
     isValid: true,
-    gatewayId: tokenRecord.gatewayId
+    gatewayId: tokenRecord.gatewayId,
+    gatewaySecret: secret
   };
 }
 
@@ -50,7 +52,8 @@ export async function verifyGatewayToken(token: string): Promise<{ isValid: bool
  */
 export async function withDeviceAuth(
   req: NextRequest,
-  handler: (req: NextRequest, context: { gatewayId: string }) => Promise<Response>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handler: (req: NextRequest, context: { gatewayId: string; gatewaySecret: string; body?: any; isE2EE?: boolean }) => Promise<Response>
 ): Promise<Response> {
   const authHeader = req.headers.get('Authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -60,10 +63,41 @@ export async function withDeviceAuth(
   const token = authHeader.replace('Bearer ', '').trim();
   const verification = await verifyGatewayToken(token);
 
-  if (!verification.isValid || !verification.gatewayId) {
+  if (!verification.isValid || !verification.gatewayId || !verification.gatewaySecret) {
     return Response.json({ error: 'Unauthorized: Invalid or expired Gateway Token' }, { status: 401 });
   }
 
-  return handler(req, { gatewayId: verification.gatewayId });
+  let body: unknown = null;
+  let isE2EE = req.headers.get('x-e2ee') === 'true';
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    try {
+      const rawBody = await req.json().catch(() => ({}));
+      if (rawBody.e2ee) {
+        body = decryptGatewayPayload(rawBody.e2ee, verification.gatewaySecret);
+        isE2EE = true;
+      } else {
+        // Enforce strict E2EE encryption policy to ensure WhatsApp and SMS messages are secure
+        return Response.json({ error: 'Bad Request: Strict E2EE encryption is required' }, { status: 400 });
+      }
+    } catch (_e) {
+      return Response.json({ error: 'Bad Request: Failed to parse or decrypt E2EE payload' }, { status: 400 });
+    }
+  } else {
+    // For GET/HEAD, require the X-E2EE header
+    if (!isE2EE) {
+      return Response.json({ error: 'Bad Request: Strict E2EE encryption header required' }, { status: 400 });
+    }
+  }
+
+  const response = await handler(req, { gatewayId: verification.gatewayId, gatewaySecret: verification.gatewaySecret, body, isE2EE: true });
+  
+  return response;
+}
+
+export function sendGatewayResponse(data: unknown, gatewaySecret?: string, useE2EE = true) {
+  if (gatewaySecret && useE2EE) {
+    return Response.json({ e2ee: encryptGatewayPayload(data, gatewaySecret) });
+  }
+  return Response.json(data);
 }
 

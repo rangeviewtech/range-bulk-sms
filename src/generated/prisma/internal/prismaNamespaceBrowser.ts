@@ -90,6 +90,7 @@ export const ModelName = {
   SmsProvider: 'SmsProvider',
   ProviderRoute: 'ProviderRoute',
   Wallet: 'Wallet',
+  MomoPayment: 'MomoPayment',
   Transaction: 'Transaction',
   SmsPricing: 'SmsPricing',
   Commission: 'Commission',
@@ -169,6 +170,8 @@ export const SessionScalarFieldEnum = {
   mfaVerified: 'mfaVerified',
   deviceInfo: 'deviceInfo',
   ipAddress: 'ipAddress',
+  location: 'location',
+  deviceName: 'deviceName',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -655,6 +658,7 @@ export const CampaignScalarFieldEnum = {
   userId: 'userId',
   clientId: 'clientId',
   senderIdId: 'senderIdId',
+  gatewayId: 'gatewayId',
   name: 'name',
   message: 'message',
   variables: 'variables',
@@ -799,6 +803,27 @@ export const WalletScalarFieldEnum = {
 } as const
 
 export type WalletScalarFieldEnum = (typeof WalletScalarFieldEnum)[keyof typeof WalletScalarFieldEnum]
+
+
+export const MomoPaymentScalarFieldEnum = {
+  id: 'id',
+  walletId: 'walletId',
+  userId: 'userId',
+  amount: 'amount',
+  currency: 'currency',
+  phone: 'phone',
+  status: 'status',
+  providerReference: 'providerReference',
+  idempotencyKey: 'idempotencyKey',
+  providerStatus: 'providerStatus',
+  failureReason: 'failureReason',
+  transactionId: 'transactionId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  completedAt: 'completedAt'
+} as const
+
+export type MomoPaymentScalarFieldEnum = (typeof MomoPaymentScalarFieldEnum)[keyof typeof MomoPaymentScalarFieldEnum]
 
 
 export const TransactionScalarFieldEnum = {
@@ -1004,6 +1029,8 @@ export type TicketMessageScalarFieldEnum = (typeof TicketMessageScalarFieldEnum)
 export const ScheduledMessageScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  clientId: 'clientId',
+  idempotencyKey: 'idempotencyKey',
   senderIdId: 'senderIdId',
   message: 'message',
   recipients: 'recipients',
@@ -1061,6 +1088,7 @@ export const GatewayDeviceScalarFieldEnum = {
   hardwareModel: 'hardwareModel',
   lastHeartbeatAt: 'lastHeartbeatAt',
   ipAddress: 'ipAddress',
+  location: 'location',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1099,7 +1127,9 @@ export type GatewayLogScalarFieldEnum = (typeof GatewayLogScalarFieldEnum)[keyof
 export const MessageAttemptScalarFieldEnum = {
   id: 'id',
   messageId: 'messageId',
+  messageRecipientId: 'messageRecipientId',
   gatewayId: 'gatewayId',
+  attemptNumber: 'attemptNumber',
   simSlot: 'simSlot',
   status: 'status',
   expiresAt: 'expiresAt',

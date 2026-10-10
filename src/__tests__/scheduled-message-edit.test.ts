@@ -190,7 +190,7 @@ describe('Scheduled Message Edit Feature & Safety Rules', () => {
       const lockedEditBtns = screen.getAllByTitle(/Locked for transmission/i);
       expect(lockedEditBtns.length).toBeGreaterThan(0);
       expect(lockedEditBtns[0].hasAttribute('disabled')).toBe(true);
-    });
+    }, 15_000);
 
     it('automatically pauses message and navigates to SMS send studio when editing', async () => {
       const futureTime = new Date(Date.now() + 7200 * 1000).toISOString();

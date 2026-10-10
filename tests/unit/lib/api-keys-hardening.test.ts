@@ -88,12 +88,63 @@ describe('API Key Security Hardening (verifyApiKey)', () => {
       userId: 'user-1',
     } as never);
 
-    prismaMock.apiKey.update.mockResolvedValueOnce({} as never);
+    prismaMock.apiKey.updateMany.mockResolvedValueOnce({ count: 1 } as never);
 
     const res = await verifyApiKey(validKey, '197.239.1.5');
     expect(res.isValid).toBe(true);
     expect(res.clientId).toBe('client-1');
     expect(res.userId).toBe('user-1');
     expect(res.scopes).toEqual(['sms.send', 'balance.read']);
+  });
+
+  it('reserves capped quota with a conditional atomic increment', async () => {
+    prismaMock.apiKey.findFirst.mockResolvedValueOnce({
+      id: 'key-race',
+      keyPrefix: testPrefix,
+      keyHash: validHash,
+      status: 'ACTIVE',
+      expiresAt: null,
+      revokedAt: null,
+      ipWhitelist: [],
+      scopes: ['sms.send'],
+      quotaLimit: 1,
+      quotaUsed: 0,
+      quotaResetAt: new Date(Date.now() + 60_000),
+      userId: 'user-1',
+    } as never);
+    prismaMock.apiKey.updateMany.mockResolvedValueOnce({ count: 1 } as never);
+
+    const result = await verifyApiKey(validKey);
+
+    expect(result.isValid).toBe(true);
+    expect(prismaMock.apiKey.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({
+        id: 'key-race',
+        quotaUsed: { lt: 1 },
+      }),
+      data: expect.objectContaining({ quotaUsed: { increment: 1 } }),
+    }));
+  });
+
+  it('rejects a request when another concurrent request takes the last quota slot', async () => {
+    const resetAt = new Date(Date.now() + 60_000);
+    prismaMock.apiKey.findFirst
+      .mockResolvedValueOnce({
+        id: 'key-race', keyPrefix: testPrefix, keyHash: validHash, status: 'ACTIVE',
+        expiresAt: null, revokedAt: null, ipWhitelist: [], scopes: ['sms.send'],
+        quotaLimit: 1, quotaUsed: 0, quotaResetAt: resetAt, userId: 'user-1',
+      } as never)
+      .mockResolvedValueOnce({
+        id: 'key-race', keyPrefix: testPrefix, keyHash: validHash, status: 'ACTIVE',
+        expiresAt: null, revokedAt: null, ipWhitelist: [], scopes: ['sms.send'],
+        quotaLimit: 1, quotaUsed: 1, quotaResetAt: resetAt, userId: 'user-1',
+      } as never);
+    prismaMock.apiKey.updateMany.mockResolvedValueOnce({ count: 0 } as never);
+
+    const result = await verifyApiKey(validKey);
+
+    expect(result.isValid).toBe(false);
+    expect(result.quotaExceeded).toBe(true);
+    expect(result.quotaUsed).toBe(1);
   });
 });

@@ -237,6 +237,11 @@ export type ProviderRoute = Prisma.ProviderRouteModel
  */
 export type Wallet = Prisma.WalletModel
 /**
+ * Model MomoPayment
+ * 
+ */
+export type MomoPayment = Prisma.MomoPaymentModel
+/**
  * Model Transaction
  * 
  */

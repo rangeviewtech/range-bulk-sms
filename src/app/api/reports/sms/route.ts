@@ -1,17 +1,17 @@
 import { NextResponse } from 'next/server';
 import { prismaRead } from '@/lib/prisma';
 import { redisCache } from '@/lib/redis';
-import { verifySession } from '@/lib/auth/session';
+import { verifyAuthenticatedSession } from '@/lib/auth/session';
 import { formatInTimezone } from '@/lib/timezone';
 
 export async function GET() {
   try {
-    const session = await verifySession();
+    const session = await verifyAuthenticatedSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const reportData = await redisCache.remember(`reports:sms:${session.userId}`, 60, async () => {
+    const reportData = await redisCache.remember(`reports:sms:${session.userId}:${session.user.timezone}`, 60, async () => {
       // Bound query to the last 90 days to eliminate memory bloat while preserving trends
       const ninetyDaysAgo = new Date();
       ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);

@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright'
 
 test.describe('Accessibility', () => {
   test('home page should not have any automatically detectable accessibility issues', async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/', { waitUntil: 'domcontentloaded' })
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -14,7 +14,7 @@ test.describe('Accessibility', () => {
   })
 
   test('login page should not have any automatically detectable accessibility issues', async ({ page }) => {
-    await page.goto('/login')
+    await page.goto('/login', { waitUntil: 'domcontentloaded' })
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -24,7 +24,7 @@ test.describe('Accessibility', () => {
   })
 
   test('design system page should not have any automatically detectable accessibility issues', async ({ page }) => {
-    await page.goto('/design-system')
+    await page.goto('/design-system', { waitUntil: 'domcontentloaded' })
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])

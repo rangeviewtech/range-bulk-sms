@@ -189,8 +189,17 @@ export async function createSession(
  * 4. Active user status
  */
 export async function verifySession() {
-  const cookieStore = await cookies();
-  const cookie = cookieStore.get('session')?.value;
+  const cookieStore = await cookies().catch(() => null);
+  let cookie = cookieStore?.get('session')?.value;
+
+  if (!cookie) {
+    const headersList = await import('next/headers').then((m) => m.headers()).catch(() => null);
+    const authHeader = headersList?.get('authorization');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      cookie = authHeader.substring(7).trim();
+    }
+  }
+
   const sessionData = cookie ? await decrypt(cookie).catch(() => null) : null;
 
   if (!sessionData || typeof sessionData.sessionId !== 'string') {
@@ -293,7 +302,9 @@ export async function verifySession() {
     sessionId: session.id,
     userId: session.userId,
     user: session.user,
-    mfaVerified: session.mfaVerified || sessionData.mfaVerified === true,
+    // The database record is authoritative. A signed cookie must not be able
+    // to upgrade a pre-authentication session after it has been created.
+    mfaVerified: session.mfaVerified,
     rememberMe: session.rememberMe,
     expiresAt: session.expiresAt,
     idleExpiresAt: session.idleExpiresAt,
@@ -406,6 +417,72 @@ export async function requireAuth() {
   }
   if (session.screenLocked) {
     throw new AppError('Unlock your session.', 403, 'SCREEN_LOCKED');
+  }
+  return session;
+}
+
+/**
+ * Validates a session token supplied directly to a Route Handler. Unlike
+ * `verifySession`, this does not depend on ambient Next.js cookies/headers,
+ * which is important for bearer-token callers such as the mobile app.
+ */
+export async function verifyRequestSessionToken(
+  token: string,
+  screenLockedCookie: string | undefined
+): Promise<{ userId: string; error?: 'unauthorized' | 'mfa_required' | 'screen_locked' } | null> {
+  const payload = await decrypt(token);
+  if (
+    !payload ||
+    typeof payload.sessionId !== 'string' ||
+    typeof payload.userId !== 'string'
+  ) {
+    return null;
+  }
+
+  const session = await prisma.session.findUnique({
+    where: { id: payload.sessionId },
+    select: {
+      id: true,
+      userId: true,
+      revokedAt: true,
+      expiresAt: true,
+      idleExpiresAt: true,
+      rememberMe: true,
+      mfaVerified: true,
+      user: { select: { status: true } },
+    },
+  });
+  const now = new Date();
+
+  if (
+    !session ||
+    session.userId !== payload.userId ||
+    session.revokedAt ||
+    session.expiresAt <= now ||
+    (!session.rememberMe && session.idleExpiresAt && session.idleExpiresAt <= now) ||
+    session.user.status !== 'ACTIVE'
+  ) {
+    return { userId: '', error: 'unauthorized' };
+  }
+
+  if (!session.mfaVerified) {
+    return { userId: '', error: 'mfa_required' };
+  }
+  if (payload.screenLocked === true || screenLockedCookie === 'true') {
+    return { userId: '', error: 'screen_locked' };
+  }
+
+  return { userId: session.userId };
+}
+
+/**
+ * Returns an authenticated, MFA-complete, unlocked session for API handlers
+ * that need to respond with their own 401/403 shape instead of throwing.
+ */
+export async function verifyAuthenticatedSession() {
+  const session = await verifySession();
+  if (!session || !session.mfaVerified || session.screenLocked) {
+    return null;
   }
   return session;
 }

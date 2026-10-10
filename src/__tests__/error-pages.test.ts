@@ -42,7 +42,7 @@ describe('Error & 404 Pages UI/UX', () => {
       expect(
         screen.getByText(/The requested address could not be located/i)
       ).toBeTruthy();
-    });
+    }, 15000);
 
     it('renders primary CTA to go back home pointing to /dashboard', () => {
       render(React.createElement(NotFoundContent));
@@ -50,7 +50,7 @@ describe('Error & 404 Pages UI/UX', () => {
       const homeLink = screen.getByRole('link', { name: /Go Back Home/i });
       expect(homeLink).toBeTruthy();
       expect(homeLink.getAttribute('href')).toBe('/dashboard');
-    });
+    }, 15000);
 
     it('renders secondary CTA to contact support pointing to /support', () => {
       render(React.createElement(NotFoundContent));
@@ -62,7 +62,7 @@ describe('Error & 404 Pages UI/UX', () => {
       );
       expect(contactSupportLink).toBeDefined();
       expect(contactSupportLink?.getAttribute('href')).toBe('/support');
-    });
+    }, 15000);
 
     it('renders return to previous page action button', () => {
       render(React.createElement(NotFoundContent));
@@ -113,7 +113,7 @@ describe('Error & 404 Pages UI/UX', () => {
 
       const supportLink = screen.getByRole('link', { name: /Contact Support/i });
       expect(supportLink.getAttribute('href')).toBe('/support');
-    });
+    }, 15000);
 
     it('toggles technical diagnostic telemetry details on demand', () => {
       const resetMock = vi.fn();

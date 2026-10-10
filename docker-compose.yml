@@ -21,6 +21,8 @@ services:
     networks:
       - backend
 
+  # Optional standalone Redis for local tooling. The Next.js application uses
+  # Upstash Redis REST credentials; this TCP service is not an app connection.
   redis:
     image: redis:7-alpine
     container_name: master_template_redis

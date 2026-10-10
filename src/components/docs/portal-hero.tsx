@@ -14,7 +14,7 @@ export function PortalHero({ environment: _environment }: PortalHeroProps) {
   const [activeLang, setActiveLang] = React.useState<HeroLang>('curl');
   const [copied, setCopied] = React.useState(false);
 
-  const endpointUrl = 'https://api.range.co.ug/v1/sms/send';
+  const endpointUrl = 'https://api.range.co.ug/api/v1/sms/send';
 
   const snippets: Record<HeroLang, { lines: string[]; full: string }> = {
     curl: {
@@ -214,7 +214,7 @@ export function PortalHero({ environment: _environment }: PortalHeroProps) {
                     <span className="select-none text-right w-4 shrink-0 text-slate-500">2</span>
                     <span>
                       {'  '}
-                      <span className="text-slate-100">https://api.range.co.ug/v1/wallet/balance</span>{' '}
+                      <span className="text-slate-100">https://api.range.co.ug/api/v1/balance</span>{' '}
                       <span className="text-slate-300">\</span>
                     </span>
                   </div>

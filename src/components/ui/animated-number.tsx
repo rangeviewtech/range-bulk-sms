@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useCountUp } from "@/hooks/use-count-up";
+import { NumberTicker } from "@/components/ui/number-ticker";
 
 interface AnimatedNumberProps {
   value: string | number;
@@ -14,29 +14,31 @@ export function AnimatedNumber({ value }: AnimatedNumberProps) {
     setMounted(true);
   }, []);
 
+  if (!mounted) {
+    return <>{value}</>;
+  }
+
   const stringVal = String(value);
   const clean = stringVal.replace(/,/g, '');
   const match = clean.match(/[\d.]+/);
   const numericValue = match ? parseFloat(match[0]) : null;
   const hasDecimals = numericValue ? !Number.isInteger(numericValue) : false;
   
-  const animatedValue = useCountUp(
-    numericValue || 0,
-    1500, // duration
-    0,
-    hasDecimals ? 1 : 0
-  );
-
-  if (!mounted || numericValue === null) {
+  if (numericValue === null) {
     return <>{value}</>;
   }
 
-  const formattedValue = animatedValue.toLocaleString('en-US', {
-    minimumFractionDigits: hasDecimals ? 1 : 0,
-    maximumFractionDigits: hasDecimals ? 1 : 0,
-  });
+  const prefix = stringVal.substring(0, match!.index);
+  const suffix = stringVal.substring(match!.index! + match![0].length);
 
-  const displayValue = stringVal.replace(/[\d.,]+/, formattedValue);
-
-  return <>{displayValue}</>;
+  return (
+    <span className="inline-flex items-center">
+      {prefix}
+      <NumberTicker 
+        value={numericValue} 
+        decimalPlaces={hasDecimals ? 1 : 0} 
+      />
+      {suffix}
+    </span>
+  );
 }

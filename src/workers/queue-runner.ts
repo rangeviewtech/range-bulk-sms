@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { JobWorker } from "@/lib/queue/worker";
 import { prisma } from "@/lib/prisma";
 import { ProviderCircuitBreaker } from "@/lib/sms/circuit-breaker";
@@ -62,7 +63,7 @@ async function main() {
   while (isRunning) {
     try {
       // 1. Check Global Emergency Halt
-      if (ProviderCircuitBreaker.isGloballyHalted()) {
+      if (await ProviderCircuitBreaker.isGloballyHalted()) {
         console.warn("[WORKER_DAEMON] Emergency dispatch halt is active. Sleeping...");
         await new Promise((resolve) => setTimeout(resolve, 5000));
         continue;

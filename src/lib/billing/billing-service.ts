@@ -1,4 +1,4 @@
-import { prisma, Prisma } from "@/lib/prisma";
+import { prisma, Prisma, PrismaTransactionClient } from "@/lib/prisma";
 import { LedgerEngine, JournalLine } from "./ledger-engine";
 
 export class BillingService {
@@ -12,8 +12,14 @@ export class BillingService {
   /**
    * Holds credits in reservation before campaign expansion or dispatch.
    */
-  static async reserveCredits(userId: string, campaignId: string, units: number, idempotencyKey?: string) {
-    return await LedgerEngine.reserveCredits(userId, campaignId, units, idempotencyKey);
+  static async reserveCredits(
+    userId: string,
+    campaignId: string,
+    units: number,
+    idempotencyKey?: string,
+    transaction?: PrismaTransactionClient
+  ) {
+    return LedgerEngine.reserveCredits(userId, campaignId, units, idempotencyKey, transaction);
   }
 
   /**

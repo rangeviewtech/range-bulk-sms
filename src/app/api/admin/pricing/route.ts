@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { verifySession } from '@/lib/auth/session';
+import { verifyAuthenticatedSession } from '@/lib/auth/session';
 import { hasPermission } from '@/lib/auth/authorization';
 import { smsPricingSchema } from '@/lib/validations/wallet';
+import { redisCache } from '@/lib/redis';
 
 export async function GET(req: Request) {
-  const session = await verifySession();
+  const session = await verifyAuthenticatedSession();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -34,7 +35,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const session = await verifySession();
+  const session = await verifyAuthenticatedSession();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -57,6 +58,7 @@ export async function POST(req: Request) {
         currency: data.currency,
       }
     });
+    await redisCache.delByPattern('pricing:public:*');
 
     return NextResponse.json({ success: true, pricing: created });
   } catch (error: unknown) {

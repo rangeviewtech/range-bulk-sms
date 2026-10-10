@@ -281,6 +281,7 @@ export type WalletWhereInput = {
   agent?: Prisma.XOR<Prisma.AgentNullableScalarRelationFilter, Prisma.AgentWhereInput> | null
   organization?: Prisma.XOR<Prisma.OrganizationNullableScalarRelationFilter, Prisma.OrganizationWhereInput> | null
   transactions?: Prisma.TransactionListRelationFilter
+  momoPayments?: Prisma.MomoPaymentListRelationFilter
 }
 
 export type WalletOrderByWithRelationInput = {
@@ -301,6 +302,7 @@ export type WalletOrderByWithRelationInput = {
   agent?: Prisma.AgentOrderByWithRelationInput
   organization?: Prisma.OrganizationOrderByWithRelationInput
   transactions?: Prisma.TransactionOrderByRelationAggregateInput
+  momoPayments?: Prisma.MomoPaymentOrderByRelationAggregateInput
 }
 
 export type WalletWhereUniqueInput = Prisma.AtLeast<{
@@ -324,6 +326,7 @@ export type WalletWhereUniqueInput = Prisma.AtLeast<{
   agent?: Prisma.XOR<Prisma.AgentNullableScalarRelationFilter, Prisma.AgentWhereInput> | null
   organization?: Prisma.XOR<Prisma.OrganizationNullableScalarRelationFilter, Prisma.OrganizationWhereInput> | null
   transactions?: Prisma.TransactionListRelationFilter
+  momoPayments?: Prisma.MomoPaymentListRelationFilter
 }, "id" | "userId" | "clientId" | "agentId">
 
 export type WalletOrderByWithAggregationInput = {
@@ -378,6 +381,7 @@ export type WalletCreateInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutWalletInput
   organization?: Prisma.OrganizationCreateNestedOneWithoutWalletsInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutWalletInput
+  momoPayments?: Prisma.MomoPaymentCreateNestedManyWithoutWalletInput
 }
 
 export type WalletUncheckedCreateInput = {
@@ -394,6 +398,7 @@ export type WalletUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutWalletInput
+  momoPayments?: Prisma.MomoPaymentUncheckedCreateNestedManyWithoutWalletInput
 }
 
 export type WalletUpdateInput = {
@@ -410,6 +415,7 @@ export type WalletUpdateInput = {
   agent?: Prisma.AgentUpdateOneWithoutWalletNestedInput
   organization?: Prisma.OrganizationUpdateOneWithoutWalletsNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutWalletNestedInput
+  momoPayments?: Prisma.MomoPaymentUpdateManyWithoutWalletNestedInput
 }
 
 export type WalletUncheckedUpdateInput = {
@@ -426,6 +432,7 @@ export type WalletUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutWalletNestedInput
+  momoPayments?: Prisma.MomoPaymentUncheckedUpdateManyWithoutWalletNestedInput
 }
 
 export type WalletCreateManyInput = {
@@ -682,6 +689,20 @@ export type WalletUncheckedUpdateOneWithoutAgentNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.WalletUpdateToOneWithWhereWithoutAgentInput, Prisma.WalletUpdateWithoutAgentInput>, Prisma.WalletUncheckedUpdateWithoutAgentInput>
 }
 
+export type WalletCreateNestedOneWithoutMomoPaymentsInput = {
+  create?: Prisma.XOR<Prisma.WalletCreateWithoutMomoPaymentsInput, Prisma.WalletUncheckedCreateWithoutMomoPaymentsInput>
+  connectOrCreate?: Prisma.WalletCreateOrConnectWithoutMomoPaymentsInput
+  connect?: Prisma.WalletWhereUniqueInput
+}
+
+export type WalletUpdateOneRequiredWithoutMomoPaymentsNestedInput = {
+  create?: Prisma.XOR<Prisma.WalletCreateWithoutMomoPaymentsInput, Prisma.WalletUncheckedCreateWithoutMomoPaymentsInput>
+  connectOrCreate?: Prisma.WalletCreateOrConnectWithoutMomoPaymentsInput
+  upsert?: Prisma.WalletUpsertWithoutMomoPaymentsInput
+  connect?: Prisma.WalletWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WalletUpdateToOneWithWhereWithoutMomoPaymentsInput, Prisma.WalletUpdateWithoutMomoPaymentsInput>, Prisma.WalletUncheckedUpdateWithoutMomoPaymentsInput>
+}
+
 export type WalletCreateNestedOneWithoutTransactionsInput = {
   create?: Prisma.XOR<Prisma.WalletCreateWithoutTransactionsInput, Prisma.WalletUncheckedCreateWithoutTransactionsInput>
   connectOrCreate?: Prisma.WalletCreateOrConnectWithoutTransactionsInput
@@ -709,6 +730,7 @@ export type WalletCreateWithoutUserInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutWalletInput
   organization?: Prisma.OrganizationCreateNestedOneWithoutWalletsInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutWalletInput
+  momoPayments?: Prisma.MomoPaymentCreateNestedManyWithoutWalletInput
 }
 
 export type WalletUncheckedCreateWithoutUserInput = {
@@ -724,6 +746,7 @@ export type WalletUncheckedCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutWalletInput
+  momoPayments?: Prisma.MomoPaymentUncheckedCreateNestedManyWithoutWalletInput
 }
 
 export type WalletCreateOrConnectWithoutUserInput = {
@@ -755,6 +778,7 @@ export type WalletUpdateWithoutUserInput = {
   agent?: Prisma.AgentUpdateOneWithoutWalletNestedInput
   organization?: Prisma.OrganizationUpdateOneWithoutWalletsNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutWalletNestedInput
+  momoPayments?: Prisma.MomoPaymentUpdateManyWithoutWalletNestedInput
 }
 
 export type WalletUncheckedUpdateWithoutUserInput = {
@@ -770,6 +794,7 @@ export type WalletUncheckedUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutWalletNestedInput
+  momoPayments?: Prisma.MomoPaymentUncheckedUpdateManyWithoutWalletNestedInput
 }
 
 export type WalletCreateWithoutOrganizationInput = {
@@ -785,6 +810,7 @@ export type WalletCreateWithoutOrganizationInput = {
   client?: Prisma.ClientCreateNestedOneWithoutWalletInput
   agent?: Prisma.AgentCreateNestedOneWithoutWalletInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutWalletInput
+  momoPayments?: Prisma.MomoPaymentCreateNestedManyWithoutWalletInput
 }
 
 export type WalletUncheckedCreateWithoutOrganizationInput = {
@@ -800,6 +826,7 @@ export type WalletUncheckedCreateWithoutOrganizationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutWalletInput
+  momoPayments?: Prisma.MomoPaymentUncheckedCreateNestedManyWithoutWalletInput
 }
 
 export type WalletCreateOrConnectWithoutOrganizationInput = {
@@ -859,6 +886,7 @@ export type WalletCreateWithoutClientInput = {
   agent?: Prisma.AgentCreateNestedOneWithoutWalletInput
   organization?: Prisma.OrganizationCreateNestedOneWithoutWalletsInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutWalletInput
+  momoPayments?: Prisma.MomoPaymentCreateNestedManyWithoutWalletInput
 }
 
 export type WalletUncheckedCreateWithoutClientInput = {
@@ -874,6 +902,7 @@ export type WalletUncheckedCreateWithoutClientInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutWalletInput
+  momoPayments?: Prisma.MomoPaymentUncheckedCreateNestedManyWithoutWalletInput
 }
 
 export type WalletCreateOrConnectWithoutClientInput = {
@@ -905,6 +934,7 @@ export type WalletUpdateWithoutClientInput = {
   agent?: Prisma.AgentUpdateOneWithoutWalletNestedInput
   organization?: Prisma.OrganizationUpdateOneWithoutWalletsNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutWalletNestedInput
+  momoPayments?: Prisma.MomoPaymentUpdateManyWithoutWalletNestedInput
 }
 
 export type WalletUncheckedUpdateWithoutClientInput = {
@@ -920,6 +950,7 @@ export type WalletUncheckedUpdateWithoutClientInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutWalletNestedInput
+  momoPayments?: Prisma.MomoPaymentUncheckedUpdateManyWithoutWalletNestedInput
 }
 
 export type WalletCreateWithoutAgentInput = {
@@ -935,6 +966,7 @@ export type WalletCreateWithoutAgentInput = {
   client?: Prisma.ClientCreateNestedOneWithoutWalletInput
   organization?: Prisma.OrganizationCreateNestedOneWithoutWalletsInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutWalletInput
+  momoPayments?: Prisma.MomoPaymentCreateNestedManyWithoutWalletInput
 }
 
 export type WalletUncheckedCreateWithoutAgentInput = {
@@ -950,6 +982,7 @@ export type WalletUncheckedCreateWithoutAgentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutWalletInput
+  momoPayments?: Prisma.MomoPaymentUncheckedCreateNestedManyWithoutWalletInput
 }
 
 export type WalletCreateOrConnectWithoutAgentInput = {
@@ -981,12 +1014,94 @@ export type WalletUpdateWithoutAgentInput = {
   client?: Prisma.ClientUpdateOneWithoutWalletNestedInput
   organization?: Prisma.OrganizationUpdateOneWithoutWalletsNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutWalletNestedInput
+  momoPayments?: Prisma.MomoPaymentUpdateManyWithoutWalletNestedInput
 }
 
 export type WalletUncheckedUpdateWithoutAgentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  smsCredits?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastTopUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutWalletNestedInput
+  momoPayments?: Prisma.MomoPaymentUncheckedUpdateManyWithoutWalletNestedInput
+}
+
+export type WalletCreateWithoutMomoPaymentsInput = {
+  id?: string
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: string
+  smsCredits?: number
+  isActive?: boolean
+  lastTopUpAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutWalletsInput
+  client?: Prisma.ClientCreateNestedOneWithoutWalletInput
+  agent?: Prisma.AgentCreateNestedOneWithoutWalletInput
+  organization?: Prisma.OrganizationCreateNestedOneWithoutWalletsInput
+  transactions?: Prisma.TransactionCreateNestedManyWithoutWalletInput
+}
+
+export type WalletUncheckedCreateWithoutMomoPaymentsInput = {
+  id?: string
+  userId?: string | null
+  clientId?: string | null
+  agentId?: string | null
+  organizationId?: string | null
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: string
+  smsCredits?: number
+  isActive?: boolean
+  lastTopUpAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutWalletInput
+}
+
+export type WalletCreateOrConnectWithoutMomoPaymentsInput = {
+  where: Prisma.WalletWhereUniqueInput
+  create: Prisma.XOR<Prisma.WalletCreateWithoutMomoPaymentsInput, Prisma.WalletUncheckedCreateWithoutMomoPaymentsInput>
+}
+
+export type WalletUpsertWithoutMomoPaymentsInput = {
+  update: Prisma.XOR<Prisma.WalletUpdateWithoutMomoPaymentsInput, Prisma.WalletUncheckedUpdateWithoutMomoPaymentsInput>
+  create: Prisma.XOR<Prisma.WalletCreateWithoutMomoPaymentsInput, Prisma.WalletUncheckedCreateWithoutMomoPaymentsInput>
+  where?: Prisma.WalletWhereInput
+}
+
+export type WalletUpdateToOneWithWhereWithoutMomoPaymentsInput = {
+  where?: Prisma.WalletWhereInput
+  data: Prisma.XOR<Prisma.WalletUpdateWithoutMomoPaymentsInput, Prisma.WalletUncheckedUpdateWithoutMomoPaymentsInput>
+}
+
+export type WalletUpdateWithoutMomoPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  smsCredits?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastTopUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutWalletsNestedInput
+  client?: Prisma.ClientUpdateOneWithoutWalletNestedInput
+  agent?: Prisma.AgentUpdateOneWithoutWalletNestedInput
+  organization?: Prisma.OrganizationUpdateOneWithoutWalletsNestedInput
+  transactions?: Prisma.TransactionUpdateManyWithoutWalletNestedInput
+}
+
+export type WalletUncheckedUpdateWithoutMomoPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  agentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   currency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1011,6 +1126,7 @@ export type WalletCreateWithoutTransactionsInput = {
   client?: Prisma.ClientCreateNestedOneWithoutWalletInput
   agent?: Prisma.AgentCreateNestedOneWithoutWalletInput
   organization?: Prisma.OrganizationCreateNestedOneWithoutWalletsInput
+  momoPayments?: Prisma.MomoPaymentCreateNestedManyWithoutWalletInput
 }
 
 export type WalletUncheckedCreateWithoutTransactionsInput = {
@@ -1026,6 +1142,7 @@ export type WalletUncheckedCreateWithoutTransactionsInput = {
   lastTopUpAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  momoPayments?: Prisma.MomoPaymentUncheckedCreateNestedManyWithoutWalletInput
 }
 
 export type WalletCreateOrConnectWithoutTransactionsInput = {
@@ -1057,6 +1174,7 @@ export type WalletUpdateWithoutTransactionsInput = {
   client?: Prisma.ClientUpdateOneWithoutWalletNestedInput
   agent?: Prisma.AgentUpdateOneWithoutWalletNestedInput
   organization?: Prisma.OrganizationUpdateOneWithoutWalletsNestedInput
+  momoPayments?: Prisma.MomoPaymentUpdateManyWithoutWalletNestedInput
 }
 
 export type WalletUncheckedUpdateWithoutTransactionsInput = {
@@ -1072,6 +1190,7 @@ export type WalletUncheckedUpdateWithoutTransactionsInput = {
   lastTopUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  momoPayments?: Prisma.MomoPaymentUncheckedUpdateManyWithoutWalletNestedInput
 }
 
 export type WalletCreateManyOrganizationInput = {
@@ -1101,6 +1220,7 @@ export type WalletUpdateWithoutOrganizationInput = {
   client?: Prisma.ClientUpdateOneWithoutWalletNestedInput
   agent?: Prisma.AgentUpdateOneWithoutWalletNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutWalletNestedInput
+  momoPayments?: Prisma.MomoPaymentUpdateManyWithoutWalletNestedInput
 }
 
 export type WalletUncheckedUpdateWithoutOrganizationInput = {
@@ -1116,6 +1236,7 @@ export type WalletUncheckedUpdateWithoutOrganizationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutWalletNestedInput
+  momoPayments?: Prisma.MomoPaymentUncheckedUpdateManyWithoutWalletNestedInput
 }
 
 export type WalletUncheckedUpdateManyWithoutOrganizationInput = {
@@ -1139,10 +1260,12 @@ export type WalletUncheckedUpdateManyWithoutOrganizationInput = {
 
 export type WalletCountOutputType = {
   transactions: number
+  momoPayments: number
 }
 
 export type WalletCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   transactions?: boolean | WalletCountOutputTypeCountTransactionsArgs
+  momoPayments?: boolean | WalletCountOutputTypeCountMomoPaymentsArgs
 }
 
 /**
@@ -1160,6 +1283,13 @@ export type WalletCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exten
  */
 export type WalletCountOutputTypeCountTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.TransactionWhereInput
+}
+
+/**
+ * WalletCountOutputType without action
+ */
+export type WalletCountOutputTypeCountMomoPaymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MomoPaymentWhereInput
 }
 
 
@@ -1181,6 +1311,7 @@ export type WalletSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   agent?: boolean | Prisma.Wallet$agentArgs<ExtArgs>
   organization?: boolean | Prisma.Wallet$organizationArgs<ExtArgs>
   transactions?: boolean | Prisma.Wallet$transactionsArgs<ExtArgs>
+  momoPayments?: boolean | Prisma.Wallet$momoPaymentsArgs<ExtArgs>
   _count?: boolean | Prisma.WalletCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["wallet"]>
 
@@ -1244,6 +1375,7 @@ export type WalletInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   agent?: boolean | Prisma.Wallet$agentArgs<ExtArgs>
   organization?: boolean | Prisma.Wallet$organizationArgs<ExtArgs>
   transactions?: boolean | Prisma.Wallet$transactionsArgs<ExtArgs>
+  momoPayments?: boolean | Prisma.Wallet$momoPaymentsArgs<ExtArgs>
   _count?: boolean | Prisma.WalletCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type WalletIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1267,6 +1399,7 @@ export type $WalletPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     agent: Prisma.$AgentPayload<ExtArgs> | null
     organization: Prisma.$OrganizationPayload<ExtArgs> | null
     transactions: Prisma.$TransactionPayload<ExtArgs>[]
+    momoPayments: Prisma.$MomoPaymentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1680,6 +1813,7 @@ export interface Prisma__WalletClient<T, Null = never, ExtArgs extends runtime.T
   agent<T extends Prisma.Wallet$agentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Wallet$agentArgs<ExtArgs>>): Prisma.Prisma__AgentClient<runtime.Types.Result.GetResult<Prisma.$AgentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   organization<T extends Prisma.Wallet$organizationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Wallet$organizationArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   transactions<T extends Prisma.Wallet$transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Wallet$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  momoPayments<T extends Prisma.Wallet$momoPaymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Wallet$momoPaymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MomoPaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2219,6 +2353,30 @@ export type Wallet$transactionsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.TransactionScalarFieldEnum | Prisma.TransactionScalarFieldEnum[]
+}
+
+/**
+ * Wallet.momoPayments
+ */
+export type Wallet$momoPaymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MomoPayment
+   */
+  select?: Prisma.MomoPaymentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MomoPayment
+   */
+  omit?: Prisma.MomoPaymentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MomoPaymentInclude<ExtArgs> | null
+  where?: Prisma.MomoPaymentWhereInput
+  orderBy?: Prisma.MomoPaymentOrderByWithRelationInput | Prisma.MomoPaymentOrderByWithRelationInput[]
+  cursor?: Prisma.MomoPaymentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MomoPaymentScalarFieldEnum | Prisma.MomoPaymentScalarFieldEnum[]
 }
 
 /**

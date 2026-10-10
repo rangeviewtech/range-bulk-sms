@@ -24,11 +24,6 @@ export class RoutingEngine {
    * 4. Automatic failover to secondary healthy routes if primary is OPEN or degraded.
    */
   static async resolveRoute(phone: string): Promise<ResolvedRoute | null> {
-    if (ProviderCircuitBreaker.isGloballyHalted()) {
-      console.warn("[ROUTING_ENGINE] Outbound routing halted: Global emergency stop is active.");
-      return null;
-    }
-
     const { isValid } = normalizePhoneNumber(phone);
     const network = detectCarrier(phone);
     const targetCarrier = isValid && network ? network.toUpperCase() : "ALL";
@@ -47,6 +42,7 @@ export class RoutingEngine {
       if (anyProviders.length === 0) return null;
       
       const p = anyProviders[0];
+      if (!(await ProviderCircuitBreaker.canExecute(p.id)).allowed) return null;
       const adapter = this.createAdapter(p);
       return {
         adapter,
@@ -59,10 +55,8 @@ export class RoutingEngine {
     }
 
     // 2. Filter candidates whose circuit breaker allows execution
-    const healthyProviders = providers.filter((p) => {
-      const check = ProviderCircuitBreaker.canExecute(p.id);
-      return check.allowed;
-    });
+    const healthChecks = await Promise.all(providers.map((provider) => ProviderCircuitBreaker.canExecute(provider.id)));
+    const healthyProviders = providers.filter((_, index) => healthChecks[index]?.allowed);
 
     if (healthyProviders.length === 0) {
       console.error(`[ROUTING_ENGINE] All active SMS providers are currently OPEN / in circuit breaker cooldown.`);
@@ -97,11 +91,11 @@ export class RoutingEngine {
   /**
    * Reports the outcome of a dispatch back to the circuit breaker.
    */
-  static reportOutcome(providerId: string, success: boolean): void {
+  static async reportOutcome(providerId: string, success: boolean): Promise<void> {
     if (success) {
-      ProviderCircuitBreaker.recordSuccess(providerId);
+      await ProviderCircuitBreaker.recordSuccess(providerId);
     } else {
-      ProviderCircuitBreaker.recordFailure(providerId);
+      await ProviderCircuitBreaker.recordFailure(providerId);
     }
   }
 

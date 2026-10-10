@@ -429,9 +429,15 @@ export default function ScheduledSmsPage() {
   const handleConfirmDelete = async () => {
     if (!deleteConfirm) return;
     try {
-      await fetch(`/api/sms/schedule?id=${deleteConfirm.id}`, { method: 'DELETE' });
+      const response = await fetch(`/api/sms/schedule?id=${deleteConfirm.id}`, { method: 'DELETE' });
+      const result = await response.json().catch(() => null);
+      if (!response.ok) {
+        toast.error(result?.error || 'Unable to cancel this scheduled message. Please try again.');
+        return;
+      }
     } catch {
-      // Best-effort
+      toast.error('Unable to cancel this scheduled message. Check your connection and try again.');
+      return;
     }
     setItems((prev) => prev.filter((item) => item.id !== deleteConfirm.id));
     toast.success(`Scheduled message "${deleteConfirm.name}" cancelled.`);

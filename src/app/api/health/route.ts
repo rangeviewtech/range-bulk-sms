@@ -48,7 +48,7 @@ export async function GET(req?: NextRequest | Request) {
       };
     }
 
-    // 2. Check Redis if configured
+    // Redis backs shared rate limits and distributed locks in production.
     if (redis) {
       const redisStart = performance.now();
       try {
@@ -58,15 +58,17 @@ export async function GET(req?: NextRequest | Request) {
           latencyMs: Math.round(performance.now() - redisStart),
         };
       } catch (error) {
+        if (process.env.NODE_ENV === 'production') isHealthy = false;
         checks.redis = {
-          status: 'degraded',
-          error: error instanceof Error ? error.message : 'Redis ping failed',
+          status: process.env.NODE_ENV === 'production' ? 'unhealthy' : 'degraded',
+          error: error instanceof Error ? error.name : 'Redis ping failed',
         };
       }
     } else {
       checks.redis = {
-        status: 'not_configured',
+        status: process.env.NODE_ENV === 'production' ? 'unhealthy' : 'not_configured',
       };
+      if (process.env.NODE_ENV === 'production') isHealthy = false;
     }
 
     const totalLatencyMs = Math.round(performance.now() - startTime);
